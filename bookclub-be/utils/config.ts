@@ -1,8 +1,10 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-const test = process.env.TEST;
+const DATABASE_URL = process.env.DATABASE_URL;
+const PORT = process.env.PORT;
 
 export default {
-    test
+    DATABASE_URL, 
+    PORT
 };

@@ -1,8 +1,11 @@
 import express from 'express';
+// TODO: express-async-errors
+import BookRouter from './routes/book';
 import config from './utils/config';
 
 const app = express();
 
-console.log(config.test);
+app.use('/book', BookRouter);
 
-app.listen();
+app.listen(config.PORT);
+
