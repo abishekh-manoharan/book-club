@@ -64,7 +64,7 @@ export function BookBrowse() {
         })
       }
 
-      page {page} of {totalPages}
+      page {books.length === 0 ? 0 : page } of {totalPages}
       
       <button onClick={() => pageUpdateHandler('+')}> + </button>
       <button onClick={() => pageUpdateHandler('-')}> - </button>
