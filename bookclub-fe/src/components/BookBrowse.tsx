@@ -15,7 +15,6 @@ export function BookBrowse() {
   useEffect(() => {
     bookSearch(searchInput, page, limit)
       .then((res) => {
-        console.log(res);
         setBooks(res.docs)
       }
       );
@@ -24,14 +23,13 @@ export function BookBrowse() {
   // effect that updates the books whenever the search query changes
   useEffect(() => {
     setPage(1); // page is set back to one for new queries
-    
+
     bookSearch(searchInput, 1, limit)
       .then((res) => {
-        console.log(res);
         setBooks(res.docs);
-        setTotalPages(Math.ceil(res.num_found/limit));
+        setTotalPages(Math.ceil(res.num_found / limit));
       }
-    );
+      );
   }, [searchInput]);
 
   const pageUpdateHandler = (button: string) => {
@@ -44,28 +42,26 @@ export function BookBrowse() {
 
   }
 
+  books.map(book => book ? console.log('book') : console.log('no book'));
+
   return (
     <div>
       <input type="text" value={searchInput} onChange={(e) => { setSearchInput(e.target.value) }} placeholder="Search by Author, Title, or ISBN" />
-      {
-        books.map((book: Book) => {
-          return <div className="book-result">
-            {
-              book ? <>
-                <div className="result-field">{book.title} </div>
-                <div className="result-field">{book.author_name}</div>
-                <div className="result-field">{book.first_publish_year}</div>
-                <div className="result-field">{book.number_of_pages_median}</div>
-                <div className="result-field">{book.ratings_average}</div>
-              </>
-                : <></>
-            }
-          </div>
-        })
-      }
 
-      page {books.length === 0 ? 0 : page } of {totalPages}
+      { books.length > 0 ?
+          books.map((book: Book) => {
+            return <div className="book-result">
+              <div className="result-field">{book.title} </div>
+              <div className="result-field">{book.author_name}</div>
+              <div className="result-field">{book.first_publish_year}</div>
+              <div className="result-field">{book.number_of_pages_median}</div>
+              <div className="result-field">{book.ratings_average}</div>
+            </div> 
+          }) : <p>Search for somthing</p> 
+        }
       
+      <p>page {books.length === 0 ? 0 : page} of {totalPages}</p>
+
       <button onClick={() => pageUpdateHandler('+')}> + </button>
       <button onClick={() => pageUpdateHandler('-')}> - </button>
     </div>
