@@ -1,6 +1,7 @@
 import express from 'express';
 import { bookSearchController } from '../controllers/book';
 import { log } from '../utils/logger';
+import { BrowseQueryData } from '../types';
 
 const BookRouter = express.Router();
 
@@ -10,7 +11,7 @@ BookRouter.get('/search', async (req, res) => {
     const limit = Number(req.query.limit);
 
     if(search && page && limit && typeof(search) === 'string' && !isNaN(page) && !isNaN(limit)) {
-        const data = await bookSearchController(search, page, limit)
+        const data: BrowseQueryData = await bookSearchController(search, page, limit)
         return res.json(data);
     }
 

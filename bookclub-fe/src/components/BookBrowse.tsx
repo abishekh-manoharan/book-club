@@ -6,24 +6,47 @@ import { Book } from '../types';
 export function BookBrowse() {
   const [searchInput, setSearchInput] = useState('') // search input
   const [page, setPage] = useState(1); // page number
-  const [limit, setLimit] = useState(5); // number of results per page
-  const [books, setBooks] = useState([]); // displayed books
+  const [totalPages, setTotalPages] = useState(1); // total pages for query
+  const [limit] = useState(5); // number of results per page
+  const [books, setBooks] = useState<Book[]>([]); // displayed books
 
+
+  // effect that updates the books whenever the page number of page limit changes
   useEffect(() => {
-    // 
-    // calling the open book API whenever search input, page number, or limit changes
-    // to update the books list
-    //
     bookSearch(searchInput, page, limit)
       .then((res) => {
         console.log(res);
         setBooks(res.docs)
       }
       );
-  }, [searchInput, page, limit]);
+  }, [page, limit]);
+
+  // effect that updates the books whenever the search query changes
+  useEffect(() => {
+    setPage(1); // page is set back to one for new queries
+    
+    bookSearch(searchInput, 1, limit)
+      .then((res) => {
+        console.log(res);
+        setBooks(res.docs);
+        setTotalPages(Math.ceil(res.num_found/limit));
+      }
+    );
+  }, [searchInput]);
+
+  const pageUpdateHandler = (button: string) => {
+    if (button === '+') { // if the user presses the next page button
+      setPage(page + 1);
+    }
+    else if (button === '-' && page > 1) { // ensure that the user cannot go to page 0
+      setPage(page - 1);
+    }
+
+  }
 
   return (
     <div>
+      <input type="text" value={searchInput} onChange={(e) => { setSearchInput(e.target.value) }} placeholder="Search by Author, Title, or ISBN" />
       {
         books.map((book: Book) => {
           return <div className="book-result">
@@ -40,7 +63,11 @@ export function BookBrowse() {
           </div>
         })
       }
-      <input type="text" value={searchInput} onChange={(e) => { setSearchInput(e.target.value) }} placeholder="Search by Author, Title, or ISBN" />
+
+      page {page} of {totalPages}
+      
+      <button onClick={() => pageUpdateHandler('+')}> + </button>
+      <button onClick={() => pageUpdateHandler('-')}> - </button>
     </div>
   );
 }
