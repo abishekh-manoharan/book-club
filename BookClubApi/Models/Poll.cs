@@ -1,0 +1,23 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace BookClubApi.Models;
+
+public partial class Poll
+{
+    public int PollId { get; set; }
+
+    public int? ClubId { get; set; }
+
+    public string? Name { get; set; }
+
+    public bool? Open { get; set; }
+
+    public DateTime? CreatedDate { get; set; }
+
+    public virtual Club? Club { get; set; }
+
+    public virtual ICollection<Pollbook> Pollbooks { get; set; } = new List<Pollbook>();
+
+    public virtual ICollection<User> Users { get; set; } = new List<User>();
+}
