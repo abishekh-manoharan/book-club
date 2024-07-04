@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-namespace BookClubApi.Models;
+using BookClubApi.Models;
+
+namespace BookClubApi.Data;
 
 public partial class BookClubContext : DbContext
 {
@@ -39,7 +41,7 @@ public partial class BookClubContext : DbContext
 
     public virtual DbSet<Readinguser> Readingusers { get; set; }
 
-    public virtual DbSet<Thread> Threads { get; set; }
+    public virtual DbSet<Models.Thread> Threads { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
@@ -323,7 +325,7 @@ public partial class BookClubContext : DbContext
                 .HasConstraintName("readinguser_ibfk_1");
         });
 
-        modelBuilder.Entity<Thread>(entity =>
+        modelBuilder.Entity<Models.Thread>(entity =>
         {
             entity.HasKey(e => e.ThreadId).HasName("PRIMARY");
 
