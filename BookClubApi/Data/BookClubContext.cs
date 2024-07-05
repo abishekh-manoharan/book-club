@@ -46,10 +46,7 @@ public partial class BookClubContext : DbContext
     public virtual DbSet<User> Users { get; set; }
 
     public virtual DbSet<UserBook> UserBooks { get; set; }
-
-    // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) =>
-    //     options.UseSqlServer(Configuration.GetConnectionString("BloggingDatabase")));
-
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Book>(entity =>

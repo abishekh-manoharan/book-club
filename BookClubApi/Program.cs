@@ -14,7 +14,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<BookClubContext>(options =>
-    options.UseMySQL(builder.Configuration.GetConnectionString("BookClubDB"))
+    options.UseMySQL(builder.Configuration.GetConnectionString("BookClubDB")!)
 );
 
 var app = builder.Build();
