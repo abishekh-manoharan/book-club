@@ -414,6 +414,7 @@ public partial class BookClubContext : DbContext
                 .HasConstraintName("userbook_ibfk_2");
         });
 
+        base.OnModelCreating(modelBuilder);
         OnModelCreatingPartial(modelBuilder);
     }
 
