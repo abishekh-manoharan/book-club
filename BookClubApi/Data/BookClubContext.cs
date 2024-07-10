@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 using BookClubApi.Models;
 
 namespace BookClubApi.Data;
 
-public partial class BookClubContext : DbContext
+public partial class BookClubContext : IdentityDbContext<IdentityUser>
 {
     public BookClubContext()
     {
