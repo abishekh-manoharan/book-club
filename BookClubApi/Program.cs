@@ -21,13 +21,12 @@ builder.Services.AddDbContext<BookClubContext>(options =>
     options.UseMySQL(builder.Configuration.GetConnectionString("BookClubDB")!)
 );
 
-// builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<BookClubContext>();
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<BookClubContext>();
 
-builder.Services.AddIdentityApiEndpoints<IdentityUser>().AddEntityFrameworkStores<BookClubContext>();
+builder.Services.Configure<IdentityOptions>(options => options.Password.RequiredLength = 8);
 
 var app = builder.Build();
-
-app.MapIdentityApi<IdentityUser>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
