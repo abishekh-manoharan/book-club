@@ -1,25 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
-
 using BookClubApi.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookClubApi.Data;
 
-public partial class BookClubContext : IdentityDbContext<IdentityUser>
+public partial class BookClubContext :  IdentityDbContext<ApplicationUser>
 {
     public BookClubContext()
     {
-
     }
 
     public BookClubContext(DbContextOptions<BookClubContext> options)
         : base(options)
     {
     }
+
+    public virtual DbSet<AspNetRole> AspNetRoles { get; set; }
+
+    public virtual DbSet<AspNetRoleClaim> AspNetRoleClaims { get; set; }
+
+    public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
+
+    public virtual DbSet<AspNetUserClaim> AspNetUserClaims { get; set; }
+
+    public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; }
+
+    public virtual DbSet<AspNetUserToken> AspNetUserTokens { get; set; }
 
     public virtual DbSet<Book> Books { get; set; }
 
@@ -28,6 +36,8 @@ public partial class BookClubContext : IdentityDbContext<IdentityUser>
     public virtual DbSet<ClubUser> ClubUsers { get; set; }
 
     public virtual DbSet<Clubrecommendation> Clubrecommendations { get; set; }
+
+    public virtual DbSet<EfmigrationsHistory> EfmigrationsHistories { get; set; }
 
     public virtual DbSet<JoinRequest> JoinRequests { get; set; }
 
@@ -48,9 +58,92 @@ public partial class BookClubContext : IdentityDbContext<IdentityUser>
     public virtual DbSet<User> Users { get; set; }
 
     public virtual DbSet<UserBook> UserBooks { get; set; }
-    
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<AspNetRole>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("AspNetRoles", "BookClub");
+
+            entity.HasIndex(e => e.NormalizedName, "RoleNameIndex").IsUnique();
+
+            entity.Property(e => e.Name).HasMaxLength(256);
+            entity.Property(e => e.NormalizedName).HasMaxLength(256);
+        });
+
+        modelBuilder.Entity<AspNetRoleClaim>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("AspNetRoleClaims", "BookClub");
+
+            entity.HasIndex(e => e.RoleId, "IX_AspNetRoleClaims_RoleId");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.AspNetRoleClaims).HasForeignKey(d => d.RoleId);
+        });
+
+        modelBuilder.Entity<AspNetUser>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("AspNetUsers", "BookClub");
+
+            entity.HasIndex(e => e.NormalizedEmail, "EmailIndex");
+
+            entity.HasIndex(e => e.NormalizedUserName, "UserNameIndex").IsUnique();
+
+            entity.Property(e => e.Email).HasMaxLength(256);
+            entity.Property(e => e.LockoutEnd).HasColumnType("datetime");
+            entity.Property(e => e.NormalizedEmail).HasMaxLength(256);
+            entity.Property(e => e.NormalizedUserName).HasMaxLength(256);
+            entity.Property(e => e.UserName).HasMaxLength(256);
+
+            entity.HasMany(d => d.Roles).WithMany(p => p.Users)
+                .UsingEntity<Dictionary<string, object>>(
+                    "AspNetUserRole",
+                    r => r.HasOne<AspNetRole>().WithMany().HasForeignKey("RoleId"),
+                    l => l.HasOne<AspNetUser>().WithMany().HasForeignKey("UserId"),
+                    j =>
+                    {
+                        j.HasKey("UserId", "RoleId").HasName("PRIMARY");
+                        j.ToTable("AspNetUserRoles", "BookClub");
+                        j.HasIndex(new[] { "RoleId" }, "IX_AspNetUserRoles_RoleId");
+                    });
+        });
+
+        modelBuilder.Entity<AspNetUserClaim>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("AspNetUserClaims", "BookClub");
+
+            entity.HasIndex(e => e.UserId, "IX_AspNetUserClaims_UserId");
+
+            entity.HasOne(d => d.User).WithMany(p => p.AspNetUserClaims).HasForeignKey(d => d.UserId);
+        });
+
+        modelBuilder.Entity<AspNetUserLogin>(entity =>
+        {
+            entity.HasKey(e => new { e.LoginProvider, e.ProviderKey }).HasName("PRIMARY");
+
+            entity.ToTable("AspNetUserLogins", "BookClub");
+
+            entity.HasIndex(e => e.UserId, "IX_AspNetUserLogins_UserId");
+
+            entity.HasOne(d => d.User).WithMany(p => p.AspNetUserLogins).HasForeignKey(d => d.UserId);
+        });
+
+        modelBuilder.Entity<AspNetUserToken>(entity =>
+        {
+            entity.HasKey(e => new { e.UserId, e.LoginProvider, e.Name }).HasName("PRIMARY");
+
+            entity.ToTable("AspNetUserTokens", "BookClub");
+
+            entity.HasOne(d => d.User).WithMany(p => p.AspNetUserTokens).HasForeignKey(d => d.UserId);
+        });
+
         modelBuilder.Entity<Book>(entity =>
         {
             entity.HasKey(e => e.BookId).HasName("PRIMARY");
@@ -118,7 +211,7 @@ public partial class BookClubContext : IdentityDbContext<IdentityUser>
 
             entity.HasIndex(e => e.BookId, "book_id");
 
-            entity.HasIndex(e => e.UserId, "user_id");
+            entity.HasIndex(e => e.UserId, "user_id1");
 
             entity.Property(e => e.ClubId).HasColumnName("club_id");
             entity.Property(e => e.BookId).HasColumnName("book_id");
@@ -142,13 +235,23 @@ public partial class BookClubContext : IdentityDbContext<IdentityUser>
                 .HasConstraintName("clubrecommendations_ibfk_2");
         });
 
+        modelBuilder.Entity<EfmigrationsHistory>(entity =>
+        {
+            entity.HasKey(e => e.MigrationId).HasName("PRIMARY");
+
+            entity.ToTable("__EFMigrationsHistory", "BookClub");
+
+            entity.Property(e => e.MigrationId).HasMaxLength(150);
+            entity.Property(e => e.ProductVersion).HasMaxLength(32);
+        });
+
         modelBuilder.Entity<JoinRequest>(entity =>
         {
             entity.HasKey(e => new { e.ClubId, e.UserId }).HasName("PRIMARY");
 
             entity.ToTable("JoinRequest", "BookClub");
 
-            entity.HasIndex(e => e.UserId, "user_id");
+            entity.HasIndex(e => e.UserId, "user_id2");
 
             entity.Property(e => e.ClubId).HasColumnName("club_id");
             entity.Property(e => e.UserId).HasColumnName("user_id");
@@ -172,7 +275,7 @@ public partial class BookClubContext : IdentityDbContext<IdentityUser>
 
             entity.ToTable("meetings", "BookClub");
 
-            entity.HasIndex(e => new { e.BookId, e.ClubId }, "book_id");
+            entity.HasIndex(e => new { e.BookId, e.ClubId }, "book_id1");
 
             entity.Property(e => e.MeetingId).HasColumnName("meeting_id");
             entity.Property(e => e.BookId).HasColumnName("book_id");
@@ -229,7 +332,7 @@ public partial class BookClubContext : IdentityDbContext<IdentityUser>
                     {
                         j.HasKey("PollId", "UserId").HasName("PRIMARY");
                         j.ToTable("polluser", "BookClub");
-                        j.HasIndex(new[] { "UserId" }, "user_id");
+                        j.HasIndex(new[] { "UserId" }, "user_id5");
                         j.IndexerProperty<int>("PollId").HasColumnName("poll_id");
                         j.IndexerProperty<int>("UserId").HasColumnName("user_id");
                     });
@@ -241,7 +344,7 @@ public partial class BookClubContext : IdentityDbContext<IdentityUser>
 
             entity.ToTable("pollbook", "BookClub");
 
-            entity.HasIndex(e => e.BookId, "book_id");
+            entity.HasIndex(e => e.BookId, "book_id2");
 
             entity.Property(e => e.PollId).HasColumnName("poll_id");
             entity.Property(e => e.BookId).HasColumnName("book_id");
@@ -276,7 +379,7 @@ public partial class BookClubContext : IdentityDbContext<IdentityUser>
 
             entity.ToTable("reading", "BookClub");
 
-            entity.HasIndex(e => e.ClubId, "club_id");
+            entity.HasIndex(e => e.ClubId, "club_id1");
 
             entity.Property(e => e.BookId).HasColumnName("book_id");
             entity.Property(e => e.ClubId).HasColumnName("club_id");
@@ -304,7 +407,7 @@ public partial class BookClubContext : IdentityDbContext<IdentityUser>
 
             entity.ToTable("readinguser", "BookClub");
 
-            entity.HasIndex(e => new { e.BookId, e.ClubId }, "book_id");
+            entity.HasIndex(e => new { e.BookId, e.ClubId }, "book_id3");
 
             entity.HasIndex(e => e.ProgresstypeId, "progresstype_id");
 
@@ -330,11 +433,11 @@ public partial class BookClubContext : IdentityDbContext<IdentityUser>
 
             entity.ToTable("thread", "BookClub");
 
-            entity.HasIndex(e => new { e.BookId, e.ClubId }, "book_id");
+            entity.HasIndex(e => new { e.BookId, e.ClubId }, "book_id4");
 
             entity.HasIndex(e => e.ParentThreadId, "parent_thread_id");
 
-            entity.HasIndex(e => e.UserId, "user_id");
+            entity.HasIndex(e => e.UserId, "user_id3");
 
             entity.Property(e => e.ThreadId).HasColumnName("thread_id");
             entity.Property(e => e.BookId).HasColumnName("book_id");
@@ -364,7 +467,10 @@ public partial class BookClubContext : IdentityDbContext<IdentityUser>
 
             entity.ToTable("user", "BookClub");
 
+            entity.HasIndex(e => e.AspnetusersId, "aspnetusers_id");
+
             entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.AspnetusersId).HasColumnName("aspnetusers_id");
             entity.Property(e => e.Bio)
                 .HasMaxLength(200)
                 .HasColumnName("bio");
@@ -389,6 +495,10 @@ public partial class BookClubContext : IdentityDbContext<IdentityUser>
             entity.Property(e => e.Username)
                 .HasMaxLength(50)
                 .HasColumnName("username");
+
+            entity.HasOne(d => d.Aspnetusers).WithMany(p => p.Users)
+                .HasForeignKey(d => d.AspnetusersId)
+                .HasConstraintName("user_ibfk_1");
         });
 
         modelBuilder.Entity<UserBook>(entity =>
@@ -397,7 +507,7 @@ public partial class BookClubContext : IdentityDbContext<IdentityUser>
 
             entity.ToTable("UserBook", "BookClub");
 
-            entity.HasIndex(e => e.UserId, "user_id");
+            entity.HasIndex(e => e.UserId, "user_id4");
 
             entity.Property(e => e.BookId).HasColumnName("book_id");
             entity.Property(e => e.UserId).HasColumnName("user_id");
@@ -416,8 +526,9 @@ public partial class BookClubContext : IdentityDbContext<IdentityUser>
                 .HasConstraintName("userbook_ibfk_2");
         });
 
-        base.OnModelCreating(modelBuilder);
         OnModelCreatingPartial(modelBuilder);
+
+        base.OnModelCreating(modelBuilder);
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

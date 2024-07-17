@@ -21,7 +21,7 @@ builder.Services.AddDbContext<BookClubContext>(options =>
     options.UseMySQL(builder.Configuration.GetConnectionString("BookClubDB")!)
 );
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<BookClubContext>();
 
 builder.Services.Configure<IdentityOptions>(options => options.Password.RequiredLength = 8);

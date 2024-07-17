@@ -23,6 +23,10 @@ public partial class User
 
     public string? ProfileImg { get; set; }
 
+    public string? AspnetusersId { get; set; }
+
+    public virtual AspNetUser? Aspnetusers { get; set; }
+
     public virtual ICollection<ClubUser> ClubUsers { get; set; } = new List<ClubUser>();
 
     public virtual ICollection<Clubrecommendation> Clubrecommendations { get; set; } = new List<Clubrecommendation>();

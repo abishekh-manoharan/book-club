@@ -19,6 +19,270 @@ namespace BookClubApi.Migrations
                 .HasAnnotation("ProductVersion", "8.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
+            modelBuilder.Entity("AspNetUserRole", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("RoleId")
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("UserId", "RoleId")
+                        .HasName("PRIMARY");
+
+                    b.HasIndex(new[] { "RoleId" }, "IX_AspNetUserRoles_RoleId");
+
+                    b.ToTable("AspNetUserRoles", "BookClub");
+                });
+
+            modelBuilder.Entity("BookClubApi.Models.ApplicationUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex");
+
+                    b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("BookClubApi.Models.AspNetRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.HasKey("Id")
+                        .HasName("PRIMARY");
+
+                    b.HasIndex(new[] { "NormalizedName" }, "RoleNameIndex")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex1");
+
+                    b.ToTable("AspNetRoles", "BookClub");
+                });
+
+            modelBuilder.Entity("BookClubApi.Models.AspNetRoleClaim", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id")
+                        .HasName("PRIMARY");
+
+                    b.HasIndex(new[] { "RoleId" }, "IX_AspNetRoleClaims_RoleId");
+
+                    b.ToTable("AspNetRoleClaims", "BookClub");
+                });
+
+            modelBuilder.Entity("BookClubApi.Models.AspNetUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTime?>("LockoutEnd")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.HasKey("Id")
+                        .HasName("PRIMARY");
+
+                    b.HasIndex(new[] { "NormalizedEmail" }, "EmailIndex")
+                        .HasDatabaseName("EmailIndex1");
+
+                    b.HasIndex(new[] { "NormalizedUserName" }, "UserNameIndex")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex1");
+
+                    b.ToTable("AspNetUsers", "BookClub");
+                });
+
+            modelBuilder.Entity("BookClubApi.Models.AspNetUserClaim", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id")
+                        .HasName("PRIMARY");
+
+                    b.HasIndex(new[] { "UserId" }, "IX_AspNetUserClaims_UserId");
+
+                    b.ToTable("AspNetUserClaims", "BookClub");
+                });
+
+            modelBuilder.Entity("BookClubApi.Models.AspNetUserLogin", b =>
+                {
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("LoginProvider", "ProviderKey")
+                        .HasName("PRIMARY");
+
+                    b.HasIndex(new[] { "UserId" }, "IX_AspNetUserLogins_UserId");
+
+                    b.ToTable("AspNetUserLogins", "BookClub");
+                });
+
+            modelBuilder.Entity("BookClubApi.Models.AspNetUserToken", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("UserId", "LoginProvider", "Name")
+                        .HasName("PRIMARY");
+
+                    b.ToTable("AspNetUserTokens", "BookClub");
+                });
+
             modelBuilder.Entity("BookClubApi.Models.Book", b =>
                 {
                     b.Property<int>("BookId")
@@ -129,10 +393,26 @@ namespace BookClubApi.Migrations
 
                     b.HasIndex(new[] { "BookId" }, "book_id");
 
-                    b.HasIndex(new[] { "UserId" }, "user_id")
-                        .HasDatabaseName("user_id1");
+                    b.HasIndex(new[] { "UserId" }, "user_id1");
 
                     b.ToTable("clubrecommendations", "BookClub");
+                });
+
+            modelBuilder.Entity("BookClubApi.Models.EfmigrationsHistory", b =>
+                {
+                    b.Property<string>("MigrationId")
+                        .HasMaxLength(150)
+                        .HasColumnType("varchar(150)");
+
+                    b.Property<string>("ProductVersion")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("varchar(32)");
+
+                    b.HasKey("MigrationId")
+                        .HasName("PRIMARY");
+
+                    b.ToTable("__EFMigrationsHistory", "BookClub");
                 });
 
             modelBuilder.Entity("BookClubApi.Models.JoinRequest", b =>
@@ -156,8 +436,7 @@ namespace BookClubApi.Migrations
                     b.HasKey("ClubId", "UserId")
                         .HasName("PRIMARY");
 
-                    b.HasIndex(new[] { "UserId" }, "user_id")
-                        .HasDatabaseName("user_id2");
+                    b.HasIndex(new[] { "UserId" }, "user_id2");
 
                     b.ToTable("JoinRequest", "BookClub");
                 });
@@ -193,8 +472,7 @@ namespace BookClubApi.Migrations
                     b.HasKey("MeetingId")
                         .HasName("PRIMARY");
 
-                    b.HasIndex(new[] { "BookId", "ClubId" }, "book_id")
-                        .HasDatabaseName("book_id1");
+                    b.HasIndex(new[] { "BookId", "ClubId" }, "book_id1");
 
                     b.ToTable("meetings", "BookClub");
                 });
@@ -248,8 +526,7 @@ namespace BookClubApi.Migrations
                     b.HasKey("PollId", "BookId")
                         .HasName("PRIMARY");
 
-                    b.HasIndex(new[] { "BookId" }, "book_id")
-                        .HasDatabaseName("book_id2");
+                    b.HasIndex(new[] { "BookId" }, "book_id2");
 
                     b.ToTable("pollbook", "BookClub");
                 });
@@ -295,8 +572,7 @@ namespace BookClubApi.Migrations
                     b.HasKey("BookId", "ClubId")
                         .HasName("PRIMARY");
 
-                    b.HasIndex(new[] { "ClubId" }, "club_id")
-                        .HasDatabaseName("club_id1");
+                    b.HasIndex(new[] { "ClubId" }, "club_id1");
 
                     b.ToTable("reading", "BookClub");
                 });
@@ -326,8 +602,7 @@ namespace BookClubApi.Migrations
                     b.HasKey("UserId", "ClubId", "BookId")
                         .HasName("PRIMARY");
 
-                    b.HasIndex(new[] { "BookId", "ClubId" }, "book_id")
-                        .HasDatabaseName("book_id3");
+                    b.HasIndex(new[] { "BookId", "ClubId" }, "book_id3");
 
                     b.HasIndex(new[] { "ProgresstypeId" }, "progresstype_id");
 
@@ -364,13 +639,11 @@ namespace BookClubApi.Migrations
                     b.HasKey("ThreadId")
                         .HasName("PRIMARY");
 
-                    b.HasIndex(new[] { "BookId", "ClubId" }, "book_id")
-                        .HasDatabaseName("book_id4");
+                    b.HasIndex(new[] { "BookId", "ClubId" }, "book_id4");
 
                     b.HasIndex(new[] { "ParentThreadId" }, "parent_thread_id");
 
-                    b.HasIndex(new[] { "UserId" }, "user_id")
-                        .HasDatabaseName("user_id3");
+                    b.HasIndex(new[] { "UserId" }, "user_id3");
 
                     b.ToTable("thread", "BookClub");
                 });
@@ -381,6 +654,10 @@ namespace BookClubApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("user_id");
+
+                    b.Property<string>("AspnetusersId")
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("aspnetusers_id");
 
                     b.Property<string>("Bio")
                         .HasMaxLength(200)
@@ -425,6 +702,8 @@ namespace BookClubApi.Migrations
                     b.HasKey("UserId")
                         .HasName("PRIMARY");
 
+                    b.HasIndex(new[] { "AspnetusersId" }, "aspnetusers_id");
+
                     b.ToTable("user", "BookClub");
                 });
 
@@ -445,8 +724,7 @@ namespace BookClubApi.Migrations
                     b.HasKey("BookId", "UserId")
                         .HasName("PRIMARY");
 
-                    b.HasIndex(new[] { "UserId" }, "user_id")
-                        .HasDatabaseName("user_id4");
+                    b.HasIndex(new[] { "UserId" }, "user_id4");
 
                     b.ToTable("UserBook", "BookClub");
                 });
@@ -495,73 +773,10 @@ namespace BookClubApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RoleId");
+                    b.HasIndex("RoleId")
+                        .HasDatabaseName("IX_AspNetRoleClaims_RoleId1");
 
                     b.ToTable("AspNetRoleClaims", (string)null);
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetime");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("longtext");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("longtext");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex");
-
-                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -582,7 +797,8 @@ namespace BookClubApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_AspNetUserClaims_UserId1");
 
                     b.ToTable("AspNetUserClaims", (string)null);
                 });
@@ -604,7 +820,8 @@ namespace BookClubApi.Migrations
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_AspNetUserLogins_UserId1");
 
                     b.ToTable("AspNetUserLogins", (string)null);
                 });
@@ -619,7 +836,8 @@ namespace BookClubApi.Migrations
 
                     b.HasKey("UserId", "RoleId");
 
-                    b.HasIndex("RoleId");
+                    b.HasIndex("RoleId")
+                        .HasDatabaseName("IX_AspNetUserRoles_RoleId1");
 
                     b.ToTable("AspNetUserRoles", (string)null);
                 });
@@ -656,10 +874,68 @@ namespace BookClubApi.Migrations
                     b.HasKey("PollId", "UserId")
                         .HasName("PRIMARY");
 
-                    b.HasIndex(new[] { "UserId" }, "user_id")
-                        .HasDatabaseName("user_id5");
+                    b.HasIndex(new[] { "UserId" }, "user_id5");
 
                     b.ToTable("polluser", "BookClub");
+                });
+
+            modelBuilder.Entity("AspNetUserRole", b =>
+                {
+                    b.HasOne("BookClubApi.Models.AspNetRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BookClubApi.Models.AspNetUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("BookClubApi.Models.AspNetRoleClaim", b =>
+                {
+                    b.HasOne("BookClubApi.Models.AspNetRole", "Role")
+                        .WithMany("AspNetRoleClaims")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("BookClubApi.Models.AspNetUserClaim", b =>
+                {
+                    b.HasOne("BookClubApi.Models.AspNetUser", "User")
+                        .WithMany("AspNetUserClaims")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("BookClubApi.Models.AspNetUserLogin", b =>
+                {
+                    b.HasOne("BookClubApi.Models.AspNetUser", "User")
+                        .WithMany("AspNetUserLogins")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("BookClubApi.Models.AspNetUserToken", b =>
+                {
+                    b.HasOne("BookClubApi.Models.AspNetUser", "User")
+                        .WithMany("AspNetUserTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BookClubApi.Models.ClubUser", b =>
@@ -826,6 +1102,16 @@ namespace BookClubApi.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("BookClubApi.Models.User", b =>
+                {
+                    b.HasOne("BookClubApi.Models.AspNetUser", "Aspnetusers")
+                        .WithMany("Users")
+                        .HasForeignKey("AspnetusersId")
+                        .HasConstraintName("user_ibfk_1");
+
+                    b.Navigation("Aspnetusers");
+                });
+
             modelBuilder.Entity("BookClubApi.Models.UserBook", b =>
                 {
                     b.HasOne("BookClubApi.Models.Book", "Book")
@@ -856,7 +1142,7 @@ namespace BookClubApi.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("BookClubApi.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -865,7 +1151,7 @@ namespace BookClubApi.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("BookClubApi.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -880,7 +1166,7 @@ namespace BookClubApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("BookClubApi.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -889,7 +1175,7 @@ namespace BookClubApi.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("BookClubApi.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -909,6 +1195,22 @@ namespace BookClubApi.Migrations
                         .HasForeignKey("UserId")
                         .IsRequired()
                         .HasConstraintName("polluser_ibfk_2");
+                });
+
+            modelBuilder.Entity("BookClubApi.Models.AspNetRole", b =>
+                {
+                    b.Navigation("AspNetRoleClaims");
+                });
+
+            modelBuilder.Entity("BookClubApi.Models.AspNetUser", b =>
+                {
+                    b.Navigation("AspNetUserClaims");
+
+                    b.Navigation("AspNetUserLogins");
+
+                    b.Navigation("AspNetUserTokens");
+
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("BookClubApi.Models.Book", b =>
