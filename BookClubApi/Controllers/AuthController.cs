@@ -19,8 +19,13 @@ public class AuthController : ControllerBase {
     // }
 
     [HttpPost("createUser")]
-    public async Task<bool> CreateUser([FromBody] ApplicationUser user, [FromBody] string password) {
+    public async Task<bool> CreateUser(ApplicationUser user, string password) {
         var result = await userManager.CreateAsync(user, password);
         return result.Succeeded;
+    }
+
+    [HttpGet]
+    public string GetBody(string name, int id) {
+        return name + id;
     }
 }
