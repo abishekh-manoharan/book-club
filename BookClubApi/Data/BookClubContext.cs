@@ -474,27 +474,15 @@ public partial class BookClubContext :  IdentityDbContext<ApplicationUser>
             entity.Property(e => e.Bio)
                 .HasMaxLength(200)
                 .HasColumnName("bio");
-            entity.Property(e => e.Email)
-                .HasMaxLength(200)
-                .HasColumnName("email");
             entity.Property(e => e.FName)
                 .HasMaxLength(50)
                 .HasColumnName("f_name");
-            entity.Property(e => e.Hash)
-                .HasMaxLength(200)
-                .HasColumnName("hash");
             entity.Property(e => e.LName)
                 .HasMaxLength(50)
                 .HasColumnName("l_name");
             entity.Property(e => e.ProfileImg)
                 .HasMaxLength(300)
                 .HasColumnName("profile_img");
-            entity.Property(e => e.Salt)
-                .HasMaxLength(200)
-                .HasColumnName("salt");
-            entity.Property(e => e.Username)
-                .HasMaxLength(50)
-                .HasColumnName("username");
 
             entity.HasOne(d => d.Aspnetusers).WithMany(p => p.Users)
                 .HasForeignKey(d => d.AspnetusersId)

@@ -9,14 +9,6 @@ public partial class User
 
     public string? Bio { get; set; }
 
-    public string? Username { get; set; }
-
-    public string? Hash { get; set; }
-
-    public string? Salt { get; set; }
-
-    public string? Email { get; set; }
-
     public string? FName { get; set; }
 
     public string? LName { get; set; }
