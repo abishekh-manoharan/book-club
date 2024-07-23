@@ -24,7 +24,10 @@ builder.Services.AddDbContext<BookClubContext>(options =>
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<BookClubContext>();
 
-builder.Services.Configure<IdentityOptions>(options => options.Password.RequiredLength = 8);
+builder.Services.Configure<IdentityOptions>(options =>{
+    options.Password.RequiredLength = 8;
+    options.User.RequireUniqueEmail = true;
+});
 
 var app = builder.Build();
 
