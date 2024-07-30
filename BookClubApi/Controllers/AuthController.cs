@@ -23,7 +23,9 @@ public class AuthController : ControllerBase {
     // public IEnumerable<ApplicationUser> Get() { 
 
     // }
+/*
 
+*/
     [HttpPost("Register")]
     public async Task<string> Register(User user, ApplicationUser appUser, string password) {
         var result = await userManager.CreateAsync(appUser, password);

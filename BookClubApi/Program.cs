@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using BookClubApi.Data;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-
+using BookClubApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +29,16 @@ builder.Services.Configure<IdentityOptions>(options =>{
     options.User.RequireUniqueEmail = true;
 });
 
+builder.Services.AddCors(options => {
+    options.AddPolicy(
+            name: "GeneralCorsPolicyWithCreds",
+            policy => {
+                policy.WithOrigins([BookClubApi.Constants.FE_URL])
+                    .AllowCredentials();
+            }
+        );
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -39,6 +49,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("GeneralCorsPolicyWithCreds");
+
 app.UseAuthentication();
 app.UseAuthorization();
 
