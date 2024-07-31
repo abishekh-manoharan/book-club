@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { RegistrationFormData } from "../utils/types";
 import AuthService from '../services/auth';
 import { AxiosError } from "axios";
@@ -9,16 +9,33 @@ function Register() {
     const [lName, setLName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    // const [confirmPassword, setConfirmPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [passwordsMatch, setPasswordsMatch] = useState(true);
 
+    // check if passwords match on password and confirmPassword state changes
+    useEffect(() => {
+        if(confirmPassword !== password) {
+            document.querySelector(".PasswordsMatch")?.classList.remove("hidden");
+            setPasswordsMatch(false);
+            return;
+        }
+        document.querySelector(".PasswordsMatch")?.classList.add("hidden");
+        setPasswordsMatch(true);
+    }, [password, confirmPassword])
 
     const submitButtonHandler = (e: React.SyntheticEvent) => {
         e.preventDefault();
         e.stopPropagation();
+
         // checking for validity - particularly requirement
         const registrationForm = document.querySelector(".registrationForm") as HTMLSelectElement;
         if (!registrationForm.checkValidity()) {
             registrationForm.reportValidity();
+            return;
+        }
+
+        // ensuring that password and confirm-password fields match before attempting to register
+        if(!passwordsMatch) {
             return;
         }
 
@@ -157,9 +174,9 @@ function Register() {
                 <p className="PasswordRequiresDigit hidden" style={{ "color": "red" }}>Passwords must have at least one digit ('0'-'9')</p>
                 <p className="PasswordRequiresLower hidden" style={{ "color": "red" }}>Passwords must have at least one lowercase ('a'-'z')</p>
                 <p className="PasswordRequiresUpper hidden" style={{ "color": "red" }}>Passwords must have at least one uppercase ('A'-'Z').</p>
-                {/* <label htmlFor="confirmPassword">Confirm Password</label>
-                <input type="password" name="confirmPassword" id="confirmPassword" onChange={(e) => {setConfirmPassword(e.target.value)}} required/><br/> */}
-
+                <label htmlFor="confirmPassword">Confirm Password</label>
+                <input type="password" name="confirmPassword" id="confirmPassword" onChange={e => setConfirmPassword(e.target.value)} required/><br/>
+                <p className="PasswordsMatch hidden" style={{ "color": "red" }}>Passwords do not match.</p>
                 <button onClick={submitButtonHandler}>Sign Up</button>
             </form>
             <p className="submission-success hidden" style={{ "color": "green" }}>Registration successful</p>
