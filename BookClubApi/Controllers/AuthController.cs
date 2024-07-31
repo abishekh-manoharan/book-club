@@ -26,20 +26,23 @@ public class AuthController : ControllerBase {
 /*
 
 */
+    // Action method that takes in user registration data then attempts to creates a user.
+    // On success, returns an IEnumerable object containing the "success" keyword and the user's ID.
+    // On failure, returns an IEnumberable object of error codes
     [HttpPost("Register")]
-    public async Task<string> Register(User user, ApplicationUser appUser, string password) {
+    public async Task<IEnumerable<string>> Register(User user, ApplicationUser appUser, string password) {
         var result = await userManager.CreateAsync(appUser, password);
         if(result.Succeeded) {            
             // Create User class with the associated AspNetUserId 
             user.AspnetusersId = appUser.Id;
             dbContext.Users.Add(user);
             dbContext.SaveChanges();
-            return appUser.Id;
+            return ["succeeded", appUser.Id];
         }
 
-        string errors = "";
+        List<string> errors = new List<string>();
         foreach (var errs in result.Errors) {
-            errors += errs.Description + "\n";
+            errors.Add(errs.Code);
         }
         return errors;
     }
