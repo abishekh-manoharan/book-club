@@ -26,6 +26,15 @@ public class AuthController : ControllerBase {
 /*
 
 */
+
+    // Action method that attempts to log in a user through email + password combination
+    // On success, returns an IEnumerable object containing the "success" keyword and the user's ID.
+    // On failure, returns an IEnumberable object of error codes
+    [HttpPost("Login")]
+    public IEnumerable<string> Login(string email, string password) {
+        return [email, password];
+    }
+
     // Action method that takes in user registration data then attempts to creates a user.
     // On success, returns an IEnumerable object containing the "success" keyword and the user's ID.
     // On failure, returns an IEnumberable object of error codes

@@ -157,25 +157,25 @@ function Register() {
         <div>
             <form className="form registrationForm">
                 <label htmlFor="Username">Username</label>
-                <input name="Username" id="Username" onChange={(e) => { setUsername(e.target.value) }} required /><br />
+                <input name="Username" id="Username" value={username} onChange={(e) => { setUsername(e.target.value) }} required /><br />
                 <p className="DuplicateUserName hidden" style={{ "color": "red" }}>Username is already taken.</p>
                 <label htmlFor="FName">First Name</label>
-                <input name="Fname" id="Fname" onChange={(e) => { setFName(e.target.value) }} required />
+                <input name="Fname" id="Fname" value={fName} onChange={(e) => { setFName(e.target.value) }} required />
                 <label htmlFor="LName">Last Name</label>
-                <input name="LName" id="LName" onChange={(e) => { setLName(e.target.value) }} required /><br />
+                <input name="LName" id="LName" value={lName} onChange={(e) => { setLName(e.target.value) }} required /><br />
                 <label htmlFor="Email">Email</label>
-                <input name="Email" id="Email" onChange={(e) => { setEmail(e.target.value) }} required /><br />
+                <input name="Email" id="Email" value={email} onChange={(e) => { setEmail(e.target.value) }} required /><br />
                 <p className="DuplicateEmail hidden" style={{ "color": "red" }}>Email is already taken.</p>
 
                 <label htmlFor="password">Password</label>
-                <input type="password" name="password" id="password" onChange={(e) => { setPassword(e.target.value) }} required /><br />
+                <input type="password" name="password" id="password" value={password} onChange={(e) => { setPassword(e.target.value) }} required /><br />
                 <p className="PasswordTooShort hidden" style={{ "color": "red" }}>Passwords must be at least 8 characters.</p>
                 <p className="PasswordRequiresNonAlphanumeric hidden" style={{ "color": "red" }}>Passwords must have at least one non alphanumeric character.</p>
                 <p className="PasswordRequiresDigit hidden" style={{ "color": "red" }}>Passwords must have at least one digit ('0'-'9')</p>
                 <p className="PasswordRequiresLower hidden" style={{ "color": "red" }}>Passwords must have at least one lowercase ('a'-'z')</p>
                 <p className="PasswordRequiresUpper hidden" style={{ "color": "red" }}>Passwords must have at least one uppercase ('A'-'Z').</p>
                 <label htmlFor="confirmPassword">Confirm Password</label>
-                <input type="password" name="confirmPassword" id="confirmPassword" onChange={e => setConfirmPassword(e.target.value)} required/><br/>
+                <input type="password" name="confirmPassword" id="confirmPassword" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required/><br/>
                 <p className="PasswordsMatch hidden" style={{ "color": "red" }}>Passwords do not match.</p>
                 <button onClick={submitButtonHandler}>Sign Up</button>
             </form>
