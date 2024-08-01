@@ -31,8 +31,19 @@ public class AuthController : ControllerBase {
     // On success, returns an IEnumerable object containing the "success" keyword and the user's ID.
     // On failure, returns an IEnumberable object of error codes
     [HttpPost("Login")]
-    public IEnumerable<string> Login(string email, string password) {
-        return [email, password];
+    public async Task<IEnumerable<string>> Login(string email, string password) {
+        // trying to find user with matching email
+        ApplicationUser? user = await userManager.FindByEmailAsync(email);
+        if(user != null){
+            // attempting password sign in
+            var result = await signInManager.PasswordSignInAsync(user!, password, true, false);
+            // return success message + user id if sign in was successful
+            if(result.Succeeded) {
+                return ["succeeded", user.Id];
+            }
+        }
+        // return error if user with email not found or if password sign in fails
+        return ["error"];
     }
 
     // Action method that takes in user registration data then attempts to creates a user.
@@ -46,6 +57,7 @@ public class AuthController : ControllerBase {
             user.AspnetusersId = appUser.Id;
             dbContext.Users.Add(user);
             dbContext.SaveChanges();
+            // return success message + user id if registration was successful
             return ["succeeded", appUser.Id];
         }
 
