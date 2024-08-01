@@ -5,3 +5,8 @@ export interface RegistrationFormData {
     Email: string,
     password: string
 }
+
+export interface AuthContext {
+    auth?: boolean,
+    setAuth?: React.Dispatch<React.SetStateAction<boolean>>,
+}
