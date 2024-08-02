@@ -24,7 +24,7 @@ const login = (email: string, password: string) => axios.post(
 
 const logout = () => axios.post(BE_URL + 'auth/logout', options).then(res => res.data);
 
-const status = () => axios.get(BE_URL + 'auth/status', options).then(res => res.data);
+const status = () => axios.get(BE_URL + 'auth/IsLoggedIn', options).then(res => res.data);
 
 export default {
     login,
