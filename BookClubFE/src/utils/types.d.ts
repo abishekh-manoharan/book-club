@@ -7,6 +7,6 @@ export interface RegistrationFormData {
 }
 
 export interface AuthContext {
-    auth?: boolean,
-    setAuth?: React.Dispatch<React.SetStateAction<boolean>>,
+    auth: boolean,
+    setAuth: React.Dispatch<React.SetStateAction<boolean>>,
 }
