@@ -19,14 +19,6 @@ public class AuthController : ControllerBase {
         this.dbContext = dbContext;
     }
 
-    // [HttpGet("users")]
-    // public IEnumerable<ApplicationUser> Get() { 
-
-    // }
-/*
-
-*/
-
     // Action method that attempts to log in a user through email + password combination
     // On success, returns an IEnumerable object containing the "success" keyword and the user's ID.
     // On failure, returns an IEnumberable object of error codes
@@ -68,13 +60,11 @@ public class AuthController : ControllerBase {
         return errors;
     }
 
-    [HttpGet("Users")]
-    public List<User> GetAllUsers(){
-        return dbContext.Users.ToList<User>();
+    // Action method that returns the authentication status of the user 
+    // If logged in, returns a boolean value of "true".
+    // If not logged in, returns a boolean value of "false".
+    [HttpGet("IsLoggedIn")]
+    public ActionResult<bool> IsLoggedIn() {
+        return signInManager.IsSignedIn(this.User);
     }
-    // [HttpGet]
-    // public string GetBody(User user, ApplicationUser appUser, string password)  {
-    //     return "Fname " + user.FName + " Lname " + user.LName + " AppUsername " + appUser.UserName+ " AppEmail " + appUser.Email+ " AppPhoneNumber " + appUser.PhoneNumber+ " AppUsername " + appUser.UserName;
-
-    // }
 }
