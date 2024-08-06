@@ -24,15 +24,26 @@ builder.Services.AddDbContext<BookClubContext>(options =>
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<BookClubContext>();
 
-builder.Services.Configure<IdentityOptions>(options =>{
+builder.Services.Configure<IdentityOptions>(options =>
+{
     options.Password.RequiredLength = 8;
     options.User.RequireUniqueEmail = true;
+
 });
 
-builder.Services.AddCors(options => {
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.ExpireTimeSpan = TimeSpan.FromDays(30);
+    options.SlidingExpiration = true;
+    options.Cookie.HttpOnly = true;
+});
+
+builder.Services.AddCors(options =>
+{
     options.AddPolicy(
             name: "GeneralCorsPolicyWithCreds",
-            policy => {
+            policy =>
+            {
                 policy.WithOrigins([BookClubApi.Constants.FE_URL])
                     .AllowCredentials();
             }
