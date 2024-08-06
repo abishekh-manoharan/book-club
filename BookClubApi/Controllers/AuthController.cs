@@ -67,4 +67,9 @@ public class AuthController : ControllerBase {
     public ActionResult<bool> IsLoggedIn() {
         return signInManager.IsSignedIn(this.User);
     }
+
+    [HttpPost("Logout")]
+    public async void Logout() {
+        await signInManager.SignOutAsync();
+    }
 }

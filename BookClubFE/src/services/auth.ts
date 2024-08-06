@@ -22,7 +22,10 @@ const login = (email: string, password: string) => axios.post(
     }
 ).then(res => res.data);
 
-const logout = () => axios.post(BE_URL + 'auth/logout', options).then(res => res.data);
+const logout = () => axios.post(BE_URL + 'auth/logout', {},     {
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    withCredentials: true
+}).then(res => res.data);
 
 const status = () => axios.get(BE_URL + 'auth/IsLoggedIn', options).then(res => res.data);
 
