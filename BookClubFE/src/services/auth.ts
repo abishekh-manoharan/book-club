@@ -23,7 +23,7 @@ const login = (email: string, password: string) => axios.post(
 ).then(res => res.data);
 
 const logout = () => axios.post(BE_URL + 'auth/logout', {},     {
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    // headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     withCredentials: true
 }).then(res => res.data);
 
