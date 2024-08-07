@@ -19,7 +19,7 @@ public class ClubController : ControllerBase
 
     // Action method that takes in new club instance's data and creates a club record and clubuser record using new club's ID and logged in user's ID as Composite PK
     [HttpPost("create")]
-    public string CreateClub(Club club) {
+    public Club CreateClub(Club club) {
         
         // create club record and saving it to the DB
         dbContext.Clubs.Add(club);
@@ -40,8 +40,9 @@ public class ClubController : ControllerBase
         dbContext.ClubUsers.Add(clubUser);
         dbContext.SaveChanges();
 
-        string returnObj =  club.Name + " " + club.Description + " " + club.ProfileImg + " " + club.ClubId + "\n" + user.AspnetusersId + " " + user.UserId + " " + userManager.GetUserId(User) + "\n" + clubUser.ClubId + " " + clubUser.UserId + " " + clubUser.Admin;
-        return returnObj;
+        return club;
+        // string returnObj =  club.Name + " " + club.Description + " " + club.ProfileImg + " " + club.ClubId + "\n" + user.AspnetusersId + " " + user.UserId + " " + userManager.GetUserId(User) + "\n" + clubUser.ClubId + " " + clubUser.UserId + " " + clubUser.Admin;
+        // return returnObj;
 
         
     }
