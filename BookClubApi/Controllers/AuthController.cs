@@ -68,8 +68,26 @@ public class AuthController : ControllerBase {
         return signInManager.IsSignedIn(this.User);
     }
 
+    // Action method that logs the user out, if they are logged in
     [HttpPost("Logout")]
     public async void Logout() {
         await signInManager.SignOutAsync();
     }
+
+    // Action method that returns the authenticated user's AspNetUserId
+    [HttpGet("AspNetUserID")]
+    public string GetAspNetUserID() {
+        return userManager.GetUserId(User)!;
+    }
+    
+    // Action method that returns the authenticated user's UserId
+    [HttpGet("UserID")]
+    public int GetUserID() {
+        var user = dbContext.Users
+            .Where(u => u.AspnetusersId == userManager.GetUserId(User))
+            .First();
+
+        return user.UserId;
+    }
+
 }
