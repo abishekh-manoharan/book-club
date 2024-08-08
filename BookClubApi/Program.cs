@@ -21,6 +21,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<BookClubContext>(options =>
     options.UseMySQL(builder.Configuration.GetConnectionString("BookClubDB")!)
+        .EnableSensitiveDataLogging()
 );
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()

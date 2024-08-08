@@ -2,6 +2,8 @@ using BookClubApi.Data;
 using BookClubApi.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BookClubApi.Controllers;
 
@@ -43,8 +45,24 @@ public class ClubController : ControllerBase
         return club;
         // string returnObj =  club.Name + " " + club.Description + " " + club.ProfileImg + " " + club.ClubId + "\n" + user.AspnetusersId + " " + user.UserId + " " + userManager.GetUserId(User) + "\n" + clubUser.ClubId + " " + clubUser.UserId + " " + clubUser.Admin;
         // return returnObj;
-
-        
     }
+
+    // action method that takes in an existing club's updated details and persists them in the DB
+    [HttpPut("update")]
+    public ActionResult PatchClub(Club club){
+        // checking if club exists in DB
+        var matchingClub = dbContext.Clubs
+            .Where(c => c.ClubId == club.ClubId);
+
+        if(matchingClub.AsNoTracking().ToList().IsNullOrEmpty()) {  // ensuring that we don't track the result of the query so there is no PK interference 
+            return NotFound();  // return not found if club with the specified Id isn't found
+        }
+        
+        dbContext.Clubs.Update(club); // update club
+        dbContext.SaveChanges();
+
+        return Ok(club); // return updated club with status 200 if club with specified Id found
+    }
+
 
 }
