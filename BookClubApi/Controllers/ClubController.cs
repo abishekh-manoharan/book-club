@@ -21,8 +21,9 @@ public class ClubController : ControllerBase
 
     // Action method that takes in new club instance's data and creates a club record and clubuser record using new club's ID and logged in user's ID as Composite PK
     [HttpPost("create")]
-    public Club CreateClub(Club club) {
-        
+    public Club CreateClub(Club club)
+    {
+
         // create club record and saving it to the DB
         dbContext.Clubs.Add(club);
         dbContext.SaveChanges(); // will populate the club object's ID field
@@ -33,7 +34,8 @@ public class ClubController : ControllerBase
             .First();
 
         // create ClubUser object with the current user's ID, created club's ID, admin as true
-        ClubUser clubUser = new ClubUser {
+        ClubUser clubUser = new ClubUser
+        {
             UserId = user.UserId,
             ClubId = club.ClubId,
             Admin = true
@@ -49,20 +51,51 @@ public class ClubController : ControllerBase
 
     // action method that takes in an existing club's updated details and persists them in the DB
     [HttpPut("update")]
-    public ActionResult PatchClub(Club club){
+    public ActionResult UpdateClub(Club club)
+    {
         // checking if club exists in DB
         var matchingClub = dbContext.Clubs
             .Where(c => c.ClubId == club.ClubId);
 
-        if(matchingClub.AsNoTracking().ToList().IsNullOrEmpty()) {  // ensuring that we don't track the result of the query so there is no PK interference 
+        if (matchingClub.AsNoTracking().ToList().IsNullOrEmpty())
+        {  // ensuring that we don't track the result of the query so there is no PK interference 
             return NotFound();  // return not found if club with the specified Id isn't found
         }
-        
+
         dbContext.Clubs.Update(club); // update club
         dbContext.SaveChanges();
 
         return Ok(club); // return updated club with status 200 if club with specified Id found
     }
 
+    // this action method gets and returns all the clubs that are associated with the logged in user
+    [HttpGet("JoinedClubs")]
+    public ActionResult<List<Club>> GetJoinedClubs()
+    {
+        // getting logged in user's User class ID
+        var user = dbContext.Users
+            .Where( user => user.AspnetusersId == userManager.GetUserId(User))
+            .AsNoTracking()
+            .First();
+        
+        // getting all ClubUser objects where the user id matches the id of the logged in user
+        var clubUsers = dbContext.ClubUsers
+            .Where(clubUser => clubUser.UserId == user.UserId)
+            .ToList();
+        
+        // forming a list of all associated club objects associated with the previously attained clubUser objects
+        List<Club> clubs = new List<Club>();
+        foreach(ClubUser clubUser in clubUsers) {
+            Club foundClub = dbContext.Clubs
+                .Where(club => club.ClubId == clubUser.ClubId)
+                .AsNoTracking()
+                .First();
 
+            clubs.Add(foundClub);
+        }
+
+        // returning retrieved clubs from 
+        return Ok(clubs);
+        
+    }
 }
