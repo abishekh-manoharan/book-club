@@ -74,18 +74,19 @@ public class ClubController : ControllerBase
     {
         // getting logged in user's User class ID
         var user = dbContext.Users
-            .Where( user => user.AspnetusersId == userManager.GetUserId(User))
+            .Where(user => user.AspnetusersId == userManager.GetUserId(User))
             .AsNoTracking()
             .First();
-        
+
         // getting all ClubUser objects where the user id matches the id of the logged in user
         var clubUsers = dbContext.ClubUsers
             .Where(clubUser => clubUser.UserId == user.UserId)
             .ToList();
-        
+
         // forming a list of all associated club objects associated with the previously attained clubUser objects
         List<Club> clubs = new List<Club>();
-        foreach(ClubUser clubUser in clubUsers) {
+        foreach (ClubUser clubUser in clubUsers)
+        {
             Club foundClub = dbContext.Clubs
                 .Where(club => club.ClubId == clubUser.ClubId)
                 .AsNoTracking()
@@ -96,6 +97,59 @@ public class ClubController : ControllerBase
 
         // returning retrieved clubs from 
         return Ok(clubs);
-        
+
     }
+
+    // action method is responsible for joining a user to a club
+    // returns true if join is successful
+    // returns false if join is failed
+    [HttpPost("join")]
+    public ActionResult<bool> JoinClub(int UserId, int ClubId)
+    {
+        // TODO check if the signed in user is authorized to allow club join
+
+        // ensure club and user exists
+        User user = dbContext.Users
+            .Where(user => user.UserId == UserId)
+            .AsNoTracking()
+            .First();
+        Club? club = dbContext.Clubs
+            .Where(club => club.ClubId == ClubId)
+            .AsNoTracking()
+            .First();
+
+        // case where both user and club exist
+        if (club != null && user != null)
+        {
+            // creating a club user to join the user to the club
+            ClubUser newClubUser = new()
+            {
+                ClubId = club.ClubId,
+                UserId = user.UserId,
+                Admin = false   // new users are not admins by default
+            };
+
+            try
+            {
+                dbContext.ClubUsers.Add(newClubUser);
+                dbContext.SaveChanges();
+            }
+            catch (DbUpdateException)
+            {
+                // case where the user is already in the club - ClubUser with the UserId and ClubId already exists
+                return StatusCode(409, false);
+            }
+            catch {
+                // all other error cases
+                return StatusCode(400, false);
+            } 
+            return Ok(true);
+        }
+
+        // case where either club or user doesn't exist in DB
+        return NotFound(false);
+
+
+    }
+
 }
