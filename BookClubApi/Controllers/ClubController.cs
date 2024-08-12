@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Mysqlx.Notice;
 
 namespace BookClubApi.Controllers;
 
@@ -100,7 +101,7 @@ public class ClubController : ControllerBase
 
     }
 
-    // action method is responsible for joining a user to a club
+    // action method joins a user to a club
     // returns true if join is successful
     // returns false if join is failed
     [HttpPost("join")]
@@ -110,14 +111,14 @@ public class ClubController : ControllerBase
         // return not authorized otherwise
 
         // ensure club and user exists
-        User user = dbContext.Users
+        User? user = dbContext.Users
             .Where(user => user.UserId == UserId)
             .AsNoTracking()
-            .First();
+            .FirstOrDefault();
         Club? club = dbContext.Clubs
             .Where(club => club.ClubId == ClubId)
             .AsNoTracking()
-            .First();
+            .FirstOrDefault();
 
         // case where both user and club exist
         if (club != null && user != null)
@@ -148,6 +149,40 @@ public class ClubController : ControllerBase
         }
 
         // case where either club or user doesn't exist in DB
+        return NotFound(false);
+    }
+
+    // action method that remove a user from a club
+    [HttpPost("leave")]
+    public ActionResult<bool> LeaveClub(int UserId, int ClubId){
+         // ensure club and user exists
+        User? user = dbContext.Users
+            .Where(user => user.UserId == UserId)
+            .AsNoTracking()
+            .FirstOrDefault();
+        Club? club = dbContext.Clubs
+            .Where(club => club.ClubId == ClubId)
+            .AsNoTracking()
+            .FirstOrDefault();
+
+        // case where both user and club exist
+        if (club != null && user != null)
+        {            
+            // ensure clubUser exists
+            var clubUser = dbContext.ClubUsers
+                .Where(clubUser => clubUser.ClubId == ClubId && clubUser.UserId == UserId)
+                .AsNoTracking()
+                .FirstOrDefault();
+
+            if(clubUser != null) {
+                dbContext.ClubUsers.Remove(clubUser);
+                dbContext.SaveChanges();
+
+                return Ok(true);
+            }
+        }
+
+        // case where either club or user or clubuser doesn't exist in DB
         return NotFound(false);
     }
 
