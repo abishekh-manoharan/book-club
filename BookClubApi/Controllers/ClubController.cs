@@ -106,7 +106,8 @@ public class ClubController : ControllerBase
     [HttpPost("join")]
     public ActionResult<bool> JoinClub(int UserId, int ClubId)
     {
-        // TODO check if the signed in user is authorized to allow club join
+        // TODO check if the signed in user is authorized to allow club join by ensuring the logged in user's ClubUser record wiht the associated ClubId has Admin = true
+        // return not authorized otherwise
 
         // ensure club and user exists
         User user = dbContext.Users
@@ -120,7 +121,7 @@ public class ClubController : ControllerBase
 
         // case where both user and club exist
         if (club != null && user != null)
-        {
+        {            
             // creating a club user to join the user to the club
             ClubUser newClubUser = new()
             {
@@ -148,8 +149,30 @@ public class ClubController : ControllerBase
 
         // case where either club or user doesn't exist in DB
         return NotFound(false);
+    }
 
+    // Action methods that returns all users who have joined the specified club
+    // takes in ClubId as agument
+    // returns a list of User objects
+    [HttpGet("clubUsers")]
+    public ActionResult<List<User>> getUsersOfAClub(int ClubId) {
+        // getting all club users where the ClubId matches the argument
+        var clubUsers = dbContext.ClubUsers
+            .Where(clubUser => clubUser.ClubId == ClubId)
+            .AsNoTracking()
+            .ToList();
+        
+        // filling empty users list with users in the club
+        List<User> users = new List<User>();
+        foreach(var clubUser in clubUsers){
+            var user = dbContext.Users
+                .Where(user => user.UserId == clubUser.UserId)
+                .AsNoTracking()
+                .First();
+            users.Add(user);
+        }
 
+        return users;
     }
 
 }
