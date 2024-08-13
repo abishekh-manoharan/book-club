@@ -69,6 +69,25 @@ public class ClubController : ControllerBase
         return Ok(club); // return updated club with status 200 if club with specified Id found
     }
 
+    // action method that deletes the specified club using the clubId
+    // returns true if operations successful
+    // returns false if operations failed
+    [HttpDelete("delete")]
+    public ActionResult<bool> DeleteClub(int ClubId){
+        var result = dbContext.Clubs
+            .Where(club => club.ClubId == ClubId)
+            .AsNoTracking()
+            .FirstOrDefault();
+        
+        if(result != null) {
+            dbContext.Clubs.Remove(result);
+            dbContext.SaveChanges();
+            return Ok(true);
+        }
+
+        return NotFound(false);
+    }
+
     // this action method gets and returns all the clubs that are associated with the logged in user
     [HttpGet("JoinedClubs")]
     public ActionResult<List<Club>> GetJoinedClubs()
