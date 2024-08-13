@@ -190,7 +190,7 @@ public class ClubController : ControllerBase
     // takes in ClubId as agument
     // returns a list of User objects
     [HttpGet("clubUsers")]
-    public ActionResult<List<User>> getUsersOfAClub(int ClubId) {
+    public ActionResult<List<User>> GetUsersOfAClub(int ClubId) {
         // getting all club users where the ClubId matches the argument
         var clubUsers = dbContext.ClubUsers
             .Where(clubUser => clubUser.ClubId == ClubId)
@@ -210,4 +210,39 @@ public class ClubController : ControllerBase
         return users;
     }
 
+    // action method that sets the given clubuser's admin state to true - giving the user admin privileges for the club
+    [HttpPost("GiveAdminPriv")]
+    public ActionResult<bool> GiveAdminPriv(int ClubId, int UserId) {
+        // find clubuser record with matching ClubId and  UserId
+        ClubUser? result = dbContext.ClubUsers
+            .Where(clubUser => clubUser.UserId == UserId && clubUser.ClubId == ClubId)
+            .FirstOrDefault();
+        
+        // case where a club user with the given ClubId and UserId exists
+        if(result != null) {
+            result.Admin = true;
+            dbContext.SaveChanges();
+            return Ok(true);
+        }
+
+        return NotFound(false);
+    }
+
+    // action method that sets the given clubuser's admin state to false - removing the user admin privileges for the club
+    [HttpPost("RemoveAdminPriv")]
+    public ActionResult<bool> RemoveAdminPriv(int ClubId, int UserId) {
+        // find clubuser record with matching ClubId and  UserId
+        ClubUser? result = dbContext.ClubUsers
+            .Where(clubUser => clubUser.UserId == UserId && clubUser.ClubId == ClubId)
+            .FirstOrDefault();
+        
+        // case where a club user with the given ClubId and UserId exists
+        if(result != null) {
+            result.Admin = false;
+            dbContext.SaveChanges();
+            return Ok(true);
+        }
+
+        return NotFound(false);
+    }
 }
