@@ -3,6 +3,7 @@ using System;
 using BookClubApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookClubApi.Migrations
 {
     [DbContext(typeof(BookClubContext))]
-    partial class BookClubContextModelSnapshot : ModelSnapshot
+    [Migration("20240813212914_TestMigration")]
+    partial class TestMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -923,14 +926,12 @@ namespace BookClubApi.Migrations
                     b.HasOne("BookClubApi.Models.Club", "Club")
                         .WithMany("ClubUsers")
                         .HasForeignKey("ClubId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("clubuser_ibfk_1");
 
                     b.HasOne("BookClubApi.Models.User", "User")
                         .WithMany("ClubUsers")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("clubuser_ibfk_2");
 
