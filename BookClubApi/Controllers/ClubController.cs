@@ -243,7 +243,7 @@ public class ClubController : ControllerBase
     // takes in ClubId as agument
     // returns a list of User objects
     [HttpGet("clubUsers")]
-    public ActionResult<List<User>> GetUsersOfAClub(int ClubId)
+    public ActionResult<List<UserDTO>> GetUsersOfAClub(int ClubId)
     {
         // getting all club users where the ClubId matches the argument
         var clubUsers = dbContext.ClubUsers
@@ -252,14 +252,16 @@ public class ClubController : ControllerBase
             .ToList();
 
         // filling empty users list with users in the club
-        List<User> users = new List<User>();
+        List<UserDTO> users = new();
         foreach (var clubUser in clubUsers)
         {
             var user = dbContext.Users
                 .Where(user => user.UserId == clubUser.UserId)
                 .AsNoTracking()
                 .First();
-            users.Add(user);
+
+            UserDTO userDTO = new(user.UserId, user.Bio, user.FName, user.LName, user.ProfileImg, user.AspnetusersId);
+            users.Add(userDTO);
         }
 
         return users;
