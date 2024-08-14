@@ -41,7 +41,6 @@ public class ClubController : ControllerBase
         return NotFound(null);
     }
 
-    // TODO: RETURN DTO
     // Action method that takes in new club instance's data and creates a club record and clubuser record using new club's ID and logged in user's ID as Composite PK
     [HttpPost("create")]
     public ActionResult<ClubDTO> CreateClub(Club club)
@@ -119,7 +118,7 @@ public class ClubController : ControllerBase
     // TODO: RETURN DTO
     // this action method gets and returns all the clubs that are associated with the logged in user
     [HttpGet("joinedClubs")]
-    public ActionResult<List<Club>> GetJoinedClubs()
+    public ActionResult<List<ClubDTO>> GetJoinedClubs()
     {
         // getting logged in user's User class ID
         var user = dbContext.Users
@@ -133,15 +132,18 @@ public class ClubController : ControllerBase
             .ToList();
 
         // forming a list of all associated club objects associated with the previously attained clubUser objects
-        List<Club> clubs = new List<Club>();
+        List<ClubDTO> clubs = new List<ClubDTO>();
         foreach (ClubUser clubUser in clubUsers)
         {
             Club foundClub = dbContext.Clubs
                 .Where(club => club.ClubId == clubUser.ClubId)
                 .AsNoTracking()
                 .First();
+            
+            // map found clubs to DTOP
+            ClubDTO foundClubDTO = new(foundClub.ClubId, foundClub.Name, foundClub.Description, foundClub.ProfileImg);
 
-            clubs.Add(foundClub);
+            clubs.Add(foundClubDTO);
         }
 
         // returning retrieved clubs from 
