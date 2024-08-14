@@ -115,7 +115,6 @@ public class ClubController : ControllerBase
         return NotFound(false);
     }
 
-    // TODO: RETURN DTO
     // this action method gets and returns all the clubs that are associated with the logged in user
     [HttpGet("joinedClubs")]
     public ActionResult<List<ClubDTO>> GetJoinedClubs()
