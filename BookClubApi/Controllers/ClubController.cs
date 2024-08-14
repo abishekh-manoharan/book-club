@@ -25,25 +25,29 @@ public class ClubController : ControllerBase
     // returns a ClubDTO object if club is found with status 200
     // returns null otherwise with status 404
     [HttpGet("getOneClub")]
-    public ActionResult<ClubDTO> GetOneClub(int ClubId) {
+    public ActionResult<ClubDTO> GetOneClub(int ClubId)
+    {
         Club? club = dbContext.Clubs
             .Where(club => club.ClubId == ClubId)
             .AsNoTracking()
             .FirstOrDefault();
 
-        if(club != null) {
+        if (club != null)
+        {
             ClubDTO clubDTO = new(club.ClubId, club.Name, club.Description, club.ProfileImg);
             return Ok(clubDTO);
         }
 
         return NotFound(null);
     }
-    
 
+    // TODO: RETURN DTO
     // Action method that takes in new club instance's data and creates a club record and clubuser record using new club's ID and logged in user's ID as Composite PK
     [HttpPost("create")]
-    public Club CreateClub(Club club)
+    public ActionResult<ClubDTO> CreateClub(Club club)
     {
+        // ensure ClubId is 0 so that a new Id will be generated on add
+        club.ClubId = 0;
 
         // create club record and saving it to the DB
         dbContext.Clubs.Add(club);
@@ -65,7 +69,9 @@ public class ClubController : ControllerBase
         dbContext.ClubUsers.Add(clubUser);
         dbContext.SaveChanges();
 
-        return club;
+        // return created club DTO object
+        ClubDTO createdClub = new(club.ClubId, club.Name, club.Description, club.ProfileImg);
+        return createdClub;
         // string returnObj =  club.Name + " " + club.Description + " " + club.ProfileImg + " " + club.ClubId + "\n" + user.AspnetusersId + " " + user.UserId + " " + userManager.GetUserId(User) + "\n" + clubUser.ClubId + " " + clubUser.UserId + " " + clubUser.Admin;
         // return returnObj;
     }
@@ -93,13 +99,15 @@ public class ClubController : ControllerBase
     // returns true if operations successful
     // returns false if operations failed
     [HttpDelete("delete")]
-    public ActionResult<bool> DeleteClub(int ClubId){
+    public ActionResult<bool> DeleteClub(int ClubId)
+    {
         var result = dbContext.Clubs
             .Where(club => club.ClubId == ClubId)
             .AsNoTracking()
             .FirstOrDefault();
-        
-        if(result != null) {
+
+        if (result != null)
+        {
             dbContext.Clubs.Remove(result);
             dbContext.SaveChanges();
             return Ok(true);
@@ -108,6 +116,7 @@ public class ClubController : ControllerBase
         return NotFound(false);
     }
 
+    // TODO: RETURN DTO
     // this action method gets and returns all the clubs that are associated with the logged in user
     [HttpGet("joinedClubs")]
     public ActionResult<List<Club>> GetJoinedClubs()
@@ -161,7 +170,7 @@ public class ClubController : ControllerBase
 
         // case where both user and club exist
         if (club != null && user != null)
-        {            
+        {
             // creating a club user to join the user to the club
             ClubUser newClubUser = new()
             {
@@ -180,10 +189,11 @@ public class ClubController : ControllerBase
                 // case where the user is already in the club - ClubUser with the UserId and ClubId already exists
                 return StatusCode(409, false);
             }
-            catch {
+            catch
+            {
                 // all other error cases
                 return StatusCode(400, false);
-            } 
+            }
             return Ok(true);
         }
 
@@ -193,8 +203,9 @@ public class ClubController : ControllerBase
 
     // action method that remove a user from a club
     [HttpPost("leave")]
-    public ActionResult<bool> LeaveClub(int UserId, int ClubId){
-         // ensure club and user exists
+    public ActionResult<bool> LeaveClub(int UserId, int ClubId)
+    {
+        // ensure club and user exists
         User? user = dbContext.Users
             .Where(user => user.UserId == UserId)
             .AsNoTracking()
@@ -206,14 +217,15 @@ public class ClubController : ControllerBase
 
         // case where both user and club exist
         if (club != null && user != null)
-        {            
+        {
             // ensure clubUser exists
             var clubUser = dbContext.ClubUsers
                 .Where(clubUser => clubUser.ClubId == ClubId && clubUser.UserId == UserId)
                 .AsNoTracking()
                 .FirstOrDefault();
 
-            if(clubUser != null) {
+            if (clubUser != null)
+            {
                 dbContext.ClubUsers.Remove(clubUser);
                 dbContext.SaveChanges();
 
@@ -225,20 +237,23 @@ public class ClubController : ControllerBase
         return NotFound(false);
     }
 
+    // TODO: RETURN DTO
     // Action methods that returns all users who have joined the specified club
     // takes in ClubId as agument
     // returns a list of User objects
     [HttpGet("clubUsers")]
-    public ActionResult<List<User>> GetUsersOfAClub(int ClubId) {
+    public ActionResult<List<User>> GetUsersOfAClub(int ClubId)
+    {
         // getting all club users where the ClubId matches the argument
         var clubUsers = dbContext.ClubUsers
             .Where(clubUser => clubUser.ClubId == ClubId)
             .AsNoTracking()
             .ToList();
-        
+
         // filling empty users list with users in the club
         List<User> users = new List<User>();
-        foreach(var clubUser in clubUsers){
+        foreach (var clubUser in clubUsers)
+        {
             var user = dbContext.Users
                 .Where(user => user.UserId == clubUser.UserId)
                 .AsNoTracking()
@@ -251,14 +266,16 @@ public class ClubController : ControllerBase
 
     // action method that sets the given clubuser's admin state to true - giving the user admin privileges for the club
     [HttpPost("giveAdminPriv")]
-    public ActionResult<bool> GiveAdminPriv(int ClubId, int UserId) {
+    public ActionResult<bool> GiveAdminPriv(int ClubId, int UserId)
+    {
         // find clubuser record with matching ClubId and  UserId
         ClubUser? result = dbContext.ClubUsers
             .Where(clubUser => clubUser.UserId == UserId && clubUser.ClubId == ClubId)
             .FirstOrDefault();
-        
+
         // case where a club user with the given ClubId and UserId exists
-        if(result != null) {
+        if (result != null)
+        {
             result.Admin = true;
             dbContext.SaveChanges();
             return Ok(true);
@@ -269,14 +286,16 @@ public class ClubController : ControllerBase
 
     // action method that sets the given clubuser's admin state to false - removing the user admin privileges for the club
     [HttpPost("removeAdminPriv")]
-    public ActionResult<bool> RemoveAdminPriv(int ClubId, int UserId) {
+    public ActionResult<bool> RemoveAdminPriv(int ClubId, int UserId)
+    {
         // find clubuser record with matching ClubId and  UserId
         ClubUser? result = dbContext.ClubUsers
             .Where(clubUser => clubUser.UserId == UserId && clubUser.ClubId == ClubId)
             .FirstOrDefault();
-        
+
         // case where a club user with the given ClubId and UserId exists
-        if(result != null) {
+        if (result != null)
+        {
             result.Admin = false;
             dbContext.SaveChanges();
             return Ok(true);
