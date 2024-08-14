@@ -1,4 +1,5 @@
 using BookClubApi.Data;
+using BookClubApi.DTOs;
 using BookClubApi.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +20,25 @@ public class ClubController : ControllerBase
         this.userManager = userManager;
         this.dbContext = dbContext;
     }
+
+    // Action method that returns a club record based on ClubID
+    // returns a ClubDTO object if club is found with status 200
+    // returns null otherwise with status 404
+    [HttpGet("getOneClub")]
+    public ActionResult<ClubDTO> GetOneClub(int ClubId) {
+        Club? club = dbContext.Clubs
+            .Where(club => club.ClubId == ClubId)
+            .AsNoTracking()
+            .FirstOrDefault();
+
+        if(club != null) {
+            ClubDTO clubDTO = new(club.ClubId, club.Name, club.Description, club.ProfileImg);
+            return Ok(clubDTO);
+        }
+
+        return NotFound(null);
+    }
+    
 
     // Action method that takes in new club instance's data and creates a club record and clubuser record using new club's ID and logged in user's ID as Composite PK
     [HttpPost("create")]
@@ -89,7 +109,7 @@ public class ClubController : ControllerBase
     }
 
     // this action method gets and returns all the clubs that are associated with the logged in user
-    [HttpGet("JoinedClubs")]
+    [HttpGet("joinedClubs")]
     public ActionResult<List<Club>> GetJoinedClubs()
     {
         // getting logged in user's User class ID
@@ -230,7 +250,7 @@ public class ClubController : ControllerBase
     }
 
     // action method that sets the given clubuser's admin state to true - giving the user admin privileges for the club
-    [HttpPost("GiveAdminPriv")]
+    [HttpPost("giveAdminPriv")]
     public ActionResult<bool> GiveAdminPriv(int ClubId, int UserId) {
         // find clubuser record with matching ClubId and  UserId
         ClubUser? result = dbContext.ClubUsers
@@ -248,7 +268,7 @@ public class ClubController : ControllerBase
     }
 
     // action method that sets the given clubuser's admin state to false - removing the user admin privileges for the club
-    [HttpPost("RemoveAdminPriv")]
+    [HttpPost("removeAdminPriv")]
     public ActionResult<bool> RemoveAdminPriv(int ClubId, int UserId) {
         // find clubuser record with matching ClubId and  UserId
         ClubUser? result = dbContext.ClubUsers
