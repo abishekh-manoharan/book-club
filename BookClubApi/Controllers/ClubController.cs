@@ -45,6 +45,10 @@ public class ClubController : ControllerBase
     [HttpPost("create")]
     public ActionResult<ClubDTO> CreateClub(Club club)
     {
+        if(club.Name == null) {
+            return StatusCode(400, "Club name is a required field.");
+        }
+
         // ensure ClubId is 0 so that a new Id will be generated on add
         club.ClubId = 0;
 
@@ -52,7 +56,7 @@ public class ClubController : ControllerBase
         dbContext.Clubs.Add(club);
         dbContext.SaveChanges(); // will populate the club object's ID field
 
-        // find user object associated with AspNetUserId
+        // find user object associated with AspNetUserId for ClubUser creation
         var user = dbContext.Users
             .Where(u => u.AspnetusersId == userManager.GetUserId(User))
             .First();
