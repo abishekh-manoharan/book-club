@@ -21,6 +21,7 @@ function Header() {
                 <NavLink to="login">Login</NavLink>
             </> : <></>}
             {auth.auth ? <>
+                <NavLink to="createClub">Create Club</NavLink><br></br>
                 <a onClick={logoutClickHandler} href="">Logout</a>
             </> : <></>}
             <Outlet />

@@ -10,3 +10,10 @@ export interface AuthContext {
     auth: boolean,
     setAuth: React.Dispatch<React.SetStateAction<boolean>>,
 }
+
+export interface Club {
+    ClubId?: number,
+    Name: string,
+    Description: string,
+    ProfileImg: string
+}

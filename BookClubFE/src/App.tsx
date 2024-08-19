@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router-dom"
 import Header from './components/Header'
 import Register from './components/Register'
 import Login from './components/Login'
+import Create from "./components/Clubs/Create"
 import { authContext } from "./utils/context"
 import AuthService from './services/auth';
 
@@ -29,6 +30,7 @@ function App() {
             <Route path="/" element=<div>Home</div> />
             <Route path="register" element=<Register /> />
             <Route path="login" element=<Login /> />
+            <Route path="createClub" element=<Create /> />
           </Route>
         </Routes >
       </authContext.Provider>

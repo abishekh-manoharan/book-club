@@ -80,13 +80,6 @@ function Register() {
                 }
 
                 // handling successful registration
-                console.log("res[0] === 'succeeded'")
-                console.log(res[0] === 'succeeded')
-                console.log("res[0]");
-                console.log(res[0]);
-                console.log("res");
-                console.log(res);
-                
                 if (res.$values[0] === 'succeeded') {
                     console.log('suceeded in effect')
                     const submissionSuccessElement = document.querySelector(".submission-success");
