@@ -79,17 +79,26 @@ function Register() {
                     errorElement7!.classList.toggle('hidden');
                 }
 
-                console.log(res)
-                
                 // handling successful registration
-                if (res[0] === 'succeeded') {
+                console.log("res[0] === 'succeeded'")
+                console.log(res[0] === 'succeeded')
+                console.log("res[0]");
+                console.log(res[0]);
+                console.log("res");
+                console.log(res);
+                
+                if (res.$values[0] === 'succeeded') {
+                    console.log('suceeded in effect')
                     const submissionSuccessElement = document.querySelector(".submission-success");
                     submissionSuccessElement!.classList.toggle("hidden");
                     return;
                 }
 
                 // handling failed registration
-                res.forEach((code: string) => {
+                res.$values.forEach((code: string) => {
+                    
+                    console.log('code');
+                    console.log(code);
                     if (code === "PasswordTooShort") {
                         // display error messages
                         const errorElement = document.querySelector(".PasswordTooShort");

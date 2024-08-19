@@ -14,7 +14,10 @@ function Login() {
         e.stopPropagation();
 
         AuthService.login(email, password).then(res => {
-            if (res[0] === 'succeeded') {
+            console.log("login res");
+            console.log(res);
+            
+            if (res.$values[0] === 'succeeded') {
                 // displaying success message
                 document.querySelector('.loginSuccess')?.classList.remove('hidden');
                 document.querySelector('.loginError')?.classList.add('hidden');
