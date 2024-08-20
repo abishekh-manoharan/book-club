@@ -3,6 +3,7 @@ import Header from './components/Header'
 import Register from './components/Register'
 import Login from './components/Login'
 import Create from "./components/Clubs/Create"
+import JoinedClubs from "./components/Clubs/JoinedClubs"
 import { authContext } from "./utils/context"
 import AuthService from './services/auth';
 
@@ -31,6 +32,7 @@ function App() {
             <Route path="register" element=<Register /> />
             <Route path="login" element=<Login /> />
             <Route path="createClub" element=<Create /> />
+            <Route path="joinedClubs" element=<JoinedClubs /> />
           </Route>
         </Routes >
       </authContext.Provider>

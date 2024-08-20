@@ -22,6 +22,7 @@ function Header() {
             </> : <></>}
             {auth.auth ? <>
                 <NavLink to="createClub">Create Club</NavLink><br></br>
+                <NavLink to="joinedClubs">Joined Clubs</NavLink><br></br>
                 <a onClick={logoutClickHandler} href="">Logout</a>
             </> : <></>}
             <Outlet />

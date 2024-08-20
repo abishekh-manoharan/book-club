@@ -12,8 +12,8 @@ export interface AuthContext {
 }
 
 export interface Club {
-    ClubId?: number,
-    Name: string,
-    Description: string,
-    ProfileImg: string
+    clubId?: number,
+    name: string,
+    description: string,
+    profileImg: string
 }
