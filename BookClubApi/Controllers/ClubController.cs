@@ -104,6 +104,7 @@ public class ClubController : ControllerBase
     [HttpDelete("delete")]
     public ActionResult<bool> DeleteClub(int ClubId)
     {
+        // TODO: ensure that the user who's trying to delete the club is admin of the club
         var result = dbContext.Clubs
             .Where(club => club.ClubId == ClubId)
             .AsNoTracking()
