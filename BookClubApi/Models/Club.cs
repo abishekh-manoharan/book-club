@@ -13,7 +13,7 @@ public partial class Club
 
     public string? ProfileImg { get; set; }
     
-    public string Creator { get; set; } 
+    public string Creator { get; set; } = null!;
 
     public virtual ICollection<ClubUser> ClubUsers { get; set; } = new List<ClubUser>();
 
