@@ -41,9 +41,11 @@ public class ClubController : ControllerBase
         return NotFound(null);
     }
 
+
+    // TODO: Include 
     // Action method that takes in new club instance's data and creates a club record and clubuser record using new club's ID and logged in user's ID as Composite PK
     [HttpPost("create")]
-    public ActionResult<ClubDTO> CreateClub(Club club)
+    public async Task<ActionResult<ClubDTO>> CreateClub(Club club)
     {
         if(club.Name == null) {
             return StatusCode(400, "Club name is a required field.");
@@ -51,6 +53,9 @@ public class ClubController : ControllerBase
 
         // ensure ClubId is 0 so that a new Id will be generated on add
         club.ClubId = 0;
+        // ensure club creator's username is specified as creator
+        var aspUser = await userManager.GetUserAsync(User);
+        club.Creator = aspUser.UserName;
 
         // create club record and saving it to the DB
         dbContext.Clubs.Add(club);
