@@ -12,6 +12,8 @@ public partial class Club
     public string? Description { get; set; }
 
     public string? ProfileImg { get; set; }
+    
+    public string Creator { get; set; } 
 
     public virtual ICollection<ClubUser> ClubUsers { get; set; } = new List<ClubUser>();
 

@@ -243,7 +243,6 @@ public class ClubController : ControllerBase
         return NotFound(false);
     }
 
-    // TODO: RETURN DTO
     // Action methods that returns all users who have joined the specified club
     // takes in ClubId as agument
     // returns a list of User objects
