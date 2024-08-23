@@ -10,7 +10,7 @@ function Create() {
         e.preventDefault();
         e.stopPropagation();
 
-        const newClub = { Name: name, Description: description, ProfileImg: profileImg };
+        const newClub = { name: name, description: description, profileImg: profileImg };
         ClubService.createClub(newClub).then(res => console.log(res));
     }
 

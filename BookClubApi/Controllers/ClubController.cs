@@ -34,20 +34,19 @@ public class ClubController : ControllerBase
 
         if (club != null)
         {
-            ClubDTO clubDTO = new(club.ClubId, club.Name, club.Description, club.ProfileImg);
+            ClubDTO clubDTO = new(club.ClubId, club.Name, club.Description, club.ProfileImg, club.Creator);
             return Ok(clubDTO);
         }
 
         return NotFound(null);
     }
 
-
-    // TODO: Include 
     // Action method that takes in new club instance's data and creates a club record and clubuser record using new club's ID and logged in user's ID as Composite PK
     [HttpPost("create")]
     public async Task<ActionResult<ClubDTO>> CreateClub(Club club)
     {
-        if(club.Name == null) {
+        if (club.Name == null)
+        {
             return StatusCode(400, "Club name is a required field.");
         }
 
@@ -55,7 +54,7 @@ public class ClubController : ControllerBase
         club.ClubId = 0;
         // ensure club creator's username is specified as creator
         var aspUser = await userManager.GetUserAsync(User);
-        club.Creator = aspUser.UserName;
+        club.Creator = aspUser!.UserName!;
 
         // create club record and saving it to the DB
         dbContext.Clubs.Add(club);
@@ -78,7 +77,7 @@ public class ClubController : ControllerBase
         dbContext.SaveChanges();
 
         // return created club DTO object
-        ClubDTO createdClub = new(club.ClubId, club.Name, club.Description, club.ProfileImg);
+        ClubDTO createdClub = new(club.ClubId, club.Name, club.Description, club.ProfileImg, club.Creator);
         return createdClub;
         // string returnObj =  club.Name + " " + club.Description + " " + club.ProfileImg + " " + club.ClubId + "\n" + user.AspnetusersId + " " + user.UserId + " " + userManager.GetUserId(User) + "\n" + clubUser.ClubId + " " + clubUser.UserId + " " + clubUser.Admin;
         // return returnObj;
@@ -148,9 +147,9 @@ public class ClubController : ControllerBase
                 .Where(club => club.ClubId == clubUser.ClubId)
                 .AsNoTracking()
                 .First();
-            
+
             // map found clubs to DTOP
-            ClubDTO foundClubDTO = new(foundClub.ClubId, foundClub.Name, foundClub.Description, foundClub.ProfileImg);
+            ClubDTO foundClubDTO = new(foundClub.ClubId, foundClub.Name, foundClub.Description, foundClub.ProfileImg, foundClub.Creator);
 
             clubs.Add(foundClubDTO);
         }
@@ -314,5 +313,28 @@ public class ClubController : ControllerBase
         }
 
         return NotFound(false);
+    }
+
+    [HttpGet("getSearchResults")]
+    public ActionResult<List<ClubDTO>> GetSearchResults(string query)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            return BadRequest("The search query cannot be empty");
+        }
+
+        var results = dbContext.Clubs
+            .FromSqlRaw("SELECT * FROM club WHERE MATCH(name, Creator) AGAINST({0} IN boolean mode)", query + "*")
+            .ToList();
+
+        List<ClubDTO> resultToReturn = [];
+        foreach (Club club in results)
+        {
+            resultToReturn.Add(
+                new ClubDTO(club.ClubId, club.Name, club.Description, club.ProfileImg, club.Creator)
+            );
+        }
+
+        return resultToReturn;
     }
 }

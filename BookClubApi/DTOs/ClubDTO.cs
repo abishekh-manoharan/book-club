@@ -11,11 +11,14 @@ public class ClubDTO
 
     public string? ProfileImg { get; set; }
 
-    public ClubDTO(int clubId, string? name, string? description, string? profileImg)
+    public string Creator { get; set; } = null!;
+
+    public ClubDTO(int clubId, string? name, string? description, string? profileImg, string creator)
     {
         ClubId = clubId;
         Name = name;
         Description = description;
         ProfileImg = profileImg;
+        Creator = creator;
     }
 }
