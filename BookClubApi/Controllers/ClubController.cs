@@ -315,7 +315,8 @@ public class ClubController : ControllerBase
         return NotFound(false);
     }
 
-    [HttpGet("getSearchResults")]
+    // action method that attains a search text, queries the club table's name and creator properties using full-text search, and returns the result
+    [HttpGet("getSearchResults/{query}")]
     public ActionResult<List<ClubDTO>> GetSearchResults(string query)
     {
         if (string.IsNullOrWhiteSpace(query))
