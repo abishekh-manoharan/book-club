@@ -12,3 +12,15 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+.hidden {
+  display: none
+}
+
+.clubsearchresults {
+  position: absolute;
+  background-color: rgb(0, 0, 0);
+  max-height: 200px;
+  width: 150px;
+  overflow: auto;
+}

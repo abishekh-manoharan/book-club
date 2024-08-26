@@ -1,6 +1,7 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { GetAuthContext } from "../utils/context";
 import AuthService from "../services/auth";
+import SearchBar from "./SearchClubBar";
 
 function Header() {
     const auth = GetAuthContext();
@@ -27,6 +28,7 @@ function Header() {
                     <NavLink to="joinedClubs">Joined Clubs</NavLink><br></br>
                     <a onClick={logoutClickHandler} href="">Logout</a>
                 </> : <></>}
+                <SearchBar/>
             </nav>
             <Outlet />
         </>

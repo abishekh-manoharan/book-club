@@ -5,14 +5,14 @@ import { Club } from "../../utils/types";
 
 function JoinedClubs() {
     const [joinedClubs, setJoinedClubs] = useState<Club[]>([]);
-    console.log(joinedClubs);
+
     useEffect(() => {
         ClubService.getJoinedClubs().then(res => setJoinedClubs(res))
     }, [])
 
     return (
         <div>
-            {joinedClubs.map((club) => <p>{club.name}</p>)}
+            {joinedClubs.map((club) => <p  key={club.clubId}>{club.name}</p>)}
         </div>
     );
 }
