@@ -34,7 +34,7 @@ public class ClubController : ControllerBase
 
         if (club != null)
         {
-            ClubDTO clubDTO = new(club.ClubId, club.Name, club.Description, club.ProfileImg, club.Creator);
+            ClubDTO clubDTO = new(club.ClubId, club.Name, club.Description, club.ProfileImg, club.Creator, club.Private);
             return Ok(clubDTO);
         }
 
@@ -77,7 +77,7 @@ public class ClubController : ControllerBase
         dbContext.SaveChanges();
 
         // return created club DTO object
-        ClubDTO createdClub = new(club.ClubId, club.Name, club.Description, club.ProfileImg, club.Creator);
+        ClubDTO createdClub = new(club.ClubId, club.Name, club.Description, club.ProfileImg, club.Creator, club.Private);
         return createdClub;
         // string returnObj =  club.Name + " " + club.Description + " " + club.ProfileImg + " " + club.ClubId + "\n" + user.AspnetusersId + " " + user.UserId + " " + userManager.GetUserId(User) + "\n" + clubUser.ClubId + " " + clubUser.UserId + " " + clubUser.Admin;
         // return returnObj;
@@ -149,7 +149,7 @@ public class ClubController : ControllerBase
                 .First();
 
             // map found clubs to DTOP
-            ClubDTO foundClubDTO = new(foundClub.ClubId, foundClub.Name, foundClub.Description, foundClub.ProfileImg, foundClub.Creator);
+            ClubDTO foundClubDTO = new(foundClub.ClubId, foundClub.Name, foundClub.Description, foundClub.ProfileImg, foundClub.Creator, foundClub.Private);
 
             clubs.Add(foundClubDTO);
         }
@@ -332,7 +332,7 @@ public class ClubController : ControllerBase
         foreach (Club club in results)
         {
             resultToReturn.Add(
-                new ClubDTO(club.ClubId, club.Name, club.Description, club.ProfileImg, club.Creator)
+                new ClubDTO(club.ClubId, club.Name, club.Description, club.ProfileImg, club.Creator, club.Private)
             );
         }
 
