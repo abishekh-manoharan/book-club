@@ -15,6 +15,8 @@ public partial class Club
     
     public string Creator { get; set; } = null!;
 
+    public bool Private { get; set; }
+
     public virtual ICollection<ClubUser> ClubUsers { get; set; } = new List<ClubUser>();
 
     public virtual ICollection<Clubrecommendation> Clubrecommendations { get; set; } = new List<Clubrecommendation>();
