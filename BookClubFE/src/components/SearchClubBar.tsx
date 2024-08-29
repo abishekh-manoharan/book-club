@@ -7,19 +7,17 @@ function SearchClubBar() {
     const [searchResults, setSearchResults] = useState<Club[]>([]);
 
     useEffect(() => {
-        // event listener to determine click location to hide/show search results
+        //event listener to determine click location to hide/show search results
         document.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-
             const searchBar = document.querySelector(".searchBar");
             const searchBarResults = document.querySelector(".clubsearchresults");
             searchBarResults?.classList.remove("hidden");
 
+            console.log(searchBar?.contains(e.target as Node))
             searchBar?.contains(e.target as Node)
                 ? searchBarResults?.classList.remove("hidden") // show search bar if clicked element is contained in search bar component
                 : searchBarResults?.classList.add("hidden") // hide search bar if clicked element isn't contained in search bar component
-        }, false)
+        }, true)
     }, []);
 
     // getting search results when search value is updated

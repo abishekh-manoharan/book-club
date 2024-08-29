@@ -16,4 +16,5 @@ export interface Club {
     name: string,
     description: string,
     profileImg: string
+    private: bool
 }
