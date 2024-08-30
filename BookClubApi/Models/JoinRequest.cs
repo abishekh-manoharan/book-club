@@ -5,6 +5,14 @@ namespace BookClubApi.Models;
 
 public partial class JoinRequest
 {
+    public JoinRequest(int clubId, int userId, bool? request, bool? invitation)
+    {
+        ClubId = clubId;
+        UserId = userId;
+        Request = request;
+        Invitation = invitation;
+    }
+
     public int ClubId { get; set; }
 
     public int UserId { get; set; }
