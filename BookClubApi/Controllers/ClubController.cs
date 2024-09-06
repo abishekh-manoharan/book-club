@@ -228,8 +228,9 @@ public class ClubController : ControllerBase
                         .Where(joinReq => joinReq.ClubId == ClubId && joinReq.UserId == UserId)
                         .AsNoTracking()
                         .FirstOrDefault();
-                    
-                    if(joinReqCheck != null) {
+
+                    if (joinReqCheck != null)
+                    {
                         dbContext.JoinRequests.Remove(joinReqCheck);
                         dbContext.SaveChanges();
                     }
@@ -404,4 +405,60 @@ public class ClubController : ControllerBase
 
         return resultToReturn;
     }
+
+    // action method that attempts to invite a user to a club. returns true if invitation goes through, false otherwise
+    [HttpPost("inviteUserToClub")]
+    [Authorize]
+    public async Task<ActionResult<bool>> InviteUserToClub(int ClubId, int UserId)
+    {
+        // getting necessary DB records for invitation logic
+        // get logged in user info
+        var aspNetUser = await userManager.GetUserAsync(User);
+        // get logged in user's associated user record
+        var user = dbContext.Users.Where(user => user.AspnetusersId == aspNetUser!.Id).AsNoTracking().FirstOrDefault();
+        // get logged in user's associated clubuser record
+        var clubUser = dbContext.ClubUsers.Where(clubUser => clubUser.UserId == user!.UserId && clubUser.ClubId == ClubId).AsNoTracking().FirstOrDefault();
+        // get club instance that invitation is intended for
+        var club = dbContext.Clubs.Where(club => club.ClubId == ClubId).AsNoTracking().FirstOrDefault();
+
+        // ensure logged in user is member of the club and that club and user exists
+        if (clubUser != null && club != null && user != null)
+        {
+            // allow invite if logged in user is admin to the club, or the club is public
+            if (clubUser.Admin == true || club.Private == false)
+            {
+                try {
+                    JoinRequest invitation = new(ClubId, UserId, false, true);
+                    dbContext.JoinRequests.Add(invitation);
+                    dbContext.SaveChanges();
+                    return Ok(true);
+                }
+                catch { 
+                    // case where invitation already exists
+                    return StatusCode(409, false);
+                }
+            }
+        }
+        return NotFound(false);
+    }
+
+    // action method to get invitations of the logged in user 
+    [HttpGet("getLoggedInUserInvitations")]
+    [Authorize]
+    public async Task<ActionResult<List<JoinRequest>>> GetLoggedInUserInvitations() {
+        // get logged in user's associated user class
+        var aspNetUser = await userManager.GetUserAsync(User);
+        var user = dbContext.Users.Where(user => user.AspnetusersId == aspNetUser!.Id).AsNoTracking().FirstOrDefault();
+
+        // get all JoinRequests associated with the user and that has the invitation flag
+        var invitations = dbContext.JoinRequests
+            .Where(jr => jr.UserId == user!.UserId && jr.Invitation == true)
+            .AsNoTracking()
+            .ToList();
+
+        return Ok(invitations);
+    }
+
+    // TODO: action method to accept invitation
+    // TODO: action method to reject invitation
 }
