@@ -1,3 +1,4 @@
+using System.Data.Common;
 using BookClubApi.Data;
 using BookClubApi.DTOs;
 using BookClubApi.Models;
@@ -468,32 +469,114 @@ public class ClubController : ControllerBase
     // action method to accept invitation
     [HttpPost("AcceptInvitation")]
     [Authorize]
-    public async Task<ActionResult<List<JoinRequest>>> AcceptInvitation(int? ClubId)
+    public async Task<ActionResult<ClubUser>> AcceptInvitation(int? ClubId)
     {
         if (ModelState.IsValid || ClubId != null)
         {
             // get user Id of logged in user
-            int userId = await authHelpers.GetUserIdOfLoggedInUser(User);
+            User? user = await authHelpers.GetUserClassOfLoggedInUser(User);
+
+            // case where user isn't logged in
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            // ensure invitation exists
+            var invitation = dbContext.JoinRequests
+                .Where(req => req.Invitation == true && req.ClubId == ClubId && req.UserId == user.UserId)
+                .AsNoTracking()
+                .FirstOrDefault();
+            // if invitation doesn't exist, return bad req response
+            if (invitation == null)
+            {
+                ModelState.AddModelError("Invitation Not Found", "Invitation not found with the associated club and user.");
+                return BadRequest(ModelState);
+            }
 
             // create ClubUser
+            ClubUser addedUserToReturn; // ClubUser record that will be returned if the operation is successful
+            try
+            {
+                int clubId = ClubId!.Value;
+                ClubUser newUser = new()
+                {
+                    ClubId = clubId,
+                    UserId = user.UserId,
+                    Admin = false
+                };
+                var addedUser = dbContext.ClubUsers.Add(newUser);
+                dbContext.SaveChanges();
+                addedUserToReturn = addedUser.Entity;
+            }
+            catch (DbUpdateException dbe)
+            {
+                // case where user is already member of the club
+                if (dbe.InnerException!.Message.Contains("Duplicate"))
+                {
+                    // remove tracking for the change that caused error
+                    dbContext.ChangeTracker.Entries()
+                        .Where(e => e.State == EntityState.Added)
+                        .ToList()
+                        .ForEach(e => e.State = EntityState.Unchanged);
 
-            // if user is already member of the club, remove invitation from DB
+                    // remove invitation from DB
+                    dbContext.JoinRequests.Remove(invitation);
+                    dbContext.SaveChanges();
+
+                    return Conflict("User is already a member of the club.");
+                }
+
+                ModelState.AddModelError("Error Joining Club", "There was an error joining the club.");
+                return BadRequest(ModelState);
+            }
 
             // remove invitation from DB
+            dbContext.JoinRequests.Remove(invitation);
+            dbContext.SaveChanges();
 
-            return Ok(userId);
+            return Ok(addedUserToReturn);
         }
+        ModelState.AddModelError("MissingFields", "Request is missing information needed to complete operation.");
         return BadRequest(ModelState); // Returns a 400 Bad Request with error details
     }
 
     // TODO: action method to reject invitation
+    [HttpPost("RejectInvitation")]
+    [Authorize]
+    public async Task<ActionResult<ClubUser>> RejectInvitation(int? ClubId)
+    {
+        if (ModelState.IsValid || ClubId != null)
+        {
+            // get user Id of logged in user
+            User? user = await authHelpers.GetUserClassOfLoggedInUser(User);
 
+            // case where user isn't logged in
+            if (user == null)
+            {
+                return Unauthorized();
+            }
 
-    // private async Task<int> GetUserIdOfLoggedInUser()
-    // {
-    //     var aspNetUser = await userManager.GetUserAsync(User);
-    //     var user = dbContext.Users.Where(user => user.AspnetusersId == aspNetUser!.Id).AsNoTracking().FirstOrDefault();
-        
-    //     return user.UserId;
-    // }
+            // ensure invitation exists
+            var invitation = dbContext.JoinRequests
+                .Where(req => req.Invitation == true && req.ClubId == ClubId && req.UserId == user.UserId)
+                .AsNoTracking()
+                .FirstOrDefault();
+
+            // if invitation doesn't exist, return bad req response
+            if (invitation == null)
+            {
+                ModelState.AddModelError("Invitation Not Found", "Invitation not found with the associated club and user.");
+                return BadRequest(ModelState);
+            }           
+
+            // remove invitation from DB
+            dbContext.JoinRequests.Remove(invitation);
+            dbContext.SaveChanges();
+
+            return Ok();
+        }
+        ModelState.AddModelError("MissingFields", "Request is missing information needed to complete operation.");
+        return BadRequest(ModelState); // Returns a 400 Bad Request with error details
+    }
 }

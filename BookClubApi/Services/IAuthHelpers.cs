@@ -1,4 +1,6 @@
+using BookClubApi.Models;
+
 namespace BookClubApi.Services;
 public interface IAuthHelpers {
-    Task<int> GetUserIdOfLoggedInUser(System.Security.Claims.ClaimsPrincipal User);    
+    Task<User?> GetUserClassOfLoggedInUser(System.Security.Claims.ClaimsPrincipal User);    
 }

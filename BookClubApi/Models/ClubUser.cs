@@ -14,4 +14,11 @@ public partial class ClubUser
     public virtual Club Club { get; set; } = null!;
 
     public virtual User User { get; set; } = null!;
+
+    // public ClubUser(int clubId, int userId, bool? admin)
+    // {
+    //     ClubId = clubId;
+    //     UserId = userId;
+    //     Admin = admin;
+    // }
 }

@@ -21,11 +21,13 @@ public class AuthHelpers : IAuthHelpers
         this.userManager = userManager;
     }
 
-    public async Task<int> GetUserIdOfLoggedInUser(System.Security.Claims.ClaimsPrincipal User)
+    public async Task<User?> GetUserClassOfLoggedInUser(System.Security.Claims.ClaimsPrincipal User)
     {
         var aspNetUser = await userManager.GetUserAsync(User);
-        var user = dbContext.Users.Where(user => user.AspnetusersId == aspNetUser!.Id).AsNoTracking().FirstOrDefault();
-
-        return user.UserId;
+        if(aspNetUser!=null){
+            User? user = dbContext.Users.Where(user => user.AspnetusersId == aspNetUser!.Id).AsNoTracking().FirstOrDefault();
+            return user;
+        }
+        return null;
     }
 }
