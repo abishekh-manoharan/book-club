@@ -1,6 +1,7 @@
 using BookClubApi.Data;
 using BookClubApi.DTOs;
 using BookClubApi.Models;
+using BookClubApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,11 +16,13 @@ public class ClubController : ControllerBase
 {
     private UserManager<ApplicationUser> userManager;
     private BookClubContext dbContext;
+    private IAuthHelpers authHelpers;
 
-    public ClubController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, BookClubContext dbContext)
+    public ClubController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, BookClubContext dbContext, IAuthHelpers authHelpers)
     {
         this.userManager = userManager;
         this.dbContext = dbContext;
+        this.authHelpers = authHelpers;
     }
 
     // Action method that returns a club record based on ClubID
@@ -427,13 +430,15 @@ public class ClubController : ControllerBase
             // allow invite if logged in user is admin to the club, or the club is public
             if (clubUser.Admin == true || club.Private == false)
             {
-                try {
+                try
+                {
                     JoinRequest invitation = new(ClubId, UserId, false, true);
                     dbContext.JoinRequests.Add(invitation);
                     dbContext.SaveChanges();
                     return Ok(true);
                 }
-                catch { 
+                catch
+                {
                     // case where invitation already exists
                     return StatusCode(409, false);
                 }
@@ -445,7 +450,8 @@ public class ClubController : ControllerBase
     // action method to get invitations of the logged in user 
     [HttpGet("getLoggedInUserInvitations")]
     [Authorize]
-    public async Task<ActionResult<List<JoinRequest>>> GetLoggedInUserInvitations() {
+    public async Task<ActionResult<List<JoinRequest>>> GetLoggedInUserInvitations()
+    {
         // get logged in user's associated user class
         var aspNetUser = await userManager.GetUserAsync(User);
         var user = dbContext.Users.Where(user => user.AspnetusersId == aspNetUser!.Id).AsNoTracking().FirstOrDefault();
@@ -459,6 +465,35 @@ public class ClubController : ControllerBase
         return Ok(invitations);
     }
 
-    // TODO: action method to accept invitation
+    // action method to accept invitation
+    [HttpPost("AcceptInvitation")]
+    [Authorize]
+    public async Task<ActionResult<List<JoinRequest>>> AcceptInvitation(int? ClubId)
+    {
+        if (ModelState.IsValid || ClubId != null)
+        {
+            // get user Id of logged in user
+            int userId = await authHelpers.GetUserIdOfLoggedInUser(User);
+
+            // create ClubUser
+
+            // if user is already member of the club, remove invitation from DB
+
+            // remove invitation from DB
+
+            return Ok(userId);
+        }
+        return BadRequest(ModelState); // Returns a 400 Bad Request with error details
+    }
+
     // TODO: action method to reject invitation
+
+
+    // private async Task<int> GetUserIdOfLoggedInUser()
+    // {
+    //     var aspNetUser = await userManager.GetUserAsync(User);
+    //     var user = dbContext.Users.Where(user => user.AspnetusersId == aspNetUser!.Id).AsNoTracking().FirstOrDefault();
+        
+    //     return user.UserId;
+    // }
 }

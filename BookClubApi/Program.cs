@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using BookClubApi.Data;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using BookClubApi;
+using BookClubApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +33,8 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.User.RequireUniqueEmail = true;
 
 });
+
+builder.Services.AddScoped<IAuthHelpers, AuthHelpers>();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
