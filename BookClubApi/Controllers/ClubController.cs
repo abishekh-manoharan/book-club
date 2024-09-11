@@ -293,15 +293,16 @@ public class ClubController : ControllerBase
             User? user = await authHelpers.GetUserClassOfLoggedInUser(User);
 
             // getting the ClubUser class associated with the logged in user
-            #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
             ClubUser clubUser = dbContext.ClubUsers
                 .Where(cu => cu.ClubId == clubId && cu.UserId == user!.UserId)
                 .AsNoTracking()
                 .FirstOrDefault();
-            #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
-        
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
+
             // ensure logged in user is authorized to perform the operation
-            if(clubUser == null || clubUser.Admin == false) {
+            if (clubUser == null || clubUser.Admin == false)
+            {
                 ModelState.AddModelError("UnauthorizedUser", "User isn't authorized to perform this operation.");
                 return Unauthorized(ModelState);
             }
@@ -314,6 +315,57 @@ public class ClubController : ControllerBase
 
             // return list of join requests
             return Ok(joinRequests);
+        }
+
+        ModelState.AddModelError("MissingFields", "Request is missing information needed to complete operation.");
+        return BadRequest(ModelState); // Returns a 400 Bad Request with error details
+
+    }
+
+    // action method that allows a club admin to decline a join request
+    [HttpPost("declinejoinRequests")]
+    [Authorize]
+    public async Task<ActionResult<List<JoinRequest>>> DeclineJoinRequest(int? ClubId, int? UserId)
+    {
+        if (ClubId != null && UserId != null)
+        {
+            int clubId = ClubId.Value;
+            int userId = UserId.Value;
+
+            // getting logged in user's associated User class
+            User? user = await authHelpers.GetUserClassOfLoggedInUser(User);
+
+            // getting the ClubUser class associated with the logged in user
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
+            ClubUser clubUser = dbContext.ClubUsers
+                .Where(cu => cu.ClubId == clubId && cu.UserId == user!.UserId)
+                .AsNoTracking()
+                .FirstOrDefault();
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
+
+            // ensure logged in user is authorized to perform the operation
+            if (clubUser == null || clubUser.Admin == false)
+            {
+                ModelState.AddModelError("UnauthorizedUser", "User isn't authorized to perform this operation.");
+                return Unauthorized(ModelState);
+            }
+
+            // getting the jr that is requested to be removed
+            var req = dbContext.JoinRequests
+                .Where(jr => jr.ClubId == clubId && jr.UserId == userId && jr.Request == true)
+                .AsNoTracking()
+                .FirstOrDefault();
+
+            // case where join request doesn't exist
+            if (req == null){
+                ModelState.AddModelError("RequestDoesntExist", "The request attempting to be declined does not exist.");
+                return BadRequest(ModelState);
+            }
+
+            dbContext.JoinRequests.Remove(req);
+
+            return Ok();
+
         }
 
         ModelState.AddModelError("MissingFields", "Request is missing information needed to complete operation.");
