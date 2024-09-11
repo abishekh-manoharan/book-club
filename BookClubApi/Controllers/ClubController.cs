@@ -217,7 +217,7 @@ public class ClubController : ControllerBase
                 catch (DbUpdateException)
                 {
                     // case where the user is already in the club - ClubUser with the UserId and ClubId already exists
-                    return StatusCode(409, false);
+                    return StatusCode(409, "club user already exists");
                 }
                 catch
                 {
@@ -274,12 +274,51 @@ public class ClubController : ControllerBase
                     return Ok(true);
                 }
                 // case where the join request has already been made
-                return StatusCode(409, false);
+                return StatusCode(409, "join request already exists");
             }
         }
 
         // case where either club or user doesn't exist in DB
         return NotFound(false);
+    }
+
+    // action method that retrieves a list of join requests for a club
+    [HttpGet("joinRequests")]
+    public async Task<ActionResult<List<JoinRequest>>> GetJoinRequests(int? ClubId)
+    {
+        if (ClubId != null)
+        {
+            int clubId = ClubId.Value;
+            // getting logged in user's associated User class
+            User? user = await authHelpers.GetUserClassOfLoggedInUser(User);
+
+            // getting the ClubUser class associated with the logged in user
+            #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
+            ClubUser clubUser = dbContext.ClubUsers
+                .Where(cu => cu.ClubId == clubId && cu.UserId == user!.UserId)
+                .AsNoTracking()
+                .FirstOrDefault();
+            #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
+        
+            // ensure logged in user is authorized to perform the operation
+            if(clubUser == null || clubUser.Admin == false) {
+                ModelState.AddModelError("UnauthorizedUser", "User isn't authorized to perform this operation.");
+                return Unauthorized(ModelState);
+            }
+
+            // get join requests where the clubId is that of the one provided in args, and where Request flag is true
+            var joinRequests = dbContext.JoinRequests
+                .Where(jr => jr.ClubId == clubId && jr.Request == true)
+                .AsNoTracking()
+                .ToList();
+
+            // return list of join requests
+            return Ok(joinRequests);
+        }
+
+        ModelState.AddModelError("MissingFields", "Request is missing information needed to complete operation.");
+        return BadRequest(ModelState); // Returns a 400 Bad Request with error details
+
     }
 
     // action method that remove a user from a club
@@ -568,7 +607,7 @@ public class ClubController : ControllerBase
             {
                 ModelState.AddModelError("Invitation Not Found", "Invitation not found with the associated club and user.");
                 return BadRequest(ModelState);
-            }           
+            }
 
             // remove invitation from DB
             dbContext.JoinRequests.Remove(invitation);
