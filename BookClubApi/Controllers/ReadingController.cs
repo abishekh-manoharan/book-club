@@ -16,4 +16,6 @@ public class ReadingController : ControllerBase {
         this.userManager = userManager;
         this.dbContext = dbContext;
     }
+
+    // [HttpPost]
 }
