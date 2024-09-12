@@ -423,8 +423,15 @@ public partial class BookClubContext :  IdentityDbContext<ApplicationUser>
 
             entity.HasOne(d => d.Reading).WithMany(p => p.Readingusers)
                 .HasForeignKey(d => new { d.BookId, d.ClubId })
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("readinguser_ibfk_1");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Readingusers)
+                .HasForeignKey(d => d.UserId )
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("readinguser_user_ibfk_2");
+
+
         });
 
         modelBuilder.Entity<Models.Thread>(entity =>

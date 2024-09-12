@@ -18,4 +18,6 @@ public partial class Readinguser
     public virtual ProgressType? Progresstype { get; set; }
 
     public virtual Reading Reading { get; set; } = null!;
+    
+    public virtual User User { get; set; } = null!;
 }
