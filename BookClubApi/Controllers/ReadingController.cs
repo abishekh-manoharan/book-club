@@ -6,6 +6,7 @@ using BookClubApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookClubApi.Controllers;
 
@@ -23,26 +24,61 @@ public class ReadingController : ControllerBase
         this.authHelpers = authHelper;
     }
 
+    // action method that attains a book (attained through OpenLibrary API) and reading data, 
+    // saves the book if needed, and creates a reading instance
     [HttpPost("create")]
     [Authorize]
-    public async Task<ActionResult<Reading>> CreateReading([Required] int clubId, Book book)
-    // public async Task<ActionResult<Reading>> CreateReading(Book book, [Required] int clubId, string name, string description)
+    public async Task<ActionResult<Reading>> CreateReading([Required] int clubId, string name, string description, Book book)
     {
         // ensure required params are included
-        // if (ModelState.IsValid && _clubId != null && name != null)
         if (ModelState.IsValid)
         {
             // ensure logged in user is the club's admin
             bool? admin = await authHelpers.IsUserAdminOfClub(User, clubId);
-            if(admin == null || admin == false) {
+            if (admin == null || admin == false)
+            {
                 return Unauthorized("User isn't authorized to create a reading for this club.");
             }
 
             // save book to db if it doesn't exist already
-            
+            var searchedBook = dbContext.Books
+                .Where(dbBook => dbBook.BookId == book.BookId)
+                .AsNoTracking()
+                .FirstOrDefault();
+            if (searchedBook == null) {
+                dbContext.Books
+                    .Add(book);
+                await dbContext.SaveChangesAsync();
+            }
 
             // create reading
-            // if reading exists already, 
+            try
+            {
+                Reading newReading = new()
+                {
+                    BookId = (int) book.BookId!,
+                    ClubId = clubId,
+                    Name = name,
+                    Description = description,
+                };
+
+                dbContext.Readings.Add(newReading);
+                dbContext.SaveChanges();
+
+                return Ok(newReading);
+            }
+            catch (DbUpdateException dbe)
+            {
+                // if reading exists already, return 409 conflict status
+                if (dbe.InnerException!.Message.Contains("Duplicate"))
+                {
+                    return Conflict("Reading already exists.");
+                }
+            }
+            catch (Exception e) {
+                // handling all other errors when trying to save to db
+                return StatusCode(500, "Error saving the reading to the database. \n"+e.Message);
+            }
         }
         // if a required parameter is not included
         return BadRequest(ModelState);

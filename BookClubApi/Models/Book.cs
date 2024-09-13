@@ -6,7 +6,8 @@ namespace BookClubApi.Models;
 
 public partial class Book
 {
-    public int BookId { get; set; }
+    [Required]
+    public int? BookId { get; set; }
 
     [Required]
     public int? Cover_Id { get; set; }
