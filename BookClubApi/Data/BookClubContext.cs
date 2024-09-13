@@ -222,12 +222,12 @@ public partial class BookClubContext :  IdentityDbContext<ApplicationUser>
 
             entity.HasOne(d => d.Book).WithMany(p => p.Clubrecommendations)
                 .HasForeignKey(d => d.BookId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("clubrecommendations_ibfk_3");
 
             entity.HasOne(d => d.Club).WithMany(p => p.Clubrecommendations)
                 .HasForeignKey(d => d.ClubId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("clubrecommendations_ibfk_1");
 
             entity.HasOne(d => d.User).WithMany(p => p.Clubrecommendations)
@@ -260,12 +260,12 @@ public partial class BookClubContext :  IdentityDbContext<ApplicationUser>
 
             entity.HasOne(d => d.Club).WithMany(p => p.JoinRequests)
                 .HasForeignKey(d => d.ClubId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("joinrequest_ibfk_1");
 
             entity.HasOne(d => d.User).WithMany(p => p.JoinRequests)
                 .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("joinrequest_ibfk_2");
         });
 
@@ -322,11 +322,11 @@ public partial class BookClubContext :  IdentityDbContext<ApplicationUser>
                     "Polluser",
                     r => r.HasOne<User>().WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("polluser_ibfk_2"),
                     l => l.HasOne<Poll>().WithMany()
                         .HasForeignKey("PollId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("polluser_ibfk_1"),
                     j =>
                     {
@@ -352,12 +352,12 @@ public partial class BookClubContext :  IdentityDbContext<ApplicationUser>
 
             entity.HasOne(d => d.Book).WithMany(p => p.Pollbooks)
                 .HasForeignKey(d => d.BookId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("pollbook_ibfk_2");
 
             entity.HasOne(d => d.Poll).WithMany(p => p.Pollbooks)
                 .HasForeignKey(d => d.PollId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("pollbook_ibfk_1");
         });
 
@@ -392,12 +392,12 @@ public partial class BookClubContext :  IdentityDbContext<ApplicationUser>
 
             entity.HasOne(d => d.Book).WithMany(p => p.Readings)
                 .HasForeignKey(d => d.BookId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("reading_ibfk_1");
 
             entity.HasOne(d => d.Club).WithMany(p => p.Readings)
                 .HasForeignKey(d => d.ClubId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("reading_ibfk_2");
         });
 
@@ -512,12 +512,12 @@ public partial class BookClubContext :  IdentityDbContext<ApplicationUser>
 
             entity.HasOne(d => d.Book).WithMany(p => p.UserBooks)
                 .HasForeignKey(d => d.BookId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("userbook_ibfk_1");
 
             entity.HasOne(d => d.User).WithMany(p => p.UserBooks)
                 .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("userbook_ibfk_2");
         });
 
