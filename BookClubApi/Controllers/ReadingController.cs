@@ -236,7 +236,7 @@ public class ReadingController : ControllerBase
     // action method that allows a club member to opt into a specified reading
     [HttpPost("OptIntoReading")]
     [Authorize]
-    public async Task<ActionResult<Reading>> OptIntoReading([Required] int clubId, [Required] int bookId)
+    public async Task<ActionResult<ReadingUserDTO>> OptIntoReading([Required] int clubId, [Required] int bookId)
     {
         if (ModelState.IsValid)
         {
@@ -289,5 +289,51 @@ public class ReadingController : ControllerBase
         return BadRequest(ModelState);
     }
 
-    
+    // action method that allows a club member to opt out of a specified reading
+    [HttpPost("OptOutOfReading")]
+    [Authorize]
+    public async Task<ActionResult<Reading>> OptOutOfReading([Required] int clubId, [Required] int bookId)
+    {
+        if (ModelState.IsValid)
+        {
+            // ensure logged in user is member of club
+            ClubUser? clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, clubId);
+            if (clubUser != null)
+            {
+                // ensure reading exists already
+                var reading = dbContext.Readings
+                    .Where(reading => reading.BookId == bookId && reading.ClubId == clubId)
+                    .AsNoTracking()
+                    .FirstOrDefault();
+                if (reading != null) // if reading exists
+                {
+                    // ensure reading isn't concluded
+                    if (reading.Status != "concluded")
+                    {
+                        var readingUser = dbContext.Readingusers  
+                            .Where(readingUser => readingUser.BookId == bookId
+                                && readingUser.ClubId == clubId
+                                && readingUser.UserId == clubUser.UserId)
+                            .AsNoTracking()
+                            .FirstOrDefault();
+                        
+                        if(readingUser != null) {
+                            dbContext.Readingusers.Remove(readingUser);
+                            dbContext.SaveChanges();
+                            
+                            return Ok();
+                        }
+
+                        return NotFound("User hasn't opted into the reading.");
+                    }
+                    return BadRequest("Unable to opt into reading. Reading was concluded.");
+                }
+                return NotFound("Reading wasn't found.");
+            }
+            return NotFound("User isn't member of the club.");
+        }
+        return BadRequest(ModelState);
+    }
+
+
 }
