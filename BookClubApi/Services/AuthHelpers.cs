@@ -45,4 +45,17 @@ public class AuthHelpers : IAuthHelpers
         }
         return null;
     }
+
+    public async Task<ClubUser?> GetClubUserOfLoggedInUser(System.Security.Claims.ClaimsPrincipal User, int ClubId)
+    {
+        var aspNetUser = await userManager.GetUserAsync(User);
+        if(aspNetUser!=null){
+            User? user = dbContext.Users.Where(user => user.AspnetusersId == aspNetUser!.Id).AsNoTracking().FirstOrDefault();
+            if(user!=null){
+                ClubUser? clubUser = dbContext.ClubUsers.Where(clubUser => clubUser.ClubId == ClubId && clubUser.UserId == user.UserId).AsNoTracking().FirstOrDefault();
+                return clubUser;            
+            }
+        }
+        return null;
+    }
 }
