@@ -9,9 +9,11 @@ public partial class Reading
 
     public int ClubId { get; set; }
 
-    public string? Name { get; set; }
+    public string Name { get; set; } = null!;
 
-    public string? Description { get; set; }
+    public string Description { get; set; } = null!;
+    
+    public string Status { get; set; } = null!;
 
     public virtual Book Book { get; set; } = null!;
 

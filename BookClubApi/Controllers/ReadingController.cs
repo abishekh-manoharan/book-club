@@ -60,6 +60,7 @@ public class ReadingController : ControllerBase
                     ClubId = clubId,
                     Name = name,
                     Description = description,
+                    Status = "started"
                 };
 
                 dbContext.Readings.Add(newReading);
@@ -138,7 +139,7 @@ public class ReadingController : ControllerBase
     // action method that updates the name and description of an existing reading
     [HttpPut("update")]
     [Authorize]
-    public async Task<ActionResult<Reading>> UpdateReading([Required] int clubId, [Required] int bookId, string name, string description)
+    public async Task<ActionResult<Reading>> UpdateReading([Required] int clubId, [Required] int bookId, string name, string description, string status)
     {
         // ensure required params are included
         if (ModelState.IsValid)
@@ -163,10 +164,11 @@ public class ReadingController : ControllerBase
             {
                 reading.Name = name;
                 reading.Description = description;
+                reading.Status = status;
 
                 dbContext.SaveChanges();
                 
-                ReadingDTO readingDTO = new(bookId, clubId, name, description);
+                ReadingDTO readingDTO = new(bookId, clubId, name, description, status);
                 return Ok(readingDTO);
             }
             catch (Exception e) {
