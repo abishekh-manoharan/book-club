@@ -136,7 +136,7 @@ public class ReadingController : ControllerBase
         return BadRequest(ModelState);
     }
 
-    // action method that updates the name and description of an existing reading
+    // action method that updates the name, description, and status of an existing reading
     [HttpPut("update")]
     [Authorize]
     public async Task<ActionResult<Reading>> UpdateReading([Required] int clubId, [Required] int bookId, string name, string description, string status)
@@ -178,5 +178,44 @@ public class ReadingController : ControllerBase
         // if a required parameter is not included
         return BadRequest(ModelState);
     }
+    
+    [HttpDelete("delete")]
+    [Authorize]
+    public async Task<ActionResult<Reading>> DeleteReading([Required] int clubId, [Required] int bookId)
+    {
+        // ensure required params are included
+        if (ModelState.IsValid)
+        {
+            // ensure logged in user is the club's admin
+            bool? admin = await authHelpers.IsUserAdminOfClub(User, clubId);
+            if (admin == null || admin == false)
+            {
+                return Unauthorized("User isn't authorized to create a reading for this club.");
+            }
+
+            // ensure reading exists already. Return 400 if not. 
+            var reading = dbContext.Readings
+                .Where(reading => reading.BookId == bookId && reading.ClubId == clubId)
+                .FirstOrDefault();
+            if (reading == null) {
+                return BadRequest("Reading wasn't found.");
+            }
+
+            // delete the reading 
+            try
+            {
+                dbContext.Readings.Remove(reading);
+                dbContext.SaveChanges();
+            
+                return Ok(reading);
+            }
+            catch (Exception e) {
+                return StatusCode(500, "Error deleting the reading\n"+e.Message);
+            }
+        }
+        // if a required parameter is not included
+        return BadRequest(ModelState);
+    }
+
 
 }
