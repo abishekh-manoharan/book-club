@@ -1,6 +1,6 @@
 namespace BookClubApi.DTOs;
 
-public class ReaddingDTO
+public class ReadingDTO
 {
 
     public int BookId { get; set; }
@@ -11,7 +11,7 @@ public class ReaddingDTO
 
     public string? Description { get; set; }
 
-    public ReaddingDTO(int bookId, int clubId, string? name, string? description)
+    public ReadingDTO(int bookId, int clubId, string? name, string? description)
     {
         BookId = bookId;
         ClubId = clubId;
