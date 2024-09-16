@@ -5,6 +5,15 @@ namespace BookClubApi.Models;
 
 public partial class Readinguser
 {
+    public Readinguser(int userId, int bookId, int clubId, int? progress, int? progresstypeId)
+    {
+        UserId = userId;
+        BookId = bookId;
+        ClubId = clubId;
+        Progress = progress;
+        ProgresstypeId = progresstypeId;
+    }
+
     public int UserId { get; set; }
 
     public int BookId { get; set; }

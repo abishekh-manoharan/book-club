@@ -45,7 +45,8 @@ public class ReadingController : ControllerBase
                 .Where(dbBook => dbBook.BookId == book.BookId)
                 .AsNoTracking()
                 .FirstOrDefault();
-            if (searchedBook == null) {
+            if (searchedBook == null)
+            {
                 dbContext.Books
                     .Add(book);
                 await dbContext.SaveChangesAsync();
@@ -56,7 +57,7 @@ public class ReadingController : ControllerBase
             {
                 Reading newReading = new()
                 {
-                    BookId = (int) book.BookId!,
+                    BookId = (int)book.BookId!,
                     ClubId = clubId,
                     Name = name,
                     Description = description,
@@ -76,9 +77,10 @@ public class ReadingController : ControllerBase
                     return Conflict("Reading already exists.");
                 }
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 // handling all other errors when trying to save to db
-                return StatusCode(500, "Error saving the reading to the database. \n"+e.Message);
+                return StatusCode(500, "Error saving the reading to the database. \n" + e.Message);
             }
         }
         // if a required parameter is not included
@@ -87,17 +89,21 @@ public class ReadingController : ControllerBase
 
     // action method that returns all reading records associated with a club
     [HttpGet("GetAllReadings")]
-    public async Task<ActionResult<List<Reading>>> GetAllReadingsOfAClub([Required] int clubId) {
-        if(ModelState.IsValid){
+    public async Task<ActionResult<List<Reading>>> GetAllReadingsOfAClub([Required] int clubId)
+    {
+        if (ModelState.IsValid)
+        {
             // ensure club exists
             var club = dbContext.Clubs.Where(club => club.ClubId == clubId).AsNoTracking().FirstOrDefault();
-            if (club == null) {
+            if (club == null)
+            {
                 return BadRequest("Club not found with the Id provided.");
             }
 
             // if club is public or if the club is private and the user is member, return list
             ClubUser? clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, clubId);
-            if(club.Private == false || clubUser != null) { // if user is a member of the club, clubUser will not be null here
+            if (club.Private == false || clubUser != null)
+            { // if user is a member of the club, clubUser will not be null here
                 var readings = dbContext.Readings.Where(reading => reading.ClubId == clubId).AsNoTracking().ToList();
                 return Ok(readings);
             }
@@ -105,34 +111,39 @@ public class ReadingController : ControllerBase
             // if club is private and user isn't a member, return Unauthorized status
             return Unauthorized("user isn't authorized to attain the readings from this club.");
         }
-        
+
         return BadRequest(ModelState);
     }
 
     // action method that returns all reading records associated with a club
     [HttpGet("GetAReading")]
-    public async Task<ActionResult<Reading>> GetSingleReadingOfAClub([Required] int clubId, [Required] int bookId) {
-        if(ModelState.IsValid){
+    public async Task<ActionResult<Reading>> GetSingleReadingOfAClub([Required] int clubId, [Required] int bookId)
+    {
+        if (ModelState.IsValid)
+        {
             // ensure club exists
             var club = dbContext.Clubs.Where(club => club.ClubId == clubId).AsNoTracking().FirstOrDefault();
-            if (club == null) {
+            if (club == null)
+            {
                 return BadRequest("Club not found with the Id provided.");
             }
 
             // if club is public or if the club is private and the user is member, return list
             ClubUser? clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, clubId);
-            if(club.Private == false || clubUser != null) { // if user is a member of the club, clubUser will not be null here
+            if (club.Private == false || clubUser != null)
+            { // if user is a member of the club, clubUser will not be null here
                 var reading = dbContext.Readings.Where(reading => reading.ClubId == clubId && reading.BookId == bookId).AsNoTracking().FirstOrDefault();
-                if(reading != null) {
+                if (reading != null)
+                {
                     return Ok(reading);
-                }                
+                }
                 return NotFound("Reading wasn't found.");
             }
 
             // if club is private and user isn't a member, return Unauthorized status
             return Unauthorized("user isn't authorized to attain the readings from this club.");
         }
-        
+
         return BadRequest(ModelState);
     }
 
@@ -155,7 +166,8 @@ public class ReadingController : ControllerBase
             var reading = dbContext.Readings
                 .Where(reading => reading.BookId == bookId && reading.ClubId == clubId)
                 .FirstOrDefault();
-            if (reading == null) {
+            if (reading == null)
+            {
                 return BadRequest("Reading wasn't found.");
             }
 
@@ -167,18 +179,20 @@ public class ReadingController : ControllerBase
                 reading.Status = status;
 
                 dbContext.SaveChanges();
-                
+
                 ReadingDTO readingDTO = new(bookId, clubId, name, description, status);
                 return Ok(readingDTO);
             }
-            catch (Exception e) {
-                return StatusCode(500, "Error saving the reading to the database. \n"+e.Message);
+            catch (Exception e)
+            {
+                return StatusCode(500, "Error saving the reading to the database. \n" + e.Message);
             }
         }
         // if a required parameter is not included
         return BadRequest(ModelState);
     }
-    
+
+    // action method that deletes the specified reading record
     [HttpDelete("delete")]
     [Authorize]
     public async Task<ActionResult<Reading>> DeleteReading([Required] int clubId, [Required] int bookId)
@@ -197,7 +211,8 @@ public class ReadingController : ControllerBase
             var reading = dbContext.Readings
                 .Where(reading => reading.BookId == bookId && reading.ClubId == clubId)
                 .FirstOrDefault();
-            if (reading == null) {
+            if (reading == null)
+            {
                 return BadRequest("Reading wasn't found.");
             }
 
@@ -206,16 +221,73 @@ public class ReadingController : ControllerBase
             {
                 dbContext.Readings.Remove(reading);
                 dbContext.SaveChanges();
-            
+
                 return Ok(reading);
             }
-            catch (Exception e) {
-                return StatusCode(500, "Error deleting the reading\n"+e.Message);
+            catch (Exception e)
+            {
+                return StatusCode(500, "Error deleting the reading\n" + e.Message);
             }
         }
         // if a required parameter is not included
         return BadRequest(ModelState);
     }
 
+    // action method that allows a club member to opt into a specified reading
+    [HttpPost("OptIntoReading")]
+    [Authorize]
+    public async Task<ActionResult<Reading>> OptIntoReading([Required] int clubId, [Required] int bookId)
+    {
+        if (ModelState.IsValid)
+        {
+            // ensure logged in user is member of club
+            ClubUser? clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, clubId);
+            if (clubUser != null)
+            {
+                // ensure reading exists already
+                var reading = dbContext.Readings
+                    .Where(reading => reading.BookId == bookId && reading.ClubId == clubId)
+                    .AsNoTracking()
+                    .FirstOrDefault();
+                if (reading != null) // if reading exists
+                {
+                    // ensure reading isn't concluded
+                    if (reading.Status != "concluded")
+                    {
+                        // create readinguser record for user
+                        try
+                        {
+                            Readinguser newReadingUser = new(clubUser.UserId, bookId, clubId, 0, 1);
+                            dbContext.Readingusers.Add(newReadingUser);
+                            dbContext.SaveChanges();
 
+                            ReadingUserDTO readingUserDTO = new(clubUser.UserId, bookId, clubId, 0, 1);
+                            
+                            return Ok(readingUserDTO);
+                        }
+                        catch (DbUpdateException dbe)
+                        {
+                            // if reading exists already, return 409 conflict status
+                            if (dbe.InnerException!.Message.Contains("Duplicate"))
+                            {
+                                return Conflict("User has already opted into reading.");
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            System.Console.WriteLine("Exception e");
+                            // handling all other errors when trying to save to db
+                            return StatusCode(500, "Error saving the reading to the database. \n" + e.Message);
+                        }
+                    }
+                    return BadRequest("Unable to opt into reading. Reading was concluded.");
+                }
+                return NotFound("Reading wasn't found.");
+            }
+            return NotFound("User isn't member of the club.");
+        }
+        return BadRequest(ModelState);
+    }
+
+    
 }
