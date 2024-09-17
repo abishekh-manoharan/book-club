@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Data.Common;
 using BookClubApi.Data;
 using BookClubApi.DTOs;
 using BookClubApi.Models;
@@ -262,7 +263,7 @@ public class ReadingController : ControllerBase
                             dbContext.SaveChanges();
 
                             ReadingUserDTO readingUserDTO = new(clubUser.UserId, bookId, clubId, 0, 1);
-                            
+
                             return Ok(readingUserDTO);
                         }
                         catch (DbUpdateException dbe)
@@ -310,17 +311,18 @@ public class ReadingController : ControllerBase
                     // ensure reading isn't concluded
                     if (reading.Status != "concluded")
                     {
-                        var readingUser = dbContext.Readingusers  
+                        var readingUser = dbContext.Readingusers
                             .Where(readingUser => readingUser.BookId == bookId
                                 && readingUser.ClubId == clubId
                                 && readingUser.UserId == clubUser.UserId)
                             .AsNoTracking()
                             .FirstOrDefault();
-                        
-                        if(readingUser != null) {
+
+                        if (readingUser != null)
+                        {
                             dbContext.Readingusers.Remove(readingUser);
                             dbContext.SaveChanges();
-                            
+
                             return Ok();
                         }
 
@@ -335,5 +337,69 @@ public class ReadingController : ControllerBase
         return BadRequest(ModelState);
     }
 
+    // action method that allows reading members to update their progress 
+    [HttpPut("UpdateReadingProgress")]
+    [Authorize]
+    public async Task<ActionResult<Reading>> UpdateReadingProgress([Required] int clubId, [Required] int bookId, [Required] int Progress, [Required] int ProgresstypeId)
+    {
+        if (ModelState.IsValid)
+        {
+            // ensure logged in user is member of club
+            ClubUser? clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, clubId);
+            if (clubUser != null)
+            {
+                // ensure reading exists already
+                var reading = dbContext.Readings
+                    .Where(reading => reading.BookId == bookId && reading.ClubId == clubId)
+                    .AsNoTracking()
+                    .FirstOrDefault();
+                if (reading != null) // if reading exists
+                {
+                    // ensure reading isn't concluded
+                    if (reading.Status != "concluded")
+                    {
+                        var readingUser = dbContext.Readingusers
+                            .Where(readingUser => readingUser.BookId == bookId
+                                && readingUser.ClubId == clubId
+                                && readingUser.UserId == clubUser.UserId)
+                            .FirstOrDefault();
 
+                        // ensure user has opted into the reading
+                        if (readingUser != null)
+                        {
+                            try
+                            {
+                                // update progress
+                                readingUser.Progress = Progress;
+                                readingUser.ProgresstypeId = ProgresstypeId;
+
+                                dbContext.SaveChanges();
+
+                                ReadingUserDTO readingUserDTO = new(clubUser.UserId, readingUser.BookId, readingUser.ClubId, readingUser.Progress, readingUser.ProgresstypeId);
+                                return Ok(readingUserDTO);
+                            }
+                            catch (DbUpdateException e)
+                            {
+                                if (e.InnerException!.Message.Contains("foreign key constraint fails"))
+                                {
+                                    return BadRequest("FK constraint violated. it's possible that the progress type was invalid.");
+                                }
+                                return StatusCode(500, "Error saving the reading to the database. \n" + e.InnerException.Message);
+                            }
+                            catch (Exception e)
+                            {
+                                return StatusCode(500, "Error saving the reading to the database. \n" + e.Message);
+                            }
+                        }
+
+                        return NotFound("User hasn't opted into the reading.");
+                    }
+                    return BadRequest("Unable to update progress for the reading. Reading was concluded.");
+                }
+                return NotFound("Reading wasn't found.");
+            }
+            return NotFound("User isn't member of the club.");
+        }
+        return BadRequest(ModelState);
+    }
 }
