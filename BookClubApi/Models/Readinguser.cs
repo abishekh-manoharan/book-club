@@ -5,7 +5,7 @@ namespace BookClubApi.Models;
 
 public partial class Readinguser
 {
-    public Readinguser(int userId, int bookId, int clubId, int? progress, int? progresstypeId)
+    public Readinguser(int userId, int bookId, int clubId, int progress, int progresstypeId)
     {
         UserId = userId;
         BookId = bookId;
@@ -20,9 +20,9 @@ public partial class Readinguser
 
     public int ClubId { get; set; }
 
-    public int? Progress { get; set; }
+    public int Progress { get; set; }
 
-    public int? ProgresstypeId { get; set; }
+    public int ProgresstypeId { get; set; }
 
     public virtual ProgressType? Progresstype { get; set; }
 
