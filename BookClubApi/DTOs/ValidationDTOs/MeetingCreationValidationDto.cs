@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BookClubApi.DTOs;
 
-public class MeetingValidationDto
+public class MeetingCreationValidationDto
 {
 
     public int MeetingId { get; set; }
