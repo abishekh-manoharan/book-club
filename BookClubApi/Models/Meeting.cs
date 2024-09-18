@@ -7,11 +7,11 @@ public partial class Meeting
 {
     public int MeetingId { get; set; }
 
-    public int? BookId { get; set; }
+    public int BookId { get; set; }
 
-    public int? ClubId { get; set; }
+    public int ClubId { get; set; }
 
-    public DateTime? StartTime { get; set; }
+    public DateTime StartTime { get; set; }
 
     public DateTime? EndTime { get; set; }
 
