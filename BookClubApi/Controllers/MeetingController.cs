@@ -202,6 +202,42 @@ public class MeetingController : ControllerBase
     }
 
     // action method that updates a meeting's information
+    [HttpPut("update")]
+    [Authorize]
+    public async Task<ActionResult<Meeting>> UpdateMeeting([Required] int meetingId, string? description, [Required] DateTime startTime, DateTime? endTime)
+    {
+        // ensure required params are included
+        if (ModelState.IsValid)
+        {
+            var meeting = dbContext.Meetings.Where(meeting => meeting.MeetingId == meetingId).FirstOrDefault();
+            if (meeting != null)
+            {
+                // ensure logged in user is the club's admin
+                bool? admin = await authHelpers.IsUserAdminOfClub(User, meeting.ClubId);
+                if (admin == true)
+                {
+                    try
+                    {
+                        meeting.Description = description;
+                        meeting.StartTime = startTime;
+                        meeting.EndTime = endTime;
+                        dbContext.SaveChanges();
+
+                        MeetingDTO meetingDTO = new(){MeetingId = meeting.MeetingId, BookId = meeting.BookId, ClubId = meeting.ClubId, Description = meeting.Description, StartTime = meeting.StartTime, EndTime = meeting.EndTime};
+                        return Ok(meetingDTO);
+                    }
+                    catch (Exception e)
+                    {
+                        return StatusCode(500, "Error updating the meeting. \n" + e.Message);
+                    }
+                }
+                return Unauthorized("User isn't authorized to update a meeting for this club.");
+            }
+            return NotFound("Meeting doesn't exist");
+        }
+        // if a required parameter is not included
+        return BadRequest(ModelState);
+    }
 
     // action method that deletes a meeting instance
 }
