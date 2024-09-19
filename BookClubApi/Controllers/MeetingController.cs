@@ -240,4 +240,43 @@ public class MeetingController : ControllerBase
     }
 
     // action method that deletes a meeting instance
+    [HttpDelete("delete")]
+    [Authorize]
+    public async Task<ActionResult<Meeting>> DeleteMeeting([Required] int meetingId)
+    {
+        // ensure required params are included
+        if (ModelState.IsValid)
+        {
+            // ensure meeting exists
+            var meeting = dbContext.Meetings.Where(meeting => meeting.MeetingId == meetingId).FirstOrDefault();
+            if (meeting != null)
+            {
+                // ensure logged in user is the club's admin
+                bool? admin = await authHelpers.IsUserAdminOfClub(User, meeting.ClubId);
+                if (admin == true)
+                {
+                    try
+                    {
+                        dbContext.Meetings.Remove(meeting);
+                        dbContext.SaveChanges();
+
+                        MeetingDTO meetingDTO = new(){MeetingId = meeting.MeetingId, BookId = meeting.BookId, ClubId = meeting.ClubId, Description = meeting.Description, StartTime = meeting.StartTime, EndTime = meeting.EndTime};
+                        return Ok(meetingDTO);
+                    }
+                    catch (Exception e)
+                    {
+                        return StatusCode(500, "Error updating the meeting. \n" + e.Message);
+                    }
+                }
+                return Unauthorized("User isn't authorized to delete a meeting.");
+            }
+            return NotFound("Meeting doesn't exist");
+        }
+        // if a required parameter is not included
+        return BadRequest(ModelState);
+    }
+
 }
+
+
+
