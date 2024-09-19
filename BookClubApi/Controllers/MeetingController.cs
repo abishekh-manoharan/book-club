@@ -19,12 +19,14 @@ public class MeetingController : ControllerBase
     private UserManager<ApplicationUser> userManager;
     private BookClubContext dbContext;
     private IAuthHelpers authHelpers;
+    private IClubService clubService;
 
-    public MeetingController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, BookClubContext dbContext, IAuthHelpers authHelpers)
+    public MeetingController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, BookClubContext dbContext, IAuthHelpers authHelpers, IClubService clubService)
     {
         this.userManager = userManager;
         this.dbContext = dbContext;
         this.authHelpers = authHelpers;
+        this.clubService = clubService;
     }
 
     // action method that creates a meeting for a reading instance
@@ -49,15 +51,16 @@ public class MeetingController : ControllerBase
                 {
                     BookId = (int)meeting.BookId!,
                     ClubId = (int)meeting.ClubId!,
-                    StartTime = (DateTime) meeting.StartTime!,
+                    StartTime = (DateTime)meeting.StartTime!,
                     EndTime = meeting.EndTime,
                     Description = meeting.Description
                 };
-                
+
                 dbContext.Meetings.Add(newMeeting);
                 dbContext.SaveChanges();
 
-                MeetingDTO newMeetingDTO = new () {
+                MeetingDTO newMeetingDTO = new()
+                {
                     MeetingId = newMeeting.MeetingId,
                     BookId = newMeeting.BookId,
                     ClubId = newMeeting.ClubId,
@@ -79,7 +82,7 @@ public class MeetingController : ControllerBase
                 {
                     return BadRequest("FK constraint violated. Ensure reading is valid.");
                 }
-                
+
                 return StatusCode(500, "Error saving the reading to the database. \n" + dbe.Message);
             }
             catch (Exception e)
@@ -151,7 +154,52 @@ public class MeetingController : ControllerBase
     }
 
     // action method that returns a specific meeting
+    [HttpGet("GetAMeeting")]
+    public async Task<ActionResult<List<MeetingDTO>>> GetAMeeting([Required] int meetingId)
+    {
+        // ensure required parameters are included
+        if (ModelState.IsValid)
+        {
+            var meeting = dbContext.Meetings.Where(meeting => meeting.MeetingId == meetingId).AsNoTracking().FirstOrDefault();
 
+            // ensure meeting exists
+            if (meeting != null)
+            {
+                // ensure that user is a club member if the club is private
+                // checking if club is private
+                bool? isPrivate = clubService.IsClubPrivate(meeting.ClubId);
+                if (isPrivate == true)
+                {
+                    // ensure user is a club member
+                    var clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, meeting.ClubId);
+                    // case where user isn't a member of the private club
+                    if (clubUser == null)
+                    {
+                        return Unauthorized("User must be member of the club to view it's meetings.");
+                    }
+                }
+                else if (isPrivate == null)
+                {
+                    return NotFound("Ensure club exists.");
+                }
+
+                // code reaches here if club isn't private or the user is a club member if it is private
+                // return a list of meetings associated with the club
+                MeetingDTO meetingDTO = new()
+                {
+                    MeetingId = meeting.MeetingId,
+                    BookId = meeting.BookId,
+                    ClubId = meeting.ClubId,
+                    StartTime = meeting.StartTime,
+                    EndTime = meeting.EndTime,
+                    Description = meeting.Description,
+                };
+                return Ok(meetingDTO);
+            }
+            return NotFound("Meeting doesn't exist.");
+        }
+        return BadRequest(ModelState);
+    }
 
     // action method that updates a meeting's information
 
