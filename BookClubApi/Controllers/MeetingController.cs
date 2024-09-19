@@ -93,6 +93,62 @@ public class MeetingController : ControllerBase
     }
 
     // action method that returns all meetings of a reading instance    
+    [HttpGet("GetAllMeetings")]
+    public async Task<ActionResult<List<MeetingDTO>>> GetAllMeetings([Required] int clubId, [Required] int bookId)
+    {
+        // ensure required parameters are included
+        if (ModelState.IsValid)
+        {
+            // ensure reading exists
+            if (clubService.DoesReadingExist(clubId, bookId))
+            {
+                // ensure that user is a club member if the club is private
+                // checking if club is private
+                bool? isPrivate = clubService.IsClubPrivate(clubId);
+                if (isPrivate == true)
+                {
+                    // ensure user is a club member
+                    var clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, clubId);
+                    if (clubUser == null)
+                    {
+                        return Unauthorized("User must be member of the club to view it's meetings.");
+                    }
+                }
+                else if (isPrivate == null)
+                {
+                    return NotFound("Ensure club exists.");
+                }
+
+                // code reaches here if club isn't private or the user is a club member if it is private
+                // return a list of meetings associated with the club
+                var meetings = dbContext.Meetings
+                    .Where(meeting =>
+                        meeting.ClubId == clubId &&
+                        meeting.BookId == bookId
+                    ).ToList();
+
+                List<MeetingDTO> meetingsDTOs = [];
+                foreach (Meeting meeting in meetings)
+                {
+                    MeetingDTO meetingDTO = new()
+                    {
+                        MeetingId = meeting.MeetingId,
+                        BookId = meeting.BookId,
+                        ClubId = meeting.ClubId,
+                        StartTime = meeting.StartTime,
+                        EndTime = meeting.EndTime,
+                        Description = meeting.Description,
+                    };
+                    meetingsDTOs.Add(meetingDTO);
+                }
+
+                return Ok(meetingsDTOs);
+            }
+            return NotFound("Reading doesn't exist.");
+        }
+        // if a required parameter is not included
+        return BadRequest(ModelState);
+    }
 
     // action method that returns a specific meeting
 
