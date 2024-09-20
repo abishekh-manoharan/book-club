@@ -9,11 +9,11 @@ public partial class Thread
 
     public int? ParentThreadId { get; set; }
 
-    public int? BookId { get; set; }
+    public int BookId { get; set; }
 
-    public int? ClubId { get; set; }
+    public int ClubId { get; set; }
 
-    public int? UserId { get; set; }
+    public int UserId { get; set; }
 
     public DateTime? TimePosted { get; set; }
 
@@ -21,7 +21,7 @@ public partial class Thread
 
     public virtual Thread? ParentThread { get; set; }
 
-    public virtual Reading? Reading { get; set; }
+    public virtual Reading Reading { get; set; } = null!;
 
-    public virtual User? User { get; set; }
+    public virtual User User { get; set; } = null!;
 }
