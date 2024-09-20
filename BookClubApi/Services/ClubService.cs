@@ -15,11 +15,13 @@ public class ClubService : IClubService
 {
     private UserManager<ApplicationUser> userManager;
     private BookClubContext dbContext;
+    private IAuthHelpers authHelpers;
 
-    public ClubService(UserManager<ApplicationUser> userManager, BookClubContext dbContext)
+    public ClubService(UserManager<ApplicationUser> userManager, BookClubContext dbContext, IAuthHelpers authHelpers)
     {
         this.dbContext = dbContext;
         this.userManager = userManager;
+        this.authHelpers = authHelpers;
     }
 
     // service method that takes in a club id and returns true if the club is private, false if the club isn't private, or null if the club doesn't exist
@@ -50,5 +52,22 @@ public class ClubService : IClubService
             return false;
         }
         return true;
+    }
+
+    // service method that returns a reading
+    public async Task<Readinguser?> GetReadinguser(System.Security.Claims.ClaimsPrincipal User, int clubId, int bookId) {
+        var user = await authHelpers.GetUserClassOfLoggedInUser(User);
+        if(user!=null) {
+            var readingUser = dbContext.Readingusers
+                .Where(readingUser => 
+                    readingUser.BookId == bookId &&
+                    readingUser.ClubId == clubId &&
+                    readingUser.UserId == user.UserId)
+                .AsNoTracking()
+                .FirstOrDefault();
+            
+            return readingUser;
+        }
+        return null;
     }
 }

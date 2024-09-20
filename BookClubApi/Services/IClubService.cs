@@ -21,4 +21,7 @@ public interface IClubService
     
     // service method that takes in a meeting id and returns true if the meeting exists, false if the meeting doesn't exist
     bool DoesMeetingExist(int meetingId);
+
+    // service method that returns a reading
+    Task<Readinguser?> GetReadinguser(System.Security.Claims.ClaimsPrincipal User, int clubId, int bookId);
 }
