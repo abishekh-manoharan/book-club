@@ -16,7 +16,9 @@ public partial class Thread
     public int UserId { get; set; }
 
     public string Text { get; set; } = null!;
-    
+
+    public bool Deleted { get; set; }
+
     public DateTime? TimePosted { get; set; }
 
     public virtual ICollection<Thread> InverseParentThread { get; set; } = new List<Thread>();
