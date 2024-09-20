@@ -97,3 +97,81 @@ public class DiscussionController : ControllerBase
         return BadRequest(ModelState);
     }
 
+    // action method that created a thread in reply to an existing thread
+    [HttpPost("reply")]
+    [Authorize]
+    public async Task<ActionResult<Reading>> CreateReplyThread(ThreadReplyCreationValidationDTO thread) {
+        // ensure required params are included
+        if (ModelState.IsValid)
+        {
+            // ensure user has opted into reading
+            Readinguser? readinguser = await clubService.GetReadinguser(User, (int) thread.ClubId!, (int) thread.BookId!);
+            if (readinguser == null)
+            {
+                return Unauthorized("User isn't authorized to create a thread for this reading. Ensure user has opted into the reading.");
+            }
+
+            // create thread
+            try
+            {
+                var user = await authHelpers.GetUserClassOfLoggedInUser(User);
+                
+                Models.Thread newThread = new()
+                {
+                    ParentThreadId = thread.ParentThreadId, 
+                    BookId = (int) thread.BookId!,
+                    ClubId = (int) thread.ClubId!,
+                    UserId = user!.UserId,
+                    Text = thread.Text,
+                    TimePosted = DateTime.Now,
+                    Deleted = false
+                };
+
+                dbContext.Threads.Add(newThread);
+                dbContext.SaveChanges();
+
+                ThreadDTO newThreadDTO = new()
+                {
+                    ThreadId = newThread.ThreadId,
+                    ParentThreadId = newThread.ParentThreadId,
+                    BookId = newThread.BookId,
+                    ClubId = newThread.ClubId,
+                    UserId = newThread.UserId,
+                    TimePosted = newThread.TimePosted,
+                    Text = newThread.Text,
+                    Deleted = newThread.Deleted
+                };
+
+                return Ok(newThreadDTO);
+            }
+            catch (DbUpdateException dbe)
+            {
+                // if reading exists already, return 409 conflict status
+                if (dbe.InnerException!.Message.Contains("Duplicate"))
+                {
+                    return Conflict("Thread already exists.");
+                }
+                else if (dbe.InnerException!.Message.Contains("foreign key constraint fails"))
+                {
+                    return BadRequest("FK constraint violated. Ensure thread being replied to exists.");
+                }
+
+                return StatusCode(500, "Error saving the reading to the database. \n" + dbe.Message);
+            }
+            catch (Exception e)
+            {
+                // handling all other errors when trying to save to db
+                return StatusCode(500, "Error saving the reading to the database. \n" + e.Message);
+            }
+        }
+        // if a required parameter is not included
+        return BadRequest(ModelState);
+    }
+        
+    // delete thread: deleting thread updates status of thread to 'deleted'
+
+
+    // get threads
+    // if thread is 'deleted' status, return thread_id, parentid, bookid, clubid, status
+    // user_id, time_posted, Text isn't returned 
+}
