@@ -35,7 +35,7 @@ public class DiscussionController : ControllerBase
         if (ModelState.IsValid)
         {
             // ensure user has opted into reading
-            Readinguser? readinguser = await clubService.GetReadinguser(User, (int) thread.ClubId!, (int) thread.BookId!);
+            Readinguser? readinguser = await clubService.GetReadinguser(User, (int)thread.ClubId!, (int)thread.BookId!);
             if (readinguser == null)
             {
                 return Unauthorized("Reading user with the associated properties not found.");
@@ -45,12 +45,12 @@ public class DiscussionController : ControllerBase
             try
             {
                 var user = await authHelpers.GetUserClassOfLoggedInUser(User);
-                
+
                 Models.Thread newThread = new()
                 {
-                    ParentThreadId = null, 
-                    BookId = (int) thread.BookId!,
-                    ClubId = (int) thread.ClubId!,
+                    ParentThreadId = null,
+                    BookId = (int)thread.BookId!,
+                    ClubId = (int)thread.ClubId!,
                     UserId = user!.UserId,
                     Text = thread.Text,
                     TimePosted = DateTime.Now,
@@ -60,16 +60,7 @@ public class DiscussionController : ControllerBase
                 dbContext.Threads.Add(newThread);
                 dbContext.SaveChanges();
 
-                ThreadDTO newThreadDTO = new()
-                {
-                    ThreadId = newThread.ThreadId,
-                    BookId = newThread.BookId,
-                    ClubId = newThread.ClubId,
-                    UserId = newThread.UserId,
-                    TimePosted = newThread.TimePosted,
-                    Text = newThread.Text,
-                    Deleted = newThread.Deleted
-                };
+                NonDeletedThreadDTO newThreadDTO = new(newThread.ThreadId, newThread.ParentThreadId, newThread.BookId, newThread.ClubId, newThread.UserId, newThread.Text, newThread.TimePosted, newThread.Deleted);
 
                 return Ok(newThreadDTO);
             }
@@ -100,12 +91,13 @@ public class DiscussionController : ControllerBase
     // action method that created a thread in reply to an existing thread
     [HttpPost("reply")]
     [Authorize]
-    public async Task<ActionResult<Reading>> CreateReplyThread(ThreadReplyCreationValidationDTO thread) {
+    public async Task<ActionResult<Reading>> CreateReplyThread(ThreadReplyCreationValidationDTO thread)
+    {
         // ensure required params are included
         if (ModelState.IsValid)
         {
             // ensure user has opted into reading
-            Readinguser? readinguser = await clubService.GetReadinguser(User, (int) thread.ClubId!, (int) thread.BookId!);
+            Readinguser? readinguser = await clubService.GetReadinguser(User, (int)thread.ClubId!, (int)thread.BookId!);
             if (readinguser == null)
             {
                 return Unauthorized("User isn't authorized to create a thread for this reading. Ensure user has opted into the reading.");
@@ -115,12 +107,12 @@ public class DiscussionController : ControllerBase
             try
             {
                 var user = await authHelpers.GetUserClassOfLoggedInUser(User);
-                
+
                 Models.Thread newThread = new()
                 {
-                    ParentThreadId = thread.ParentThreadId, 
-                    BookId = (int) thread.BookId!,
-                    ClubId = (int) thread.ClubId!,
+                    ParentThreadId = thread.ParentThreadId,
+                    BookId = (int)thread.BookId!,
+                    ClubId = (int)thread.ClubId!,
                     UserId = user!.UserId,
                     Text = thread.Text,
                     TimePosted = DateTime.Now,
@@ -130,17 +122,7 @@ public class DiscussionController : ControllerBase
                 dbContext.Threads.Add(newThread);
                 dbContext.SaveChanges();
 
-                ThreadDTO newThreadDTO = new()
-                {
-                    ThreadId = newThread.ThreadId,
-                    ParentThreadId = newThread.ParentThreadId,
-                    BookId = newThread.BookId,
-                    ClubId = newThread.ClubId,
-                    UserId = newThread.UserId,
-                    TimePosted = newThread.TimePosted,
-                    Text = newThread.Text,
-                    Deleted = newThread.Deleted
-                };
+                NonDeletedThreadDTO newThreadDTO = new(newThread.ThreadId, newThread.ParentThreadId, newThread.BookId, newThread.ClubId, newThread.UserId, newThread.Text, newThread.TimePosted, newThread.Deleted);
 
                 return Ok(newThreadDTO);
             }
@@ -167,20 +149,24 @@ public class DiscussionController : ControllerBase
         // if a required parameter is not included
         return BadRequest(ModelState);
     }
-        
+
     // action method to delete thread: deleting thread updates the deleted flag of a thread record to true
     [HttpDelete("delete")]
     [Authorize]
-    public async Task<ActionResult<Reading>> DeleteThread([Required] int threadId){
-        if(ModelState.IsValid){
+    public async Task<ActionResult<Reading>> DeleteThread([Required] int threadId)
+    {
+        if (ModelState.IsValid)
+        {
             Models.Thread? thread = dbContext.Threads.Where(thread => thread.ThreadId == threadId).FirstOrDefault();
-            if(thread != null) {                
+            if (thread != null)
+            {
                 var adminStatus = await authHelpers.IsUserAdminOfClub(User, thread.ClubId);
                 var loggedInUser = await authHelpers.GetUserClassOfLoggedInUser(User);
                 int userId = loggedInUser!.UserId;
 
                 // ensure logged in user is either admin of the club or the poster of the thread
-                if (adminStatus == true || thread.UserId == userId) {
+                if (adminStatus == true || thread.UserId == userId)
+                {
                     thread.Deleted = true;
                     dbContext.SaveChanges();
                     return Ok();
@@ -193,7 +179,51 @@ public class DiscussionController : ControllerBase
         return BadRequest(ModelState);
     }
 
-    // get threads
-    // if thread is 'deleted' status, return thread_id, parentid, bookid, clubid, status
-    // user_id, time_posted, Text isn't returned 
+    // action method that returns a list of threads for a reading
+    // returns a list of objects that implement IThreadDTO - either ThreadDTO or ThreadDeletedDTO
+    [HttpGet("getAllThreadsOfAReading")]
+    public async Task<ActionResult<List<GetThreadListDTO>>> GetAllThreads([Required] int bookId, [Required] int clubId)
+    {
+        if (ModelState.IsValid)
+        {
+            var clubPrivacy = clubService.IsClubPrivate(clubId);
+            var clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, clubId);
+            if (clubPrivacy == false || clubUser != null)
+            { // case where club is public or if not, user is member of the club
+                // ensure reading exists
+                var reading = dbContext.Readings.Where(reading => reading.BookId == bookId && reading.ClubId == clubId).AsNoTracking().FirstOrDefault();
+                if (reading != null)
+                {
+                    // get threads with associated with the reading
+                    List<Models.Thread> threads = dbContext.Threads.Where(thread => thread.BookId == bookId && thread.ClubId == clubId).AsNoTracking().ToList();
+
+                    // create threads list with DTOs
+                    List<NonDeletedThreadDTO> listOfNonDeletedThreadsAsDTOs = new() { };
+                    List<DeletedThreadDTO> listOfDeletedThreadsAsDTOs = new() { };
+
+                    foreach (Models.Thread thread in threads)
+                    {
+                        // create ThreadDeletedDTO for return list if the thread is deleted
+                        if (thread.Deleted)
+                        {
+                            DeletedThreadDTO threadDeletedDTO = new(thread.ThreadId, thread.ParentThreadId, thread.BookId, thread.ClubId, thread.TimePosted, thread.Deleted);
+                            listOfDeletedThreadsAsDTOs.Add(threadDeletedDTO);
+                        }
+                        else
+                        {
+                            // create ThreadDTO for return list if the thread is deleted
+                            NonDeletedThreadDTO threadNonDeletedDTO = new(thread.ThreadId, thread.ParentThreadId, thread.BookId, thread.ClubId, thread.UserId, thread.Text, thread.TimePosted, thread.Deleted);
+                            listOfNonDeletedThreadsAsDTOs.Add(threadNonDeletedDTO);
+                        }
+                    }
+
+                    GetThreadListDTO threadDTO = new(listOfNonDeletedThreadsAsDTOs, listOfDeletedThreadsAsDTOs);
+                    return Ok(threadDTO);
+                }
+                return NotFound("Reading doesn't exist.");
+            }
+            return Unauthorized("User must be member of a private club to view it's threads.");
+        }
+        return BadRequest(ModelState);
+    }
 }
