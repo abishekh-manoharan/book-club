@@ -38,7 +38,7 @@ public class DiscussionController : ControllerBase
             Readinguser? readinguser = await clubService.GetReadinguser(User, (int) thread.ClubId!, (int) thread.BookId!);
             if (readinguser == null)
             {
-                return Unauthorized("User isn't authorized to create a thread for this reading. Ensure user has opted into the reading.");
+                return Unauthorized("Reading user with the associated properties not found.");
             }
 
             // create thread
@@ -168,8 +168,30 @@ public class DiscussionController : ControllerBase
         return BadRequest(ModelState);
     }
         
-    // delete thread: deleting thread updates status of thread to 'deleted'
+    // action method to delete thread: deleting thread updates the deleted flag of a thread record to true
+    [HttpDelete("delete")]
+    [Authorize]
+    public async Task<ActionResult<Reading>> DeleteThread([Required] int threadId){
+        if(ModelState.IsValid){
+            Models.Thread? thread = dbContext.Threads.Where(thread => thread.ThreadId == threadId).FirstOrDefault();
+            if(thread != null) {                
+                var adminStatus = await authHelpers.IsUserAdminOfClub(User, thread.ClubId);
+                var loggedInUser = await authHelpers.GetUserClassOfLoggedInUser(User);
+                int userId = loggedInUser!.UserId;
 
+                // ensure logged in user is either admin of the club or the poster of the thread
+                if (adminStatus == true || thread.UserId == userId) {
+                    thread.Deleted = true;
+                    dbContext.SaveChanges();
+                    return Ok();
+                }
+
+                return Unauthorized("User is unauthorized to delete the thread. Ensure user is admin of the club or the poster of the thread.");
+            }
+            return NotFound("Thread wasn't found.");
+        }
+        return BadRequest(ModelState);
+    }
 
     // get threads
     // if thread is 'deleted' status, return thread_id, parentid, bookid, clubid, status

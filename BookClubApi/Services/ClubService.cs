@@ -62,10 +62,10 @@ public class ClubService : IClubService
                 .Where(readingUser => 
                     readingUser.BookId == bookId &&
                     readingUser.ClubId == clubId &&
-                    readingUser.UserId == user.UserId)
+                    readingUser.UserId == user!.UserId)
                 .AsNoTracking()
                 .FirstOrDefault();
-            
+
             return readingUser;
         }
         return null;
