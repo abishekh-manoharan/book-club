@@ -19,12 +19,14 @@ public class ClubController : ControllerBase
     private UserManager<ApplicationUser> userManager;
     private BookClubContext dbContext;
     private IAuthHelpers authHelpers;
+    private IClubService clubService;
 
-    public ClubController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, BookClubContext dbContext, IAuthHelpers authHelpers)
+    public ClubController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, BookClubContext dbContext, IAuthHelpers authHelpers, IClubService clubService)
     {
         this.userManager = userManager;
         this.dbContext = dbContext;
         this.authHelpers = authHelpers;
+        this.clubService = clubService;
     }
 
     // Action method that returns a club record based on ClubID
@@ -784,5 +786,29 @@ public class ClubController : ControllerBase
 
         }
         return BadRequest(ModelState); // Returns a 400 Bad Request with error details
+    }
+
+    // action method that returns a list of threads for a reading
+    [HttpGet("getAllClubRecommendations")]
+    public async Task<ActionResult<List<ClubRecommendationDTO>>> GetAllClubRecommendations([Required] int clubId)
+    {
+        if (ModelState.IsValid)
+        {
+            // ensure either that the club is public or if the club is private, that they are a member of the club
+            var clubPrivacy = clubService.IsClubPrivate(clubId);
+            var clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, clubId);
+            if (clubPrivacy == false || clubUser != null)
+            { 
+                List<Clubrecommendation> clubRecommendations = dbContext.Clubrecommendations
+                    .Where(rec => rec.ClubId == clubId)
+                    .AsNoTracking()
+                    .ToList();
+                
+                return Ok(clubRecommendations);                
+                // TODO - convert to dtos
+            }
+            return Unauthorized("User must be member of a private club to view it's threads.");
+        }
+        return BadRequest(ModelState);
     }
 }
