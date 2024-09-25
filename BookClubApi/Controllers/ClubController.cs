@@ -706,13 +706,13 @@ public class ClubController : ControllerBase
                     }
 
                     // try saving club recommendation
-                    Clubrecommendation rec = new(clubId, (int) book.BookId!, user.UserId, DateTime.Now);
+                    Clubrecommendation rec = new(clubId, (int)book.BookId!, user.UserId, DateTime.Now);
                     try
                     {
                         dbContext.Clubrecommendations.Add(rec);
                         dbContext.SaveChanges();
 
-                        ClubRecommendationDTO clubRecommendationDTO = new(clubId, (int) book.BookId!, user.UserId, DateTime.Now);
+                        ClubRecommendationDTO clubRecommendationDTO = new(clubId, (int)book.BookId!, user.UserId, DateTime.Now);
                         return Ok(clubRecommendationDTO);
                     }
                     catch (DbUpdateException dbe)
@@ -739,6 +739,49 @@ public class ClubController : ControllerBase
                 return Unauthorized("User must me a member of the club to perform this action.");
             }
             return Unauthorized("Ensure user is logged in and has a valid userId.");
+        }
+        return BadRequest(ModelState); // Returns a 400 Bad Request with error details
+    }
+
+
+    // action method to add a book to club recommendation
+    [HttpDelete("removeFromRecommendations")]
+    [Authorize]
+    public async Task<ActionResult<ClubRecommendationDTO>> RemoveFromRecommendations([Required] int clubId, [Required] int bookId)
+    {
+        if (ModelState.IsValid)
+        {
+            // get the recommendation
+            var recommendation = dbContext.Clubrecommendations
+                .Where(rec => rec.ClubId == clubId &&
+                    rec.BookId == bookId)
+                .AsNoTracking()
+                .FirstOrDefault();
+
+            if (recommendation != null)
+            {
+                var user = await authHelpers.GetUserClassOfLoggedInUser(User);
+                // ensure user is the one who recommended the book
+                if (user != null && user.UserId == recommendation.UserId)
+                {
+                    try
+                    {
+                        dbContext.Clubrecommendations.Remove(recommendation);
+                        dbContext.SaveChanges();
+
+                        ClubRecommendationDTO clubRecommendationDTO = new(clubId, bookId, user.UserId, recommendation.DateAdded);
+                        return Ok(clubRecommendationDTO);
+                    }
+                    catch (Exception e)
+                    {
+                        // handling all other errors when trying to save to db
+                        return StatusCode(500, "Error saving the reading to the database. \n" + e.Message);
+                    }
+                }
+                return Unauthorized("Ensure user was the creator of the recommendation and has a valid userId.");
+            }
+            return NotFound("Recommendation not found.");
+
         }
         return BadRequest(ModelState); // Returns a 400 Bad Request with error details
     }
