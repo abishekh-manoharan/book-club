@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Data.Common;
 using BookClubApi.Data;
 using BookClubApi.DTOs;
@@ -357,7 +358,8 @@ public class ClubController : ControllerBase
                 .FirstOrDefault();
 
             // case where join request doesn't exist
-            if (req == null){
+            if (req == null)
+            {
                 ModelState.AddModelError("RequestDoesntExist", "The request attempting to be declined does not exist.");
                 return BadRequest(ModelState);
             }
@@ -632,7 +634,7 @@ public class ClubController : ControllerBase
         return BadRequest(ModelState); // Returns a 400 Bad Request with error details
     }
 
-    // TODO: action method to reject invitation
+    // action method to reject invitation
     [HttpPost("RejectInvitation")]
     [Authorize]
     public async Task<ActionResult<ClubUser>> RejectInvitation(int? ClubId)
@@ -668,6 +670,76 @@ public class ClubController : ControllerBase
             return Ok();
         }
         ModelState.AddModelError("MissingFields", "Request is missing information needed to complete operation.");
+        return BadRequest(ModelState); // Returns a 400 Bad Request with error details
+    }
+
+    // action method to add a book to club recommendation
+    [HttpPost("addToRecommendations")]
+    [Authorize]
+    public async Task<ActionResult<ClubRecommendationDTO>> AddToRecommendations([Required] int clubId, [Required] Book book)
+    {
+        if (ModelState.IsValid)
+        {
+            // get logged in user's userId
+            var user = await authHelpers.GetUserClassOfLoggedInUser(User);
+            if (user != null)
+            {
+                // ensure user is a member of the club
+                var clubUser = dbContext.ClubUsers
+                    .Where(clubUser => clubUser.ClubId == clubId &&
+                        clubUser.UserId == user.UserId)
+                    .AsNoTracking()
+                    .FirstOrDefault();
+
+                if (clubUser != null)
+                {
+                    // save book to db if it doesn't exist already
+                    var searchedBook = dbContext.Books
+                        .Where(dbBook => dbBook.BookId == book.BookId)
+                        .AsNoTracking()
+                        .FirstOrDefault();
+                    if (searchedBook == null)
+                    {
+                        dbContext.Books
+                            .Add(book);
+                        await dbContext.SaveChangesAsync();
+                    }
+
+                    // try saving club recommendation
+                    Clubrecommendation rec = new(clubId, (int) book.BookId!, user.UserId, DateTime.Now);
+                    try
+                    {
+                        dbContext.Clubrecommendations.Add(rec);
+                        dbContext.SaveChanges();
+
+                        ClubRecommendationDTO clubRecommendationDTO = new(clubId, (int) book.BookId!, user.UserId, DateTime.Now);
+                        return Ok(clubRecommendationDTO);
+                    }
+                    catch (DbUpdateException dbe)
+                    {
+                        // if reading exists already, return 409 conflict status
+                        if (dbe.InnerException!.Message.Contains("Duplicate"))
+                        {
+                            return Conflict("Recommendation already exists.");
+                        }
+                        // return fk error message if fk error is produced
+                        else if (dbe.InnerException!.Message.Contains("foreign key constraint fails"))
+                        {
+                            return BadRequest("FK constraint violated. Ensure bookId, clubId, and userId is valid.");
+                        }
+
+                        return StatusCode(500, "Error saving the reading to the database. \n" + dbe.Message);
+                    }
+                    catch (Exception e)
+                    {
+                        // handling all other errors when trying to save to db
+                        return StatusCode(500, "Error saving the reading to the database. \n" + e.Message);
+                    }
+                }
+                return Unauthorized("User must me a member of the club to perform this action.");
+            }
+            return Unauthorized("Ensure user is logged in and has a valid userId.");
+        }
         return BadRequest(ModelState); // Returns a 400 Bad Request with error details
     }
 }
