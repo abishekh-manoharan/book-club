@@ -18,6 +18,6 @@ public partial class Poll
     public virtual Club? Club { get; set; }
 
     public virtual ICollection<Pollbook> Pollbooks { get; set; } = new List<Pollbook>();
-
+    public virtual ICollection<PollVote> PollVotes { get; set; } = new List<PollVote>();
     public virtual ICollection<User> Users { get; set; } = new List<User>();
 }

@@ -47,6 +47,8 @@ public partial class BookClubContext :  IdentityDbContext<ApplicationUser>
 
     public virtual DbSet<Pollbook> Pollbooks { get; set; }
 
+    public virtual DbSet<PollVote> PollVotes { get; set; }
+
     public virtual DbSet<ProgressType> ProgressTypes { get; set; }
 
     public virtual DbSet<Reading> Readings { get; set; }
@@ -359,6 +361,26 @@ public partial class BookClubContext :  IdentityDbContext<ApplicationUser>
                 .HasForeignKey(d => d.PollId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("pollbook_ibfk_1");
+        });
+        
+        modelBuilder.Entity<PollVote>(entity =>
+        {
+            entity.HasKey(e => new { e.PollId, e.UserId }).HasName("PRIMARY");
+
+            entity.ToTable("pollvote", "BookClub");
+
+            entity.Property(e => e.PollId).HasColumnName("poll_id");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+
+            entity.HasOne(d => d.User).WithMany(p => p.PollVotes)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("pollvote_ibfk_2");
+
+            entity.HasOne(d => d.Poll).WithMany(p => p.PollVotes)
+                .HasForeignKey(d => d.PollId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("pollvote_ibfk_1");
         });
 
         modelBuilder.Entity<ProgressType>(entity =>

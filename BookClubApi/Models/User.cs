@@ -28,8 +28,10 @@ public partial class User
     public virtual ICollection<Thread> Threads { get; set; } = new List<Thread>();
 
     public virtual ICollection<UserBook> UserBooks { get; set; } = new List<UserBook>();
-    
+
     public virtual ICollection<Readinguser> Readingusers { get; set; } = new List<Readinguser>();
 
     public virtual ICollection<Poll> Polls { get; set; } = new List<Poll>();
+
+    public virtual ICollection<PollVote> PollVotes { get; set; } = new List<PollVote>();
 }
