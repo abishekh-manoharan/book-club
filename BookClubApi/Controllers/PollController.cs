@@ -29,11 +29,54 @@ public class PollController : ControllerBase
         this.clubService = clubService;
     }
 
-    [HttpPost("createPoll")] 
+    [HttpPost("createPoll")]
     [Authorize]
-    public ActionResult<int> CreatePoll(PollCreationDTO poll) {
-        if(ModelState.IsValid){
-            return Ok();
+    public async Task<ActionResult<int>> CreatePoll(PollCreationDTO poll)
+    {
+        if (ModelState.IsValid)
+        {
+            // ensure user is admin of club
+            var adminStatus = await authHelpers.IsUserAdminOfClub(User, (int)poll.ClubId!);
+            if (adminStatus == true)
+            {
+                // try creating poll
+                Poll newPoll = new()
+                {
+                    ClubId = (int)poll.ClubId!,
+                    Name = poll.Name,
+                    Open = true,
+                    CreatedDate = DateTime.Now,
+                };
+                try
+                {
+                    dbContext.Polls.Add(newPoll);
+                    dbContext.SaveChanges();
+
+                    PollDTO newPollDTO = new((int)newPoll.PollId!, newPoll.ClubId, newPoll.Name, newPoll.Open, newPoll.CreatedDate);
+
+                    return Ok(newPollDTO);
+                }
+                catch (DbUpdateException dbe)
+                {
+                    // if poll exists already, return 409 conflict status
+                    if (dbe.InnerException!.Message.Contains("Duplicate"))
+                    {
+                        return Conflict("Poll already exists.");
+                    }
+                    // if a FK error arises, return 400 status
+                    else if (dbe.InnerException!.Message.Contains("foreign key constraint fails"))
+                    {
+                        return BadRequest("FK constraint violated. Ensure clubId is valid.");
+                    }
+                    return StatusCode(500, "Error saving the reading to the database. \n" + dbe.Message);
+                }
+                catch (Exception e)
+                {
+                    // handling all other errors when trying to save to db
+                    return StatusCode(500, "Error saving the reading to the database. \n" + e.Message);
+                }
+            }
+            return Unauthorized("User isn't authorized to create a poll.");
         }
         return BadRequest(ModelState);
     }

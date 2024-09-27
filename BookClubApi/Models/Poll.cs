@@ -11,7 +11,7 @@ public partial class Poll
 
     public string Name { get; set; } = null!;
 
-    public bool? Open { get; set; }
+    public bool Open { get; set; }
 
     public DateTime CreatedDate { get; set; }
 
