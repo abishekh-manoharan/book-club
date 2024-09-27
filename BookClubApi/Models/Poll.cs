@@ -5,15 +5,15 @@ namespace BookClubApi.Models;
 
 public partial class Poll
 {
-    public int PollId { get; set; }
+    public int? PollId { get; set; }
 
-    public int? ClubId { get; set; }
+    public int ClubId { get; set; }
 
-    public string? Name { get; set; }
+    public string Name { get; set; } = null!;
 
     public bool? Open { get; set; }
 
-    public DateTime? CreatedDate { get; set; }
+    public DateTime CreatedDate { get; set; }
 
     public virtual Club? Club { get; set; }
 
