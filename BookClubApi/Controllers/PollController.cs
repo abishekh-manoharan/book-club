@@ -94,14 +94,14 @@ public class PollController : ControllerBase
             if (poll != null)
             {
                 // ensure user is admin of club
-                var adminStatus = await authHelpers.IsUserAdminOfClub(User, (int) poll.ClubId!);
+                var adminStatus = await authHelpers.IsUserAdminOfClub(User, (int)poll.ClubId!);
                 if (adminStatus == true)
                 {
                     // try creating pollbook
                     Pollbook newPollBook = new()
                     {
-                        PollId = (int) pollbook.PollId!,
-                        BookId = (int) pollbook.BookId!,
+                        PollId = (int)pollbook.PollId!,
+                        BookId = (int)pollbook.BookId!,
                         Votes = 0,
                     };
                     try
@@ -140,4 +140,34 @@ public class PollController : ControllerBase
         return BadRequest(ModelState);
     }
 
+    // action method that return a single poll instance.
+    // user can access if club is public or if user is a club member if the club is private
+    [HttpGet("getOnePoll")]
+    [Authorize]
+    public async Task<ActionResult<PollDTO>> GetOnePoll([Required] int pollId)
+    {
+        if(ModelState.IsValid){
+            var poll = dbContext.Polls
+                .Where(poll => poll.PollId == pollId)
+                .AsNoTracking()
+                .FirstOrDefault();
+
+            // ensure poll with the provided id exists
+            if(poll != null) {
+                bool? clubPrivacy = clubService.IsClubPrivate(poll.ClubId);
+                ClubUser? clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, poll.ClubId);
+                
+                // ensure club is either public or that the user is a club member if it's private
+                if(clubPrivacy == false || clubUser != null) {
+                    // generate poll DTO and return the poll
+                    PollDTO pollDTO = new((int) poll.PollId!, poll.ClubId, poll.Name, poll.Open, poll.CreatedDate);
+                    return Ok(pollDTO);
+                }
+
+                return Unauthorized("User is unauthorized to view the poll. Ensure the club is public or that the user is a member of the club.");
+            }
+            return NotFound("Poll with the provided ID not found.");
+        }
+        return BadRequest(ModelState);
+    }
 }
