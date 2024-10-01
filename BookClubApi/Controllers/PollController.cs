@@ -146,27 +146,74 @@ public class PollController : ControllerBase
     [Authorize]
     public async Task<ActionResult<PollDTO>> GetOnePoll([Required] int pollId)
     {
-        if(ModelState.IsValid){
+        if (ModelState.IsValid)
+        {
             var poll = dbContext.Polls
                 .Where(poll => poll.PollId == pollId)
                 .AsNoTracking()
                 .FirstOrDefault();
 
             // ensure poll with the provided id exists
-            if(poll != null) {
+            if (poll != null)
+            {
                 bool? clubPrivacy = clubService.IsClubPrivate(poll.ClubId);
                 ClubUser? clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, poll.ClubId);
-                
+
                 // ensure club is either public or that the user is a club member if it's private
-                if(clubPrivacy == false || clubUser != null) {
+                if (clubPrivacy == false || clubUser != null)
+                {
                     // generate poll DTO and return the poll
-                    PollDTO pollDTO = new((int) poll.PollId!, poll.ClubId, poll.Name, poll.Open, poll.CreatedDate);
+                    PollDTO pollDTO = new((int)poll.PollId!, poll.ClubId, poll.Name, poll.Open, poll.CreatedDate);
                     return Ok(pollDTO);
                 }
 
                 return Unauthorized("User is unauthorized to view the poll. Ensure the club is public or that the user is a member of the club.");
             }
             return NotFound("Poll with the provided ID not found.");
+        }
+        return BadRequest(ModelState);
+    }
+
+
+    // action method that return a all poll instances of a club.
+    // user can access if club is public or if user is a club member if the club is private
+    [HttpGet("getAllPollsOfClub")]
+    [Authorize]
+    public async Task<ActionResult<PollDTO>> GetAllPollsOfClub([Required] int clubId)
+    {
+        if (ModelState.IsValid)
+        {
+            var club = dbContext.Clubs
+                .Where(club => club.ClubId == clubId)
+                .AsNoTracking()
+                .FirstOrDefault();
+
+            // ensure poll with the provided id exists
+            if (club != null)
+            {
+                ClubUser? clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, clubId);
+
+                // ensure club is either public or that the user is a club member if it's private
+                if (club.Private == false || clubUser != null)
+                {
+                    // get all polls associated with the club
+                    List<Poll> polls = dbContext.Polls
+                        .Where(poll => poll.ClubId == clubId)
+                        .AsNoTracking()
+                        .ToList();
+                    
+                    // convert polls list to pollDTO List
+                    List<PollDTO> pollDtos = [];
+                    foreach (Poll poll in polls) {
+                        PollDTO pollDTO = new((int) poll.PollId!, poll.ClubId, poll.Name, poll.Open, poll.CreatedDate);
+                        pollDtos.Add(pollDTO);
+                    }
+                    return Ok(pollDtos);
+                }
+
+                return Unauthorized("User is unauthorized to view the poll collection. Ensure the club is public or that the user is a member of the club.");
+            }
+            return NotFound("Club with the provided ID not found.");
         }
         return BadRequest(ModelState);
     }
