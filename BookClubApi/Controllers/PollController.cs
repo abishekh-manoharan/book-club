@@ -174,7 +174,6 @@ public class PollController : ControllerBase
         return BadRequest(ModelState);
     }
 
-
     // action method that return a all poll instances of a club.
     // user can access if club is public or if user is a club member if the club is private
     [HttpGet("getAllPollsOfClub")]
@@ -247,7 +246,7 @@ public class PollController : ControllerBase
                         .AsNoTracking()
                         .ToList();
 
-                    // convert polls list to pollDTO List
+                    // convert pollbook list to pollbookDTO List
                     List<PollBookDTO> pollbookDtos = [];
                     foreach (Pollbook pollbook in pollbooks)
                     {
@@ -257,9 +256,78 @@ public class PollController : ControllerBase
                     return Ok(pollbookDtos);
                 }
 
-                return Unauthorized("User is unauthorized to view the poll. Ensure the club is public or that the user is a member of the club.");
+                return Unauthorized("User is unauthorized to view the pollbooks. Ensure the club is public or that the user is a member of the club.");
             }
             return NotFound("Poll with the provided ID not found.");
+        }
+        return BadRequest(ModelState);
+    }
+
+    // action method used to allow a club member to cast a vote in an existing poll
+    [HttpPost("castVote")]
+    [Authorize]
+    public async Task<ActionResult<PollVoteDTO>> CastVote([Required] int pollId, [Required] int bookId)
+    {
+        if (ModelState.IsValid)
+        {
+            // get poll using pollId to ensure poll exists
+            Poll? poll = dbContext.Polls.Where(poll => poll.PollId == pollId).AsNoTracking().FirstOrDefault();
+            // get pollbook using pollId and bookId to ensure pollbook exists
+            Pollbook? pollbook = dbContext.Pollbooks.Where(pollbook => pollbook.PollId == pollId && pollbook.BookId == bookId).FirstOrDefault();
+
+            if (poll != null && pollbook != null)
+            {
+                if (poll!.Open == true)
+                {
+
+                    // get clubuser
+                    ClubUser? clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, poll.ClubId);
+                    if (clubUser != null)
+                    {
+                        // attempt to create pollvote
+                        PollVote pollVote = new(pollId, clubUser.UserId);
+
+                        try
+                        {
+                            dbContext.PollVotes.Add(pollVote);
+                            dbContext.SaveChanges();
+                        }
+                        catch (DbUpdateException dbe)
+                        {
+                            // case where the user has already voted in the poll
+                            if (dbe.InnerException!.Message.Contains("Duplicate"))
+                            {
+                                return Conflict("User has already voted in this poll.");
+                            }
+                            return StatusCode(500, "Error saving the reading to the database. \n" + dbe.Message);
+                        }
+                        catch (Exception e)
+                        {
+                            // handling all other errors when trying to save to db
+                            return StatusCode(500, "Error saving the reading to the database. \n" + e.Message);
+                        }
+
+                        try
+                        {
+                            // increase vote count of pollbook
+                            pollbook.Votes += 1;
+                            dbContext.SaveChanges();
+                        }
+                        catch (Exception e)
+                        {
+                            // handling all other errors when trying to save to db
+                            return StatusCode(500, "Error saving the reading to the database. \n" + e.Message);
+                        }
+
+                        // return pollVote dto
+                        PollVoteDTO pollVoteDTO = new(pollVote.PollId, pollVote.UserId);
+                        return Ok(pollVoteDTO);
+                    }
+                    return Unauthorized("User must be member of the club to perform this action.");
+                }
+                return BadRequest("Poll is closed and no new votes can be cast.");
+            }
+            return NotFound("Poll or pollbook not found with the provided Ids");
         }
         return BadRequest(ModelState);
     }
