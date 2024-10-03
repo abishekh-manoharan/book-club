@@ -331,4 +331,32 @@ public class PollController : ControllerBase
         }
         return BadRequest(ModelState);
     }
+
+    // action method that allows a club admin to delete a poll instance
+    [HttpDelete("delete")]
+    [Authorize]
+    public async Task<ActionResult<Poll>> DeletePoll([Required] int pollId)
+    {
+        if (ModelState.IsValid)
+        {
+            // ensure poll exists
+            Poll? poll = dbContext.Polls.Where(poll => poll.PollId == pollId).FirstOrDefault();
+            if (poll != null)
+            {
+                // ensure user is admin of club
+                var isUserAdmin = await authHelpers.IsUserAdminOfClub(User, poll.ClubId);
+
+                if(isUserAdmin == true) {
+                    dbContext.Polls.Remove(poll);
+                    dbContext.SaveChanges();
+                    return Ok(poll);
+                }
+
+                return Unauthorized("User isn't authorized to delete a poll.");
+            }
+            return NotFound("Poll with the given id not found.");
+        }
+        return BadRequest(ModelState);
+    }
+
 }
