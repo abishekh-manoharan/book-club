@@ -335,7 +335,7 @@ public class PollController : ControllerBase
     // action method that allows a club admin to delete a poll instance
     [HttpDelete("delete")]
     [Authorize]
-    public async Task<ActionResult<Poll>> DeletePoll([Required] int pollId)
+    public async Task<ActionResult<PollDTO>> DeletePoll([Required] int pollId)
     {
         if (ModelState.IsValid)
         {
@@ -346,10 +346,13 @@ public class PollController : ControllerBase
                 // ensure user is admin of club
                 var isUserAdmin = await authHelpers.IsUserAdminOfClub(User, poll.ClubId);
 
-                if(isUserAdmin == true) {
+                if (isUserAdmin == true)
+                {
                     dbContext.Polls.Remove(poll);
                     dbContext.SaveChanges();
-                    return Ok(poll);
+
+                    PollDTO pollDTO = new((int)poll.PollId!, poll.ClubId, poll.Name, poll.Open, poll.CreatedDate);
+                    return Ok(pollDTO);
                 }
 
                 return Unauthorized("User isn't authorized to delete a poll.");
@@ -359,4 +362,34 @@ public class PollController : ControllerBase
         return BadRequest(ModelState);
     }
 
+    // action method that allows a club admin to update a poll instance's name and open properties
+    [HttpPut("update")]
+    [Authorize]
+    public async Task<ActionResult<PollDTO>> UpdatePoll([Required] int pollId, [Required] string name, [Required] bool open)
+    {
+        if (ModelState.IsValid)
+        {
+            // ensure poll exists
+            Poll? poll = dbContext.Polls.Where(poll => poll.PollId == pollId).FirstOrDefault();
+            if (poll != null)
+            {
+                // ensure user is admin of club
+                var isUserAdmin = await authHelpers.IsUserAdminOfClub(User, poll.ClubId);
+
+                if (isUserAdmin == true)
+                {
+                    poll.Name = name;
+                    poll.Open = open;
+                    dbContext.SaveChanges();
+
+                    PollDTO pollDTO = new((int)poll.PollId!, poll.ClubId, poll.Name, poll.Open, poll.CreatedDate);
+                    return Ok(pollDTO);
+                }
+
+                return Unauthorized("User isn't authorized to delete a poll.");
+            }
+            return NotFound("Poll with the given id not found.");
+        }
+        return BadRequest(ModelState);
+    }
 }
