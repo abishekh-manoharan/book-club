@@ -36,6 +36,7 @@ builder.Services.Configure<IdentityOptions>(options =>
 
 builder.Services.AddScoped<IAuthHelpers, AuthHelpers>();
 builder.Services.AddScoped<IClubService, ClubService>();
+builder.Services.AddScoped<IBookService, BookService>();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
