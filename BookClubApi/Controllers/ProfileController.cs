@@ -99,4 +99,31 @@ public class ProfileController : ControllerBase
         return BadRequest(ModelState);
     }
 
+    [HttpDelete("removeFavourite")]
+    public async Task<ActionResult<UserBookDTO>> RemoveFavourite([Required] int bookId)
+    {
+        if (ModelState.IsValid)
+        {
+            User? user = await authHelpers.GetUserClassOfLoggedInUser(User);
+
+            // get the associated userbook object
+            var userbook = dbContext.UserBooks.Where(userbook => userbook.BookId == bookId && userbook.UserId == user!.UserId).AsNoTracking().FirstOrDefault();
+
+            // ensure userbook object exists. return not found otherwise.
+            if (userbook != null)
+            {
+                try
+                {
+                    dbContext.UserBooks.Remove(userbook);
+                    dbContext.SaveChanges();
+
+                    return Ok(new UserBookDTO(userbook.BookId, userbook.UserId, userbook.DateAdded));
+                } catch (Exception e) {
+                    return Problem(e.InnerException?.Message);
+                }
+            }
+            return NotFound("Book not found in user's favourites.");
+        }
+        return BadRequest(ModelState);
+    }
 }
