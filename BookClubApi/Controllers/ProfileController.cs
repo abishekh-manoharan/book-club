@@ -126,4 +126,19 @@ public class ProfileController : ControllerBase
         }
         return BadRequest(ModelState);
     }
+
+    [HttpGet("getFavourites")]
+    public ActionResult<List<UserBookDTO>> GetUsersFavourites([Required] int userId) {
+        if(ModelState.IsValid) {
+            List<UserBook> ubs = dbContext.UserBooks.Where(ub => ub.UserId == userId).AsNoTracking().ToList();
+            List<UserBookDTO> ubsDTOs = [];
+
+            foreach (UserBook ub in ubs){
+                ubsDTOs.Add(new UserBookDTO(ub.BookId, ub.UserId, ub.DateAdded));
+            }
+
+            return Ok(ubsDTOs);
+        }
+        return BadRequest(ModelState);
+    }
 }
