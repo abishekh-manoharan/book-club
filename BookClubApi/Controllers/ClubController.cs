@@ -788,7 +788,7 @@ public class ClubController : ControllerBase
         return BadRequest(ModelState); // Returns a 400 Bad Request with error details
     }
 
-    // action method that returns a list of threads for a reading
+    // action method that returns a list of book recommendations associated with a club
     [HttpGet("getAllClubRecommendations")]
     public async Task<ActionResult<List<ClubRecommendationDTO>>> GetAllClubRecommendations([Required] int clubId)
     {

@@ -118,7 +118,9 @@ public class ProfileController : ControllerBase
                     dbContext.SaveChanges();
 
                     return Ok(new UserBookDTO(userbook.BookId, userbook.UserId, userbook.DateAdded));
-                } catch (Exception e) {
+                }
+                catch (Exception e)
+                {
                     return Problem(e.InnerException?.Message);
                 }
             }
@@ -128,16 +130,51 @@ public class ProfileController : ControllerBase
     }
 
     [HttpGet("getFavourites")]
-    public ActionResult<List<UserBookDTO>> GetUsersFavourites([Required] int userId) {
-        if(ModelState.IsValid) {
+    public ActionResult<List<UserBookDTO>> GetUsersFavourites([Required] int userId)
+    {
+        if (ModelState.IsValid)
+        {
             List<UserBook> ubs = dbContext.UserBooks.Where(ub => ub.UserId == userId).AsNoTracking().ToList();
             List<UserBookDTO> ubsDTOs = [];
 
-            foreach (UserBook ub in ubs){
+            foreach (UserBook ub in ubs)
+            {
                 ubsDTOs.Add(new UserBookDTO(ub.BookId, ub.UserId, ub.DateAdded));
             }
 
             return Ok(ubsDTOs);
+        }
+        return BadRequest(ModelState);
+    }
+
+    // action method that returns all clubs associated with a user
+    [HttpGet("getClubs")]
+    public ActionResult<List<ClubDTO>> GetClubs([Required] int userId)
+    {
+        if (ModelState.IsValid)
+        {
+            // get clubuser objects associated with the user to determine clubs associated with user
+            var clubUsers = dbContext.ClubUsers
+                .Where(clubUser => clubUser.UserId == userId)
+                .ToList();
+
+            // forming a list of all associated club objects associated with the previously attained clubUser objects
+            List<ClubDTO> clubs = [];
+            foreach (ClubUser clubUser in clubUsers)
+            {
+                Club foundClub = dbContext.Clubs
+                    .Where(club => club.ClubId == clubUser.ClubId)
+                    .AsNoTracking()
+                    .First();
+
+                // map found clubs to DTOP
+                ClubDTO foundClubDTO = new(foundClub.ClubId, foundClub.Name, foundClub.Description, foundClub.ProfileImg, foundClub.Creator, foundClub.Private);
+
+                clubs.Add(foundClubDTO);
+            }
+
+            // returning retrieved clubs from 
+            return Ok(clubs);
         }
         return BadRequest(ModelState);
     }
