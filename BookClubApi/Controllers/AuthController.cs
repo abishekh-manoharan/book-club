@@ -1,19 +1,24 @@
 
+using System.ComponentModel.DataAnnotations;
 using BookClubApi.Data;
+using BookClubApi.DTOs;
 using BookClubApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookClubApi.Controllers;
 
 [Route("[controller]")]
-public class AuthController : ControllerBase {
+public class AuthController : ControllerBase
+{
     private UserManager<ApplicationUser> userManager;
     private SignInManager<ApplicationUser> signInManager;
     private BookClubContext dbContext;
-    
 
-    public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, BookClubContext dbContext) {
+
+    public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, BookClubContext dbContext)
+    {
         this.userManager = userManager;
         this.signInManager = signInManager;
         this.dbContext = dbContext;
@@ -23,14 +28,17 @@ public class AuthController : ControllerBase {
     // On success, returns an IEnumerable object containing the "success" keyword and the user's ID.
     // On failure, returns an IEnumberable object of error codes
     [HttpPost("Login")]
-    public async Task<IEnumerable<string>> Login(string email, string password) {
+    public async Task<IEnumerable<string>> Login(string email, string password)
+    {
         // trying to find user with matching email
         ApplicationUser? user = await userManager.FindByEmailAsync(email);
-        if(user != null){
+        if (user != null)
+        {
             // attempting password sign in
             var result = await signInManager.PasswordSignInAsync(user!, password, true, false);
             // return success message + user id if sign in was successful
-            if(result.Succeeded) {
+            if (result.Succeeded)
+            {
                 return ["succeeded", user.Id];
             }
         }
@@ -42,9 +50,11 @@ public class AuthController : ControllerBase {
     // On success, returns an IEnumerable object containing the "success" keyword and the user's ID.
     // On failure, returns an IEnumberable object of error codes
     [HttpPost("Register")]
-    public async Task<IEnumerable<string>> Register(User user, ApplicationUser appUser, string password) {
+    public async Task<IEnumerable<string>> Register(User user, ApplicationUser appUser, string password)
+    {
         var result = await userManager.CreateAsync(appUser, password);
-        if(result.Succeeded) {            
+        if (result.Succeeded)
+        {
             // Create User class with the associated AspNetUserId 
             user.AspnetusersId = appUser.Id;
             dbContext.Users.Add(user);
@@ -54,35 +64,67 @@ public class AuthController : ControllerBase {
         }
 
         List<string> errors = new List<string>();
-        foreach (var errs in result.Errors) {
+        foreach (var errs in result.Errors)
+        {
             errors.Add(errs.Code);
         }
         return errors;
+    }
+
+    // action method used to update a user's password
+    [HttpPost("updatePassword")]
+    [Authorize]
+    public async Task<ActionResult<List<String>>> UpdatePassword([Required] string password)
+    {
+        if (ModelState.IsValid)
+        {
+            var user = await userManager.GetUserAsync(User);
+            var token = await userManager.GeneratePasswordResetTokenAsync(user!);
+            var result = await userManager.ResetPasswordAsync(user!, token, password);
+
+            if (result.Succeeded)
+            {
+                // return success message + user id if registration was successful
+                return Ok(new List<String> { "succeeded", user!.Id });
+            }
+
+            List<string> errors = new List<string>();
+            foreach (var errs in result.Errors)
+            {
+                errors.Add(errs.Code);
+            }
+            return BadRequest(errors);
+        }
+        return BadRequest(ModelState);
     }
 
     // Action method that returns the authentication status of the user 
     // If logged in, returns a boolean value of "true".
     // If not logged in, returns a boolean value of "false".
     [HttpGet("IsLoggedIn")]
-    public ActionResult<bool> IsLoggedIn() {
+    public ActionResult<bool> IsLoggedIn()
+    {
         return signInManager.IsSignedIn(this.User);
     }
 
     // Action method that logs the user out, if they are logged in
     [HttpPost("Logout")]
-    public async void Logout() {
+    public async void Logout()
+    {
         await signInManager.SignOutAsync();
     }
 
     // Action method that returns the authenticated user's AspNetUserId
     [HttpGet("AspNetUserID")]
-    public string GetAspNetUserID() {
+    public string GetAspNetUserID()
+    {
         return userManager.GetUserId(User)!;
     }
-    
+
     // Action method that returns the authenticated user's UserId
     [HttpGet("UserID")]
-    public int GetUserID() {
+    public int GetUserID()
+    {
         var user = dbContext.Users
             .Where(u => u.AspnetusersId == userManager.GetUserId(User))
             .First();

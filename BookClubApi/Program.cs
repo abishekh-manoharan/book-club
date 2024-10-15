@@ -25,13 +25,13 @@ builder.Services.AddDbContext<BookClubContext>(options =>
 );
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-    .AddEntityFrameworkStores<BookClubContext>();
+    .AddEntityFrameworkStores<BookClubContext>()
+    .AddDefaultTokenProviders();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
     options.Password.RequiredLength = 8;
     options.User.RequireUniqueEmail = true;
-
 });
 
 builder.Services.AddScoped<IAuthHelpers, AuthHelpers>();
