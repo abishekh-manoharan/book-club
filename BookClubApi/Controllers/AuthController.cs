@@ -74,7 +74,7 @@ public class AuthController : ControllerBase
     // action method used to update a user's password
     [HttpPost("updatePassword")]
     [Authorize]
-    public async Task<ActionResult<List<String>>> UpdatePassword([Required] string password)
+    public async Task<ActionResult<List<string>>> UpdatePassword([Required] string password)
     {
         if (ModelState.IsValid)
         {
@@ -85,10 +85,10 @@ public class AuthController : ControllerBase
             if (result.Succeeded)
             {
                 // return success message + user id if registration was successful
-                return Ok(new List<String> { "succeeded", user!.Id });
+                return Ok(new List<string> { "succeeded", user!.Id });
             }
 
-            List<string> errors = new List<string>();
+            List<string> errors = [];
             foreach (var errs in result.Errors)
             {
                 errors.Add(errs.Code);
@@ -113,6 +113,8 @@ public class AuthController : ControllerBase
     {
         await signInManager.SignOutAsync();
     }
+
+    // Action method that deletes a user's account
 
     // Action method that returns the authenticated user's AspNetUserId
     [HttpGet("AspNetUserID")]

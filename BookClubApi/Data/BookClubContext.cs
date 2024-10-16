@@ -515,7 +515,8 @@ public partial class BookClubContext :  IdentityDbContext<ApplicationUser>
 
             entity.HasOne(d => d.Aspnetusers).WithMany(p => p.Users)
                 .HasForeignKey(d => d.AspnetusersId)
-                .HasConstraintName("user_ibfk_1");
+                .HasConstraintName("user_ibfk_1")
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<UserBook>(entity =>
