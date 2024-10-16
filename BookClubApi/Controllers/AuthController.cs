@@ -72,7 +72,7 @@ public class AuthController : ControllerBase
     }
 
     // action method used to update a user's password
-    [HttpPost("updatePassword")]
+    [HttpPut("updatePassword")]
     [Authorize]
     public async Task<ActionResult<List<string>>> UpdatePassword([Required] string password)
     {
@@ -115,6 +115,30 @@ public class AuthController : ControllerBase
     }
 
     // Action method that deletes a user's account
+    [HttpDelete("deleteAccount")]
+    [Authorize]
+    public async Task<ActionResult<List<string>>> DeleteAccount()
+    {
+        ApplicationUser? user = await userManager.GetUserAsync(User);
+        if (user != null)
+        {
+            var result = await userManager.DeleteAsync(user!);
+
+            if (result.Succeeded)
+            {
+                // return success message + user id if registration was successful
+                return Ok(new List<string> { "succeeded", user!.Id });
+            }
+
+            List<string> errors = [];
+            foreach (var errs in result.Errors)
+            {
+                errors.Add(errs.Code);
+            }
+            return BadRequest(errors);
+        }
+        return BadRequest("User not found.");        
+    }
 
     // Action method that returns the authenticated user's AspNetUserId
     [HttpGet("AspNetUserID")]
