@@ -35,6 +35,7 @@ public class ClubController : ControllerBase
     [HttpGet("getOneClub")]
     public ActionResult<ClubDTO> GetOneClub(int ClubId)
     {
+
         Club? club = dbContext.Clubs
             .Where(club => club.ClubId == ClubId)
             .AsNoTracking()
@@ -42,7 +43,7 @@ public class ClubController : ControllerBase
 
         if (club != null)
         {
-            ClubDTO clubDTO = new(club.ClubId, club.Name, club.Description, club.ProfileImg, club.Creator, club.Private);
+            ClubDTO clubDTO = new(club.ClubId, club.Name, club.Description, club.ProfileImg, club.Private);
             return Ok(clubDTO);
         }
 
@@ -60,9 +61,6 @@ public class ClubController : ControllerBase
 
         // ensure ClubId is 0 so that a new Id will be generated on add
         club.ClubId = 0;
-        // ensure club creator's username is specified as creator
-        var aspUser = await userManager.GetUserAsync(User);
-        club.Creator = aspUser!.UserName!;
 
         // create club record and saving it to the DB
         dbContext.Clubs.Add(club);
@@ -85,7 +83,7 @@ public class ClubController : ControllerBase
         dbContext.SaveChanges();
 
         // return created club DTO object
-        ClubDTO createdClub = new(club.ClubId, club.Name, club.Description, club.ProfileImg, club.Creator, club.Private);
+        ClubDTO createdClub = new(club.ClubId, club.Name, club.Description, club.ProfileImg, club.Private);
         return createdClub;
         // string returnObj =  club.Name + " " + club.Description + " " + club.ProfileImg + " " + club.ClubId + "\n" + user.AspnetusersId + " " + user.UserId + " " + userManager.GetUserId(User) + "\n" + clubUser.ClubId + " " + clubUser.UserId + " " + clubUser.Admin;
         // return returnObj;
@@ -157,7 +155,7 @@ public class ClubController : ControllerBase
                 .First();
 
             // map found clubs to DTOP
-            ClubDTO foundClubDTO = new(foundClub.ClubId, foundClub.Name, foundClub.Description, foundClub.ProfileImg, foundClub.Creator, foundClub.Private);
+            ClubDTO foundClubDTO = new(foundClub.ClubId, foundClub.Name, foundClub.Description, foundClub.ProfileImg, foundClub.Private);
 
             clubs.Add(foundClubDTO);
         }
@@ -498,7 +496,7 @@ public class ClubController : ControllerBase
         foreach (Club club in results)
         {
             resultToReturn.Add(
-                new ClubDTO(club.ClubId, club.Name, club.Description, club.ProfileImg, club.Creator, club.Private)
+                new ClubDTO(club.ClubId, club.Name, club.Description, club.ProfileImg, club.Private)
             );
         }
 
@@ -798,13 +796,13 @@ public class ClubController : ControllerBase
             var clubPrivacy = clubService.IsClubPrivate(clubId);
             var clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, clubId);
             if (clubPrivacy == false || clubUser != null)
-            { 
+            {
                 List<Clubrecommendation> clubRecommendations = dbContext.Clubrecommendations
                     .Where(rec => rec.ClubId == clubId)
                     .AsNoTracking()
                     .ToList();
-                
-                return Ok(clubRecommendations);                
+
+                return Ok(clubRecommendations);
                 // TODO - convert to dtos
             }
             return Unauthorized("User must be member of a private club to view it's threads.");

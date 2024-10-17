@@ -168,7 +168,7 @@ public class ProfileController : ControllerBase
                     .First();
 
                 // map found clubs to DTOP
-                ClubDTO foundClubDTO = new(foundClub.ClubId, foundClub.Name, foundClub.Description, foundClub.ProfileImg, foundClub.Creator, foundClub.Private);
+                ClubDTO foundClubDTO = new(foundClub.ClubId, foundClub.Name, foundClub.Description, foundClub.ProfileImg, foundClub.Private);
 
                 clubs.Add(foundClubDTO);
             }

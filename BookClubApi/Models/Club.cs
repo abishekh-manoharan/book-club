@@ -7,14 +7,12 @@ public partial class Club
 {
     public int ClubId { get; set; }
 
-    public string? Name { get; set; }
+    public string Name { get; set; } = null!;
 
     public string? Description { get; set; }
 
     public string? ProfileImg { get; set; }
     
-    public string Creator { get; set; } = null!;
-
     public bool Private { get; set; }
 
     public virtual ICollection<ClubUser> ClubUsers { get; set; } = new List<ClubUser>();
