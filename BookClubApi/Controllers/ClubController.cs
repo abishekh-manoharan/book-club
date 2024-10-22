@@ -479,7 +479,7 @@ public class ClubController : ControllerBase
         return NotFound(false);
     }
 
-    // action method that attains a search text, queries the club table's name and creator properties using full-text search, and returns the result
+    // action method that attains a search text, queries the club table's name property using full-text search, and returns the result
     [HttpGet("getSearchResults/{query}")]
     public ActionResult<List<ClubDTO>> GetSearchResults(string query)
     {
@@ -489,7 +489,7 @@ public class ClubController : ControllerBase
         }
 
         var results = dbContext.Clubs
-            .FromSqlRaw("SELECT * FROM club WHERE MATCH(name, Creator) AGAINST({0} IN boolean mode)", query + "*")
+            .FromSqlRaw("SELECT * FROM club WHERE MATCH(name) AGAINST({0} IN boolean mode)", query + "*")
             .ToList();
 
         List<ClubDTO> resultToReturn = [];
