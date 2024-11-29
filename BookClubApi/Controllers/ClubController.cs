@@ -91,21 +91,28 @@ public class ClubController : ControllerBase
 
     // action method that takes in an existing club's updated details and persists them in the DB
     [HttpPut("update")]
-    public ActionResult UpdateClub(Club club)
+    public ActionResult UpdateClub(ClubCreationValDTO club)
     {
-        // checking if club exists in DB
-        var matchingClub = dbContext.Clubs
-            .Where(c => c.ClubId == club.ClubId);
+        if (ModelState.IsValid)
+        {
+            // checking if club exists in DB
+            var matchingClub = dbContext.Clubs
+                .Where(c => c.ClubId == club.ClubId)
+                .FirstOrDefault();
 
-        if (matchingClub.AsNoTracking().ToList().IsNullOrEmpty())
-        {  // ensuring that we don't track the result of the query so there is no PK interference 
-            return NotFound();  // return not found if club with the specified Id isn't found
+            if (matchingClub != null)
+            {
+                matchingClub.Description = club.Description;
+                matchingClub.Name = club.Name;
+                matchingClub.ProfileImg = club.ProfileImg;
+                matchingClub.Private = (bool) club.Private!;
+                dbContext.SaveChanges();
+            }
+
+            return Ok(club); // return updated club with status 200 if club with specified Id found
+
         }
-
-        dbContext.Clubs.Update(club); // update club
-        dbContext.SaveChanges();
-
-        return Ok(club); // return updated club with status 200 if club with specified Id found
+        return BadRequest(ModelState);
     }
 
     // action method that deletes the specified club using the clubId

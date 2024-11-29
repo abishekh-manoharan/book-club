@@ -15,12 +15,15 @@
     "mongoose": "^8.4.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-redux": "^9",
     "react-router-dom": "^6.22.0",
+    "@reduxjs/toolkit": "^2.2",
     "swiper": "^11.0.6",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@types/uuid": "^9.0.8",
+    "@types/node": "^20.11.6",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^7.15.0",
