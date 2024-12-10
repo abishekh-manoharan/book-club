@@ -105,7 +105,7 @@ public class ClubController : ControllerBase
                 matchingClub.Description = club.Description;
                 matchingClub.Name = club.Name;
                 matchingClub.ProfileImg = club.ProfileImg;
-                matchingClub.Private = (bool) club.Private!;
+                matchingClub.Private = (bool)club.Private!;
                 dbContext.SaveChanges();
             }
 
@@ -384,66 +384,74 @@ public class ClubController : ControllerBase
 
     // action method that remove a user from a club
     [HttpPost("leave")]
-    public ActionResult<bool> LeaveClub(int UserId, int ClubId)
+    public ActionResult<bool> LeaveClub([Required] int UserId, [Required] int ClubId)
     {
-        // ensure club and user exists
-        User? user = dbContext.Users
-            .Where(user => user.UserId == UserId)
-            .AsNoTracking()
-            .FirstOrDefault();
-        Club? club = dbContext.Clubs
-            .Where(club => club.ClubId == ClubId)
-            .AsNoTracking()
-            .FirstOrDefault();
-
-        // case where both user and club exist
-        if (club != null && user != null)
+        if (ModelState.IsValid)
         {
-            // ensure clubUser exists
-            var clubUser = dbContext.ClubUsers
-                .Where(clubUser => clubUser.ClubId == ClubId && clubUser.UserId == UserId)
+            // ensure club and user exists
+            User? user = dbContext.Users
+                .Where(user => user.UserId == UserId)
+                .AsNoTracking()
+                .FirstOrDefault();
+            Club? club = dbContext.Clubs
+                .Where(club => club.ClubId == ClubId)
                 .AsNoTracking()
                 .FirstOrDefault();
 
-            if (clubUser != null)
+            // case where both user and club exist
+            if (club != null && user != null)
             {
-                dbContext.ClubUsers.Remove(clubUser);
-                dbContext.SaveChanges();
+                // ensure clubUser exists
+                var clubUser = dbContext.ClubUsers
+                    .Where(clubUser => clubUser.ClubId == ClubId && clubUser.UserId == UserId)
+                    .AsNoTracking()
+                    .FirstOrDefault();
 
-                return Ok(true);
+                if (clubUser != null)
+                {
+                    dbContext.ClubUsers.Remove(clubUser);
+                    dbContext.SaveChanges();
+
+                    return Ok(true);
+                }
             }
-        }
 
-        // case where either club or user or clubuser doesn't exist in DB
-        return NotFound(false);
+            // case where either club or user or clubuser doesn't exist in DB
+            return NotFound(false);
+        }
+        return BadRequest(ModelState);
     }
 
     // Action methods that returns all users who have joined the specified club
     // takes in ClubId as agument
     // returns a list of User objects
     [HttpGet("clubUsers")]
-    public ActionResult<List<UserDTO>> GetUsersOfAClub(int ClubId)
+    public ActionResult<List<UserDTO>> GetUsersOfAClub([Required] int ClubId)
     {
-        // getting all club users where the ClubId matches the argument
-        var clubUsers = dbContext.ClubUsers
-            .Where(clubUser => clubUser.ClubId == ClubId)
-            .AsNoTracking()
-            .ToList();
-
-        // filling empty users list with users in the club
-        List<UserDTO> users = new();
-        foreach (var clubUser in clubUsers)
+        if (ModelState.IsValid)
         {
-            var user = dbContext.Users
-                .Where(user => user.UserId == clubUser.UserId)
+            // getting all club users where the ClubId matches the argument
+            var clubUsers = dbContext.ClubUsers
+                .Where(clubUser => clubUser.ClubId == ClubId)
                 .AsNoTracking()
-                .First();
+                .ToList();
 
-            UserDTO userDTO = new(user.UserId, user.Bio, user.FName, user.LName, user.ProfileImg, user.AspnetusersId);
-            users.Add(userDTO);
+            // filling empty users list with users in the club
+            List<UserDTO> users = new();
+            foreach (var clubUser in clubUsers)
+            {
+                var user = dbContext.Users
+                    .Where(user => user.UserId == clubUser.UserId)
+                    .AsNoTracking()
+                    .First();
+
+                UserDTO userDTO = new(user.UserId, user.Bio, user.FName, user.LName, user.ProfileImg, user.AspnetusersId);
+                users.Add(userDTO);
+            }
+
+            return Ok(users);
         }
-
-        return users;
+        return BadRequest(ModelState);
     }
 
     // action method that sets the given clubuser's admin state to true - giving the user admin privileges for the club
