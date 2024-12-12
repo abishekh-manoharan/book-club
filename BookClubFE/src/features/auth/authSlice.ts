@@ -38,9 +38,9 @@ export const apiSliceWithAuth = apiSlice.injectEndpoints({
                 url: 'auth/login',
                 credentials: 'include',
                 method: 'POST',
-                body: info,
+                body: JSON.stringify(info),
                 headers: {
-                    'Content-Type': 'x-www-form-urlencoded'
+                    'Content-Type': 'application/json'
                 }
             }),
             invalidatesTags: () => ([{ type: 'Auth', id: 'status' }])

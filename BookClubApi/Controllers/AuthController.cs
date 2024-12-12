@@ -28,16 +28,16 @@ public class AuthController : ControllerBase
     // On success, returns an IEnumerable object containing the "success" keyword and the user's ID.
     // On failure, returns an IEnumberable object of error codes
     [HttpPost("Login")]
-    public async Task<ActionResult<List<string>>> Login(string email, string password)
+    public async Task<ActionResult<List<string>>> Login([FromBody] LoginValDTO loginDTO)
     {
         if (ModelState.IsValid)
         {
             // trying to find user with matching email
-            ApplicationUser? user = await userManager.FindByEmailAsync(email);
+            ApplicationUser? user = await userManager.FindByEmailAsync(loginDTO.email);
             if (user != null)
             {
                 // attempting password sign in
-                var result = await signInManager.PasswordSignInAsync(user!, password, true, false);
+                var result = await signInManager.PasswordSignInAsync(user!, loginDTO.password, true, false);
                 // return success message + user id if sign in was successful
                 if (result.Succeeded)
                 {
@@ -45,7 +45,7 @@ public class AuthController : ControllerBase
                 }
             }
             // return error if user with email not found or if password sign in fails
-            return BadRequest(new List<string> { "error" });
+            return BadRequest(new List<string> { "user with email not found or password sign in failed" });
         }
         return BadRequest(ModelState);
     }
