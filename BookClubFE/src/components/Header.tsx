@@ -2,20 +2,20 @@ import { NavLink, Outlet } from "react-router-dom";
 // import { GetAuthContext } from "../utils/context";
 // import AuthService from "../services/auth";
 import SearchBar from "./SearchClubBar";
-import {  useGetStatusQuery } from "../features/auth/authSlice";
+import {  useGetStatusQuery, useLogoutMutation } from "../features/auth/authSlice";
 // import { useAppSelector } from "../app/hooks";
 
 function Header() {
     // const auth = GetAuthContext();
     const { data: loginStatus } = useGetStatusQuery();
+    const [logout] = useLogoutMutation();
 
-    // const logoutClickHandler = (e: React.SyntheticEvent) => {
-    //     e.preventDefault();
-    //     e.stopPropagation();
+    const logoutClickHandler = (e: React.SyntheticEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
 
-    //     AuthService.logout();
-    //     auth.setAuth(false);
-    // }
+        logout();
+    }
 
     return (
         <>

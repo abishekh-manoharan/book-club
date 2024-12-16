@@ -13,7 +13,6 @@ function Login() {
     const loginSubmitClick = async (e: React.SyntheticEvent) => {
         e.preventDefault();
         e.stopPropagation();
-        console.log("login fn");
         
         try {
             await login({ email, password }).unwrap();

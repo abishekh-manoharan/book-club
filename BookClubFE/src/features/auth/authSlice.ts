@@ -47,6 +47,14 @@ export const apiSliceWithAuth = apiSlice.injectEndpoints({
                 }
             }),
             invalidatesTags: () => ([{ type: 'Auth', id: 'status' }])
+        }),
+        logout: builder.mutation<void, void>({
+            query: () => ({
+                url: 'auth/logout',
+                credentials: 'include',
+                method: 'POST'
+            }),
+            invalidatesTags: () => ([{type: 'Auth', id: 'status'}])
         })
     })
 });
@@ -57,7 +65,11 @@ export const selectLoginStatus = (state: RootState) => state.auth.isLoggedIn;
 export default authSlice.reducer;
 
 
-export const { useGetStatusQuery, useLoginMutation } = apiSliceWithAuth;
+export const { 
+    useGetStatusQuery, 
+    useLoginMutation,
+    useLogoutMutation 
+} = apiSliceWithAuth;
 
 
 
