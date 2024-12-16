@@ -1,38 +1,32 @@
 import { useState } from "react";
-import AuthService from "../services/auth";
-import { GetAuthContext } from "../utils/context";
 import { useNavigate } from "react-router-dom";
+import { useLoginMutation } from "../features/auth/authSlice";
+
 
 function Login() {
     const nav = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const auth = GetAuthContext();
+    // const auth = GetAuthContext();
+    const [login, { isLoading }]  = useLoginMutation();
 
-    const loginSubmitClick = (e: React.SyntheticEvent) => {
+    const loginSubmitClick = async (e: React.SyntheticEvent) => {
         e.preventDefault();
         e.stopPropagation();
-
-        AuthService.login(email, password).then(res => {
-            console.log("login res");
-            console.log(res);
-            
-            if (res.$values[0] === 'succeeded') {
-                // displaying success message
-                document.querySelector('.loginSuccess')?.classList.remove('hidden');
-                document.querySelector('.loginError')?.classList.add('hidden');
-                // updating the auth state using context
-                auth.setAuth(true);
-                nav('/');
-            } else {
-                document.querySelector('.loginSuccess')?.classList.add('hidden');
-                document.querySelector('.loginError')?.classList.remove('hidden');
-            }
-            
+        console.log("login fn");
+        
+        try {
+            await login({ email, password }).unwrap();
+            document.querySelector('.loginSuccess')?.classList.remove('hidden');
+            document.querySelector('.loginError')?.classList.add('hidden');
+            nav('/')
+        } catch {
+            document.querySelector('.loginSuccess')?.classList.add('hidden');
+            document.querySelector('.loginError')?.classList.remove('hidden');
         }
-        );
-        // HANDLING LOGIN RESPONSE
     }
+
+
 
     return (
         <div>
@@ -45,7 +39,7 @@ function Login() {
 
                 <p className="loginError hidden" style={{ "color": "red" }}>Email or password incorrect</p>
                 <p className="loginSuccess hidden" style={{ "color": "green" }}>Login successful</p>
-                <button onClick={loginSubmitClick}>Submit</button>
+                <button onClick={loginSubmitClick} disabled={isLoading}>Submit</button>
             </form>
         </div>
     );
