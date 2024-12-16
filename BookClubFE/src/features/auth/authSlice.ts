@@ -30,7 +30,10 @@ const authSlice = createSlice({
 export const apiSliceWithAuth = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         getStatus: builder.query<boolean, void>({
-            query: () => 'auth/isloggedin',
+            query: () => ({
+                url: 'auth/isloggedin',
+                credentials: 'include'
+            }),
             providesTags: [{ type: 'Auth', id: 'status' }]
         }),
         login: builder.mutation<LoginResponse, { email: string, password: string }>({
