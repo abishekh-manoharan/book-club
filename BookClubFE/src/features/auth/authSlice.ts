@@ -8,6 +8,22 @@ type LoginError = {
 }
 type LoginResponse = LoginSuccess | LoginError;
 
+type RegistrationModelStateError = {
+    [key: string]: string
+};
+type RegistrationAllowanceError = string[];
+type RegistrationSuccess = string[];
+type RegistrationResponse = RegistrationModelStateError | RegistrationAllowanceError | RegistrationSuccess;
+
+export interface RegistrationFormData {
+    Username: string,
+    Fname: string,
+    LName: string,
+    Email: string,
+    password: string
+}
+
+
 const initialState = {
     isLoggedIn: false
 }
@@ -55,6 +71,17 @@ export const apiSliceWithAuth = apiSlice.injectEndpoints({
                 method: 'POST'
             }),
             invalidatesTags: () => ([{type: 'Auth', id: 'status'}])
+        }),
+        register: builder.mutation<RegistrationResponse, RegistrationFormData>({
+            query: (info) => ({
+                url: 'auth/register',
+                credentials: 'include',
+                method: 'POST',
+                body: JSON.stringify(info),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
         })
     })
 });
@@ -68,7 +95,8 @@ export default authSlice.reducer;
 export const { 
     useGetStatusQuery, 
     useLoginMutation,
-    useLogoutMutation 
+    useLogoutMutation, 
+    useRegisterMutation 
 } = apiSliceWithAuth;
 
 

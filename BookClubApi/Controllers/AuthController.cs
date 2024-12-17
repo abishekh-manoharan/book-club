@@ -66,10 +66,10 @@ public class AuthController : ControllerBase
                 dbContext.Users.Add(user);
                 dbContext.SaveChanges();
                 // return success message + user id if registration was successful
-                return Ok(new List<string> { "succeeded", appUser.Id });
+                return Ok(new List<string> { "success", appUser.Id });
             }
 
-            List<string> errors = new List<string>();
+            List<string> errors = new List<string>{"error"};
             foreach (var errs in result.Errors)
             {
                 errors.Add(errs.Code);
