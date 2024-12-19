@@ -9,11 +9,21 @@ type LoginError = {
 type LoginResponse = LoginSuccess | LoginError;
 
 type RegistrationModelStateError = {
-    [key: string]: string
+    [key: string]: string[] | string;
+    kind: 'modelStateError';
 };
-type RegistrationAllowanceError = string[];
-type RegistrationSuccess = string[];
-type RegistrationResponse = RegistrationModelStateError | RegistrationAllowanceError | RegistrationSuccess;
+
+export interface RegistrationAllowanceError {
+    errors: string[];
+    kind: 'registrationError';
+}
+
+type RegistrationError = RegistrationModelStateError | RegistrationAllowanceError;
+
+type RegistrationSuccess = {
+    values: string[];
+}
+
 
 export interface RegistrationFormData {
     Username: string,
@@ -70,9 +80,9 @@ export const apiSliceWithAuth = apiSlice.injectEndpoints({
                 credentials: 'include',
                 method: 'POST'
             }),
-            invalidatesTags: () => ([{type: 'Auth', id: 'status'}])
+            invalidatesTags: () => ([{ type: 'Auth', id: 'status' }])
         }),
-        register: builder.mutation<RegistrationResponse, RegistrationFormData>({
+        register: builder.mutation<RegistrationSuccess, RegistrationFormData>({
             query: (info) => ({
                 url: 'auth/register',
                 credentials: 'include',
@@ -80,6 +90,30 @@ export const apiSliceWithAuth = apiSlice.injectEndpoints({
                 body: JSON.stringify(info),
                 headers: {
                     'Content-Type': 'application/json'
+                },
+                transformResponse(res: { id: number, $values: RegistrationSuccess }) {
+                    return res.$values;
+                },
+                transformErrorResponse(res: {
+                    [key: string]: string[];
+                } | {
+                    $values: string[];
+                }) {
+                    if ('$values' in res) {
+                        const errors: RegistrationError = {
+                            errors: res.$values,
+                            kind: "registrationError"
+                        }
+
+                        return errors;
+                    } else {
+                        const errors: RegistrationError = {
+                            ...res,
+                            kind: "modelStateError"
+                        }
+
+                        return errors;
+                    }
                 }
             })
         })
@@ -92,11 +126,11 @@ export const selectLoginStatus = (state: RootState) => state.auth.isLoggedIn;
 export default authSlice.reducer;
 
 
-export const { 
-    useGetStatusQuery, 
+export const {
+    useGetStatusQuery,
     useLoginMutation,
-    useLogoutMutation, 
-    useRegisterMutation 
+    useLogoutMutation,
+    useRegisterMutation
 } = apiSliceWithAuth;
 
 
