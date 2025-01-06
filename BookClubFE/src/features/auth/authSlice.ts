@@ -18,11 +18,9 @@ export interface RegistrationAllowanceError {
     kind: 'registrationError';
 }
 
-type RegistrationError = RegistrationModelStateError | RegistrationAllowanceError;
+export type RegistrationError = RegistrationModelStateError | RegistrationAllowanceError;
 
-type RegistrationSuccess = {
-    values: string[];
-}
+type RegistrationSuccess = string[];
 
 
 export interface RegistrationFormData {
@@ -95,18 +93,18 @@ export const apiSliceWithAuth = apiSlice.injectEndpoints({
                     return res.$values;
                 },
                 transformErrorResponse(res: {
-                    [key: string]: string[];
+                    [key: string]: string[]; // type for model state errors in their raw state
                 } | {
-                    $values: string[];
+                    $values: string[]; // type for registration error
                 }) {
-                    if ('$values' in res) {
+                    if ('$values' in res) { // case where the error is a registration errors in their raw state
                         const errors: RegistrationError = {
                             errors: res.$values,
                             kind: "registrationError"
                         }
 
                         return errors;
-                    } else {
+                    } else { // case where the error is a model state error
                         const errors: RegistrationError = {
                             ...res,
                             kind: "modelStateError"
