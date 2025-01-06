@@ -1,5 +1,6 @@
 
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 using BookClubApi.Data;
 using BookClubApi.DTOs;
 using BookClubApi.Models;
@@ -33,11 +34,11 @@ public class AuthController : ControllerBase
         if (ModelState.IsValid)
         {
             // trying to find user with matching email
-            ApplicationUser? user = await userManager.FindByEmailAsync(loginDTO.email);
+            ApplicationUser? user = await userManager.FindByEmailAsync(loginDTO.Email);
             if (user != null)
             {
                 // attempting password sign in
-                var result = await signInManager.PasswordSignInAsync(user!, loginDTO.password, true, false);
+                var result = await signInManager.PasswordSignInAsync(user!, loginDTO.Password, true, false);
                 // return success message + user id if sign in was successful
                 if (result.Succeeded)
                 {
@@ -54,22 +55,37 @@ public class AuthController : ControllerBase
     // On success, returns an IEnumerable object containing the "success" keyword and the user's ID.
     // On failure, returns an IEnumberable object of error codes
     [HttpPost("Register")]
-    public async Task<ActionResult<List<string>>> Register(User user, ApplicationUser appUser, string password)
+    public async Task<ActionResult<List<string>>> Register([FromBody] RegistrationValDTO user)
     {
+        ApplicationUser appUser = new()
+        {
+            UserName = user.Username,
+            Email = user.Email,
+        };
+        System.Console.WriteLine("appUser");
+        Console.WriteLine(JsonSerializer.Serialize(appUser, new JsonSerializerOptions { WriteIndented = true }));
+
         if (ModelState.IsValid)
         {
-            var result = await userManager.CreateAsync(appUser, password);
+            var result = await userManager.CreateAsync(appUser, user.Password);
             if (result.Succeeded)
             {
                 // Create User class with the associated AspNetUserId 
-                user.AspnetusersId = appUser.Id;
-                dbContext.Users.Add(user);
+                User newUser = new()
+                {
+                    FName = user.Fname,
+                    LName = user.LName,
+                    AspnetusersId = appUser.Id
+                };
+                System.Console.WriteLine("users");
+                dbContext.Users.Add(newUser);
                 dbContext.SaveChanges();
+                Console.WriteLine(JsonSerializer.Serialize(newUser, new JsonSerializerOptions { WriteIndented = true }));
                 // return success message + user id if registration was successful
                 return Ok(new List<string> { "success", appUser.Id });
             }
 
-            List<string> errors = new List<string>{"error"};
+            List<string> errors = new List<string> { "error" };
             foreach (var errs in result.Errors)
             {
                 errors.Add(errs.Code);
@@ -78,6 +94,33 @@ public class AuthController : ControllerBase
         }
         return BadRequest(ModelState);
     }
+    // [HttpPost("Register")]
+    // public async Task<ActionResult<List<string>>> Register([FromBody] User user, [FromBody] ApplicationUser appUser, string password)
+    // {
+    //     Console.WriteLine(user.FName);
+
+    //     if (ModelState.IsValid)
+    //     {
+    //         var result = await userManager.CreateAsync(appUser, password);
+    //         if (result.Succeeded)
+    //         {
+    //             // Create User class with the associated AspNetUserId 
+    //             user.AspnetusersId = appUser.Id;
+    //             dbContext.Users.Add(user);
+    //             dbContext.SaveChanges();
+    //             // return success message + user id if registration was successful
+    //             return Ok(new List<string> { "success", appUser.Id });
+    //         }
+
+    //         List<string> errors = new List<string>{"error"};
+    //         foreach (var errs in result.Errors)
+    //         {
+    //             errors.Add(errs.Code);
+    //         }
+    //         return BadRequest(errors);
+    //     }
+    //     return BadRequest(ModelState);
+    // }
 
     // action method used to update a user's password
     [HttpPut("updatePassword")]
