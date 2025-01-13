@@ -2,17 +2,16 @@ import React, { useEffect, useState } from "react";
 import { RegistrationFormData } from "../utils/types";
 // import AuthService from '../services/auth';
 // import { AxiosError } from "axios";
-import { RegistrationError, useRegisterMutation } from "../features/auth/authSlice";
-import { isFetchBaseQueryError } from "../app/typeGuards";
-import { handleNetworkError } from "../utils/helpers";
+import { useRegisterMutation, RegistrationSuccess } from "../features/auth/authSlice";
+import { isRegistrationAllowanceError } from "../app/typeGuards";
 
 function Register() {
     const [username, setUsername] = useState('');
     const [fName, setFName] = useState('');
     const [lName, setLName] = useState('');
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
+    const [password, setPassword] = useState("Abcde123!");
+    const [confirmPassword, setConfirmPassword] = useState("Abcde123!");
     const [passwordsMatch, setPasswordsMatch] = useState(true);
 
     const [register, { isLoading }] = useRegisterMutation();
@@ -84,10 +83,11 @@ function Register() {
 
 
         try {
-            const response = await register(registrationData).unwrap()
-            // handling successful registration
-            // if (response.kind === 'success') {
-            if (response[0] === 'succeeded') {
+            const unTypedResponse = await register(registrationData).unwrap() as unknown;
+            const { $values: response } = unTypedResponse as { id: string, $values: RegistrationSuccess }
+
+            console.log(response);
+            if (response[0] === 'success') {
                 console.log('suceeded in effect')
                 const submissionSuccessElement = document.querySelector(".submission-success");
                 submissionSuccessElement!.classList.toggle("hidden");
@@ -95,147 +95,67 @@ function Register() {
             }
             // }
         } catch (e) {
-            if (isFetchBaseQueryError(e)) {
-                if (e.status === "FETCH_ERROR") {
-                    handleNetworkError(e.error);
-                } else if (typeof e.status === 'number' && e.status >= 400 && e.status <= 500 && "data" in e && e.data != null && typeof (e.data) === "object") {
-                    const transformedData = e.data as RegistrationError;
-                    if (transformedData.kind === "registrationError") {
-                        transformedData.errors.forEach((code: string) => {
-                            if (code === "PasswordTooShort") {
-                                // display error messages
-                                const errorElement = document.querySelector(".PasswordTooShort");
-                                if (errorElement?.classList.contains("hidden")) { // display only if 
-                                    errorElement.classList.toggle('hidden');
-                                }
-                            }
-                            if (code === "PasswordRequiresNonAlphanumeric") {
-                                // display error messages
-                                const errorElement = document.querySelector(".PasswordRequiresNonAlphanumeric");
-                                if (errorElement?.classList.contains("hidden")) { // display only if 
-                                    errorElement.classList.toggle('hidden');
-                                }
-                            }
-                            if (code === "PasswordRequiresLower") {
-                                // display error messages
-                                const errorElement = document.querySelector(".PasswordRequiresLower");
-                                if (errorElement?.classList.contains("hidden")) { // display only if 
-                                    errorElement.classList.toggle('hidden');
-                                }
-                            }
-                            if (code === "PasswordRequiresUpper") {
-                                // display error messages
-                                const errorElement = document.querySelector(".PasswordRequiresUpper");
-                                if (errorElement?.classList.contains("hidden")) { // display only if 
-                                    errorElement.classList.toggle('hidden');
-                                }
-                            }
-                            if (code === "PasswordRequiresDigit") {
-                                // display error messages
-                                const errorElement = document.querySelector(".PasswordRequiresDigit");
-                                if (errorElement?.classList.contains("hidden")) { // display only if 
-                                    errorElement.classList.toggle('hidden');
-                                }
-                            }
-                            if (code === "DuplicateUserName") {
-                                // display error messages
-                                const errorElement = document.querySelector(".DuplicateUserName");
-                                if (errorElement?.classList.contains("hidden")) { // display only if 
-                                    errorElement.classList.toggle('hidden');
-                                }
-                            }
-                            if (code === "DuplicateEmail") {
-                                // display error messages
-                                const errorElement = document.querySelector(".DuplicateEmail");
-                                if (errorElement?.classList.contains("hidden")) { // display only if 
-                                    errorElement.classList.toggle('hidden');
-                                }
-                            }
-                        })
-                    } else if (transformedData.kind === "modelStateError") {
-                        console.error(transformedData.errors);
+            if (isRegistrationAllowanceError(e)) {
+                console.log("e");
+                console.log(e);
+
+                e.errors.forEach((code: string) => {
+                    console.log(code)
+                    if (code === "PasswordTooShort") {
+                        // display error messages
+                        const errorElement = document.querySelector(".PasswordTooShort");
+                        if (errorElement?.classList.contains("hidden")) { // display only if 
+                            errorElement.classList.toggle('hidden');
+                        }
                     }
-                }
+                    if (code === "PasswordRequiresNonAlphanumeric") {
+                        // display error messages
+                        const errorElement = document.querySelector(".PasswordRequiresNonAlphanumeric");
+                        if (errorElement?.classList.contains("hidden")) { // display only if 
+                            errorElement.classList.toggle('hidden');
+                        }
+                    }
+                    if (code === "PasswordRequiresLower") {
+                        // display error messages
+                        const errorElement = document.querySelector(".PasswordRequiresLower");
+                        if (errorElement?.classList.contains("hidden")) { // display only if 
+                            errorElement.classList.toggle('hidden');
+                        }
+                    }
+                    if (code === "PasswordRequiresUpper") {
+                        // display error messages
+                        const errorElement = document.querySelector(".PasswordRequiresUpper");
+                        if (errorElement?.classList.contains("hidden")) { // display only if 
+                            errorElement.classList.toggle('hidden');
+                        }
+                    }
+                    if (code === "PasswordRequiresDigit") {
+                        // display error messages
+                        const errorElement = document.querySelector(".PasswordRequiresDigit");
+                        if (errorElement?.classList.contains("hidden")) { // display only if 
+                            errorElement.classList.toggle('hidden');
+                        }
+                    }
+                    if (code === "DuplicateUserName") {
+                        // display error messages
+                        const errorElement = document.querySelector(".DuplicateUserName");
+                        if (errorElement?.classList.contains("hidden")) { // display only if 
+                            errorElement.classList.toggle('hidden');
+                        }
+                    }
+                    if (code === "DuplicateEmail") {
+                        // display error messages
+                        const errorElement = document.querySelector(".DuplicateEmail");
+                        if (errorElement?.classList.contains("hidden")) { // display only if 
+                            errorElement.classList.toggle('hidden');
+                        }
+                    }
+                })
+
+            } else {
+                window.alert("an unknown error occurred. please try again later.")
             }
         }
-        // AuthService.register(registrationData)
-        //     .then(res => {
-
-
-        //         // // handling successful registration
-        //         // if (res.$values[0] === 'succeeded') {
-        //         //     console.log('suceeded in effect')
-        //         //     const submissionSuccessElement = document.querySelector(".submission-success");
-        //         //     submissionSuccessElement!.classList.toggle("hidden");
-        //         //     return;
-        //         // }
-
-        //         // handling failed registration
-        //         res.$values.forEach((code: string) => {
-
-        //             console.log('code');
-        //             console.log(code);
-        //             if (code === "PasswordTooShort") {
-        //                 // display error messages
-        //                 const errorElement = document.querySelector(".PasswordTooShort");
-        //                 if (errorElement?.classList.contains("hidden")) { // display only if 
-        //                     errorElement.classList.toggle('hidden');
-        //                 }
-        //             }
-        //             if (code === "PasswordRequiresNonAlphanumeric") {
-        //                 // display error messages
-        //                 const errorElement = document.querySelector(".PasswordRequiresNonAlphanumeric");
-        //                 if (errorElement?.classList.contains("hidden")) { // display only if 
-        //                     errorElement.classList.toggle('hidden');
-        //                 }
-        //             }
-        //             if (code === "PasswordRequiresLower") {
-        //                 // display error messages
-        //                 const errorElement = document.querySelector(".PasswordRequiresLower");
-        //                 if (errorElement?.classList.contains("hidden")) { // display only if 
-        //                     errorElement.classList.toggle('hidden');
-        //                 }
-        //             }
-        //             if (code === "PasswordRequiresUpper") {
-        //                 // display error messages
-        //                 const errorElement = document.querySelector(".PasswordRequiresUpper");
-        //                 if (errorElement?.classList.contains("hidden")) { // display only if 
-        //                     errorElement.classList.toggle('hidden');
-        //                 }
-        //             }
-        //             if (code === "PasswordRequiresDigit") {
-        //                 // display error messages
-        //                 const errorElement = document.querySelector(".PasswordRequiresDigit");
-        //                 if (errorElement?.classList.contains("hidden")) { // display only if 
-        //                     errorElement.classList.toggle('hidden');
-        //                 }
-        //             }
-        //             if (code === "DuplicateUserName") {
-        //                 // display error messages
-        //                 const errorElement = document.querySelector(".DuplicateUserName");
-        //                 if (errorElement?.classList.contains("hidden")) { // display only if 
-        //                     errorElement.classList.toggle('hidden');
-        //                 }
-        //             }
-        //             if (code === "DuplicateEmail") {
-        //                 // display error messages
-        //                 const errorElement = document.querySelector(".DuplicateEmail");
-        //                 if (errorElement?.classList.contains("hidden")) { // display only if 
-        //                     errorElement.classList.toggle('hidden');
-        //                 }
-        //             }
-
-        //         }
-        //         );
-
-        //     })
-        //     .catch(e => {
-        //         if (e instanceof AxiosError) {
-        //             console.log(e.message);
-        //         }
-        //     });
-
-        console.log('submit button clicked')
     }
 
     return (

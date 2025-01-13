@@ -1,10 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { apiSlice } from "../api/apiSlice";
 import { RootState } from "@/app/store";
+import { log } from "console";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 
 type LoginSuccess = boolean;
 type LoginError = {
-    [key: string]: string | string[]
+    [key: string]: string[]
 }
 type LoginResponse = LoginSuccess | LoginError;
 
@@ -20,7 +22,7 @@ export interface RegistrationAllowanceError {
 
 export type RegistrationError = RegistrationModelStateError | RegistrationAllowanceError;
 
-type RegistrationSuccess = string[];
+export type RegistrationSuccess = string[];
 
 
 export interface RegistrationFormData {
@@ -88,32 +90,53 @@ export const apiSliceWithAuth = apiSlice.injectEndpoints({
                 body: JSON.stringify(info),
                 headers: {
                     'Content-Type': 'application/json'
-                },
-                transformResponse(res: { id: number, $values: RegistrationSuccess }) {
-                    return res.$values;
-                },
-                transformErrorResponse(res: {
-                    [key: string]: string[]; // type for model state errors in their raw state
-                } | {
-                    $values: string[]; // type for registration error
-                }) {
-                    if ('$values' in res) { // case where the error is a registration errors in their raw state
+                }
+            }),
+            transformResponse(res: { id: number, $values: RegistrationSuccess }) {
+                return res.$values;
+            },
+            transformErrorResponse(res: FetchBaseQueryError) {
+                if (res.data && typeof res.data === 'object') {
+                    if ('$values' in res.data) { // case where the error is a registration errors in their raw state
                         const errors: RegistrationError = {
-                            errors: res.$values,
+                            errors: res.data.$values as string[],
                             kind: "registrationError"
                         }
 
                         return errors;
                     } else { // case where the error is a model state error
                         const errors: RegistrationError = {
-                            ...res,
+                            ...res.data,
                             kind: "modelStateError"
                         }
 
                         return errors;
                     }
                 }
-            })
+            }
+            // transformErrorResponse(res: {
+            //     [key: string]: string[]; // type for model state errors in their raw state
+            // } | {
+            //     $values: string[]; // type for registration error
+            // }) {
+            //     console.log("res");
+            //     console.log(res);
+            //     if ('$values' in res) { // case where the error is a registration errors in their raw state
+            //         const errors: RegistrationError = {
+            //             errors: res.$values,
+            //             kind: "registrationError"
+            //         }
+
+            //         return errors;
+            //     } else { // case where the error is a model state error
+            //         const errors: RegistrationError = {
+            //             ...res,
+            //             kind: "modelStateError"
+            //         }
+
+            //         return errors;
+            //     }
+            // }
         })
     })
 });
