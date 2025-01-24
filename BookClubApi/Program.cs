@@ -5,6 +5,9 @@ using BookClubApi.Data;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using BookClubApi.Services;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,7 +46,14 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.ExpireTimeSpan = TimeSpan.FromDays(30);
     options.SlidingExpiration = true;
     options.Cookie.HttpOnly = true;
+    // ensuring [Auhtorize] attribute returns a 401 error
+    options.Events.OnRedirectToLogin = context =>
+    {
+        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+        return Task.CompletedTask;
+    };
 });
+
 
 builder.Services.AddCors(options =>
 {
@@ -80,3 +90,4 @@ app.Run();
 
 // 1. dotnet ef migrations add UpdateTable  // adds a migration
 // 2. dotnet ef database update // updates DB
+
