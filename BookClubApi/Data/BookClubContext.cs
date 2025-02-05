@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookClubApi.Data;
 
-public partial class BookClubContext :  IdentityDbContext<ApplicationUser>
+public partial class BookClubContext : IdentityDbContext<ApplicationUser>
 {
     public BookClubContext()
     {
@@ -180,6 +180,12 @@ public partial class BookClubContext :  IdentityDbContext<ApplicationUser>
             entity.Property(e => e.ProfileImg)
                 .HasMaxLength(300)
                 .HasColumnName("profile_img");
+
+            entity
+                .HasOne(u => u.User)
+                .WithMany(c => c.Clubs)
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<ClubUser>(entity =>
@@ -362,7 +368,7 @@ public partial class BookClubContext :  IdentityDbContext<ApplicationUser>
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("pollbook_ibfk_1");
         });
-        
+
         modelBuilder.Entity<PollVote>(entity =>
         {
             entity.HasKey(e => new { e.PollId, e.UserId }).HasName("PRIMARY");
@@ -449,7 +455,7 @@ public partial class BookClubContext :  IdentityDbContext<ApplicationUser>
                 .HasConstraintName("readinguser_ibfk_1");
 
             entity.HasOne(d => d.User).WithMany(p => p.Readingusers)
-                .HasForeignKey(d => d.UserId )
+                .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("readinguser_user_ibfk_2");
 

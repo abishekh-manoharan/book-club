@@ -12,8 +12,10 @@ public partial class Club
     public string? Description { get; set; }
 
     public string? ProfileImg { get; set; }
-    
+
     public bool Private { get; set; }
+
+    public int UserId { get; set; }
 
     public virtual ICollection<ClubUser> ClubUsers { get; set; } = new List<ClubUser>();
 
@@ -24,4 +26,6 @@ public partial class Club
     public virtual ICollection<Poll> Polls { get; set; } = new List<Poll>();
 
     public virtual ICollection<Reading> Readings { get; set; } = new List<Reading>();
+
+    public virtual User User { get; set; }
 }

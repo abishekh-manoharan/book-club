@@ -19,6 +19,8 @@ public partial class User
 
     public virtual AspNetUser? Aspnetusers { get; set; }
 
+    public virtual ICollection<Club> Clubs { get; set; } = new List<Club>();
+
     public virtual ICollection<ClubUser> ClubUsers { get; set; } = new List<ClubUser>();
 
     public virtual ICollection<Clubrecommendation> Clubrecommendations { get; set; } = new List<Clubrecommendation>();
