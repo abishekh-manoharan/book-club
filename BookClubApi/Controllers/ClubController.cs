@@ -43,7 +43,7 @@ public class ClubController : ControllerBase
 
         if (club != null)
         {
-            ClubDTO clubDTO = new(club.ClubId, club.Name, club.Description, club.ProfileImg, club.Private);
+            ClubDTO clubDTO = new(club.ClubId, club.Name, club.Description, club.ProfileImg, club.Private, club.UserId);
             return Ok(clubDTO);
         }
 
@@ -57,22 +57,24 @@ public class ClubController : ControllerBase
     {
         if (ModelState.IsValid)
         {
+            // find user object associated with AspNetUserId for ClubUser creation
+            var user = dbContext.Users
+                .Where(u => u.AspnetusersId == userManager.GetUserId(User))
+                .First();
+
             Club newClub = new()
             {
                 Name = club.Name,
                 Description = club.Description,
                 ProfileImg = club.ProfileImg,
-                Private = (bool)club.Private!
+                Private = (bool)club.Private!,
+                UserId = user!.UserId
             };
 
             // create club record and saving it to the DB
             dbContext.Clubs.Add(newClub);
             dbContext.SaveChanges(); // will populate the club object's ID field
 
-            // find user object associated with AspNetUserId for ClubUser creation
-            var user = dbContext.Users
-                .Where(u => u.AspnetusersId == userManager.GetUserId(User))
-                .First();
 
             // create ClubUser object with the current user's ID, created club's ID, admin as true
             ClubUser clubUser = new ClubUser
@@ -86,7 +88,7 @@ public class ClubController : ControllerBase
             dbContext.SaveChanges();
 
             // return created club DTO object
-            ClubDTO createdClub = new(newClub.ClubId, club.Name, club.Description, club.ProfileImg, (bool)club.Private!);
+            ClubDTO createdClub = new(newClub.ClubId, club.Name, club.Description, club.ProfileImg, (bool)club.Private!, newClub.UserId);
             return Ok(createdClub);
 
         }
@@ -167,7 +169,7 @@ public class ClubController : ControllerBase
                 .First();
 
             // map found clubs to DTOP
-            ClubDTO foundClubDTO = new(foundClub.ClubId, foundClub.Name, foundClub.Description, foundClub.ProfileImg, foundClub.Private);
+            ClubDTO foundClubDTO = new(foundClub.ClubId, foundClub.Name, foundClub.Description, foundClub.ProfileImg, foundClub.Private, foundClub.UserId);
 
             clubs.Add(foundClubDTO);
         }
@@ -516,7 +518,7 @@ public class ClubController : ControllerBase
         foreach (Club club in results)
         {
             resultToReturn.Add(
-                new ClubDTO(club.ClubId, club.Name, club.Description, club.ProfileImg, club.Private)
+                new ClubDTO(club.ClubId, club.Name, club.Description, club.ProfileImg, club.Private, club.UserId)
             );
         }
 
