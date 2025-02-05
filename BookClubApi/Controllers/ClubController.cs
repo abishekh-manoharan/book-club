@@ -52,46 +52,51 @@ public class ClubController : ControllerBase
 
     // Action method that takes in new club instance's data and creates a club record and clubuser record using new club's ID and logged in user's ID as Composite PK
     [HttpPost("create")]
-    public async Task<ActionResult<ClubDTO>> CreateClub(Club club)
+    [Authorize]
+    public async Task<ActionResult<ClubDTO>> CreateClub([FromBody] ClubCreationValDTO club)
     {
-        if (club.Name == null)
+        if (ModelState.IsValid)
         {
-            return StatusCode(400, "Club name is a required field.");
+            Club newClub = new()
+            {
+                Name = club.Name,
+                Description = club.Description,
+                ProfileImg = club.ProfileImg,
+                Private = (bool)club.Private!
+            };
+
+            // create club record and saving it to the DB
+            dbContext.Clubs.Add(newClub);
+            dbContext.SaveChanges(); // will populate the club object's ID field
+
+            // find user object associated with AspNetUserId for ClubUser creation
+            var user = dbContext.Users
+                .Where(u => u.AspnetusersId == userManager.GetUserId(User))
+                .First();
+
+            // create ClubUser object with the current user's ID, created club's ID, admin as true
+            ClubUser clubUser = new ClubUser
+            {
+                UserId = user.UserId,
+                ClubId = newClub.ClubId,
+                Admin = true
+            };
+
+            dbContext.ClubUsers.Add(clubUser);
+            dbContext.SaveChanges();
+
+            // return created club DTO object
+            ClubDTO createdClub = new(newClub.ClubId, club.Name, club.Description, club.ProfileImg, (bool)club.Private!);
+            return Ok(createdClub);
+
         }
+        return BadRequest(ModelState);
 
-        // ensure ClubId is 0 so that a new Id will be generated on add
-        club.ClubId = 0;
-
-        // create club record and saving it to the DB
-        dbContext.Clubs.Add(club);
-        dbContext.SaveChanges(); // will populate the club object's ID field
-
-        // find user object associated with AspNetUserId for ClubUser creation
-        var user = dbContext.Users
-            .Where(u => u.AspnetusersId == userManager.GetUserId(User))
-            .First();
-
-        // create ClubUser object with the current user's ID, created club's ID, admin as true
-        ClubUser clubUser = new ClubUser
-        {
-            UserId = user.UserId,
-            ClubId = club.ClubId,
-            Admin = true
-        };
-
-        dbContext.ClubUsers.Add(clubUser);
-        dbContext.SaveChanges();
-
-        // return created club DTO object
-        ClubDTO createdClub = new(club.ClubId, club.Name, club.Description, club.ProfileImg, club.Private);
-        return createdClub;
-        // string returnObj =  club.Name + " " + club.Description + " " + club.ProfileImg + " " + club.ClubId + "\n" + user.AspnetusersId + " " + user.UserId + " " + userManager.GetUserId(User) + "\n" + clubUser.ClubId + " " + clubUser.UserId + " " + clubUser.Admin;
-        // return returnObj;
     }
 
     // action method that takes in an existing club's updated details and persists them in the DB
     [HttpPut("update")]
-    public ActionResult UpdateClub(ClubCreationValDTO club)
+    public ActionResult UpdateClub(ClubUpdateValDTO club)
     {
         if (ModelState.IsValid)
         {
