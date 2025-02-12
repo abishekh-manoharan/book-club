@@ -509,9 +509,13 @@ public class ClubController : ControllerBase
         {
             return BadRequest("The search query cannot be empty");
         }
+// select c.name, aspu.username from club c
+// 	left join user u on c.UserId = u.user_id left join aspnetusers aspu on u.aspnetusers_id = aspu.id
+//     WHERE MATCH(c.name) AGAINST('aa a*' IN boolean mode)OR MATCH(aspu.username) AGAINST('ass a*' IN boolean mode);
 
         var results = dbContext.Clubs
-            .FromSqlRaw("SELECT * FROM club WHERE MATCH(name) AGAINST({0} IN boolean mode)", query + "*")
+            // .FromSqlRaw("SELECT * FROM club WHERE MATCH(name) AGAINST({0} IN boolean mode)", query + "*")
+            .FromSqlRaw("select c.*, aspu.username from club c left join user u on c.UserId = u.user_id left join aspnetusers aspu on u.aspnetusers_id = aspu.id WHERE MATCH(c.name) AGAINST({0} IN boolean mode)OR MATCH(aspu.username) AGAINST({0} IN boolean mode)", query + "*")
             .ToList();
 
         List<ClubDTO> resultToReturn = [];
