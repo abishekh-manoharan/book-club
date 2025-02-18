@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import ClubService from "../services/club";
 import { Club } from "../utils/types";
+import { Link } from "react-router-dom";
 
 function SearchClubBar() {
     const [searchValue, setSearchValue] = useState('');
@@ -41,13 +42,14 @@ function SearchClubBar() {
         const searchBarResults = document.querySelector(".clubsearchresults");
         searchBarResults?.classList.remove("hidden");
     }
-
     return (
         <div className="searchBar">
             <input onChange={searchInputChangeHandler} value={searchValue} />
             <div className="clubsearchresults hidden">
                 {
-                    searchResults.map((res) => <div key={res.clubId}>{res.name}</div>)
+                    searchResults.map((res) => <div key={res.clubId}>
+                        <Link to={`/club/${res.clubId}/home`}>{res.name}</Link>
+                    </div>)
                 }
             </div>
         </div>

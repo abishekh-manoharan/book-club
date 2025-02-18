@@ -1,5 +1,12 @@
 import { useState } from "react";
-import ClubService from "../../services/club";
+import { useCreateClubMutation } from "./clubSlice";
+
+export type CreateClubFormData = {
+    name: string,
+    description?: string,
+    profileImg?: string,
+    private: boolean
+}
 
 function Create() {
     const [name, setName] = useState('');
@@ -7,7 +14,9 @@ function Create() {
     const [profileImg, setProfileImg] = useState('');
     const [privateClub, setPrivateClub] = useState(false);
 
-    const createButtonClickHandler = (e: React.SyntheticEvent) => {
+    const [createClub, {isLoading, isSuccess}] = useCreateClubMutation();
+
+    const createButtonClickHandler = async (e: React.SyntheticEvent) => {
         e.preventDefault();
         // e.stopPropagation();
     
@@ -18,10 +27,19 @@ function Create() {
         }
         
         const privateCheckBox: HTMLInputElement | null = document.querySelector(".form.clubCreationForm .private");
+        const clubFormData: CreateClubFormData = {
+            name, description, profileImg, private: privateCheckBox!.checked
+        }
 
-        const newClub = { name: name, description: description, profileImg: profileImg, private: privateCheckBox!.checked };
-        ClubService.createClub(newClub).then(res => console.log(res));
+        try {
+            const res = await createClub(clubFormData).unwrap()
+            console.log('success');
+            console.log(res);
+        } catch {
+            console.log('error')
+        }
     }
+
 
     return (
         <div>
@@ -37,6 +55,8 @@ function Create() {
                 <label htmlFor="Private">Private</label>
                 <input name="Private" className="private" id="Private" type="checkbox" checked={privateClub} value="private" onChange={(e) => setPrivateClub(e.target.checked)}/>
                 <button onClick={createButtonClickHandler}>Create</button>
+                { isLoading && <>Loading</> }
+                { isSuccess && <>Success</> }
             </form>
         </div>
     );

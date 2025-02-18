@@ -1,19 +1,87 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Club } from "@/utils/types";
+import { apiSlice } from "../api/apiSlice";
+import { CreateClubFormData } from "./Create";
 
+interface ClubExt extends Club {
+    foo: string;
+}
 
-const clubSlice = createSlice({
-    name: 'club',
-    initialState: [],
-    reducers: {
-        login(state, action: PayloadAction<string>) {
-            console.log(state, action)
-        }
-    },
-    // extraReducers(builder) {
+export const apiSliceWithClub = apiSlice.injectEndpoints({
+    endpoints: (builder) => ({
+        createClub: builder.mutation<ClubExt, CreateClubFormData>({
+            query: (club) => ({
+                url: 'club/create',
+                credentials: 'include',
+                method: 'POST',
+                body: JSON.stringify(club),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }),
 
-    // }
-});
+        })
+    })
+})
 
-export const { login: loginAction } = clubSlice.actions;
+export const { useCreateClubMutation } = apiSliceWithClub
 
-export default clubSlice.reducer;
+// export const apiSliceWithCl= apiSlice.injectEndpoints({
+//     endpoints: (builder) => ({
+//         register: builder.mutation<RegistrationSuccess, RegistrationFormData>({
+//             query: (info) => ({
+//                 url: 'auth/register',
+//                 credentials: 'include',
+//                 method: 'POST',
+//                 body: JSON.stringify(info),
+//                 headers: {
+//                     'Content-Type': 'application/json'
+//                 }
+//             }),
+//             transformResponse(res: { id: number, $values: RegistrationSuccess }) {
+//                 return res.$values;
+//             },
+//             transformErrorResponse(res: FetchBaseQueryError) {
+//                 if (res.data && typeof res.data === 'object') {
+//                     if ('$values' in res.data) { // case where the error is a registration errors in their raw state
+//                         const errors: RegistrationError = {
+//                             errors: res.data.$values as string[],
+//                             kind: "registrationError"
+//                         }
+
+//                         return errors;
+//                     } else { // case where the error is a model state error
+//                         const errors: RegistrationError = {
+//                             ...res.data,
+//                             kind: "modelStateError"
+//                         }
+
+//                         return errors;
+//                     }
+//                 }
+//             }
+//             // transformErrorResponse(res: {
+//             //     [key: string]: string[]; // type for model state errors in their raw state
+//             // } | {
+//             //     $values: string[]; // type for registration error
+//             // }) {
+//             //     console.log("res");
+//             //     console.log(res);
+//             //     if ('$values' in res) { // case where the error is a registration errors in their raw state
+//             //         const errors: RegistrationError = {
+//             //             errors: res.$values,
+//             //             kind: "registrationError"
+//             //         }
+
+//             //         return errors;
+//             //     } else { // case where the error is a model state error
+//             //         const errors: RegistrationError = {
+//             //             ...res,
+//             //             kind: "modelStateError"
+//             //         }
+
+//             //         return errors;
+//             //     }
+//             // }
+//         })
+//     })
+// });

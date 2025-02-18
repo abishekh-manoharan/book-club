@@ -1,7 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { apiSlice } from "../api/apiSlice";
 import { RootState } from "@/app/store";
-import { log } from "console";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 
 type LoginSuccess = boolean;
