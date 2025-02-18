@@ -7,6 +7,12 @@ function SearchClubBar() {
     const [searchValue, setSearchValue] = useState('');
     const [searchResults, setSearchResults] = useState<Club[]>([]);
 
+    // event handler to close search window if club link is clicked
+    const closeSearchResults = () => {
+        const searchBarResults = document.querySelector(".clubsearchresults");
+        searchBarResults?.classList.add("hidden");
+    }
+
     useEffect(() => {
         //event listener to determine click location to hide/show search results
         document.addEventListener('click', (e) => {
@@ -48,7 +54,7 @@ function SearchClubBar() {
             <div className="clubsearchresults hidden">
                 {
                     searchResults.map((res) => <div key={res.clubId}>
-                        <Link to={`/club/${res.clubId}/home`}>{res.name}</Link>
+                        <Link to={`/club/${res.clubId}/home`} onClick={closeSearchResults}>{res.name}</Link>
                     </div>)
                 }
             </div>
