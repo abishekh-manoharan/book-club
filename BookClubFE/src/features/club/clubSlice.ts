@@ -2,13 +2,9 @@ import { Club } from "@/utils/types";
 import { apiSlice } from "../api/apiSlice";
 import { CreateClubFormData } from "./Create";
 
-interface ClubExt extends Club {
-    foo: string;
-}
-
 export const apiSliceWithClub = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
-        createClub: builder.mutation<ClubExt, CreateClubFormData>({
+        createClub: builder.mutation<Club, CreateClubFormData>({
             query: (club) => ({
                 url: 'club/create',
                 credentials: 'include',
@@ -19,11 +15,21 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                 }
             }),
 
+        }),
+        getClub: builder.query<Club, number>({
+            query: (clubId) => ({
+                url: `club/getOneClub?clubId=${clubId}`,
+                credentials: 'include',
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
         })
     })
 })
 
-export const { useCreateClubMutation } = apiSliceWithClub
+export const { useCreateClubMutation, useGetClubQuery } = apiSliceWithClub
 
 // export const apiSliceWithCl= apiSlice.injectEndpoints({
 //     endpoints: (builder) => ({
