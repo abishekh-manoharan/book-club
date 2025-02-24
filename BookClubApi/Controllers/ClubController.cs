@@ -184,19 +184,19 @@ public class ClubController : ControllerBase
     // returns false if join is failed
     [Authorize]
     [HttpPost("join")]
-    public ActionResult<bool> JoinClub(int UserId, int ClubId)
+    public ActionResult<bool> JoinClub(ClubJoinValDTO clubJoinValDTO)
     {
         // ensure club and user exists
         User? user = dbContext.Users
-            .Where(user => user.UserId == UserId)
+            .Where(user => user.UserId == clubJoinValDTO.UserId)
             .AsNoTracking()
             .FirstOrDefault();
         Club? club = dbContext.Clubs
-            .Where(club => club.ClubId == ClubId)
+            .Where(club => club.ClubId == clubJoinValDTO.ClubId)
             .AsNoTracking()
             .FirstOrDefault();
         ClubUser? clubUser = dbContext.ClubUsers
-            .Where(clubUser => clubUser.ClubId == ClubId && clubUser.UserId == UserId)
+            .Where(clubUser => clubUser.ClubId == clubJoinValDTO.ClubId && clubUser.UserId == clubJoinValDTO.UserId)
             .AsNoTracking()
             .FirstOrDefault();
 
@@ -204,12 +204,12 @@ public class ClubController : ControllerBase
         // case where both user and club exist, and user hasn't already joined the club
         if (club != null && user != null && clubUser == null)
         {
-            // getting logged in user and if the logged in user's clubuser record to see if the user is admin of club
+            // getting logged in user and the logged in user's clubuser record to see if the user is admin of club
             var loggedInUser = dbContext.Users
                 .Where(u => u.AspnetusersId == userManager.GetUserId(User))
                 .FirstOrDefault();
             var clubUserLoggedInUser = dbContext.ClubUsers
-                .Where(clubUser => clubUser.UserId == loggedInUser!.UserId && clubUser.ClubId == ClubId)
+                .Where(clubUser => clubUser.UserId == loggedInUser!.UserId && clubUser.ClubId == clubJoinValDTO.ClubId)
                 .AsNoTracking()
                 .FirstOrDefault();
 
@@ -244,7 +244,7 @@ public class ClubController : ControllerBase
                 if (clubUserLoggedInUser != null && clubUserLoggedInUser.Admin == true)
                 {
                     var joinReqCheck = dbContext.JoinRequests
-                        .Where(joinReq => joinReq.ClubId == ClubId && joinReq.UserId == UserId)
+                        .Where(joinReq => joinReq.ClubId == clubJoinValDTO.ClubId && joinReq.UserId == clubJoinValDTO.UserId)
                         .AsNoTracking()
                         .FirstOrDefault();
 
@@ -263,7 +263,7 @@ public class ClubController : ControllerBase
             {
                 // check if join request has already been made. return status 409 otherwise
                 var joinReqCheck = dbContext.JoinRequests
-                    .Where(joinReq => joinReq.ClubId == ClubId && joinReq.UserId == UserId)
+                    .Where(joinReq => joinReq.ClubId == clubJoinValDTO.ClubId && joinReq.UserId == clubJoinValDTO.UserId)
                     .AsNoTracking()
                     .FirstOrDefault();
 
@@ -271,7 +271,7 @@ public class ClubController : ControllerBase
                 if (joinReqCheck == null)
                 {
                     // create join request if join request hasn't been made already
-                    JoinRequest newJoinRequest = new(ClubId, UserId, true, false);
+                    JoinRequest newJoinRequest = new((int)clubJoinValDTO.ClubId!, (int)clubJoinValDTO.UserId!, true, false);
                     dbContext.JoinRequests.Add(newJoinRequest);
                     try
                     {
