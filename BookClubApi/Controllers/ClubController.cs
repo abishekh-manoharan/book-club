@@ -184,117 +184,121 @@ public class ClubController : ControllerBase
     // returns false if join is failed
     [Authorize]
     [HttpPost("join")]
-    public ActionResult<bool> JoinClub(ClubJoinValDTO clubJoinValDTO)
+    public ActionResult<bool> JoinClub([FromBody] ClubJoinValDTO clubJoinValDTO)
     {
-        // ensure club and user exists
-        User? user = dbContext.Users
-            .Where(user => user.UserId == clubJoinValDTO.UserId)
-            .AsNoTracking()
-            .FirstOrDefault();
-        Club? club = dbContext.Clubs
-            .Where(club => club.ClubId == clubJoinValDTO.ClubId)
-            .AsNoTracking()
-            .FirstOrDefault();
-        ClubUser? clubUser = dbContext.ClubUsers
-            .Where(clubUser => clubUser.ClubId == clubJoinValDTO.ClubId && clubUser.UserId == clubJoinValDTO.UserId)
-            .AsNoTracking()
-            .FirstOrDefault();
-
-
-        // case where both user and club exist, and user hasn't already joined the club
-        if (club != null && user != null && clubUser == null)
+        if (ModelState.IsValid)
         {
-            // getting logged in user and the logged in user's clubuser record to see if the user is admin of club
-            var loggedInUser = dbContext.Users
-                .Where(u => u.AspnetusersId == userManager.GetUserId(User))
+            // ensure club and user exists
+            User? user = dbContext.Users
+                .Where(user => user.UserId == clubJoinValDTO.UserId)
+                .AsNoTracking()
                 .FirstOrDefault();
-            var clubUserLoggedInUser = dbContext.ClubUsers
-                .Where(clubUser => clubUser.UserId == loggedInUser!.UserId && clubUser.ClubId == clubJoinValDTO.ClubId)
+            Club? club = dbContext.Clubs
+                .Where(club => club.ClubId == clubJoinValDTO.ClubId)
+                .AsNoTracking()
+                .FirstOrDefault();
+            ClubUser? clubUser = dbContext.ClubUsers
+                .Where(clubUser => clubUser.ClubId == clubJoinValDTO.ClubId && clubUser.UserId == clubJoinValDTO.UserId)
                 .AsNoTracking()
                 .FirstOrDefault();
 
 
-            // if club is public or if the logged in user is admin, allow the join
-            if (!club.Private || clubUserLoggedInUser != null && clubUserLoggedInUser.Admin == true)
+            // case where both user and club exist, and user hasn't already joined the club
+            if (club != null && user != null && clubUser == null)
             {
-                ClubUser newClubUser = new()
-                {
-                    ClubId = club.ClubId,
-                    UserId = user.UserId,
-                    Admin = false   // new users are not admins by default
-                };
-
-                try
-                {
-                    dbContext.ClubUsers.Add(newClubUser);
-                    dbContext.SaveChanges();
-                }
-                catch (DbUpdateException)
-                {
-                    // case where the user is already in the club - ClubUser with the UserId and ClubId already exists
-                    return StatusCode(409, "club user already exists");
-                }
-                catch
-                {
-                    // all other error cases
-                    return StatusCode(400, false);
-                }
-
-                // delete the join request if the Admin of the club is sending request
-                if (clubUserLoggedInUser != null && clubUserLoggedInUser.Admin == true)
-                {
-                    var joinReqCheck = dbContext.JoinRequests
-                        .Where(joinReq => joinReq.ClubId == clubJoinValDTO.ClubId && joinReq.UserId == clubJoinValDTO.UserId)
-                        .AsNoTracking()
-                        .FirstOrDefault();
-
-                    if (joinReqCheck != null)
-                    {
-                        dbContext.JoinRequests.Remove(joinReqCheck);
-                        dbContext.SaveChanges();
-                    }
-                }
-
-                return Ok(true);
-            }
-
-            // if the club trying to be joined is private & logged in user isn't admin, create a join request
-            if (club.Private || clubUserLoggedInUser != null && clubUserLoggedInUser.Admin == false)
-            {
-                // check if join request has already been made. return status 409 otherwise
-                var joinReqCheck = dbContext.JoinRequests
-                    .Where(joinReq => joinReq.ClubId == clubJoinValDTO.ClubId && joinReq.UserId == clubJoinValDTO.UserId)
+                // getting logged in user and the logged in user's clubuser record to see if the user is admin of club
+                var loggedInUser = dbContext.Users
+                    .Where(u => u.AspnetusersId == userManager.GetUserId(User))
+                    .FirstOrDefault();
+                var clubUserLoggedInUser = dbContext.ClubUsers
+                    .Where(clubUser => clubUser.UserId == loggedInUser!.UserId && clubUser.ClubId == clubJoinValDTO.ClubId)
                     .AsNoTracking()
                     .FirstOrDefault();
 
 
-                if (joinReqCheck == null)
+                // if club is public or if the logged in user is admin, allow the join
+                if (!club.Private || clubUserLoggedInUser != null && clubUserLoggedInUser.Admin == true)
                 {
-                    // create join request if join request hasn't been made already
-                    JoinRequest newJoinRequest = new((int)clubJoinValDTO.ClubId!, (int)clubJoinValDTO.UserId!, true, false);
-                    dbContext.JoinRequests.Add(newJoinRequest);
+                    ClubUser newClubUser = new()
+                    {
+                        ClubId = club.ClubId,
+                        UserId = user.UserId,
+                        Admin = false   // new users are not admins by default
+                    };
+
                     try
                     {
+                        dbContext.ClubUsers.Add(newClubUser);
                         dbContext.SaveChanges();
                     }
                     catch (DbUpdateException)
                     {
-                        return StatusCode(409, false);
+                        // case where the user is already in the club - ClubUser with the UserId and ClubId already exists
+                        return StatusCode(409, "club user already exists");
                     }
                     catch
                     {
                         // all other error cases
                         return StatusCode(400, false);
                     }
+
+                    // delete the join request if the Admin of the club is sending request
+                    if (clubUserLoggedInUser != null && clubUserLoggedInUser.Admin == true)
+                    {
+                        var joinReqCheck = dbContext.JoinRequests
+                            .Where(joinReq => joinReq.ClubId == clubJoinValDTO.ClubId && joinReq.UserId == clubJoinValDTO.UserId)
+                            .AsNoTracking()
+                            .FirstOrDefault();
+
+                        if (joinReqCheck != null)
+                        {
+                            dbContext.JoinRequests.Remove(joinReqCheck);
+                            dbContext.SaveChanges();
+                        }
+                    }
+
                     return Ok(true);
                 }
-                // case where the join request has already been made
-                return StatusCode(409, "join request already exists");
-            }
-        }
 
-        // case where either club or user doesn't exist in DB
-        return NotFound(false);
+                // if the club trying to be joined is private & logged in user isn't admin, create a join request
+                if (club.Private || clubUserLoggedInUser != null && clubUserLoggedInUser.Admin == false)
+                {
+                    // check if join request has already been made. return status 409 otherwise
+                    var joinReqCheck = dbContext.JoinRequests
+                        .Where(joinReq => joinReq.ClubId == clubJoinValDTO.ClubId && joinReq.UserId == clubJoinValDTO.UserId)
+                        .AsNoTracking()
+                        .FirstOrDefault();
+
+
+                    if (joinReqCheck == null)
+                    {
+                        // create join request if join request hasn't been made already
+                        JoinRequest newJoinRequest = new((int)clubJoinValDTO.ClubId!, (int)clubJoinValDTO.UserId!, true, false);
+                        dbContext.JoinRequests.Add(newJoinRequest);
+                        try
+                        {
+                            dbContext.SaveChanges();
+                        }
+                        catch (DbUpdateException)
+                        {
+                            return StatusCode(409, false);
+                        }
+                        catch
+                        {
+                            // all other error cases
+                            return StatusCode(400, false);
+                        }
+                        return Ok(true);
+                    }
+                    // case where the join request has already been made
+                    return StatusCode(409, "join request already exists");
+                }
+            }
+
+            // case where either club or user doesn't exist in DB
+            return NotFound(false);
+        }
+        return BadRequest(ModelState);
     }
 
     // action method that retrieves a list of join requests for a club
@@ -509,9 +513,9 @@ public class ClubController : ControllerBase
         {
             return BadRequest("The search query cannot be empty");
         }
-// select c.name, aspu.username from club c
-// 	left join user u on c.UserId = u.user_id left join aspnetusers aspu on u.aspnetusers_id = aspu.id
-//     WHERE MATCH(c.name) AGAINST('aa a*' IN boolean mode)OR MATCH(aspu.username) AGAINST('ass a*' IN boolean mode);
+        // select c.name, aspu.username from club c
+        // 	left join user u on c.UserId = u.user_id left join aspnetusers aspu on u.aspnetusers_id = aspu.id
+        //     WHERE MATCH(c.name) AGAINST('aa a*' IN boolean mode)OR MATCH(aspu.username) AGAINST('ass a*' IN boolean mode);
 
         var results = dbContext.Clubs
             // .FromSqlRaw("SELECT * FROM club WHERE MATCH(name) AGAINST({0} IN boolean mode)", query + "*")

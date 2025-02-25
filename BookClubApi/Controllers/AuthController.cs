@@ -206,9 +206,9 @@ public class AuthController : ControllerBase
     {
         var user = dbContext.Users
             .Where(u => u.AspnetusersId == userManager.GetUserId(User))
-            .First();
+            .FirstOrDefault();
 
-        return user.UserId;
+        return user!.UserId;
     }
 
 }
