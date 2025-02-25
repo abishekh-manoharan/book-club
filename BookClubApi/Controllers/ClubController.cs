@@ -96,6 +96,24 @@ public class ClubController : ControllerBase
 
     }
 
+    [HttpGet("getOneClubUser")]
+    // action method to retrieve a club user record
+    // returns ClubUserDTO object if club user exists, and NotFound if not
+    public ActionResult<ClubUserDTO> GetClubUser([FromBody] ClubUserGetValDTO clubUser) {
+        if(ModelState.IsValid){
+            ClubUser? foundUser = dbContext.ClubUsers
+                .Where(clubuser => clubuser.ClubId == clubUser.ClubId && clubuser.UserId == clubUser.UserId)
+                .FirstOrDefault();
+            
+            if(foundUser != null) {
+                ClubUserDTO clubUserDTO = new(foundUser.ClubId, foundUser.UserId, (bool) foundUser.Admin!);
+                return Ok(clubUserDTO);   
+            }
+            return NotFound("clubuser not found");
+        }
+        return BadRequest(ModelState);
+    }
+
     // action method that takes in an existing club's updated details and persists them in the DB
     [HttpPut("update")]
     public ActionResult UpdateClub(ClubUpdateValDTO club)
