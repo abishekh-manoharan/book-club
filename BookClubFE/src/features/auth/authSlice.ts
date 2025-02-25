@@ -61,6 +61,13 @@ export const apiSliceWithAuth = apiSlice.injectEndpoints({
             }),
             providesTags: [{ type: 'Auth', id: 'status' }]
         }),
+        getUserId: builder.query<number, void>({
+            query: () => ({
+                url: 'auth/userid',
+                credentials: 'include'
+            }),
+            providesTags: [{ type: 'Auth', id: 'userId' }]
+        }),
         login: builder.mutation<LoginResponse, { email: string, password: string }>({
             query: (info) => ({
                 url: 'auth/login',
@@ -71,7 +78,7 @@ export const apiSliceWithAuth = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            invalidatesTags: () => ([{ type: 'Auth', id: 'status' }])
+            invalidatesTags: () => ([{ type: 'Auth', id: 'status' }, { type: 'Auth', id: 'userId' }])
         }),
         logout: builder.mutation<void, void>({
             query: () => ({
@@ -79,7 +86,7 @@ export const apiSliceWithAuth = apiSlice.injectEndpoints({
                 credentials: 'include',
                 method: 'POST'
             }),
-            invalidatesTags: () => ([{ type: 'Auth', id: 'status' }])
+            invalidatesTags: () => ([{ type: 'Auth', id: 'status' }, { type: 'Auth', id: 'userId' }])
         }),
         register: builder.mutation<RegistrationSuccess, RegistrationFormData>({
             query: (info) => ({
@@ -150,7 +157,8 @@ export const {
     useGetStatusQuery,
     useLoginMutation,
     useLogoutMutation,
-    useRegisterMutation
+    useRegisterMutation,
+    useGetUserIdQuery
 } = apiSliceWithAuth;
 
 
