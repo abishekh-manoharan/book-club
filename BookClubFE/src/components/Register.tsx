@@ -4,6 +4,7 @@ import { RegistrationFormData } from "../utils/types";
 // import { AxiosError } from "axios";
 import { useRegisterMutation, RegistrationSuccess } from "../features/auth/authSlice";
 import { isRegistrationAllowanceError } from "../app/typeGuards";
+import { useNavigate } from "react-router-dom";
 
 function Register() {
     const [username, setUsername] = useState('');
@@ -13,6 +14,7 @@ function Register() {
     const [password, setPassword] = useState("Abcde123!");
     const [confirmPassword, setConfirmPassword] = useState("Abcde123!");
     const [passwordsMatch, setPasswordsMatch] = useState(true);
+    const nav = useNavigate();
 
     const [register, { isLoading }] = useRegisterMutation();
 
@@ -84,16 +86,17 @@ function Register() {
 
         try {
             const unTypedResponse = await register(registrationData).unwrap() as unknown;
-            const { $values: response } = unTypedResponse as { id: string, $values: RegistrationSuccess }
+            const response = unTypedResponse as RegistrationSuccess;
 
             console.log(response);
             if (response[0] === 'success') {
                 console.log('suceeded in effect')
                 const submissionSuccessElement = document.querySelector(".submission-success");
                 submissionSuccessElement!.classList.toggle("hidden");
+                nav('/login');
                 return;
             }
-            // }
+            
         } catch (e) {
             if (isRegistrationAllowanceError(e)) {
                 console.log("e");
@@ -182,7 +185,7 @@ function Register() {
                 <label htmlFor="confirmPassword">Confirm Password</label>
                 <input type="password" name="confirmPassword" id="confirmPassword" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required /><br />
                 <p className="PasswordsMatch hidden" style={{ "color": "red" }}>Passwords do not match.</p>
-                <button onClick={submitButtonHandler}>Sign Up</button>
+                <button onClick={submitButtonHandler} disabled={isLoading}>Sign Up</button>
             </form>
             <p className="submission-success hidden" style={{ "color": "green" }}>Registration successful</p>
         </div>
