@@ -53,7 +53,7 @@ public class ClubController : ControllerBase
     // Action method that takes in new club instance's data and creates a club record and clubuser record using new club's ID and logged in user's ID as Composite PK
     [HttpPost("create")]
     [Authorize]
-    public async Task<ActionResult<ClubDTO>> CreateClub([FromBody] ClubCreationValDTO club)
+    public ActionResult<ClubDTO> CreateClub([FromBody] ClubCreationValDTO club)
     {
         if (ModelState.IsValid)
         {
@@ -99,15 +99,18 @@ public class ClubController : ControllerBase
     [HttpGet("getOneClubUser")]
     // action method to retrieve a club user record
     // returns ClubUserDTO object if club user exists, and NotFound if not
-    public ActionResult<ClubUserDTO> GetClubUser([FromBody] ClubUserGetValDTO clubUser) {
-        if(ModelState.IsValid){
+    public ActionResult<ClubUserDTO> GetClubUser([FromQuery] ClubUserGetValDTO clubUser)
+    {
+        if (ModelState.IsValid)
+        {
             ClubUser? foundUser = dbContext.ClubUsers
                 .Where(clubuser => clubuser.ClubId == clubUser.ClubId && clubuser.UserId == clubUser.UserId)
                 .FirstOrDefault();
-            
-            if(foundUser != null) {
-                ClubUserDTO clubUserDTO = new(foundUser.ClubId, foundUser.UserId, (bool) foundUser.Admin!);
-                return Ok(clubUserDTO);   
+
+            if (foundUser != null)
+            {
+                ClubUserDTO clubUserDTO = new(foundUser.ClubId, foundUser.UserId, (bool)foundUser.Admin!);
+                return Ok(clubUserDTO);
             }
             return NotFound("clubuser not found");
         }
@@ -357,6 +360,26 @@ public class ClubController : ControllerBase
         ModelState.AddModelError("MissingFields", "Request is missing information needed to complete operation.");
         return BadRequest(ModelState); // Returns a 400 Bad Request with error details
 
+    }
+
+    // action method that retrieves a single join request
+    [HttpGet("joinRequest")]
+    public ActionResult<JoinRequest> GetJoinRequest([Required] int ClubId, [Required] int UserId)
+    {
+        if (ModelState.IsValid)
+        {
+            JoinRequest? jr = dbContext.JoinRequests
+                .Where(jr => jr.ClubId == ClubId && jr.UserId == UserId)
+                .FirstOrDefault();
+
+            if (jr == null)
+            {
+                return NotFound(); // Return 404 if no matching JoinRequest is found
+            }
+
+            return Ok(jr); // Return 200 OK with the JoinRequest if found
+        }
+        return BadRequest(ModelState);
     }
 
     // action method that allows a club admin to decline a join request
