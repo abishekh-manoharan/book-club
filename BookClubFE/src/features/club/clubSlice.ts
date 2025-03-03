@@ -25,11 +25,32 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             })
+        }),
+        getClubUser: builder.query<{userId: number, clubId: number, admin: boolean}, {userId: number, clubId: number}> ({
+            query: (clubUser) => ({
+                url: `club/getOneClubUser?clubId=${clubUser.clubId}&userId=${clubUser.userId}`,
+                credentials: 'include',
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+        }),
+        joinClub: builder.mutation<boolean, {UserId: number, ClubId: number}>({
+            query: (clubUser) => ({
+                url: `club/join`,
+                credentials: 'include',
+                method: 'POST',
+                body: JSON.stringify(clubUser),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
         })
     })
 })
 
-export const { useCreateClubMutation, useGetClubQuery } = apiSliceWithClub
+export const { useCreateClubMutation, useGetClubQuery, useJoinClubMutation, useGetClubUserQuery } = apiSliceWithClub
 
 // export const apiSliceWithCl= apiSlice.injectEndpoints({
 //     endpoints: (builder) => ({
