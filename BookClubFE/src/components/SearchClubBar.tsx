@@ -53,9 +53,8 @@ function SearchClubBar() {
             <input onChange={searchInputChangeHandler} value={searchValue} />
             <div className="clubsearchresults hidden">
                 {
-                    searchResults.map((res) => <div key={res.clubId}>
-                        <Link to={`/club/${res.clubId}/home`} onClick={closeSearchResults}>{res.name}</Link>
-                    </div>)
+                    searchResults.map((res, i) => 
+                        <Link key={`${res.clubId}${i}`} to={`/club/${res.clubId}/home`} onClick={closeSearchResults}>{res.name} {res.clubId}</Link>)
                 }
             </div>
         </div>

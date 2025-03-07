@@ -8,18 +8,28 @@ function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     // const auth = GetAuthContext();
-    const [login, { isLoading }]  = useLoginMutation();
+    const [login, { isLoading }] = useLoginMutation();
 
     const loginSubmitClick = async (e: React.SyntheticEvent) => {
         e.preventDefault();
         e.stopPropagation();
-        
+
         try {
-            await login({ email, password }).unwrap();
+            const res = await login({ email, password }).unwrap();
+            console.log('success res')
+            console.log(res)
             document.querySelector('.loginSuccess')?.classList.remove('hidden');
             document.querySelector('.loginError')?.classList.add('hidden');
             nav('/')
-        } catch {
+        } catch (e) {
+            if (e && typeof e === 'object') {
+                if ('status' in e) console.log('e.status')
+                if ('status' in e) console.log(e.status)
+                if ('data' in e) console.log('e.data')
+                if ('data' in e) console.log(e.data)
+                if ('error' in e) console.log('e.error')
+                if ('error' in e) console.log(e.error)
+            }
             document.querySelector('.loginSuccess')?.classList.add('hidden');
             document.querySelector('.loginError')?.classList.remove('hidden');
         }

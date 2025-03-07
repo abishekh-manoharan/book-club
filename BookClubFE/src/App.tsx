@@ -11,7 +11,7 @@ import './App.css'
 // import { useEffect, useState } from "react"
 import { useGetStatusQuery } from "./features/auth/authSlice"
 import classNames from "classnames"
-import ClubHome from "./features/club/ClubHome"
+import ClubHome from "./features/club/home/ClubHome"
 // import { useAppSelector } from "./app/hooks"
 
 function App() {
