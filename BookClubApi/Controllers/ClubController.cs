@@ -377,7 +377,9 @@ public class ClubController : ControllerBase
                 return NotFound(); // Return 404 if no matching JoinRequest is found
             }
 
-            return Ok(jr); // Return 200 OK with the JoinRequest if found
+            JoinRequestDTO jrDTO = new(jr.ClubId, jr.UserId, (bool) jr.Request!, (bool) jr.Invitation!);
+
+            return Ok(jrDTO); // Return 200 OK with the JoinRequest if found
         }
         return BadRequest(ModelState);
     }
