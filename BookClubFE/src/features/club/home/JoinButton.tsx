@@ -8,25 +8,25 @@ function JoinButton(props: { clubId: number }) {
     const status = useAppSelector(selectLoginStatus);
     const { data: club } = useGetClubQuery(props.clubId);
     const { data: userId } = useGetUserIdQuery();
-    const [joinClub, { isSuccess }] = useJoinClubMutation();
+    const [joinClub] = useJoinClubMutation();
 
     const { data: clubUser, error: getClubUserError, isError: isClubUserError} = useGetClubUserQuery(
         { clubId: props.clubId, userId: userId as number },
         { skip: !userId }
     );
-    const { data: joinRequest, error: getJoinRequestError, isError: isJoinRequestError } = useGetJoinRequestQuery(
+    const { data: joinRequest, error: getJoinRequestError, isError: isJoinRequestError, refetch } = useGetJoinRequestQuery(
         { clubId: props.clubId, userId: userId as number },
         { skip: !userId }
     );
 
     const [joinButton, setJoinButton] = useState<JSX.Element | null>(null);
-    
+
     useEffect(() => {
         const joinClubBtnClickHandler = async () => {
             console.log({ userId: userId as number, clubId: club?.clubId as number });
             try {
-                const result = await joinClub({ UserId: userId as number, ClubId: club?.clubId as number }).unwrap();
-                console.log(result);
+                await joinClub({ UserId: userId as number, ClubId: club?.clubId as number }).unwrap();
+                refetch();
             } catch (e) {
                 console.log(e);
             }
