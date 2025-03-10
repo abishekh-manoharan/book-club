@@ -374,7 +374,7 @@ public class ClubController : ControllerBase
 
             if (jr == null)
             {
-                return NotFound(); // Return 404 if no matching JoinRequest is found
+                return NotFound("join request not found"); // Return 404 if no matching JoinRequest is found
             }
 
             JoinRequestDTO jrDTO = new(jr.ClubId, jr.UserId, (bool) jr.Request!, (bool) jr.Invitation!);

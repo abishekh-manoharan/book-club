@@ -20,10 +20,7 @@ function JoinButton(props: { clubId: number }) {
     );
 
     const [joinButton, setJoinButton] = useState<JSX.Element | null>(null);
-
-
-
-
+    
     useEffect(() => {
         const joinClubBtnClickHandler = async () => {
             console.log({ userId: userId as number, clubId: club?.clubId as number });
