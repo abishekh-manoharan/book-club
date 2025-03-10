@@ -10,11 +10,11 @@ function JoinButton(props: { clubId: number }) {
     const { data: userId } = useGetUserIdQuery();
     const [joinClub] = useJoinClubMutation();
 
-    const { data: clubUser, error: getClubUserError, isError: isClubUserError} = useGetClubUserQuery(
+    const { data: clubUser, error: getClubUserError, isError: isClubUserError, refetch: refetchGetClubUser} = useGetClubUserQuery(
         { clubId: props.clubId, userId: userId as number },
         { skip: !userId }
     );
-    const { data: joinRequest, error: getJoinRequestError, isError: isJoinRequestError, refetch } = useGetJoinRequestQuery(
+    const { data: joinRequest, error: getJoinRequestError, isError: isJoinRequestError, refetch: refetchGetJoinRequest } = useGetJoinRequestQuery(
         { clubId: props.clubId, userId: userId as number },
         { skip: !userId }
     );
@@ -26,7 +26,8 @@ function JoinButton(props: { clubId: number }) {
             console.log({ userId: userId as number, clubId: club?.clubId as number });
             try {
                 await joinClub({ UserId: userId as number, ClubId: club?.clubId as number }).unwrap();
-                refetch();
+                refetchGetJoinRequest();
+                refetchGetClubUser();
             } catch (e) {
                 console.log(e);
             }
@@ -47,7 +48,7 @@ function JoinButton(props: { clubId: number }) {
         } else if (!status || !getClubUserError) {
             setJoinButton(<></>)
         }
-    }, [clubUser, joinRequest, getClubUserError, getJoinRequestError, status, club, userId, joinClub, isClubUserError, isJoinRequestError]);
+    }, [clubUser, joinRequest, getClubUserError, getJoinRequestError, status, club, userId, joinClub, isClubUserError, isJoinRequestError, refetchGetJoinRequest, refetchGetClubUser]);
 
     return (
         <>

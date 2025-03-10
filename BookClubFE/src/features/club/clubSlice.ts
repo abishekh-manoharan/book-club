@@ -55,8 +55,8 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
             })
         }),
         getJoinRequest: builder.query<JoinRequest, {userId: number, clubId: number}> ({
-            query: (clubUser) => ({
-                url: `club/joinRequest?clubId=${clubUser.clubId}&userId=${clubUser.userId}`,
+            query: (joinRequest) => ({
+                url: `club/joinRequest?clubId=${joinRequest.clubId}&userId=${joinRequest.userId}`,
                 credentials: 'include',
                 method: 'GET',
                 headers: {
@@ -64,10 +64,30 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                 }
             })
         }),
+        getJoinRequests: builder.query<JoinRequest[], number> ({
+            query: (clubId) => ({
+                url: `club/joinRequests?clubId=${clubId}`,
+                credentials: 'include',
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }),
+            transformResponse(res: {$values: JoinRequest[], id: string}){
+                return res.$values;
+            }
+        }),
     })
 })
 
-export const { useCreateClubMutation, useGetClubQuery, useJoinClubMutation, useGetClubUserQuery, useGetJoinRequestQuery } = apiSliceWithClub
+export const { 
+    useCreateClubMutation, 
+    useGetClubQuery, 
+    useJoinClubMutation, 
+    useGetClubUserQuery, 
+    useGetJoinRequestQuery,
+    useGetJoinRequestsQuery    
+} = apiSliceWithClub
 
 // export const apiSliceWithCl= apiSlice.injectEndpoints({
 //     endpoints: (builder) => ({

@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 // import { useAppSelector } from '../../../app/hooks';
 import JoinButton from './JoinButton';
 import { useGetClubQuery } from '../clubSlice';
+import JoinRequests from '../JoinRequests';
 
 function ClubHome() {
     const { id } = useParams();
@@ -37,6 +38,7 @@ function ClubHome() {
             {/* // <>{userId}</><br />  */}
             {/* hide joing button if use isn't logged in or if the user is a club member already */}
             <JoinButton clubId={clubId}/>
+            <JoinRequests clubId={clubId}/>
             <br />
         </div>
     );

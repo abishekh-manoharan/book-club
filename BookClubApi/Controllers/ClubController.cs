@@ -353,8 +353,13 @@ public class ClubController : ControllerBase
                 .AsNoTracking()
                 .ToList();
 
+            List<JoinRequestDTO> joinReqDTOs = new();
+
+            foreach (JoinRequest jr in joinRequests){
+                joinReqDTOs.Add(new JoinRequestDTO(jr.ClubId, jr.UserId, (bool) jr.Request!, (bool) jr.Invitation!));                
+            }
             // return list of join requests
-            return Ok(joinRequests);
+            return Ok(joinReqDTOs);
         }
 
         ModelState.AddModelError("MissingFields", "Request is missing information needed to complete operation.");
