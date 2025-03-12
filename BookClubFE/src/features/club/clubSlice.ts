@@ -6,7 +6,10 @@ export interface JoinRequest {
     clubId: number,
     userId: number,
     request: boolean,
-    invitation: boolean
+    invitation: boolean,
+    userName: string,
+    fname?: string,
+    lname?: string
 }
 
 export const apiSliceWithClub = apiSlice.injectEndpoints({
@@ -74,6 +77,7 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                 }
             }),
             transformResponse(res: {$values: JoinRequest[], id: string}){
+                console.log(res.$values);
                 return res.$values;
             }
         }),

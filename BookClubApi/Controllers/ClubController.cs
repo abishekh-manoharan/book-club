@@ -331,7 +331,8 @@ public class ClubController : ControllerBase
             int clubId = ClubId.Value;
             // getting logged in user's associated User class
             User? user = await authHelpers.GetUserClassOfLoggedInUser(User);
-
+            var aspNetUser = dbContext.AspNetUsers.Where(aspU => aspU.Id == user!.AspnetusersId).FirstOrDefault();
+            
             // getting the ClubUser class associated with the logged in user
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
             ClubUser clubUser = dbContext.ClubUsers
@@ -356,7 +357,7 @@ public class ClubController : ControllerBase
             List<JoinRequestDTO> joinReqDTOs = new();
 
             foreach (JoinRequest jr in joinRequests){
-                joinReqDTOs.Add(new JoinRequestDTO(jr.ClubId, jr.UserId, (bool) jr.Request!, (bool) jr.Invitation!));                
+                joinReqDTOs.Add(new JoinRequestDTO(jr.ClubId, jr.UserId, (bool) jr.Request!, (bool) jr.Invitation!, aspNetUser!.UserName!, user!.FName, user!.LName));                
             }
             // return list of join requests
             return Ok(joinReqDTOs);
