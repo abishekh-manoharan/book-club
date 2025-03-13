@@ -393,12 +393,12 @@ public class ClubController : ControllerBase
     // action method that allows a club admin to decline a join request
     [HttpPost("declinejoinRequests")]
     [Authorize]
-    public async Task<ActionResult<List<JoinRequest>>> DeclineJoinRequest(int? ClubId, int? UserId)
+    public async Task<ActionResult<List<JoinRequest>>> DeclineJoinRequest([FromBody] ClubJoinValDTO clubJoinValDTO)
     {
-        if (ClubId != null && UserId != null)
+        if (clubJoinValDTO.ClubId != null && clubJoinValDTO.UserId != null)
         {
-            int clubId = ClubId.Value;
-            int userId = UserId.Value;
+            int clubId = clubJoinValDTO.ClubId.Value;
+            int userId = clubJoinValDTO.UserId.Value;
 
             // getting logged in user's associated User class
             User? user = await authHelpers.GetUserClassOfLoggedInUser(User);
@@ -432,6 +432,7 @@ public class ClubController : ControllerBase
             }
 
             dbContext.JoinRequests.Remove(req);
+            dbContext.SaveChanges();
 
             return Ok();
 
@@ -746,7 +747,7 @@ public class ClubController : ControllerBase
             dbContext.JoinRequests.Remove(invitation);
             dbContext.SaveChanges();
 
-            return Ok();
+            return Ok("invitation removed");
         }
         ModelState.AddModelError("MissingFields", "Request is missing information needed to complete operation.");
         return BadRequest(ModelState); // Returns a 400 Bad Request with error details

@@ -8,8 +8,8 @@ export interface JoinRequest {
     request: boolean,
     invitation: boolean,
     userName: string,
-    fname?: string,
-    lname?: string
+    fName?: string,
+    lName?: string
 }
 
 export const apiSliceWithClub = apiSlice.injectEndpoints({
@@ -81,6 +81,17 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                 return res.$values;
             }
         }),
+        rejectJoinRequest: builder.mutation<boolean, {UserId: number, ClubId: number}>({
+            query: (clubUser) => ({
+                url: `club/declinejoinRequests`,
+                credentials: 'include',
+                method: 'POST',
+                body: JSON.stringify(clubUser),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+        }),
     })
 })
 
@@ -90,7 +101,8 @@ export const {
     useJoinClubMutation, 
     useGetClubUserQuery, 
     useGetJoinRequestQuery,
-    useGetJoinRequestsQuery    
+    useGetJoinRequestsQuery,
+    useRejectJoinRequestMutation    
 } = apiSliceWithClub
 
 // export const apiSliceWithCl= apiSlice.injectEndpoints({

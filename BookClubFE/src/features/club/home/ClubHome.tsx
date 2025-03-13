@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 // import { useAppSelector } from '../../../app/hooks';
 import JoinButton from './JoinButton';
 import { useGetClubQuery } from '../clubSlice';
-import JoinRequests from '../JoinRequests';
+import JoinRequests from './JoinRequests/JoinRequests';
 
 function ClubHome() {
     const { id } = useParams();
