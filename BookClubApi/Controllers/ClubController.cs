@@ -331,8 +331,7 @@ public class ClubController : ControllerBase
             int clubId = ClubId.Value;
             // getting logged in user's associated User class
             User? user = await authHelpers.GetUserClassOfLoggedInUser(User);
-            var aspNetUser = dbContext.AspNetUsers.Where(aspU => aspU.Id == user!.AspnetusersId).FirstOrDefault();
-            
+
             // getting the ClubUser class associated with the logged in user
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
             ClubUser clubUser = dbContext.ClubUsers
@@ -356,8 +355,13 @@ public class ClubController : ControllerBase
 
             List<JoinRequestDTO> joinReqDTOs = new();
 
-            foreach (JoinRequest jr in joinRequests){
-                joinReqDTOs.Add(new JoinRequestDTO(jr.ClubId, jr.UserId, (bool) jr.Request!, (bool) jr.Invitation!, aspNetUser!.UserName!, user!.FName, user!.LName));                
+            foreach (JoinRequest jr in joinRequests)
+            {
+                // getting user and aspnetuser for the join request initiator
+                var jrUser = dbContext.Users.Where(user => user.UserId == jr.UserId).AsNoTracking().FirstOrDefault();
+                var jrAspUser = dbContext.AspNetUsers.Where(aspUser => aspUser.Id == jrUser!.AspnetusersId).AsNoTracking().FirstOrDefault();
+
+                joinReqDTOs.Add(new JoinRequestDTO(jr.ClubId, jr.UserId, (bool)jr.Request!, (bool)jr.Invitation!, jrAspUser!.UserName!, jrUser!.FName, jrUser!.LName));
             }
             // return list of join requests
             return Ok(joinReqDTOs);
@@ -383,7 +387,7 @@ public class ClubController : ControllerBase
                 return NotFound("join request not found"); // Return 404 if no matching JoinRequest is found
             }
 
-            JoinRequestDTO jrDTO = new(jr.ClubId, jr.UserId, (bool) jr.Request!, (bool) jr.Invitation!);
+            JoinRequestDTO jrDTO = new(jr.ClubId, jr.UserId, (bool)jr.Request!, (bool)jr.Invitation!);
 
             return Ok(jrDTO); // Return 200 OK with the JoinRequest if found
         }
@@ -747,7 +751,7 @@ public class ClubController : ControllerBase
             dbContext.JoinRequests.Remove(invitation);
             dbContext.SaveChanges();
 
-            return Ok("invitation removed");
+            return Ok();
         }
         ModelState.AddModelError("MissingFields", "Request is missing information needed to complete operation.");
         return BadRequest(ModelState); // Returns a 400 Bad Request with error details
