@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useLoginMutation } from "../features/auth/authSlice";
+import { useLoginMutation } from "./authSlice";
 
 
 function Login() {

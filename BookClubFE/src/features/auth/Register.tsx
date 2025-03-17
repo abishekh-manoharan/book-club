@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { RegistrationFormData } from "../utils/types";
+import { RegistrationFormData } from "../../utils/types";
 // import AuthService from '../services/auth';
 // import { AxiosError } from "axios";
-import { useRegisterMutation, RegistrationSuccess } from "../features/auth/authSlice";
-import { isRegistrationAllowanceError } from "../app/typeGuards";
+import { useRegisterMutation, RegistrationSuccess } from "./authSlice";
+import { isRegistrationAllowanceError } from "../../app/typeGuards";
 import { useNavigate } from "react-router-dom";
 
 function Register() {
@@ -157,6 +157,9 @@ function Register() {
 
             } else {
                 window.alert("an unknown error occurred. please try again later.")
+                if (e instanceof Error) {
+                    console.log(e)
+                }
             }
         }
     }
@@ -172,7 +175,7 @@ function Register() {
                 <label htmlFor="LName">Last Name</label>
                 <input name="LName" id="LName" value={lName} onChange={(e) => { setLName(e.target.value) }} required /><br />
                 <label htmlFor="Email">Email</label>
-                <input name="Email" id="Email" value={email} onChange={(e) => { setEmail(e.target.value) }} required /><br />
+                <input name="Email" id="Email" value={email} onChange={(e) => { setEmail(e.target.value) }} type="email" required /><br />
                 <p className="DuplicateEmail hidden" style={{ "color": "red" }}>Email is already taken.</p>
 
                 <label htmlFor="password">Password</label>
