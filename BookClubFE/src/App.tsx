@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom"
 import Header from './components/Header'
-import Register from './components/Register'
-import Login from './components/Login'
+import Register from './features/auth/Register'
+import Login from './features/auth/Login'
 import Create from "./features/club/Create"
 import JoinedClubs from "./features/club/JoinedClubs"
 // import { authContext } from "./utils/context"
@@ -12,11 +12,15 @@ import './App.css'
 import { useGetStatusQuery } from "./features/auth/authSlice"
 import classNames from "classnames"
 import ClubHome from "./features/club/home/ClubHome"
+import ErrorMsg from "./features/error/ErrorMsg"
+import { useAppDispatch, useAppSelector } from "./app/hooks"
+import { selectError, updateErrorMessageThunk } from "./features/error/errorSlice"
 // import { useAppSelector } from "./app/hooks"
 
 function App() {
   // const [auth, setAuth] = useState(false);
   const { isFetching } = useGetStatusQuery();
+  const error = useAppSelector(selectError)
 
   // gets and sets the current session's auth status
   // useEffect(() => {
@@ -31,8 +35,11 @@ function App() {
     'hidden': isFetching
   })
 
+
+
   return (
     <div className={pageHiddenClassWrapper}>
+      {error.error && <ErrorMsg/>}
         <Routes>
           <Route element=<Header /> >
             <Route path="/" element=<div>Home</div> />

@@ -3,23 +3,25 @@ import { apiSlice } from '../features/api/apiSlice'
 
 import { listenerMiddleware } from './listenerMiddleware'
 import authSlice from '../features/auth/authSlice'
-import clubSlice from '../features/club/clubSlice'
+// import clubSlice from '../features/club/clubSlice'
 import discussionSlice from '../features/discussion/discussionSlice'
 import meetingSlice from '../features/meeting/meetingSlice'
 import pollSlice from '../features/poll/pollSlice'
 import readingSlice from '../features/reading/readingSlice'
 import userSlice from '../features/user/userSlice'
+import errorSlice from '../features/error/errorSlice'
 
 export const store = configureStore({
   reducer: {
     [apiSlice.reducerPath]: apiSlice.reducer,
     auth: authSlice,
-    club: clubSlice,
+    // club: clubSlice,
     discussion: discussionSlice,
     meeting: meetingSlice,
     poll: pollSlice,
     reading: readingSlice,
-    user: userSlice
+    user: userSlice,
+    error: errorSlice
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
