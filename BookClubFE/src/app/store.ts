@@ -1,5 +1,6 @@
 import { Action, ThunkAction, configureStore } from '@reduxjs/toolkit'
 import { apiSlice } from '../features/api/apiSlice'
+import { apiSliceOpenLibrary } from '../features/api/apiSliceOpenLibrary'
 
 import { listenerMiddleware } from './listenerMiddleware'
 import authSlice from '../features/auth/authSlice'
@@ -7,26 +8,28 @@ import authSlice from '../features/auth/authSlice'
 import discussionSlice from '../features/discussion/discussionSlice'
 import meetingSlice from '../features/meeting/meetingSlice'
 import pollSlice from '../features/poll/pollSlice'
-import readingSlice from '../features/reading/readingSlice'
+// import readingSlice from '../features/reading/readingSlice'
 import userSlice from '../features/user/userSlice'
 import errorSlice from '../features/error/errorSlice'
 
 export const store = configureStore({
   reducer: {
     [apiSlice.reducerPath]: apiSlice.reducer,
+    [apiSliceOpenLibrary.reducerPath]: apiSliceOpenLibrary.reducer,
     auth: authSlice,
     // club: clubSlice,
     discussion: discussionSlice,
     meeting: meetingSlice,
     poll: pollSlice,
-    reading: readingSlice,
+    // reading: readingSlice,
     user: userSlice,
     error: errorSlice
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
       .prepend(listenerMiddleware.middleware)
-      .concat(apiSlice.middleware),
+      .concat(apiSlice.middleware)
+      .concat(apiSliceOpenLibrary.middleware),
 })
 
 // Infer the type of `store`
