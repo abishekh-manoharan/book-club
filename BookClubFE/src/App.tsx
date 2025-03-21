@@ -11,10 +11,11 @@ import './App.css'
 // import { useEffect, useState } from "react"
 import { useGetStatusQuery } from "./features/auth/authSlice"
 import classNames from "classnames"
-import ClubHome from "./features/club/home/ClubHome"
+import Club from "./features/club/home/Club"
 import ErrorMsg from "./features/error/ErrorMsg"
-import { useAppDispatch, useAppSelector } from "./app/hooks"
-import { selectError, updateErrorMessageThunk } from "./features/error/errorSlice"
+import {  useAppSelector } from "./app/hooks"
+import { selectError } from "./features/error/errorSlice"
+import CreateReading from "./features/reading/CreateReading/CreateReading"
 // import { useAppSelector } from "./app/hooks"
 
 function App() {
@@ -47,8 +48,8 @@ function App() {
             <Route path="login" element=<Login /> />
             <Route path="createClub" element=<Create /> />
             <Route path="joinedClubs" element=<JoinedClubs /> />
-            <Route path="club/:id">
-              <Route path="home" element=<ClubHome /> /> 
+            <Route path="club/:id" element=<Club /> >
+              <Route path="createReading" element=<CreateReading /> /> 
             </Route>
           </Route>
         </Routes >
