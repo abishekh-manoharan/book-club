@@ -6,6 +6,18 @@ namespace BookClubApi.Models;
 
 public partial class Book
 {
+    public Book(int? bookId, int? cover_Id, string title, string authorName, string ol_key, int? firstPublishYear, int? numberOfPagesMedian, float? ratingsAverage)
+    {
+        BookId = bookId;
+        Cover_Id = cover_Id;
+        Title = title;
+        AuthorName = authorName;
+        Ol_key = ol_key;
+        FirstPublishYear = firstPublishYear;
+        NumberOfPagesMedian = numberOfPagesMedian;
+        RatingsAverage = ratingsAverage;
+    }
+
     [Required]
     public int? BookId { get; set; }
 

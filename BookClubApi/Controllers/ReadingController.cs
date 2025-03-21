@@ -29,13 +29,13 @@ public class ReadingController : ControllerBase
     // saves the book if needed, and creates a reading instance
     [HttpPost("create")]
     [Authorize]
-    public async Task<ActionResult<Reading>> CreateReading([Required] int clubId, string name, string description, Book book)
+    public async Task<ActionResult<Reading>> CreateReading([FromBody] ReadingCreationValDTO readingCreationValDTO)
     {
         // ensure required params are included
         if (ModelState.IsValid)
         {
             // ensure logged in user is the club's admin
-            bool? admin = await authHelpers.IsUserAdminOfClub(User, clubId);
+            bool? admin = await authHelpers.IsUserAdminOfClub(User, (int) readingCreationValDTO.ClubId!);
             if (admin == null || admin == false)
             {
                 return Unauthorized("User isn't authorized to create a reading for this club.");
@@ -43,13 +43,22 @@ public class ReadingController : ControllerBase
 
             // save book to db if it doesn't exist already
             var searchedBook = dbContext.Books
-                .Where(dbBook => dbBook.BookId == book.BookId)
+                .Where(dbBook => dbBook.BookId == readingCreationValDTO.BookId)
                 .AsNoTracking()
                 .FirstOrDefault();
             if (searchedBook == null)
             {
                 dbContext.Books
-                    .Add(book);
+                    .Add(new Book(
+                        readingCreationValDTO.BookId,
+                        readingCreationValDTO.Cover_Id,
+                        readingCreationValDTO.Title,
+                        readingCreationValDTO.AuthorName,
+                        readingCreationValDTO.Ol_key,
+                        readingCreationValDTO.FirstPublishYear,
+                        readingCreationValDTO.NumberOfPagesMedian,
+                        readingCreationValDTO.RatingsAverage
+                    ));
                 await dbContext.SaveChangesAsync();
             }
 
@@ -58,10 +67,10 @@ public class ReadingController : ControllerBase
             {
                 Reading newReading = new()
                 {
-                    BookId = (int)book.BookId!,
-                    ClubId = clubId,
-                    Name = name,
-                    Description = description,
+                    BookId = (int)readingCreationValDTO.BookId!,
+                    ClubId = (int) readingCreationValDTO.ClubId!,
+                    Name = readingCreationValDTO.Name,
+                    Description = readingCreationValDTO.Description,
                     Status = "started"
                 };
 
