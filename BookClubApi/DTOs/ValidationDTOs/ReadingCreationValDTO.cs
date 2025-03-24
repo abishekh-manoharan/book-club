@@ -22,7 +22,8 @@ public class ReadingCreationValDTO
     public int? ClubId { get; set; }
     public string Name { get; set; } = null!;
 
-    public string Description { get; set; } = null!;
+    public string? Description { get; set; } 
+    
     [Required]
     public int? BookId { get; set; }
 
