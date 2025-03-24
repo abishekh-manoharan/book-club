@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import ClubService from "../services/club";
-import { Club } from "../utils/types";
+import ClubService from "../../services/club";
+import { Club } from "../../utils/types";
 import { Link } from "react-router-dom";
 
 function SearchClubBar() {
@@ -54,7 +54,7 @@ function SearchClubBar() {
             <div className="clubsearchresults hidden">
                 {
                     searchResults.map((res, i) => 
-                        <Link key={`${res.clubId}${i}`} to={`/club/${res.clubId}/home`} onClick={closeSearchResults}>{res.name} {res.clubId}</Link>)
+                        <Link key={`${res.clubId}${i}`} to={`/club/${res.clubId}`} onClick={closeSearchResults}>{res.name} {res.clubId}</Link>)
                 }
             </div>
         </div>

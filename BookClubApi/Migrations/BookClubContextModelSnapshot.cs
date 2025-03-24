@@ -599,7 +599,6 @@ namespace BookClubApi.Migrations
                         .HasColumnName("club_id");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)")
                         .HasColumnName("description");

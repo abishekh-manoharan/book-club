@@ -1,10 +1,10 @@
 import { apiSliceOpenLibrary } from "../api/apiSliceOpenLibrary";
 
-interface Book {
+export interface Book {
     BookId: number,
     Cover_Id: number,
     Title: string,
-    AuthorName: string,
+    AuthorName: string[],
     Ol_key: string,
     FirstPublishYear: number,
     NumberOfPagesMedian: number,
