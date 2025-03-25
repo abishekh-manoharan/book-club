@@ -21,22 +21,18 @@ public partial class Book
     [Required]
     public int? BookId { get; set; }
 
-    [Required]
     public int? Cover_Id { get; set; }
 
     public string Title { get; set; } = null!;
 
-    public string AuthorName { get; set; } = null!;
+    public string? AuthorName { get; set; }
     
     public string Ol_key { get; set; } = null!;
 
-    [Required]
     public int? FirstPublishYear { get; set; }
     
-    [Required]
     public int? NumberOfPagesMedian { get; set; }
     
-    [Required]
     public float? RatingsAverage { get; set; }
 
     public virtual ICollection<Clubrecommendation> Clubrecommendations { get; set; } = new List<Clubrecommendation>();

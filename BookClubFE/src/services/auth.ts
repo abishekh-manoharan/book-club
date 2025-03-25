@@ -17,7 +17,7 @@ const login = (email: string, password: string) => axios.post(
     BE_URL + 'auth/login',
     { email, password },
     {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        // headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         withCredentials: true
     }
 ).then(res => res.data);

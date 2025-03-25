@@ -1,6 +1,6 @@
 import { apiSlice } from "../api/apiSlice";
 
-interface Reading {
+export interface Reading {
     BookId: number,
     ClubId: number,
     Name: string,
@@ -8,9 +8,23 @@ interface Reading {
     Status: string
 }
 
+export interface NewReading {
+    BookId: number,
+    ClubId: number,
+    Name: string,
+    Description?: string,
+    Cover_Id?: number,
+    Title: string,
+    AuthorName?: string,
+    Ol_key?: string,
+    FirstPublishYear?: number,
+    NumberOfPagesMedian?: number,
+    RatingsAverage?: number
+}
+
 export const apiSliceWithReading = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
-        createReading: builder.mutation<Reading, { foo: string }>({
+        createReading: builder.mutation<Reading, NewReading>({
             query: (newReading) => ({
                 url: 'reading/create',
                 credentials: 'include',
