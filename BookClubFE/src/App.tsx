@@ -40,7 +40,7 @@ function App() {
 
   return (
     <div className={pageHiddenClassWrapper}>
-      {error.error && <ErrorMsg/>}
+      {error.error && <ErrorMsg msg={error.errorMsg}/>}
         <Routes>
           <Route element=<Header /> >
             <Route path="/" element=<div>Home</div> />

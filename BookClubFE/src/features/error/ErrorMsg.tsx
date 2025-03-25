@@ -1,9 +1,10 @@
 
 
-function ErrorMsg() {
+function ErrorMsg(props: {msg: string}) {
+    
     return (
         <div className="errorMsg">
-            Error.
+            {props.msg}
         </div>
     );
 }
