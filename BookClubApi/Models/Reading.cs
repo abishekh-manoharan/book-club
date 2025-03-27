@@ -15,6 +15,8 @@ public partial class Reading
     
     public string Status { get; set; } = null!;
 
+    public DateTime startDate { get; set; }
+
     public virtual Book Book { get; set; } = null!;
 
     public virtual Club Club { get; set; } = null!;
