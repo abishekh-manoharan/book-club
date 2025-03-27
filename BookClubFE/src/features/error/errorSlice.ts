@@ -20,9 +20,6 @@ const errorSlice = createSlice({
             state.error = false;
         }
     },
-    // extraReducers(builder) {
-
-    // }
 });
 
 export const { updateErrorMessage: updateErrorMessageAction, clearErrorMessage } = errorSlice.actions;
