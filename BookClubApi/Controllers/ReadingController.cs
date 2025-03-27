@@ -71,7 +71,8 @@ public class ReadingController : ControllerBase
                     ClubId = (int) readingCreationValDTO.ClubId!,
                     Name = readingCreationValDTO.Name,
                     Description = readingCreationValDTO.Description,
-                    Status = "started"
+                    Status = "started",
+                    StartDate = DateTime.Now,
                 };
 
                 dbContext.Readings.Add(newReading);
@@ -190,7 +191,7 @@ public class ReadingController : ControllerBase
 
                 dbContext.SaveChanges();
 
-                ReadingDTO readingDTO = new(bookId, clubId, name, description, status);
+                ReadingDTO readingDTO = new(bookId, clubId, name, description, status, reading.StartDate);
                 return Ok(readingDTO);
             }
             catch (Exception e)

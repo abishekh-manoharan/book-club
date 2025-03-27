@@ -5,7 +5,8 @@ export interface Reading {
     ClubId: number,
     Name: string,
     Description?: string,
-    Status: string
+    Status: string,
+    StartDate: Date
 }
 
 export interface NewReading {

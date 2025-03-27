@@ -18,13 +18,17 @@ public class ReadingDTO
     [Required]    
     public string Status { get; set; } = null!;
 
-    public ReadingDTO(int bookId, int clubId, string name, string description, string status)
+    [Required]
+    public DateTime StartDate { get; set; }
+
+    public ReadingDTO(int bookId, int clubId, string name, string description, string status, DateTime startDate)
     {
         BookId = bookId;
         ClubId = clubId;
         Name = name;
         Description = description;
         Status = status;
+        StartDate = startDate;
     }
 
 }
