@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import ClubService from "../../services/club";
 import { Club } from "../../utils/types";
+import { Link } from "react-router-dom";
 
 function JoinedClubs() {
     const [joinedClubs, setJoinedClubs] = useState<Club[]>([]);
@@ -12,7 +13,7 @@ function JoinedClubs() {
 
     return (
         <div>
-            {joinedClubs.map((club) => <p  key={club.clubId}>{club.name}</p>)}
+            {joinedClubs.map((club) => <><Link to={`/club/${club.clubId}`}  key={club.clubId}>{club.name}</Link><br/></>)}
         </div>
     );
 }

@@ -1,12 +1,12 @@
 import { apiSlice } from "../api/apiSlice";
 
 export interface Reading {
-    BookId: number,
-    ClubId: number,
-    Name: string,
-    Description?: string,
-    Status: string,
-    StartDate: Date
+    bookId: number,
+    clubId: number,
+    name: string,
+    description?: string,
+    status: string,
+    startDate: Date
 }
 
 export interface NewReading {
@@ -35,8 +35,20 @@ export const apiSliceWithReading = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-
         }),
+        getReadingsOfAClub: builder.query<Reading[], number>({
+            query: (clubId) => ({
+                url: `reading/GetAllReadings?clubId=${clubId}`,
+                credentials: 'include',
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }),
+            transformResponse(res: {$id: string, $values: Reading[]}){
+                return res.$values;
+            }
+        })
         // getClub: builder.query<Club, number>({
         //     query: (clubId) => ({
         //         url: `club/getOneClub?clubId=${clubId}`,
@@ -52,5 +64,5 @@ export const apiSliceWithReading = apiSlice.injectEndpoints({
 
 export const {
     useCreateReadingMutation,
-    // useGetClubQuery,
+    useGetReadingsOfAClubQuery
 } = apiSliceWithReading
