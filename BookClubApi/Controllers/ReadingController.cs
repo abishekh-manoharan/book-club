@@ -139,7 +139,7 @@ public class ReadingController : ControllerBase
                 return BadRequest("Club not found with the Id provided.");
             }
 
-            // if club is public or if the club is private and the user is member, return list
+            // if club is public or if the club is private and the user is member, return reading details
             ClubUser? clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, clubId);
             if (club.Private == false || clubUser != null)
             { // if user is a member of the club, clubUser will not be null here
@@ -343,6 +343,28 @@ public class ReadingController : ControllerBase
                 return NotFound("Reading wasn't found.");
             }
             return NotFound("User isn't member of the club.");
+        }
+        return BadRequest(ModelState);
+    }
+
+    // action method to retrieve a ReadingUser object
+    [HttpGet("readingUser")]
+    public ActionResult<Readinguser> GetReadingUser([FromQuery] ReadingUserValDTO readingUser){
+        if(ModelState.IsValid){
+            var readingUserResult = dbContext.Readingusers
+                .Where(
+                    ru => ru.BookId == readingUser.BookId 
+                    && ru.ClubId == readingUser.ClubId 
+                    && ru.UserId == readingUser.UserId)
+                .AsNoTracking()
+                .FirstOrDefault();
+            
+            if (readingUserResult == null) {
+                return NotFound("User hasn't opted into reading.");
+            }
+
+            return Ok(readingUserResult);
+            
         }
         return BadRequest(ModelState);
     }
