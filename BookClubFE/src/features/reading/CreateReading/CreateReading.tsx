@@ -12,8 +12,8 @@ function CreateReading() {
     const [selectedBook, setSelectedBook] = useState<Book>();
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
-    const { id } = useParams();
-    const clubId = Number(id);
+    const { clubid } = useParams();
+    const clubId = Number(clubid);
     const [createReading, { isError: isCreateReadingError, error: createReadingError }] = useCreateReadingMutation();
 
     // function used to generate an int value from a string

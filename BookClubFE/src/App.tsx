@@ -16,6 +16,7 @@ import ErrorMsg from "./features/error/ErrorMsg"
 import {  useAppSelector } from "./app/hooks"
 import { selectError } from "./features/error/errorSlice"
 import CreateReading from "./features/reading/CreateReading/CreateReading"
+import ReadingHome from "./features/reading/ReadingHome"
 // import { useAppSelector } from "./app/hooks"
 
 function App() {
@@ -48,8 +49,9 @@ function App() {
             <Route path="login" element=<Login /> />
             <Route path="createClub" element=<Create /> />
             <Route path="joinedClubs" element=<JoinedClubs /> />
-            <Route path="club/:id" element=<Club /> >
+            <Route path="club/:clubid" element=<Club /> >
               <Route path="createReading" element=<CreateReading /> /> 
+              <Route path="reading/:readingid" element=<ReadingHome /> /> 
             </Route>
           </Route>
         </Routes >

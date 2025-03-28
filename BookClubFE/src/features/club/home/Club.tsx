@@ -10,8 +10,8 @@ import { useGetUserIdQuery } from '../../auth/authSlice';
 import ReadingsList from '../../reading/ReadingsList';
 
 function Club() {
-    const { id } = useParams();
-    const clubId = Number(id);
+    const { clubid } = useParams();
+    const clubId = Number(clubid);
     const { data: userId } = useGetUserIdQuery();
     // const status = useAppSelector(selectLoginStatus);
 
