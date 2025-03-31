@@ -23,6 +23,14 @@ export interface NewReading {
     RatingsAverage?: number
 }
 
+export interface ReadingUser {
+    UserId: string,
+    BookId: string,
+    ClubId: string,
+    Progress: string,
+    ProgresstypeId: string,
+}
+
 export const apiSliceWithReading = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         createReading: builder.mutation<Reading, NewReading>({
@@ -46,6 +54,19 @@ export const apiSliceWithReading = apiSlice.injectEndpoints({
                 }
             }),
             transformResponse(res: {$id: string, $values: Reading[]}){
+                return res.$values;
+            }
+        }),
+        getReadingUser: builder.query<ReadingUser, {UserId: number, BookId: number, ClubId: number}>({
+            query: (readingUser) => ({
+                url: `reading/GetAllReadings?clubId=${readingUser.ClubId}&bookId=${readingUser.BookId}&userIf=${readingUser.UserId}`,
+                credentials: 'include',
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }),
+            transformResponse(res: {$id: string, $values: ReadingUser}){
                 return res.$values;
             }
         })

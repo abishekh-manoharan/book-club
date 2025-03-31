@@ -28,7 +28,7 @@ function Club() {
                 <>{club?.name}</><br></br>
                 {isClubUserSuccess && clubUser.admin && <Link to="./createREading">create reading</Link>}
                 <Outlet />
-                <ReadingsList clubId={clubId}/>
+                <ReadingsList clubId={clubId} />
                 {/* // <>{userId}</><br />  */}
                 {/* hide joing button if use isn't logged in or if the user is a club member already */}
                 <JoinButton clubId={clubId} />
