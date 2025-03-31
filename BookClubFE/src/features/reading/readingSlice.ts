@@ -43,6 +43,7 @@ export const apiSliceWithReading = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
+            invalidatesTags: [{type: 'Readings', id: 'all'}]
         }),
         getReadingsOfAClub: builder.query<Reading[], number>({
             query: (clubId) => ({
@@ -55,7 +56,8 @@ export const apiSliceWithReading = apiSlice.injectEndpoints({
             }),
             transformResponse(res: {$id: string, $values: Reading[]}){
                 return res.$values;
-            }
+            },
+            providesTags: [{type: 'Readings', id: 'all'}]
         }),
         getReadingUser: builder.query<ReadingUser, {UserId: number, BookId: number, ClubId: number}>({
             query: (readingUser) => ({
@@ -85,5 +87,6 @@ export const apiSliceWithReading = apiSlice.injectEndpoints({
 
 export const {
     useCreateReadingMutation,
-    useGetReadingsOfAClubQuery
+    useGetReadingsOfAClubQuery,
+    useGetReadingUserQuery
 } = apiSliceWithReading
