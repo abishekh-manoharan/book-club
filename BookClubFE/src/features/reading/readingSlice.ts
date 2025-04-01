@@ -45,6 +45,20 @@ export const apiSliceWithReading = apiSlice.injectEndpoints({
             }),
             invalidatesTags: [{type: 'Readings', id: 'all'}]
         }),
+        getOneReading: builder.query<Reading, {ClubId: number, BookId: number}>({
+            query: (reading) => ({
+                url: `reading/GetAReading?ClubId=${reading.ClubId}&BookId=${reading.BookId}`,
+                credentials: 'include',
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }),
+            // transformResponse(res: {$id: string, $values: Reading}){
+            //     return res.$values;
+            // },
+            providesTags: [{type: 'Readings', id: 'all'}]
+        }),
         getReadingsOfAClub: builder.query<Reading[], number>({
             query: (clubId) => ({
                 url: `reading/GetAllReadings?clubId=${clubId}`,
@@ -61,7 +75,7 @@ export const apiSliceWithReading = apiSlice.injectEndpoints({
         }),
         getReadingUser: builder.query<ReadingUser, {UserId: number, BookId: number, ClubId: number}>({
             query: (readingUser) => ({
-                url: `reading/GetAllReadings?clubId=${readingUser.ClubId}&bookId=${readingUser.BookId}&userIf=${readingUser.UserId}`,
+                url: `reading/GetAllReadings?clubId=${readingUser.ClubId}&bookId=${readingUser.BookId}&userId=${readingUser.UserId}`,
                 credentials: 'include',
                 method: 'GET',
                 headers: {
@@ -71,7 +85,18 @@ export const apiSliceWithReading = apiSlice.injectEndpoints({
             transformResponse(res: {$id: string, $values: ReadingUser}){
                 return res.$values;
             }
-        })
+        }),
+        optIntoReading: builder.mutation<Reading, NewReading>({
+            query: (newReading) => ({
+                url: 'reading/OptIntoReading',
+                credentials: 'include',
+                method: 'POST',
+                body: JSON.stringify(newReading),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }),
+        }),
         // getClub: builder.query<Club, number>({
         //     query: (clubId) => ({
         //         url: `club/getOneClub?clubId=${clubId}`,
@@ -88,5 +113,6 @@ export const apiSliceWithReading = apiSlice.injectEndpoints({
 export const {
     useCreateReadingMutation,
     useGetReadingsOfAClubQuery,
-    useGetReadingUserQuery
+    useGetReadingUserQuery,
+    useGetOneReadingQuery
 } = apiSliceWithReading

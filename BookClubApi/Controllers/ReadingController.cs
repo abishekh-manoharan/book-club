@@ -128,22 +128,22 @@ public class ReadingController : ControllerBase
 
     // action method that returns all reading records associated with a club
     [HttpGet("GetAReading")]
-    public async Task<ActionResult<Reading>> GetSingleReadingOfAClub([Required] int clubId, [Required] int bookId)
+    public async Task<ActionResult<Reading>> GetSingleReadingOfAClub([FromQuery] ReadingGetOneValDTO readingDTO)
     {
         if (ModelState.IsValid)
         {
             // ensure club exists
-            var club = dbContext.Clubs.Where(club => club.ClubId == clubId).AsNoTracking().FirstOrDefault();
+            var club = dbContext.Clubs.Where(club => club.ClubId == readingDTO.ClubId).AsNoTracking().FirstOrDefault();
             if (club == null)
             {
                 return BadRequest("Club not found with the Id provided.");
             }
 
             // if club is public or if the club is private and the user is member, return reading details
-            ClubUser? clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, clubId);
+            ClubUser? clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, (int) readingDTO.ClubId!);
             if (club.Private == false || clubUser != null)
             { // if user is a member of the club, clubUser will not be null here
-                var reading = dbContext.Readings.Where(reading => reading.ClubId == clubId && reading.BookId == bookId).AsNoTracking().FirstOrDefault();
+                var reading = dbContext.Readings.Where(reading => reading.ClubId == readingDTO.ClubId && reading.BookId == readingDTO.BookId).AsNoTracking().FirstOrDefault();
                 if (reading != null)
                 {
                     return Ok(reading);

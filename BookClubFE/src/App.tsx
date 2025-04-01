@@ -51,7 +51,7 @@ function App() {
             <Route path="joinedClubs" element=<JoinedClubs /> />
             <Route path="club/:clubid" element=<Club /> >
               <Route path="createReading" element=<CreateReading /> /> 
-              <Route path="reading/:readingid" element=<ReadingHome /> /> 
+              <Route path="reading/:bookid" element=<ReadingHome /> /> 
             </Route>
           </Route>
         </Routes >
