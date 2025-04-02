@@ -24,12 +24,14 @@ export interface NewReading {
 }
 
 export interface ReadingUser {
-    UserId: string,
-    BookId: string,
-    ClubId: string,
-    Progress: string,
-    ProgresstypeId: string,
+    UserId: number,
+    BookId: number,
+    ClubId: number,
+    Progress: number,
+    ProgresstypeId: number,
 }
+
+export type ReadingWithoutUserAndProgress = Pick<ReadingUser, "BookId" | "ClubId">
 
 export const apiSliceWithReading = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
@@ -75,27 +77,38 @@ export const apiSliceWithReading = apiSlice.injectEndpoints({
         }),
         getReadingUser: builder.query<ReadingUser, {UserId: number, BookId: number, ClubId: number}>({
             query: (readingUser) => ({
-                url: `reading/GetAllReadings?clubId=${readingUser.ClubId}&bookId=${readingUser.BookId}&userId=${readingUser.UserId}`,
+                url: `reading/readingUser?clubId=${readingUser.ClubId}&bookId=${readingUser.BookId}&userId=${readingUser.UserId}`,
                 credentials: 'include',
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
                 }
             }),
-            transformResponse(res: {$id: string, $values: ReadingUser}){
-                return res.$values;
-            }
+            providesTags: [{type: 'Readings', id: 'user'}]
         }),
-        optIntoReading: builder.mutation<Reading, NewReading>({
-            query: (newReading) => ({
+        optIntoReading: builder.mutation<Reading, ReadingWithoutUserAndProgress>({
+            query: (reading) => ({
                 url: 'reading/OptIntoReading',
                 credentials: 'include',
                 method: 'POST',
-                body: JSON.stringify(newReading),
+                body: JSON.stringify(reading),
                 headers: {
                     'Content-Type': 'application/json'
                 }
             }),
+            invalidatesTags: [{type: 'Readings', id: 'user'}]
+        }),
+        optOutOfReading: builder.mutation<Reading, ReadingWithoutUserAndProgress>({
+            query: (reading) => ({
+                url: 'reading/OptOutOfReading',
+                credentials: 'include',
+                method: 'POST',
+                body: JSON.stringify(reading),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }),
+            invalidatesTags: [{type: 'Readings', id: 'user'}]
         }),
         // getClub: builder.query<Club, number>({
         //     query: (clubId) => ({
@@ -114,5 +127,7 @@ export const {
     useCreateReadingMutation,
     useGetReadingsOfAClubQuery,
     useGetReadingUserQuery,
-    useGetOneReadingQuery
+    useGetOneReadingQuery,
+    useOptIntoReadingMutation,
+    useOptOutOfReadingMutation
 } = apiSliceWithReading

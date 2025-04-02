@@ -35,7 +35,7 @@ public class ReadingController : ControllerBase
         if (ModelState.IsValid)
         {
             // ensure logged in user is the club's admin
-            bool? admin = await authHelpers.IsUserAdminOfClub(User, (int) readingCreationValDTO.ClubId!);
+            bool? admin = await authHelpers.IsUserAdminOfClub(User, (int)readingCreationValDTO.ClubId!);
             if (admin == null || admin == false)
             {
                 return Unauthorized("User isn't authorized to create a reading for this club.");
@@ -68,7 +68,7 @@ public class ReadingController : ControllerBase
                 Reading newReading = new()
                 {
                     BookId = (int)readingCreationValDTO.BookId!,
-                    ClubId = (int) readingCreationValDTO.ClubId!,
+                    ClubId = (int)readingCreationValDTO.ClubId!,
                     Name = readingCreationValDTO.Name,
                     Description = readingCreationValDTO.Description,
                     Status = "started",
@@ -140,7 +140,7 @@ public class ReadingController : ControllerBase
             }
 
             // if club is public or if the club is private and the user is member, return reading details
-            ClubUser? clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, (int) readingDTO.ClubId!);
+            ClubUser? clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, (int)readingDTO.ClubId!);
             if (club.Private == false || clubUser != null)
             { // if user is a member of the club, clubUser will not be null here
                 var reading = dbContext.Readings.Where(reading => reading.ClubId == readingDTO.ClubId && reading.BookId == readingDTO.BookId).AsNoTracking().FirstOrDefault();
@@ -247,19 +247,20 @@ public class ReadingController : ControllerBase
     // action method that allows a club member to opt into a specified reading
     [HttpPost("OptIntoReading")]
     [Authorize]
-    public async Task<ActionResult<ReadingUserDTO>> OptIntoReading([Required] int clubId, [Required] int bookId)
+    public async Task<ActionResult<ReadingUserDTO>> OptIntoReading([FromBody] ReadingGetOneValDTO readingDTO)
     {
         if (ModelState.IsValid)
         {
             // ensure logged in user is member of club
-            ClubUser? clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, clubId);
+            ClubUser? clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, (int)readingDTO.ClubId!);
             if (clubUser != null)
             {
                 // ensure reading exists already
                 var reading = dbContext.Readings
-                    .Where(reading => reading.BookId == bookId && reading.ClubId == clubId)
+                    .Where(reading => reading.BookId == (int)readingDTO.BookId! && reading.ClubId == (int)readingDTO.ClubId!)
                     .AsNoTracking()
                     .FirstOrDefault();
+
                 if (reading != null) // if reading exists
                 {
                     // ensure reading isn't concluded
@@ -268,11 +269,11 @@ public class ReadingController : ControllerBase
                         // create readinguser record for user
                         try
                         {
-                            Readinguser newReadingUser = new(clubUser.UserId, bookId, clubId, 0, 1);
+                            Readinguser newReadingUser = new(clubUser.UserId, (int)readingDTO.BookId!, (int)readingDTO.ClubId!, 0, 1);
                             dbContext.Readingusers.Add(newReadingUser);
                             dbContext.SaveChanges();
 
-                            ReadingUserDTO readingUserDTO = new(clubUser.UserId, bookId, clubId, 0, 1);
+                            ReadingUserDTO readingUserDTO = new(clubUser.UserId, (int)readingDTO.BookId!, (int)readingDTO.ClubId!, 0, 1);
 
                             return Ok(readingUserDTO);
                         }
@@ -303,17 +304,17 @@ public class ReadingController : ControllerBase
     // action method that allows a club member to opt out of a specified reading
     [HttpPost("OptOutOfReading")]
     [Authorize]
-    public async Task<ActionResult<Reading>> OptOutOfReading([Required] int clubId, [Required] int bookId)
+    public async Task<ActionResult<Reading>> OptOutOfReading([FromBody] ReadingGetOneValDTO readingDTO)
     {
         if (ModelState.IsValid)
         {
             // ensure logged in user is member of club
-            ClubUser? clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, clubId);
+            ClubUser? clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, (int)readingDTO.ClubId!);
             if (clubUser != null)
             {
                 // ensure reading exists already
                 var reading = dbContext.Readings
-                    .Where(reading => reading.BookId == bookId && reading.ClubId == clubId)
+                    .Where(reading => reading.BookId == readingDTO.BookId && reading.ClubId == readingDTO.ClubId)
                     .AsNoTracking()
                     .FirstOrDefault();
                 if (reading != null) // if reading exists
@@ -322,8 +323,8 @@ public class ReadingController : ControllerBase
                     if (reading.Status != "concluded")
                     {
                         var readingUser = dbContext.Readingusers
-                            .Where(readingUser => readingUser.BookId == bookId
-                                && readingUser.ClubId == clubId
+                            .Where(readingUser => readingUser.BookId == readingDTO.BookId
+                                && readingUser.ClubId == readingDTO.ClubId
                                 && readingUser.UserId == clubUser.UserId)
                             .AsNoTracking()
                             .FirstOrDefault();
@@ -349,22 +350,25 @@ public class ReadingController : ControllerBase
 
     // action method to retrieve a ReadingUser object
     [HttpGet("readingUser")]
-    public ActionResult<Readinguser> GetReadingUser([FromQuery] ReadingUserValDTO readingUser){
-        if(ModelState.IsValid){
+    public ActionResult<Readinguser> GetReadingUser([FromQuery] ReadingUserValDTO readingUser)
+    {
+        if (ModelState.IsValid)
+        {
             var readingUserResult = dbContext.Readingusers
                 .Where(
-                    ru => ru.BookId == readingUser.BookId 
-                    && ru.ClubId == readingUser.ClubId 
+                    ru => ru.BookId == readingUser.BookId
+                    && ru.ClubId == readingUser.ClubId
                     && ru.UserId == readingUser.UserId)
                 .AsNoTracking()
                 .FirstOrDefault();
-            
-            if (readingUserResult == null) {
+
+            if (readingUserResult == null)
+            {
                 return NotFound("User hasn't opted into reading.");
             }
 
             return Ok(readingUserResult);
-            
+
         }
         return BadRequest(ModelState);
     }
