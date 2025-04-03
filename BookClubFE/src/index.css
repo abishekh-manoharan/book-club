@@ -14,7 +14,8 @@
 }
 
 .hidden {
-  display: none
+  display: none;
+  background-color: pink;
 }
 
 .clubsearchresults {

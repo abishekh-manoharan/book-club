@@ -4,6 +4,7 @@ import { useGetUserIdQuery } from "../auth/authSlice";
 import { useAppDispatch } from "../../app/hooks";
 import { updateErrorMessageThunk } from "../error/errorSlice";
 import { isFetchBaseQueryError, isSerializedError } from "../../app/typeGuards";
+import UpdateReadingProgress from "./UpdateReadingProgress";
 
 
 function ReadingHome() {
@@ -15,11 +16,11 @@ function ReadingHome() {
 
 
     const { data: userId, isSuccess: getUserIsSuccess, isFetching: getUserIsFetching } = useGetUserIdQuery();
-    const { data: reading, isSuccess: getReadingIsSuccess, isFetching: getReadingIsFetching} = useGetOneReadingQuery(
+    const { data: reading, isSuccess: getReadingIsSuccess, isFetching: getReadingIsFetching } = useGetOneReadingQuery(
         { ClubId: clubId, BookId: bookId },
         { skip: !bookId || !clubId || isNaN(clubId) || isNaN(bookId) }
     );
-    const { isSuccess: getReadingUserSuccess, isError: getReadingUserError} = useGetReadingUserQuery(
+    const { isSuccess: getReadingUserSuccess, isError: getReadingUserError, isFetching: getReadingUserIsFetching } = useGetReadingUserQuery(
         { BookId: bookId, ClubId: clubId, UserId: userId! },
         { skip: !getUserIsSuccess || !clubId || isNaN(clubId) || !bookId || isNaN(bookId) || !getReadingIsSuccess }
     );
@@ -60,16 +61,23 @@ function ReadingHome() {
         }
     }
 
+    const optedIn: boolean = getReadingUserSuccess;
+    const optedOut: boolean = getReadingUserError;
+    const loggedIn = getUserIsSuccess;
+
     return (
         <div>
             <h1>Reading home</h1>
+            {!getUserIsFetching && !getReadingIsFetching && !getReadingUserIsFetching &&<>
+                {optedIn && loggedIn && <button onClick={optOutOfReadingButtonClick}>opt out of reading</button>}
+                {optedOut && loggedIn && <button onClick={optIntoReadingButtonClick}>opt into reading</button>}<br/><br/>
 
-            {!getUserIsFetching && !getReadingIsFetching && getReadingUserSuccess && getUserIsSuccess && <button onClick={optOutOfReadingButtonClick}>opt out of reading</button>}
-            {!getUserIsFetching && !getReadingIsFetching && getReadingUserError && getUserIsSuccess && <button onClick={optIntoReadingButtonClick}>opt into reading</button>}
-            clubid <br />
-            {clubid} <br /> <br />
-            bookId <br />
-            {bookId}
+                {optedIn && loggedIn && <UpdateReadingProgress/>}
+                clubid <br />
+                {clubid} <br /> <br />
+                bookId <br />
+                {bookId}
+            </>}
         </div>
     );
 }

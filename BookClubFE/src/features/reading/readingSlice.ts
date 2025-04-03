@@ -110,6 +110,18 @@ export const apiSliceWithReading = apiSlice.injectEndpoints({
             }),
             invalidatesTags: [{type: 'Readings', id: 'user'}]
         }),
+        updateReadingProgress: builder.mutation<Reading, Omit<ReadingUser, "UserId">>({
+            query: (reading) => ({
+                url: 'reading/UpdateReadingProgress',
+                credentials: 'include',
+                method: 'POST',
+                body: JSON.stringify(reading),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }),
+            invalidatesTags: [{type: 'Readings', id: 'user'}]
+        }),
         // getClub: builder.query<Club, number>({
         //     query: (clubId) => ({
         //         url: `club/getOneClub?clubId=${clubId}`,
@@ -129,5 +141,6 @@ export const {
     useGetReadingUserQuery,
     useGetOneReadingQuery,
     useOptIntoReadingMutation,
-    useOptOutOfReadingMutation
+    useOptOutOfReadingMutation,
+    useUpdateReadingProgressMutation
 } = apiSliceWithReading

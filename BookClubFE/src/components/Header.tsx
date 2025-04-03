@@ -1,7 +1,7 @@
 import { NavLink, Outlet } from "react-router-dom";
 // import { GetAuthContext } from "../utils/context";
 // import AuthService from "../services/auth";
-import SearchBar from "./SearchClubBar";
+import SearchBar from "../features/club/SearchClubBar";
 import {  useGetStatusQuery, useLogoutMutation } from "../features/auth/authSlice";
 // import { useAppSelector } from "../app/hooks";
 

@@ -374,19 +374,19 @@ public class ReadingController : ControllerBase
     }
 
     // action method that allows reading members to update their progress 
-    [HttpPut("UpdateReadingProgress")]
+    [HttpPost("UpdateReadingProgress")]
     [Authorize]
-    public async Task<ActionResult<Reading>> UpdateReadingProgress([Required] int clubId, [Required] int bookId, [Required] int Progress, [Required] int ProgresstypeId)
+    public async Task<ActionResult<Reading>> UpdateReadingProgress([FromBody] UpdateReadingProgressValDTO readingDTO)
     {
         if (ModelState.IsValid)
         {
             // ensure logged in user is member of club
-            ClubUser? clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, clubId);
+            ClubUser? clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, (int) readingDTO.ClubId!);
             if (clubUser != null)
             {
                 // ensure reading exists already
                 var reading = dbContext.Readings
-                    .Where(reading => reading.BookId == bookId && reading.ClubId == clubId)
+                    .Where(reading => reading.BookId == readingDTO.BookId && reading.ClubId == readingDTO.ClubId)
                     .AsNoTracking()
                     .FirstOrDefault();
                 if (reading != null) // if reading exists
@@ -395,8 +395,8 @@ public class ReadingController : ControllerBase
                     if (reading.Status != "concluded")
                     {
                         var readingUser = dbContext.Readingusers
-                            .Where(readingUser => readingUser.BookId == bookId
-                                && readingUser.ClubId == clubId
+                            .Where(readingUser => readingUser.BookId == readingDTO.BookId
+                                && readingUser.ClubId == readingDTO.ClubId
                                 && readingUser.UserId == clubUser.UserId)
                             .FirstOrDefault();
 
@@ -406,8 +406,8 @@ public class ReadingController : ControllerBase
                             try
                             {
                                 // update progress
-                                readingUser.Progress = Progress;
-                                readingUser.ProgresstypeId = ProgresstypeId;
+                                readingUser.Progress = (int) readingDTO.Progress!;
+                                readingUser.ProgresstypeId = (int) readingDTO.ProgresstypeId!;
 
                                 dbContext.SaveChanges();
 
