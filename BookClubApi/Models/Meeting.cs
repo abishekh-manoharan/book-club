@@ -12,6 +12,8 @@ public partial class Meeting
 
     public int ClubId { get; set; }
 
+    public string Name { get; set; } = null!;
+    
     public DateTime StartTime { get; set; }
 
     public DateTime? EndTime { get; set; }
