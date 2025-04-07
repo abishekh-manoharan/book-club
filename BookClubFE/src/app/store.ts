@@ -6,7 +6,7 @@ import { listenerMiddleware } from './listenerMiddleware'
 import authSlice from '../features/auth/authSlice'
 // import clubSlice from '../features/club/clubSlice'
 import discussionSlice from '../features/discussion/discussionSlice'
-import meetingSlice from '../features/meeting/meetingSlice'
+// import meetingSlice from '../features/meeting/meetingSlice'
 import pollSlice from '../features/poll/pollSlice'
 // import readingSlice from '../features/reading/readingSlice'
 import userSlice from '../features/user/userSlice'
@@ -19,7 +19,7 @@ export const store = configureStore({
     auth: authSlice,
     // club: clubSlice,
     discussion: discussionSlice,
-    meeting: meetingSlice,
+    // meeting: meetingSlice,
     poll: pollSlice,
     // reading: readingSlice,
     user: userSlice,

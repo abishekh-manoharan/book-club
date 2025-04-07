@@ -1,10 +1,13 @@
-import { useParams } from "react-router-dom";
+import {  useParams } from "react-router-dom";
 import { useGetOneReadingQuery, useGetReadingUserQuery, useOptIntoReadingMutation, useOptOutOfReadingMutation } from "./readingSlice";
 import { useGetUserIdQuery } from "../auth/authSlice";
 import { useAppDispatch } from "../../app/hooks";
 import { updateErrorMessageThunk } from "../error/errorSlice";
 import { isFetchBaseQueryError, isSerializedError } from "../../app/typeGuards";
 import UpdateReadingProgress from "./UpdateReadingProgress";
+import { useGetClubUserQuery } from "../club/clubSlice";
+import CreateMeeting from "../meeting/CreateMeeting";
+import MeetingList from "../meeting/MeetingList";
 
 
 function ReadingHome() {
@@ -24,7 +27,10 @@ function ReadingHome() {
         { BookId: bookId, ClubId: clubId, UserId: userId! },
         { skip: !getUserIsSuccess || !clubId || isNaN(clubId) || !bookId || isNaN(bookId) || !getReadingIsSuccess }
     );
-
+    const { data: clubUser, isSuccess: clubUserIsSuccess, isError: clubUserIsFetching } = useGetClubUserQuery(
+        { clubId: clubId, userId: userId as number },
+        { skip: !userId }
+    );
 
     const [optIntoReading] = useOptIntoReadingMutation();
     const [optOutOfReading] = useOptOutOfReadingMutation();
@@ -37,42 +43,49 @@ function ReadingHome() {
 
     const optIntoReadingButtonClick = async () => {
         try {
-            await optIntoReading({ BookId: bookId, ClubId: clubId })
+            await optIntoReading({ BookId: bookId, ClubId: clubId }).unwrap();
         } catch (error) {
             if (isFetchBaseQueryError(error)) {
                 const errorMessage = (error.data as string) || "Unknown error";
                 dispatch(updateErrorMessageThunk(errorMessage));
             } else if (isSerializedError(error)) {
                 dispatch(updateErrorMessageThunk(error.message!));
+            } else {
+                dispatch(updateErrorMessageThunk("An error occured. Please try again later."));
             }
         }
     }
-
     const optOutOfReadingButtonClick = async () => {
         try {
-            await optOutOfReading({ BookId: bookId, ClubId: clubId })
+            await optOutOfReading({ BookId: bookId, ClubId: clubId }).unwrap();
         } catch (error) {
             if (isFetchBaseQueryError(error)) {
                 const errorMessage = (error.data as string) || "Unknown error";
                 dispatch(updateErrorMessageThunk(errorMessage));
             } else if (isSerializedError(error)) {
                 dispatch(updateErrorMessageThunk(error.message!));
+            } else {
+                dispatch(updateErrorMessageThunk("An error occured. Please try again later."));
             }
         }
     }
 
     const optedIn: boolean = getReadingUserSuccess;
     const optedOut: boolean = getReadingUserError;
+    const isAdmin = clubUserIsSuccess && clubUser && clubUser.admin;
     const loggedIn = getUserIsSuccess;
 
     return (
         <div>
             <h1>Reading home</h1>
-            {!getUserIsFetching && !getReadingIsFetching && !getReadingUserIsFetching &&<>
+            {!getUserIsFetching && !getReadingIsFetching && !getReadingUserIsFetching && !clubUserIsFetching &&<>
                 {optedIn && loggedIn && <button onClick={optOutOfReadingButtonClick}>opt out of reading</button>}
                 {optedOut && loggedIn && <button onClick={optIntoReadingButtonClick}>opt into reading</button>}<br/><br/>
 
+                {isAdmin && optedIn && <CreateMeeting/>}
+                {optedIn && <MeetingList/>}
                 {optedIn && loggedIn && <UpdateReadingProgress/>}
+                
                 clubid <br />
                 {clubid} <br /> <br />
                 bookId <br />

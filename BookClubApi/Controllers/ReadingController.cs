@@ -339,7 +339,7 @@ public class ReadingController : ControllerBase
 
                         return NotFound("User hasn't opted into the reading.");
                     }
-                    return BadRequest("Unable to opt into reading. Reading was concluded.");
+                    return BadRequest("Unable to opt out of reading. Reading was concluded.");
                 }
                 return NotFound("Reading wasn't found.");
             }

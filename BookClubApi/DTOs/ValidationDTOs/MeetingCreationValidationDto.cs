@@ -13,6 +13,8 @@ public class MeetingCreationValidationDto
     [Required]
     public int? ClubId { get; set; }
     
+    public string Name { get; set; } = null!;
+    
     [Required]
     public DateTime? StartTime { get; set; }
     

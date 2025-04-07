@@ -32,7 +32,7 @@ public class MeetingController : ControllerBase
     // action method that creates a meeting for a reading instance
     [HttpPost("create")]
     [Authorize]
-    public async Task<ActionResult<Reading>> CreateMeeting(MeetingCreationValidationDto meeting)
+    public async Task<ActionResult<Reading>> CreateMeeting([FromBody] MeetingCreationValidationDto meeting)
     {
         // ensure required params are included
         if (ModelState.IsValid)
@@ -53,6 +53,7 @@ public class MeetingController : ControllerBase
                     ClubId = (int)meeting.ClubId!,
                     StartTime = (DateTime)meeting.StartTime!,
                     EndTime = meeting.EndTime,
+                    Name = meeting.Name,
                     Description = meeting.Description
                 };
 
@@ -66,6 +67,7 @@ public class MeetingController : ControllerBase
                     ClubId = newMeeting.ClubId,
                     StartTime = newMeeting.StartTime,
                     EndTime = newMeeting.EndTime,
+                    Name = newMeeting.Name,
                     Description = newMeeting.Description
                 };
 
@@ -97,21 +99,22 @@ public class MeetingController : ControllerBase
 
     // action method that returns all meetings of a reading instance    
     [HttpGet("GetAllMeetings")]
-    public async Task<ActionResult<List<MeetingDTO>>> GetAllMeetings([Required] int clubId, [Required] int bookId)
+    [Authorize]
+    public async Task<ActionResult<List<MeetingDTO>>> GetAllMeetings([FromQuery] ReadingGetOneValDTO reading)
     {
         // ensure required parameters are included
         if (ModelState.IsValid)
         {
             // ensure reading exists
-            if (clubService.DoesReadingExist(clubId, bookId))
+            if (clubService.DoesReadingExist((int)reading.ClubId!, (int)reading.BookId!))
             {
                 // ensure that user is a club member if the club is private
                 // checking if club is private
-                bool? isPrivate = clubService.IsClubPrivate(clubId);
+                bool? isPrivate = clubService.IsClubPrivate((int)reading.ClubId!);
                 if (isPrivate == true)
                 {
                     // ensure user is a club member
-                    var clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, clubId);
+                    var clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, (int)reading.ClubId!);
                     if (clubUser == null)
                     {
                         return Unauthorized("User must be member of the club to view it's meetings.");
@@ -126,8 +129,8 @@ public class MeetingController : ControllerBase
                 // return a list of meetings associated with the club
                 var meetings = dbContext.Meetings
                     .Where(meeting =>
-                        meeting.ClubId == clubId &&
-                        meeting.BookId == bookId
+                        meeting.ClubId == (int)reading.ClubId! &&
+                        meeting.BookId == (int)reading.BookId!
                     ).ToList();
 
                 List<MeetingDTO> meetingsDTOs = [];
@@ -223,7 +226,7 @@ public class MeetingController : ControllerBase
                         meeting.EndTime = endTime;
                         dbContext.SaveChanges();
 
-                        MeetingDTO meetingDTO = new(){MeetingId = meeting.MeetingId, BookId = meeting.BookId, ClubId = meeting.ClubId, Description = meeting.Description, StartTime = meeting.StartTime, EndTime = meeting.EndTime};
+                        MeetingDTO meetingDTO = new() { MeetingId = meeting.MeetingId, BookId = meeting.BookId, ClubId = meeting.ClubId, Description = meeting.Description, StartTime = meeting.StartTime, EndTime = meeting.EndTime };
                         return Ok(meetingDTO);
                     }
                     catch (Exception e)
@@ -260,7 +263,7 @@ public class MeetingController : ControllerBase
                         dbContext.Meetings.Remove(meeting);
                         dbContext.SaveChanges();
 
-                        MeetingDTO meetingDTO = new(){MeetingId = meeting.MeetingId, BookId = meeting.BookId, ClubId = meeting.ClubId, Description = meeting.Description, StartTime = meeting.StartTime, EndTime = meeting.EndTime};
+                        MeetingDTO meetingDTO = new() { MeetingId = meeting.MeetingId, BookId = meeting.BookId, ClubId = meeting.ClubId, Description = meeting.Description, StartTime = meeting.StartTime, EndTime = meeting.EndTime };
                         return Ok(meetingDTO);
                     }
                     catch (Exception e)

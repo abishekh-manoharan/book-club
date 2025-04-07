@@ -5,7 +5,7 @@ const BE_URL = import.meta.env.VITE_BE_URL;
 export const apiSlice = createApi({
     reducerPath: 'api',
     baseQuery: fetchBaseQuery({ baseUrl: BE_URL }),
-    tagTypes: ['Auth', 'Readings'],
+    tagTypes: ['Auth', 'Readings', 'Meetings'],
     endpoints: () => ({
         
     }),
