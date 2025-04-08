@@ -6,10 +6,19 @@ export interface Meeting {
     clubId: number,
     name: string,
     description?: string,
+    startTime: string,
+    endTime?: string,
+}
+
+export interface NewMeeting {
+    bookId: number,
+    clubId: number,
+    name: string,
+    description?: string,
     startTime: Date,
     endTime?: Date,
 }
-export type NewMeeting = Omit<Meeting, "meetingId">
+
 
 export const apiSliceWithClub = apiSlice.injectEndpoints({
     endpoints: (builder) => ({

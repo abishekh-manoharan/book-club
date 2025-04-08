@@ -1,7 +1,11 @@
 
 
-function ErrorMsg(props: {msg: string}) {
-    
+function ErrorMsg(props: { msg: string }) {
+    if (typeof (props.msg) !== "string") {
+        <div className="errorMsg">
+            Unknown error occured.
+        </div>
+    }
     return (
         <div className="errorMsg">
             {props.msg}

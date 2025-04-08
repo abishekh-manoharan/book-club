@@ -139,6 +139,7 @@ public class MeetingController : ControllerBase
                     MeetingDTO meetingDTO = new()
                     {
                         MeetingId = meeting.MeetingId,
+                        Name = meeting.Name,
                         BookId = meeting.BookId,
                         ClubId = meeting.ClubId,
                         StartTime = meeting.StartTime,

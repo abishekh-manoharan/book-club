@@ -7,7 +7,7 @@ import { useAppDispatch } from "../../app/hooks";
 
 function CreateMeeting () {
     const dispatch = useAppDispatch();
-    const [Name, setName] = useState("default");
+    const [Name, setName] = useState("");
     const [Description, setDescription] = useState("");
 
     const [createMeeting] = useCreateMeetingMutation();
@@ -26,6 +26,13 @@ function CreateMeeting () {
 
     const createMeetingClickHandler = async (e: React.SyntheticEvent) => {
         e.preventDefault();
+        
+        const form: HTMLFormElement = document.querySelector(".createMeetingForm")!;
+        if(!form.checkValidity()){
+            form.reportValidity();
+            return;
+        }
+
         const meetingStartDate: HTMLInputElement = document.getElementById("meetingStartDate")! as HTMLInputElement;
         const meetingEndDate: HTMLInputElement = document.getElementById("meetingEndDate")! as HTMLInputElement;
 
@@ -57,13 +64,16 @@ function CreateMeeting () {
     return (
         <div>
             Create Meeting
-            <form>
+            <form className="createMeetingForm">
                 <label htmlFor="meetingName">Name</label>
                 <input id="meetingName" type="text" onChange={(e) => setName(e.target.value)} value={Name} required /> <br />
+
                 <label htmlFor="meetingDescription">Description</label>
                 <textarea id="meetingDescription" rows={5} cols={20} onChange={(e) => setDescription(e.target.value)} value={Description} /> <br />
+                
                 <label htmlFor="meetingStartDate">Meeting Start Time</label>
-                <input id="meetingStartDate" type="datetime-local" min={minDate} value="2030-06-12T19:30" required /> <br />
+                {/* <input id="meetingStartDate" type="datetime-local" min={minDate} value="2030-06-12T19:30" required /> <br /> */}
+                <input id="meetingStartDate" type="datetime-local" min={minDate} required /> <br />
                 <label htmlFor="meetingEndDate">Meeting End Time</label>
                 <input id="meetingEndDate" type="datetime-local" min={minDate} value="2050-06-12T19:30" required />
                 <button onClick={createMeetingClickHandler}>Create</button>

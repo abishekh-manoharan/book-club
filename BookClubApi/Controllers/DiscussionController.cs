@@ -26,7 +26,7 @@ public class DiscussionController : ControllerBase
         this.clubService = clubService;
     }
 
-    // action method that creates a thread for a reading instance. not applicable to replies to existing threads (see )
+    // action method that creates a thread for a reading instance. not applicable to replies to existing threads (see reply)
     [HttpPost("create")]
     [Authorize]
     public async Task<ActionResult<Reading>> CreateThread(ThreadCreationValidationDTO thread)
