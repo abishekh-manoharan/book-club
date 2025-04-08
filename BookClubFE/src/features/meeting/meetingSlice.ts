@@ -34,6 +34,18 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
             }),
             invalidatesTags: [{type: "Meetings", id: "all"}]
         }),
+        deleteMeeting: builder.mutation<Meeting, number>({
+            query: (meetingId) => ({
+                url: 'meeting/delete',
+                credentials: 'include',
+                method: 'DELETE',
+                body: JSON.stringify(meetingId),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }),
+            invalidatesTags: [{type: "Meetings", id: "all"}]
+        }),
         getAllMeetings: builder.query<Meeting[], { clubId: number, bookId: number }>({
             query: ({clubId, bookId}) => ({
                 url: `meeting/GetAllMeetings?clubId=${clubId}&bookId=${bookId}`,
@@ -64,5 +76,6 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
 
 export const {
     useCreateMeetingMutation,
+    useDeleteMeetingMutation,
     useGetAllMeetingsQuery
 } = apiSliceWithClub

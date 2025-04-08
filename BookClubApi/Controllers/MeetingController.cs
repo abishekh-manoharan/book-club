@@ -246,7 +246,7 @@ public class MeetingController : ControllerBase
     // action method that deletes a meeting instance
     [HttpDelete("delete")]
     [Authorize]
-    public async Task<ActionResult<Meeting>> DeleteMeeting([Required] int meetingId)
+    public async Task<ActionResult<Meeting>> DeleteMeeting([FromBody] [Required] int? meetingId)
     {
         // ensure required params are included
         if (ModelState.IsValid)

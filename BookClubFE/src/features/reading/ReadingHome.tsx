@@ -1,4 +1,4 @@
-import {  useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useGetOneReadingQuery, useGetReadingUserQuery, useOptIntoReadingMutation, useOptOutOfReadingMutation } from "./readingSlice";
 import { useGetUserIdQuery } from "../auth/authSlice";
 import { useAppDispatch } from "../../app/hooks";
@@ -78,14 +78,14 @@ function ReadingHome() {
     return (
         <div>
             <h1>Reading home</h1>
-            {!getUserIsFetching && !getReadingIsFetching && !getReadingUserIsFetching && !clubUserIsFetching &&<>
+            {!getUserIsFetching && !getReadingIsFetching && !getReadingUserIsFetching && !clubUserIsFetching && <>
                 {optedIn && loggedIn && <button onClick={optOutOfReadingButtonClick}>opt out of reading</button>}
-                {optedOut && loggedIn && <button onClick={optIntoReadingButtonClick}>opt into reading</button>}<br/><br/>
+                {optedOut && loggedIn && <button onClick={optIntoReadingButtonClick}>opt into reading</button>}<br /><br />
 
-                {isAdmin && optedIn && <CreateMeeting/>}
-                {optedIn && <MeetingList/>}
-                {optedIn && loggedIn && <UpdateReadingProgress/>}
-                
+                {isAdmin && optedIn && <CreateMeeting />}
+                {optedIn && <MeetingList />}
+                {optedIn && loggedIn && <UpdateReadingProgress />}
+
                 clubid <br />
                 {clubid} <br /> <br />
                 bookId <br />
