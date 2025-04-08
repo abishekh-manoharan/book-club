@@ -63,7 +63,8 @@ builder.Services.AddCors(options =>
             {
                 policy.WithOrigins([BookClubApi.Constants.FE_URL])
                     .AllowCredentials()
-                    .WithHeaders(["Content-Type"]);
+                    .WithHeaders(["Content-Type"])
+                    .WithMethods("GET", "POST", "PUT", "DELETE");
             }
         );
 });
