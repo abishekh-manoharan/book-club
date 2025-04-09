@@ -56,7 +56,20 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                 }
             }),            
             transformResponse(res: {$id: string, $values: Meeting[]}){
-                return res.$values;
+                const meetings = res.$values;
+                const meetingsWithUpdatedDates = meetings.map((m) => {
+                    const updatedStartDate = new Date(m.startTime+"Z").toLocaleString()
+                    const updatedEndDate = new Date(m.endTime!+"Z").toLocaleString();
+                    
+                    const updatedMeeting: Meeting = {
+                        ...m,
+                        startTime: updatedStartDate,
+                        endTime: updatedEndDate
+                    }
+
+                    return updatedMeeting;
+                })
+                return meetingsWithUpdatedDates;
             },
             providesTags: [{type: "Meetings", id: "all"}]
         })
