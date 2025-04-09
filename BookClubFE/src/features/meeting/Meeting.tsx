@@ -7,10 +7,9 @@ import { useAppDispatch } from "../../app/hooks";
 import { Meeting as MeetingType, useDeleteMeetingMutation } from "./meetingSlice";
 import React from "react";
 
-function Meeting({ meeting }: { meeting: MeetingType }) {
-    const { clubid, bookid } = useParams();
+function Meeting({ meeting, concluded }: { meeting: MeetingType, concluded: boolean }) {
+    const { clubid } = useParams();
     const clubId = Number(clubid);
-    const bookId = Number(bookid);
 
     const dispatch = useAppDispatch();
 
@@ -25,7 +24,7 @@ function Meeting({ meeting }: { meeting: MeetingType }) {
 
     const isAdmin = clubUserIsSuccess && clubUser && clubUser.admin;
 
-    const deleteMeetingBtnClick = async (e: React.SyntheticEvent) => {
+    const deleteMeetingBtnClick = async () => {
         try {
             const result = await deleteMeeting(meeting.meetingId).unwrap();
             console.log(result);
@@ -43,8 +42,9 @@ function Meeting({ meeting }: { meeting: MeetingType }) {
 
     return (
         <div>
-            {meeting.name}
+            {meeting.name} {meeting.startTime}
             {isAdmin && <button onClick={deleteMeetingBtnClick}>delete</button>}
+            {concluded && <>concluded</>}
         </div>
     );
 }

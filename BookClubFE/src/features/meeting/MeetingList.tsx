@@ -16,8 +16,6 @@ function MeetingList() {
         return meetingsCopy?.sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
     }, [meetings]);
 
-    console.log(sortedMeetings);
-
     if (isGetMettingsError) {
         return <>Error occured retrieving meetings.</>
     }
@@ -26,8 +24,11 @@ function MeetingList() {
         <div>
             <h3>Meetings</h3>
             {meetings?.length === 0 ? <>no meetings to display</> : <>
-                {/* {sortedMeetings && sortedMeetings.map((meeting) => <div>{meeting.startTime}{meeting.name}</div>)} */}
-                {sortedMeetings && sortedMeetings.map((meeting) => <Meeting meeting={meeting}/>)}
+                {sortedMeetings && sortedMeetings.map((meeting) => {
+                    const now = new Date();
+                    return <Meeting meeting={meeting} concluded={now.getTime() - new Date(meeting.endTime!).getTime() > 0} />
+                }
+                )}
             </>}
         </div>
     );
