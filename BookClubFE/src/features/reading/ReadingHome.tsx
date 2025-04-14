@@ -8,6 +8,7 @@ import UpdateReadingProgress from "./UpdateReadingProgress";
 import { useGetClubUserQuery } from "../club/clubSlice";
 import CreateMeeting from "../meeting/CreateMeeting";
 import MeetingList from "../meeting/MeetingList";
+import DiscussionBoard from "../discussion/DiscussionBoard";
 
 
 function ReadingHome() {
@@ -85,11 +86,7 @@ function ReadingHome() {
                 {isAdmin && optedIn && <CreateMeeting />}
                 {optedIn && <MeetingList />}
                 {optedIn && loggedIn && <UpdateReadingProgress />}
-
-                clubid <br />
-                {clubid} <br /> <br />
-                bookId <br />
-                {bookId}
+                {optedIn && loggedIn && <DiscussionBoard />}
             </>}
         </div>
     );

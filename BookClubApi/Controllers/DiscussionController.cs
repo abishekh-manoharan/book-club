@@ -29,7 +29,7 @@ public class DiscussionController : ControllerBase
     // action method that creates a thread for a reading instance. not applicable to replies to existing threads (see reply)
     [HttpPost("create")]
     [Authorize]
-    public async Task<ActionResult<Reading>> CreateThread(ThreadCreationValidationDTO thread)
+    public async Task<ActionResult<Reading>> CreateThread([FromBody] ThreadCreationValidationDTO thread)
     {
         // ensure required params are included
         if (ModelState.IsValid)

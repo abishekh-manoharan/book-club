@@ -5,7 +5,7 @@ import { apiSliceOpenLibrary } from '../features/api/apiSliceOpenLibrary'
 import { listenerMiddleware } from './listenerMiddleware'
 import authSlice from '../features/auth/authSlice'
 // import clubSlice from '../features/club/clubSlice'
-import discussionSlice from '../features/discussion/discussionSlice'
+// import discussionSlice from '../features/discussion/discussionSlice'
 // import meetingSlice from '../features/meeting/meetingSlice'
 import pollSlice from '../features/poll/pollSlice'
 // import readingSlice from '../features/reading/readingSlice'
@@ -18,7 +18,7 @@ export const store = configureStore({
     [apiSliceOpenLibrary.reducerPath]: apiSliceOpenLibrary.reducer,
     auth: authSlice,
     // club: clubSlice,
-    discussion: discussionSlice,
+    // discussion: discussionSlice,
     // meeting: meetingSlice,
     poll: pollSlice,
     // reading: readingSlice,

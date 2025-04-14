@@ -1,19 +1,53 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { apiSlice } from "../api/apiSlice";
 
+interface NewThread {
+    bookId: number,
+    clubId: number,
+    text: string
+}
 
-const discussionSlice = createSlice({
-    name: 'discussion',
-    initialState: [],
-    reducers: {
-        login(state, action: PayloadAction<string>) {
-            console.log(state, action)
-        }
-    },
-    // extraReducers(builder) {
+interface Thread {
+    parentThreadId: number,
+    bookId: number,
+    clubId: number,
+    userId: number,
+    text: string,
+    timePosted: Date,
+    deleted: boolean,
+}
 
-    // }
-});
+export const apiSliceWithDiscussions = apiSlice.injectEndpoints({
+    endpoints: (builder) => ({
+        createThread: builder.mutation<Thread, NewThread>({
+            query: (newThread) => ({
+                url: 'discussion/create',
+                credentials: 'include',
+                method: 'POST',
+                body: JSON.stringify(newThread),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }),
+            // invalidatesTags: [{ type: 'Readings', id: 'all' }]
+        }),
+        // getThreads: builder.query<Reading, {ClubId: number, BookId: number}>({
+        //     query: (reading) => ({
+        //         url: `reading/GetAReading?ClubId=${reading.ClubId}&BookId=${reading.BookId}`,
+        //         credentials: 'include',
+        //         method: 'GET',
+        //         headers: {
+        //             'Content-Type': 'application/json'
+        //         }
+        //     }),
+        //     // transformResponse(res: {$id: string, $values: Reading}){
+        //     //     return res.$values;
+        //     // },
+        //     providesTags: [{type: 'Readings', id: 'all'}]
+        // }),
 
-export const { login: loginAction } = discussionSlice.actions;
+    })
+})
 
-export default discussionSlice.reducer;
+export const {
+    useCreateThreadMutation
+} = apiSliceWithDiscussions
