@@ -182,20 +182,20 @@ public class DiscussionController : ControllerBase
     // action method that returns a list of threads for a reading
     // returns a list of objects that implement IThreadDTO - either ThreadDTO or ThreadDeletedDTO
     [HttpGet("getAllThreadsOfAReading")]
-    public async Task<ActionResult<List<GetThreadListDTO>>> GetAllThreads([Required] int bookId, [Required] int clubId)
+    public async Task<ActionResult<List<GetThreadListDTO>>> GetAllThreads([FromQuery] ReadingGetOneValDTO readingDTO)
     {
         if (ModelState.IsValid)
         {
-            var clubPrivacy = clubService.IsClubPrivate(clubId);
-            var clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, clubId);
+            var clubPrivacy = clubService.IsClubPrivate((int) readingDTO.ClubId!);
+            var clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, (int) readingDTO.ClubId);
             if (clubPrivacy == false || clubUser != null)
             { // case where club is public or if not, user is member of the club
                 // ensure reading exists
-                var reading = dbContext.Readings.Where(reading => reading.BookId == bookId && reading.ClubId == clubId).AsNoTracking().FirstOrDefault();
+                var reading = dbContext.Readings.Where(reading => reading.BookId == readingDTO.BookId && reading.ClubId == (int) readingDTO.ClubId).AsNoTracking().FirstOrDefault();
                 if (reading != null)
                 {
                     // get threads with associated with the reading
-                    List<Models.Thread> threads = dbContext.Threads.Where(thread => thread.BookId == bookId && thread.ClubId == clubId).AsNoTracking().ToList();
+                    List<Models.Thread> threads = dbContext.Threads.Where(thread => thread.BookId == readingDTO.BookId && thread.ClubId == readingDTO.ClubId).AsNoTracking().ToList();
 
                     // create threads list with DTOs
                     List<NonDeletedThreadDTO> listOfNonDeletedThreadsAsDTOs = new() { };
