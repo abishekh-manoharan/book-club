@@ -1,4 +1,7 @@
+import { createEntityAdapter, EntityState } from "@reduxjs/toolkit";
 import { apiSlice } from "../api/apiSlice";
+import { createSelector } from '@reduxjs/toolkit'
+import { RootState } from "../../app/store";
 
 interface NewThread {
     bookId: number,
@@ -8,6 +11,7 @@ interface NewThread {
 
 interface Thread {
     parentThreadId: number,
+    threadId: number,
     bookId: number,
     clubId: number,
     userId: number,
@@ -15,6 +19,16 @@ interface Thread {
     timePosted: Date,
     deleted: boolean,
 }
+
+export interface NestedThread extends Thread {
+    replies: NestedThread[]
+}
+
+const threadsAdapter = createEntityAdapter<Thread, number>({
+    selectId: (thread) => thread.threadId
+});
+const initialState = threadsAdapter.getInitialState();
+
 
 export const apiSliceWithDiscussions = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
@@ -30,24 +44,73 @@ export const apiSliceWithDiscussions = apiSlice.injectEndpoints({
             }),
             // invalidatesTags: [{ type: 'Readings', id: 'all' }]
         }),
-        // getThreads: builder.query<Reading, {ClubId: number, BookId: number}>({
-        //     query: (reading) => ({
-        //         url: `reading/GetAReading?ClubId=${reading.ClubId}&BookId=${reading.BookId}`,
-        //         credentials: 'include',
-        //         method: 'GET',
-        //         headers: {
-        //             'Content-Type': 'application/json'
-        //         }
-        //     }),
-        //     // transformResponse(res: {$id: string, $values: Reading}){
-        //     //     return res.$values;
-        //     // },
-        //     providesTags: [{type: 'Readings', id: 'all'}]
-        // }),
-
+        getThreads: builder.query<EntityState<Thread, number>, { ClubId: number, BookId: number }>({
+            query: (reading) => ({
+                url: `discussion/getAllThreadsOfAReading?ClubId=${reading.ClubId}&BookId=${reading.BookId}`,
+                credentials: 'include',
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }),
+            transformResponse(res: { $id: string, $values: Thread[] }) {
+                console.log("res.$values")
+                console.log(res.$values)
+                return threadsAdapter.setAll(initialState, res.$values);
+            },
+        }),
     })
 })
 
+
+
+export const selectThreadsResult = (reading: { ClubId: number, BookId: number }) =>
+    apiSliceWithDiscussions.endpoints.getThreads.select(reading)
+export const selectThreadsData = (reading: { ClubId: number, BookId: number }) => createSelector(
+    selectThreadsResult(reading),
+    (result) => {
+        console.log("result")
+        console.log(result)
+        return result.data ?? initialState;
+    }
+)
+
+
+export const makeThreadSelectors = (reading: { ClubId: number, BookId: number }) => {
+    return threadsAdapter.getSelectors<RootState>(selectThreadsData(reading))
+}
+
+export const makeSelectNestedThreads = (reading: { ClubId: number, BookId: number }) => createSelector(
+    makeThreadSelectors(reading).selectAll,
+    (threads): NestedThread[] => {
+        console.log("threads1")
+        console.log(threads)
+        const threadMap: Record<string, NestedThread> = {}
+        const rootThreads: NestedThread[] = []
+
+        for (const thread of threads) {
+            threadMap[thread.threadId] = { ...thread, replies: [] }
+        }
+
+        for (const thread of threads) {
+            const parentId = thread.parentThreadId
+            if (parentId && threadMap[parentId]) {
+                threadMap[parentId].replies.push(threadMap[thread.threadId])
+            } else {
+                rootThreads.push(threadMap[thread.threadId])
+            }
+        }
+        console.log("rootThreads")
+        console.log(rootThreads)
+        console.log("threadMap")
+        console.log(threadMap)
+
+        return rootThreads
+    }
+)
+
+
 export const {
-    useCreateThreadMutation
+    useCreateThreadMutation,
+    useGetThreadsQuery
 } = apiSliceWithDiscussions
