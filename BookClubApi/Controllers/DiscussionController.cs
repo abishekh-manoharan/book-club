@@ -91,7 +91,7 @@ public class DiscussionController : ControllerBase
     // action method that created a thread in reply to an existing thread
     [HttpPost("reply")]
     [Authorize]
-    public async Task<ActionResult<Reading>> CreateReplyThread(ThreadReplyCreationValidationDTO thread)
+    public async Task<ActionResult<Reading>> CreateReplyThread([FromBody] ThreadReplyCreationValidationDTO thread)
     {
         // ensure required params are included
         if (ModelState.IsValid)

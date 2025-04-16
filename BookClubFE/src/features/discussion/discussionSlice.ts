@@ -9,6 +9,13 @@ interface NewThread {
     text: string
 }
 
+export interface NewThreadReply {
+    parentthreadid: number,
+    bookId: number,
+    clubId: number,
+    text: string
+}
+
 interface Thread {
     parentThreadId: number,
     threadId: number,
@@ -42,7 +49,19 @@ export const apiSliceWithDiscussions = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            // invalidatesTags: [{ type: 'Readings', id: 'all' }]
+            invalidatesTags: [{ type: 'Readings', id: 'all' }]
+        }),
+        replyToThread: builder.mutation<Thread, NewThreadReply>({
+            query: (newThread) => ({
+                url: 'discussion/reply',
+                credentials: 'include',
+                method: 'POST',
+                body: JSON.stringify(newThread),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }),
+            invalidatesTags: [{ type: 'Readings', id: 'all' }]
         }),
         getThreads: builder.query<EntityState<Thread, number>, { ClubId: number, BookId: number }>({
             query: (reading) => ({
@@ -56,6 +75,7 @@ export const apiSliceWithDiscussions = apiSlice.injectEndpoints({
             transformResponse(res: { $id: string, $values: Thread[] }) {
                 return threadsAdapter.setAll(initialState, res.$values);
             },
+            providesTags: [{ type: 'Readings', id: 'all' }]
         }),
     })
 })
@@ -102,5 +122,6 @@ export const makeSelectNestedThreads = (reading: { ClubId: number, BookId: numbe
 
 export const {
     useCreateThreadMutation,
+    useReplyToThreadMutation,
     useGetThreadsQuery
 } = apiSliceWithDiscussions
