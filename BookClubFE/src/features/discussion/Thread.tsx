@@ -1,11 +1,11 @@
 import React from 'react';
 import { NestedThread } from './discussionSlice';
 
-function Thread({thread}:{thread:NestedThread}) {
+function Thread({thread, offset}:{thread:NestedThread, offset: number}) {
     return (
-        <div>
+        <div style={{position: "relative", left: offset}}>
             {thread.text}
-            {thread.replies.map(replyThread => <Thread thread={replyThread}/>)}
+            {thread.replies.map(replyThread => <Thread thread={replyThread} offset={offset+25}/>)}
         </div>
     );
 }

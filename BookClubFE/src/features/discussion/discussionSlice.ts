@@ -54,8 +54,6 @@ export const apiSliceWithDiscussions = apiSlice.injectEndpoints({
                 }
             }),
             transformResponse(res: { $id: string, $values: Thread[] }) {
-                console.log("res.$values")
-                console.log(res.$values)
                 return threadsAdapter.setAll(initialState, res.$values);
             },
         }),
@@ -69,8 +67,6 @@ export const selectThreadsResult = (reading: { ClubId: number, BookId: number })
 export const selectThreadsData = (reading: { ClubId: number, BookId: number }) => createSelector(
     selectThreadsResult(reading),
     (result) => {
-        console.log("result")
-        console.log(result)
         return result.data ?? initialState;
     }
 )
@@ -83,8 +79,6 @@ export const makeThreadSelectors = (reading: { ClubId: number, BookId: number })
 export const makeSelectNestedThreads = (reading: { ClubId: number, BookId: number }) => createSelector(
     makeThreadSelectors(reading).selectAll,
     (threads): NestedThread[] => {
-        console.log("threads1")
-        console.log(threads)
         const threadMap: Record<string, NestedThread> = {}
         const rootThreads: NestedThread[] = []
 
@@ -100,10 +94,6 @@ export const makeSelectNestedThreads = (reading: { ClubId: number, BookId: numbe
                 rootThreads.push(threadMap[thread.threadId])
             }
         }
-        console.log("rootThreads")
-        console.log(rootThreads)
-        console.log("threadMap")
-        console.log(threadMap)
 
         return rootThreads
     }
