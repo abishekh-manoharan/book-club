@@ -72,7 +72,7 @@ function UpdateReadingProgress() {
     }
 
     return (
-        <div>
+        <div hidden>
             <h4>update reading progress</h4>
             <form>
                 {maxProgressValue}

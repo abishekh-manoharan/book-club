@@ -77,6 +77,18 @@ export const apiSliceWithDiscussions = apiSlice.injectEndpoints({
             },
             providesTags: [{ type: 'Readings', id: 'all' }]
         }),
+        deleteThread: builder.mutation<Thread, number>({
+            query: (threadId) => ({
+                url: 'discussion/delete',
+                credentials: 'include',
+                method: 'DELETE',
+                body: JSON.stringify(threadId),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }),
+            invalidatesTags: [{ type: 'Readings', id: 'all' }]
+        }),
     })
 })
 
@@ -123,5 +135,6 @@ export const makeSelectNestedThreads = (reading: { ClubId: number, BookId: numbe
 export const {
     useCreateThreadMutation,
     useReplyToThreadMutation,
-    useGetThreadsQuery
+    useGetThreadsQuery,
+    useDeleteThreadMutation
 } = apiSliceWithDiscussions

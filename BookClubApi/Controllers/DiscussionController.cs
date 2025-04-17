@@ -153,7 +153,7 @@ public class DiscussionController : ControllerBase
     // action method to delete thread: deleting thread updates the deleted flag of a thread record to true
     [HttpDelete("delete")]
     [Authorize]
-    public async Task<ActionResult<Reading>> DeleteThread([Required] int threadId)
+    public async Task<ActionResult<Reading>> DeleteThread([FromBody][Required] int threadId)
     {
         if (ModelState.IsValid)
         {

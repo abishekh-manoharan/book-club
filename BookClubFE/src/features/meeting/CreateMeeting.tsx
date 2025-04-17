@@ -63,8 +63,8 @@ function CreateMeeting () {
 
     return (
         <div>
+            <form className="createMeetingForm" hidden>
             Create Meeting
-            <form className="createMeetingForm">
                 <label htmlFor="meetingName">Name</label>
                 <input id="meetingName" type="text" onChange={(e) => setName(e.target.value)} value={Name} required /> <br />
 
@@ -73,9 +73,10 @@ function CreateMeeting () {
                 
                 <label htmlFor="meetingStartDate">Meeting Start Time</label>
                 {/* <input id="meetingStartDate" type="datetime-local" min={minDate} value="2030-06-12T19:30" required /> <br /> */}
+                {/* <input id="meetingStartDate" type="datetime-local" min={minDate} required  value="2025-04-08T19:30"/> <br /> */}
                 <input id="meetingStartDate" type="datetime-local" min={minDate} required /> <br />
                 <label htmlFor="meetingEndDate">Meeting End Time</label>
-                <input id="meetingEndDate" type="datetime-local" min={minDate} value="2050-06-12T19:30" required />
+                <input id="meetingEndDate" type="datetime-local" required />
                 <button onClick={createMeetingClickHandler}>Create</button>
             </form>
         </div>
