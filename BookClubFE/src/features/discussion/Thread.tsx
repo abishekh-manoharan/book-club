@@ -3,7 +3,7 @@ import { NestedThread, NewThreadReply, useDeleteThreadMutation, useReplyToThread
 import { isFetchBaseQueryError, isSerializedError } from "../../app/typeGuards";
 import { updateErrorMessageThunk } from "../error/errorSlice";
 import { useAppDispatch } from "../../app/hooks";
-import { useGetUserIdQuery } from '../auth/authSlice';
+import { useGetUserIdQuery, useGetUserQuery } from '../auth/authSlice';
 import { useGetClubUserQuery } from '../club/clubSlice';
 
 function Thread({ thread, offset, reading }: { thread: NestedThread, offset: number, reading: { bookId: number, clubId: number } }) {
@@ -11,13 +11,14 @@ function Thread({ thread, offset, reading }: { thread: NestedThread, offset: num
 
     const { data: userId } = useGetUserIdQuery();
     const { data: clubUser } = useGetClubUserQuery({ clubId: reading.clubId, userId: userId! }, { skip: !userId })
+    const { data: user } = useGetUserQuery(thread.userId);
     const [deleteThread] = useDeleteThreadMutation();
+    const [createReply] = useReplyToThreadMutation();
 
     const dispatch = useAppDispatch();
 
     const [reply, setReply] = useState("");
 
-    const [createReply] = useReplyToThreadMutation();
 
     const replyBtnClickHandler = () => {
         replyInput.current?.classList.remove("hidden");
@@ -33,8 +34,8 @@ function Thread({ thread, offset, reading }: { thread: NestedThread, offset: num
         }
 
         try {
-            const result = await createReply(newReply).unwrap();
-            console.log("Success:", result);
+            await createReply(newReply).unwrap();
+            replyInput.current?.classList.add("hidden");
         } catch (error) {
             if (isFetchBaseQueryError(error)) {
                 const errorMessage = (error.data as string) || "Unknown error";
@@ -64,6 +65,7 @@ function Thread({ thread, offset, reading }: { thread: NestedThread, offset: num
     return (
         <div style={{ position: "relative", left: offset, textAlign: "left" }}>
             {thread.deleted ? "deleted post" : thread.text}
+            <span> -- {user?.fName} {user?.lName}</span>
             <button onClick={replyBtnClickHandler}>reply</button>
             {(userId === thread.userId || clubUser?.admin) && !thread.deleted && <button onClick={deleteBtnClickHandler}>delete</button>}
             <div ref={replyInput} className="hidden">

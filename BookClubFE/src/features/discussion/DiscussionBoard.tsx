@@ -8,10 +8,10 @@ function DiscussionBoard() {
     const clubId = Number(clubid);
     const bookId = Number(bookid);
 
-    const {isError, isFetching} = useGetThreadsQuery({BookId: bookId, ClubId: clubId});
+    const {isError, isLoading} = useGetThreadsQuery({BookId: bookId, ClubId: clubId});
     if(isError){
         return "error";
-    } else if(isFetching){
+    } else if (isLoading){
         return "loading";
     }
     

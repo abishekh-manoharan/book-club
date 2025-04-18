@@ -19,6 +19,14 @@ export interface RegistrationAllowanceError {
     kind: 'registrationError';
 }
 
+export interface User {
+    userId: number,
+    bio: string,
+    fName: string,
+    lName: string,
+    profileImg: string,
+}
+
 export type RegistrationError = RegistrationModelStateError | RegistrationAllowanceError;
 
 export type RegistrationSuccess = string[];
@@ -67,6 +75,12 @@ export const apiSliceWithAuth = apiSlice.injectEndpoints({
                 credentials: 'include'
             }),
             providesTags: [{ type: 'Auth', id: 'userId' }]
+        }),
+        getUser: builder.query<User, number>({
+            query: (userId) => ({
+                url: `auth/user?userId=${userId}`,
+                credentials: 'include'
+            }),
         }),
         login: builder.mutation<LoginResponse, { email: string, password: string }>({
             query: (info) => ({
@@ -158,7 +172,8 @@ export const {
     useLoginMutation,
     useLogoutMutation,
     useRegisterMutation,
-    useGetUserIdQuery
+    useGetUserIdQuery,
+    useGetUserQuery
 } = apiSliceWithAuth;
 
 

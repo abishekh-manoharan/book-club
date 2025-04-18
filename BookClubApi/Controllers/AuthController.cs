@@ -7,6 +7,7 @@ using BookClubApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookClubApi.Controllers;
 
@@ -156,6 +157,27 @@ public class AuthController : ControllerBase
     public ActionResult<bool> IsLoggedIn()
     {
         return Ok(signInManager.IsSignedIn(this.User));
+    }
+    // Action method that returns a user's basic information
+    [HttpGet("User")]
+    public ActionResult<bool> GetUser([FromQuery][Required] int? userId)
+    {
+        if (ModelState.IsValid)
+        {
+            var user = dbContext.Users
+                .Where(user => user.UserId == userId)
+                .AsNoTracking()
+                .FirstOrDefault();
+
+            if (user != null)
+            {
+                UserDTO userDTO = new(user.UserId, user.Bio, user.FName, user.LName, user.ProfileImg);
+                return Ok(userDTO);
+            }
+
+            return NotFound("User with the id not found.");
+        }
+        return BadRequest(ModelState);
     }
 
     // Action method that logs the user out, if they are logged in

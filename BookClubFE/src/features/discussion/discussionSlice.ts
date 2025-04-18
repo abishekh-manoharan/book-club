@@ -49,7 +49,7 @@ export const apiSliceWithDiscussions = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            invalidatesTags: [{ type: 'Readings', id: 'all' }]
+            invalidatesTags: [{ type: 'Threads', id: 'all' }]
         }),
         replyToThread: builder.mutation<Thread, NewThreadReply>({
             query: (newThread) => ({
@@ -61,7 +61,7 @@ export const apiSliceWithDiscussions = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            invalidatesTags: [{ type: 'Readings', id: 'all' }]
+            invalidatesTags: [{ type: 'Threads', id: 'all' }]
         }),
         getThreads: builder.query<EntityState<Thread, number>, { ClubId: number, BookId: number }>({
             query: (reading) => ({
@@ -75,7 +75,8 @@ export const apiSliceWithDiscussions = apiSlice.injectEndpoints({
             transformResponse(res: { $id: string, $values: Thread[] }) {
                 return threadsAdapter.setAll(initialState, res.$values);
             },
-            providesTags: [{ type: 'Readings', id: 'all' }]
+            providesTags: [{ type: 'Threads', id: 'all' }],
+            // keepUnusedDataFor: 60
         }),
         deleteThread: builder.mutation<Thread, number>({
             query: (threadId) => ({
@@ -87,7 +88,7 @@ export const apiSliceWithDiscussions = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            invalidatesTags: [{ type: 'Readings', id: 'all' }]
+            invalidatesTags: [{ type: 'Threads', id: 'all' }]
         }),
     })
 })

@@ -14,7 +14,7 @@ public class UserDTO
 
     public string? AspnetusersId { get; set; }
 
-    public UserDTO(int userId, string? bio, string? fName, string? lName, string? profileImg, string? aspnetusersId)
+    public UserDTO(int userId, string? bio, string? fName, string? lName, string? profileImg, string? aspnetusersId = null)
     {
         UserId = userId;
         Bio = bio;
