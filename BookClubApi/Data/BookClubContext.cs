@@ -42,6 +42,8 @@ public partial class BookClubContext : IdentityDbContext<ApplicationUser>
     public virtual DbSet<JoinRequest> JoinRequests { get; set; }
 
     public virtual DbSet<Meeting> Meetings { get; set; }
+    
+    public virtual DbSet<Notification> Notification { get; set; }
 
     public virtual DbSet<Poll> Polls { get; set; }
 
@@ -301,6 +303,27 @@ public partial class BookClubContext : IdentityDbContext<ApplicationUser>
             entity.HasOne(d => d.Reading).WithMany(p => p.Meetings)
                 .HasForeignKey(d => new { d.BookId, d.ClubId })
                 .HasConstraintName("meetings_ibfk_1");
+        });
+
+        modelBuilder.Entity<Notification>(entity =>
+        {
+            entity.HasKey(e => e.NotificationId).HasName("PRIMARY");
+
+            entity.ToTable("notification", "BookClub");
+
+            entity.HasIndex(e => e.UserId, "UserId");
+
+            entity.Property(e => e.Text)
+                .HasMaxLength(255);
+            entity.Property(e => e.Link)
+                .HasMaxLength(300);
+            entity.Property(e => e.Time)
+                .HasColumnType("datetime");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Notifications)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("notifications_ibfk_1");
         });
 
         modelBuilder.Entity<Poll>(entity =>
