@@ -24,7 +24,7 @@ public class NotificationController : ControllerBase
     private IClubService clubService;
     private IBookService bookService;
 
-    public ProfileController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, BookClubContext dbContext, IAuthHelpers authHelpers, IClubService clubService, IBookService bookService)
+    public NotificationController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, BookClubContext dbContext, IAuthHelpers authHelpers, IClubService clubService, IBookService bookService)
     {
         this.userManager = userManager;
         this.dbContext = dbContext;
@@ -33,7 +33,7 @@ public class NotificationController : ControllerBase
         this.bookService = bookService;
     }
 
-    // action method to get all of the user's notifications
+    // action method to get all of the logged in user's notifications
     [HttpGet("notifications")]
     [Authorize]
     public async Task<ActionResult<UserDTO>> GetAllNotifications()
@@ -41,9 +41,16 @@ public class NotificationController : ControllerBase
         User? user = await authHelpers.GetUserClassOfLoggedInUser(User);
         if (user != null)
         {
-            // update user instance's properties to request specifications            
+            var notifications = dbContext.Notification.Where(n => n.UserId == user.UserId).AsNoTracking();
+            List<NotificationDTO> notificationDTOs = [];
+            
+            foreach (var n in notifications){
+                NotificationDTO notificationDTO = new(n.NotificationId, n.UserId, n.Text, n.Time, n.Link);
+                notificationDTOs.Add(notificationDTO);
+            }
+
+            return Ok(notificationDTOs);
         }
         return BadRequest("User instance associated with AspNetUser class not found.");
     }
-
 }
