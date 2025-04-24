@@ -161,5 +161,62 @@ public class NotificationController : ControllerBase
     }
 
     // action method to create notification records for all reading members
+    [HttpPost("notificationForReadingMembers")]
+    [Authorize]
+    public async Task<ActionResult<NotificationDTO>> CreateNotificationForReadingMembers([FromBody] CreateNotificationReadingUsersValDTO notification)
+    {
+        if (ModelState.IsValid)
+        {
+            // get all club users in the club
+            var readingUsers = await dbContext.Readingusers
+                .Where(ru => ru.ClubId == notification.ClubId && ru.BookId == notification.BookId)
+                .AsNoTracking()
+                .ToListAsync();
+            
+            if (!readingUsers.IsNullOrEmpty())
+            {
+                // create a notification for each club member
+                var notifications = readingUsers.Select(ru => new Notification
+                {
+                    UserId = ru.UserId,
+                    Text = notification.Text,
+                    Link = notification.Link,
+                    Time = (DateTime)notification.Time!,
+                }).ToList();
+
+                try
+                {
+                    await dbContext.AddRangeAsync(notifications);
+                    await dbContext.SaveChangesAsync();
+                    return Ok();
+                }
+                catch (DbUpdateException dbe)
+                {
+                    string InnerException = dbe.InnerException!.Message ?? dbe.Message;
+                    // if reading exists already, return 409 conflict status
+                    if (InnerException.Contains("Duplicate", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return Conflict("Notification already exists.");
+                    }
+                    else if (InnerException.Contains("foreign key", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return NotFound("Book or club not found with the associated id.");
+                    }
+                    else
+                    {
+                        return BadRequest(dbe.InnerException!.Message);
+                    }
+                }
+                catch (Exception e)
+                {
+                    // handling all other errors when trying to save to db
+                    return StatusCode(500, "Error saving the notification to the database. \n" + e.Message);
+                }
+            }
+
+            return NotFound("No reading users found with the associated reading.");
+        }
+        return BadRequest(ModelState);
+    }
 }
 

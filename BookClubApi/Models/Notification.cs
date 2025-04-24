@@ -6,11 +6,11 @@ public class Notification
 
     public int UserId { get; set; }
 
-    public string Text { get; set; }
+    public string Text { get; set; } = null!;
 
     public string? Link { get; set; }
 
     public DateTime Time { get; set; }
 
-    public virtual User User { get; set; }
+    public virtual User User { get; set; } = null!;
 }
