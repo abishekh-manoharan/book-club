@@ -9,8 +9,5 @@ public class CreateNotificationClubMembersValDTO
     public string? Link { get; set; }
 
     [Required]
-    public DateTime? Time { get; set; }
-
-    [Required]
     public int? ClubId { get; set; }
 }

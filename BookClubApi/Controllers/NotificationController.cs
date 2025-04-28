@@ -69,7 +69,7 @@ public class NotificationController : ControllerBase
                     UserId = (int)notification.UserId!,
                     Text = notification.Text,
                     Link = notification.Link,
-                    Time = (DateTime)notification.Time!,
+                    Time = DateTime.UtcNow,
                 };
 
                 dbContext.Notification.Add(newNotification);
@@ -121,7 +121,7 @@ public class NotificationController : ControllerBase
                     UserId = cu.UserId,
                     Text = notification.Text,
                     Link = notification.Link,
-                    Time = (DateTime)notification.Time!,
+                    Time = DateTime.UtcNow,
                 }).ToList();
 
 
@@ -181,7 +181,7 @@ public class NotificationController : ControllerBase
                     UserId = ru.UserId,
                     Text = notification.Text,
                     Link = notification.Link,
-                    Time = (DateTime)notification.Time!,
+                    Time = DateTime.UtcNow,
                 }).ToList();
 
                 try

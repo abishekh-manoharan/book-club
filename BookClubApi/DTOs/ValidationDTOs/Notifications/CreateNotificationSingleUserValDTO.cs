@@ -11,6 +11,4 @@ public class CreateNotificationSingleUserValDTO {
 
     public string? Link { get; set; }
 
-    [Required]
-    public DateTime? Time { get; set; }
 }
