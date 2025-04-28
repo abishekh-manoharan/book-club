@@ -1,11 +1,21 @@
 import { apiSlice } from "../api/apiSlice";
 
 interface NewNotification {
-    NotificationId: number,
-    UserId: number,
     Text: string,
     Link?: string,
-    Time: Date
+}
+
+interface NewNotificationForSingleUser extends NewNotification {
+    UserId: number
+}
+
+interface NewNotificationForReadingMembers extends NewNotification {
+    ClubId: number,
+    BookId: number
+}
+
+interface NewNotificationForClubMembers extends NewNotification {
+    ClubId: number,
 }
 
 interface Notification {
@@ -40,9 +50,41 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                     return updatedNotification;
                 })
                 return notificationsWithUpdateDateValues;
-            },
-            providesTags: [{type: "Meetings", id: "all"}]
-        })
+            }
+        }),
+        notifySingleUser: builder.mutation<Notification, NewNotificationForSingleUser>({
+            query: (notification) => ({
+                url: 'notification/notificationForSingleUser',
+                credentials: 'include',
+                method: 'POST',
+                body: JSON.stringify(notification),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }),
+        }),
+        notifyReadingUsers: builder.mutation<Notification, NewNotificationForReadingMembers>({
+            query: (notification) => ({
+                url: 'notification/notificationForReadingMembers',
+                credentials: 'include',
+                method: 'POST',
+                body: JSON.stringify(notification),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }),
+        }),
+        notifyClubMembers: builder.mutation<Notification, NewNotificationForClubMembers>({
+            query: (notification) => ({
+                url: 'notification/notificationForClubMembers',
+                credentials: 'include',
+                method: 'POST',
+                body: JSON.stringify(notification),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }),
+        }),
     })
 })
 
