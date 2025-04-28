@@ -5,6 +5,7 @@ import { updateErrorMessageThunk } from "../error/errorSlice";
 import { useAppDispatch } from "../../app/hooks";
 import { useGetUserIdQuery, useGetUserQuery } from '../auth/authSlice';
 import { useGetClubUserQuery } from '../club/clubSlice';
+import { useNotifySingleUserMutation } from '../notification/notificationSlice';
 
 function Thread({ thread, offset, reading }: { thread: NestedThread, offset: number, reading: { bookId: number, clubId: number } }) {
     const replyInput = useRef<HTMLDivElement>(null);
@@ -12,8 +13,10 @@ function Thread({ thread, offset, reading }: { thread: NestedThread, offset: num
     const { data: userId } = useGetUserIdQuery();
     const { data: clubUser } = useGetClubUserQuery({ clubId: reading.clubId, userId: userId! }, { skip: !userId })
     const { data: user } = useGetUserQuery(thread.userId);
+    const { data: loggedInUser } = useGetUserQuery(userId!, { skip: !userId });
     const [deleteThread] = useDeleteThreadMutation();
     const [createReply] = useReplyToThreadMutation();
+    const [notifySingleUser] = useNotifySingleUserMutation();
 
     const dispatch = useAppDispatch();
 
@@ -36,6 +39,9 @@ function Thread({ thread, offset, reading }: { thread: NestedThread, offset: num
         try {
             await createReply(newReply).unwrap();
             replyInput.current?.classList.add("hidden");
+
+            const notificationText = `${loggedInUser?.fName} replied to your post: ${newReply.text}`;
+            await notifySingleUser({ UserId: thread.userId, Text: notificationText })
         } catch (error) {
             if (isFetchBaseQueryError(error)) {
                 const errorMessage = (error.data as string) || "Unknown error";
