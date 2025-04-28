@@ -89,5 +89,8 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
 })
 
 export const {
-    useGetAllNotificationsQuery
+    useGetAllNotificationsQuery,
+    useNotifySingleUserMutation,
+    useNotifyReadingUsersMutation,
+    useNotifyClubMembersMutation
 } = apiSliceWithClub    

@@ -4,6 +4,8 @@ import { useParams } from "react-router-dom";
 import { useAppDispatch } from "../../app/hooks";
 import { isFetchBaseQueryError, isSerializedError } from "../../app/typeGuards";
 import { updateErrorMessageThunk } from "../error/errorSlice";
+import { useNotifyReadingUsersMutation } from "../notification/notificationSlice";
+import { useGetUserIdQuery, useGetUserQuery } from "../auth/authSlice";
 
 function CreateThread() {
     const { clubid, bookid } = useParams()
@@ -11,8 +13,12 @@ function CreateThread() {
     const bookId = Number(bookid);
 
     const [text, setText] = useState("");
+    
     const [createThread] = useCreateThreadMutation();
-
+    const [notifyReadingUsers] = useNotifyReadingUsersMutation();
+    const { data: userId } = useGetUserIdQuery();
+    const { data: user, isFetching } = useGetUserQuery(userId!, {skip: !userId});
+    
     const dispatch = useAppDispatch();
 
     const postThreadClickHandler = async (e: React.SyntheticEvent) => {
@@ -25,8 +31,10 @@ function CreateThread() {
         }
 
         try {
-            const result = await createThread({ bookId, clubId, text }).unwrap();
-            console.log(result);
+            await createThread({ bookId, clubId, text }).unwrap();
+
+            const notificationText = "New post from "+user?.fName+": "+text;
+            await notifyReadingUsers({ClubId: clubId, BookId: bookId, Text: notificationText})
         } catch (error) {
             if (isFetchBaseQueryError(error)) {
                 const errorMessage = (error.data as string) || "Unknown error";
@@ -42,7 +50,7 @@ function CreateThread() {
 
     return (
         <div>
-            <form className="discussionPostThreadForm">
+            <form className="discussionPostThreadForm" hidden={isFetching || !user}>
                 <textarea value={text} onChange={(e) => setText(e.target.value)} required /><br />
                 <button onClick={postThreadClickHandler}>Post</button>
             </form>
