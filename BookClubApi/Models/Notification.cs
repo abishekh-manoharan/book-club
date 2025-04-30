@@ -9,6 +9,8 @@ public class Notification
     public string Text { get; set; } = null!;
 
     public string? Link { get; set; }
+    
+    public bool Read { get; set; }
 
     public DateTime Time { get; set; }
 
