@@ -17,6 +17,7 @@ import {  useAppSelector } from "./app/hooks"
 import { selectError } from "./features/error/errorSlice"
 import CreateReading from "./features/reading/CreateReading/CreateReading"
 import ReadingHome from "./features/reading/ReadingHome"
+import NotificationList from "./features/notification/NotificationList"
 // import { useAppSelector } from "./app/hooks"
 
 function App() {
@@ -55,6 +56,7 @@ function App() {
             </Route>
           </Route>
         </Routes >
+        <NotificationList/>
     </div>
   )
 }

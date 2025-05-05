@@ -46,7 +46,7 @@ public class NotificationController : ControllerBase
 
             foreach (var n in notifications)
             {
-                NotificationDTO notificationDTO = new(n.NotificationId, n.UserId, n.Text, n.Time, n.Link);
+                NotificationDTO notificationDTO = new(n.NotificationId, n.UserId, n.Text, n.Time, n.Read, n.Link);
                 notificationDTOs.Add(notificationDTO);
             }
 
@@ -70,6 +70,7 @@ public class NotificationController : ControllerBase
                     Text = notification.Text,
                     Link = notification.Link,
                     Time = DateTime.UtcNow,
+                    Read = false
                 };
 
                 dbContext.Notification.Add(newNotification);
@@ -122,6 +123,7 @@ public class NotificationController : ControllerBase
                     Text = notification.Text,
                     Link = notification.Link,
                     Time = DateTime.UtcNow,
+                    Read = false
                 }).ToList();
 
 
@@ -182,6 +184,7 @@ public class NotificationController : ControllerBase
                     Text = notification.Text,
                     Link = notification.Link,
                     Time = DateTime.UtcNow,
+                    Read = false
                 }).ToList();
 
                 try
