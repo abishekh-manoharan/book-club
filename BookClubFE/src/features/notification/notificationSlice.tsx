@@ -18,12 +18,13 @@ interface NewNotificationForClubMembers extends NewNotification {
     ClubId: number,
 }
 
-interface Notification {
+export interface Notification {
     notificationId: number,
     userId: number,
     text: string,
     link?: string,
-    time: string
+    time: string,
+    read: boolean
 }
 
 export const apiSliceWithClub = apiSlice.injectEndpoints({
