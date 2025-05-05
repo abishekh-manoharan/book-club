@@ -25,3 +25,11 @@
   width: 150px;
   overflow: auto;
 }
+
+.unreadNotification {
+  background-color: rgba(41, 135, 135, 0.453);
+}
+
+.readNotification {
+  background-color: rgba(244, 244, 244, 0.453);
+}
