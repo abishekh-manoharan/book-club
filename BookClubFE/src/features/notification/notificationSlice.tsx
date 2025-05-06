@@ -86,6 +86,17 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                 }
             }),
         }),
+        updateNotificationsAsRead: builder.mutation<number[], number[]>({
+            query: (notifications) => ({
+                url: 'notification/notificationsAsRead',
+                credentials: 'include',
+                method: 'PUT',
+                body: JSON.stringify(notifications),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }),
+        }),
     })
 })
 
@@ -93,5 +104,6 @@ export const {
     useGetAllNotificationsQuery,
     useNotifySingleUserMutation,
     useNotifyReadingUsersMutation,
-    useNotifyClubMembersMutation
+    useNotifyClubMembersMutation,
+    useUpdateNotificationsAsReadMutation
 } = apiSliceWithClub    

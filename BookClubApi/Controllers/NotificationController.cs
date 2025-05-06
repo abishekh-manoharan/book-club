@@ -221,5 +221,12 @@ public class NotificationController : ControllerBase
         }
         return BadRequest(ModelState);
     }
+
+    [HttpPut("notificationsAsRead")]
+    [Authorize]
+    public ActionResult<int[]> UpdateNotificationsAsRead([FromBody] int[] notifications){
+    // public async Task<ActionResult<bool>> UpdateNotificationsAsRead([FromBody] int[] notifications){
+        return notifications;
+    }
 }
 

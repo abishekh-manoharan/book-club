@@ -43,6 +43,7 @@ function App() {
   return (
     <div className={pageHiddenClassWrapper}>
       {error.error && <ErrorMsg msg={error.errorMsg}/>}
+        <NotificationList/>
         <Routes>
           <Route element=<Header /> >
             <Route path="/" element=<div>Home</div> />
@@ -56,7 +57,6 @@ function App() {
             </Route>
           </Route>
         </Routes >
-        <NotificationList/>
     </div>
   )
 }
