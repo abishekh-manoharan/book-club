@@ -174,7 +174,7 @@ public class NotificationController : ControllerBase
                 .Where(ru => ru.ClubId == notification.ClubId && ru.BookId == notification.BookId)
                 .AsNoTracking()
                 .ToListAsync();
-            
+
             if (!readingUsers.IsNullOrEmpty())
             {
                 // create a notification for each club member
@@ -224,9 +224,21 @@ public class NotificationController : ControllerBase
 
     [HttpPut("notificationsAsRead")]
     [Authorize]
-    public ActionResult<int[]> UpdateNotificationsAsRead([FromBody] int[] notifications){
-    // public async Task<ActionResult<bool>> UpdateNotificationsAsRead([FromBody] int[] notifications){
-        return notifications;
+    // public ActionResult<int[]> UpdateNotificationsAsRead([FromBody] int[] notifications){
+    public async Task<ActionResult<List<BookClubApi.Models.Notification>>> UpdateNotificationsAsRead([FromBody] int[] notificationIds)
+    {
+        var notifications = await dbContext.Notification
+            .Where(n => notificationIds.Contains(n.NotificationId))
+            .ToListAsync();
+
+        foreach (var n in notifications)
+        {
+            n.Read = true;
+        }
+
+        await dbContext.SaveChangesAsync();
+
+        return Ok(notifications);
     }
 }
 
