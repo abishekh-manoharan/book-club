@@ -18,12 +18,17 @@ import { selectError } from "./features/error/errorSlice"
 import CreateReading from "./features/reading/CreateReading/CreateReading"
 import ReadingHome from "./features/reading/ReadingHome"
 import NotificationList from "./features/notification/NotificationList"
+import { useGetAllNotificationsQuery } from "./features/notification/notificationSlice"
 // import { useAppSelector } from "./app/hooks"
 
 function App() {
   // const [auth, setAuth] = useState(false);
   const { isFetching } = useGetStatusQuery();
   const error = useAppSelector(selectError)
+  useGetAllNotificationsQuery(undefined, {
+    pollingInterval: 10000,
+    refetchOnMountOrArgChange: true
+  });
 
   // gets and sets the current session's auth status
   // useEffect(() => {
@@ -37,8 +42,6 @@ function App() {
   const pageHiddenClassWrapper = classNames('page', {
     'hidden': isFetching
   })
-
-
 
   return (
     <div className={pageHiddenClassWrapper}>
