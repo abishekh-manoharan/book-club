@@ -13,6 +13,11 @@ function NotificationList() {
     const unreadNotificationIds = useRef<number[]>([]);
     const dispatch = useAppDispatch();
 
+    // determining unread notification count whenever notifications cache is updated
+    const unreadNotificationCount = useMemo(() => {
+        return notifications?.filter(n => !n.read).length;
+    }, [notifications])
+    
     // sorting notifications by start date 
     const sortedNotifications = useMemo(() => {
         const notificationCopy = notifications?.slice();
@@ -59,16 +64,11 @@ function NotificationList() {
         }
 
         setOpen(!open);
-        console.log("open2");
-        console.log(open);
-
-        // reset unreadNotificationIds collection
-        // unreadNotificationIds.current = [];
     }
 
     return (
         <>
-            <div onClick={clickNotification}> notifs</div>
+            <div onClick={clickNotification}> notifs - {unreadNotificationCount}</div>
             <div hidden={!open}>
                 {
                     sortedNotifications?.map((n) => <><Notification notif={n} /><br /></>)
