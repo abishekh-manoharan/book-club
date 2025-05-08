@@ -7,7 +7,7 @@ import { useAppDispatch } from "../../app/hooks";
 
 
 function NotificationList() {
-    const { data: notifications } = useGetAllNotificationsQuery(undefined);
+    const { data: notifications, refetch: refetchNotifications } = useGetAllNotificationsQuery(undefined);
     const [ updateNotificationsAsRead ] = useUpdateNotificationsAsReadMutation();
     const [open, setOpen] = useState(false);
     const unreadNotificationIds = useRef<number[]>([]);
@@ -36,6 +36,7 @@ function NotificationList() {
 
     const clickNotification = async () => {
         // closed when clicked case
+        // mark all notifications as read when clicked
         if(!open) {
             // send request to update unread notifications to set as "read"
             try {
@@ -51,6 +52,10 @@ function NotificationList() {
                         dispatch(updateErrorMessageThunk("Unknown error occured."));
                 }
             }
+        }
+        else {
+            // refetch notifications when the notification component is closed
+            refetchNotifications();
         }
 
         setOpen(!open);
