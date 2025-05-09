@@ -55,6 +55,40 @@ public class NotificationController : ControllerBase
         return BadRequest("User instance associated with AspNetUser class not found.");
     }
 
+    // action method to retrieve a batch of notifications
+    [HttpGet("notificationBatch")]
+    [Authorize]
+    public async Task<ActionResult<List<NotificationDTO>>> GetNotificationBatch([FromBody] NotificationBatchOptionsDTO batchOptions)
+    {
+        if (ModelState.IsValid)
+        {
+            User? user = await authHelpers.GetUserClassOfLoggedInUser(User);
+            if (user != null)
+            {
+                var notifications = await dbContext.Notification
+                    .Where(n => n.UserId == user.UserId)
+                    .OrderBy(n => n.Time)
+                    .Skip(((int)batchOptions.pageNumber! - 1) * (int)batchOptions.batchSize!)
+                    .Take((int)batchOptions.batchSize!)
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                List<NotificationDTO> notificationDTOs = [];
+
+                foreach (var n in notifications)
+                {
+                    NotificationDTO notificationDTO = new(n.NotificationId, n.UserId, n.Text, n.Time, n.Read, n.Link);
+                    notificationDTOs.Add(notificationDTO);
+                }
+
+                return Ok(notificationDTOs);
+            }
+            return BadRequest("User instance associated with AspNetUser class not found.");
+        }
+        return BadRequest(ModelState);
+    }
+
+
     // action method to create a notification record for a single user
     [HttpPost("notificationForSingleUser")]
     [Authorize]
