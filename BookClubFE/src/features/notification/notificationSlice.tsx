@@ -18,6 +18,11 @@ interface NewNotificationForClubMembers extends NewNotification {
     ClubId: number,
 }
 
+interface NotificationBatchInput {
+    pageNumber: number,
+    batchSize: number
+}
+
 export interface Notification {
     notificationId: number,
     userId: number,
@@ -33,6 +38,31 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
             query: () => ({
                 url: `notification/notifications`,
                 credentials: 'include',
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }),            
+            transformResponse(res: {$id: string, $values: Notification[]}){
+                const notifications = res.$values;
+                const notificationsWithUpdateDateValues = notifications.map((n) => {
+                    const updatedTime = new Date(n.time+"Z").toLocaleString()
+                    
+                    const updatedNotification: Notification = {
+                        ...n,
+                        time: updatedTime
+                    }
+
+                    return updatedNotification;
+                })
+                return notificationsWithUpdateDateValues;
+            }
+        }),
+        getNotificationBatch: builder.query<Notification[], NotificationBatchInput>({
+            query: (batchInput) => ({
+                url: `notification/notificationBatch`,
+                credentials: 'include',
+                body: batchInput,
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -105,5 +135,6 @@ export const {
     useNotifySingleUserMutation,
     useNotifyReadingUsersMutation,
     useNotifyClubMembersMutation,
-    useUpdateNotificationsAsReadMutation
+    useUpdateNotificationsAsReadMutation,
+    useGetNotificationBatchQuery
 } = apiSliceWithClub    
