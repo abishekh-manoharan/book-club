@@ -32,7 +32,7 @@ export interface Notification {
     read: boolean
 }
 
-export const apiSliceWithClub = apiSlice.injectEndpoints({
+export const apiSliceWithNotifications = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         getAllNotifications: builder.query<Notification[], undefined>({
             query: () => ({
@@ -60,9 +60,8 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
         }),
         getNotificationBatch: builder.query<Notification[], NotificationBatchInput>({
             query: (batchInput) => ({
-                url: `notification/notificationBatch`,
+                url: `notification/notificationBatch?pageNumber=${batchInput.pageNumber}&batchSize=${batchInput.batchSize}`,
                 credentials: 'include',
-                body: batchInput,
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -137,4 +136,4 @@ export const {
     useNotifyClubMembersMutation,
     useUpdateNotificationsAsReadMutation,
     useGetNotificationBatchQuery
-} = apiSliceWithClub    
+} = apiSliceWithNotifications 
