@@ -58,7 +58,7 @@ public class NotificationController : ControllerBase
     // action method to retrieve a batch of notifications
     [HttpGet("notificationBatch")]
     [Authorize]
-    public async Task<ActionResult<List<NotificationDTO>>> GetNotificationBatch([FromBody] NotificationBatchOptionsDTO batchOptions)
+    public async Task<ActionResult<List<NotificationDTO>>> GetNotificationBatch([FromQuery] NotificationBatchOptionsDTO batchOptions)
     {
         if (ModelState.IsValid)
         {
@@ -67,7 +67,7 @@ public class NotificationController : ControllerBase
             {
                 var notifications = await dbContext.Notification
                     .Where(n => n.UserId == user.UserId)
-                    .OrderBy(n => n.Time)
+                    .OrderByDescending(n => n.Time)
                     .Skip(((int)batchOptions.pageNumber! - 1) * (int)batchOptions.batchSize!)
                     .Take((int)batchOptions.batchSize!)
                     .AsNoTracking()
