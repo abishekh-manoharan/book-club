@@ -17,7 +17,7 @@ import {  useAppSelector } from "./app/hooks"
 import { selectError } from "./features/error/errorSlice"
 import CreateReading from "./features/reading/CreateReading/CreateReading"
 import ReadingHome from "./features/reading/ReadingHome"
-import NotificationList from "./features/notification/NotificationList"
+import NotificationHeader from "./features/notification/NotificationHeader"
 import { useGetAllNotificationsQuery } from "./features/notification/notificationSlice"
 // import { useAppSelector } from "./app/hooks"
 
@@ -26,7 +26,7 @@ function App() {
   const { isFetching } = useGetStatusQuery();
   const error = useAppSelector(selectError)
   useGetAllNotificationsQuery(undefined, {
-    pollingInterval: 10000,
+    pollingInterval: 5000,
     refetchOnMountOrArgChange: true
   });
 
@@ -46,7 +46,7 @@ function App() {
   return (
     <div className={pageHiddenClassWrapper}>
       {error.error && <ErrorMsg msg={error.errorMsg}/>}
-        <NotificationList/>
+        <NotificationHeader/>
         <Routes>
           <Route element=<Header /> >
             <Route path="/" element=<div>Home</div> />

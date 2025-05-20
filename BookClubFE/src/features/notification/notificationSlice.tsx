@@ -80,7 +80,8 @@ export const apiSliceWithNotifications = apiSlice.injectEndpoints({
                     return updatedNotification;
                 })
                 return notificationsWithUpdateDateValues;
-            }
+            },
+            keepUnusedDataFor: 0
         }),
         notifySingleUser: builder.mutation<Notification, NewNotificationForSingleUser>({
             query: (notification) => ({
