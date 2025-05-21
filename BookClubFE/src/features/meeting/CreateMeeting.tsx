@@ -4,17 +4,22 @@ import { NewMeeting, useCreateMeetingMutation } from "./meetingSlice";
 import { isFetchBaseQueryError, isSerializedError } from "../../app/typeGuards";
 import { updateErrorMessageThunk } from "../error/errorSlice";
 import { useAppDispatch } from "../../app/hooks";
+import { useNotifyReadingUsersMutation } from "../notification/notificationSlice";
+import { useGetOneReadingQuery } from "../reading/readingSlice";
 
-function CreateMeeting () {
+function CreateMeeting() {
     const dispatch = useAppDispatch();
     const [Name, setName] = useState("");
     const [Description, setDescription] = useState("");
 
     const [createMeeting] = useCreateMeetingMutation();
-
+    const [notifyReadingUsers] = useNotifyReadingUsersMutation();
+    
     const { clubid, bookid } = useParams();
     const clubId = Number(clubid);
     const bookId = Number(bookid);
+    
+    const {data: reading} = useGetOneReadingQuery({BookId: bookId, ClubId: clubId}, { skip: isNaN(clubId) || isNaN(bookId)});
 
 
     // getting the current date in the format yyyy-mm-dd to use as a minimum value for the start date of the meeting 
@@ -26,9 +31,9 @@ function CreateMeeting () {
 
     const createMeetingClickHandler = async (e: React.SyntheticEvent) => {
         e.preventDefault();
-        
+
         const form: HTMLFormElement = document.querySelector(".createMeetingForm")!;
-        if(!form.checkValidity()){
+        if (!form.checkValidity()) {
             form.reportValidity();
             return;
         }
@@ -47,7 +52,13 @@ function CreateMeeting () {
 
         try {
             const result = await createMeeting(newMeeting).unwrap();
-            console.log(result);
+            const result2 = await notifyReadingUsers({
+                    ClubId: clubId,
+                    BookId: bookId,
+                    Text: `New meeting created in ${reading?.name}`
+                })
+                .unwrap();
+            console.log(result + " " + result2);
         } catch (error) {
             if (isFetchBaseQueryError(error)) {
                 const errorMessage = (error.data as string) || "Unknown error";
@@ -63,14 +74,14 @@ function CreateMeeting () {
 
     return (
         <div>
-            <form className="createMeetingForm" hidden>
-            Create Meeting
+            <form className="createMeetingForm">
+                Create Meeting
                 <label htmlFor="meetingName">Name</label>
                 <input id="meetingName" type="text" onChange={(e) => setName(e.target.value)} value={Name} required /> <br />
 
                 <label htmlFor="meetingDescription">Description</label>
                 <textarea id="meetingDescription" rows={5} cols={20} onChange={(e) => setDescription(e.target.value)} value={Description} /> <br />
-                
+
                 <label htmlFor="meetingStartDate">Meeting Start Time</label>
                 {/* <input id="meetingStartDate" type="datetime-local" min={minDate} value="2030-06-12T19:30" required /> <br /> */}
                 {/* <input id="meetingStartDate" type="datetime-local" min={minDate} required  value="2025-04-08T19:30"/> <br /> */}
