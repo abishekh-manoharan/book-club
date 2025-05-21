@@ -6,16 +6,20 @@ import { updateErrorMessageThunk } from '../../error/errorSlice';
 import { useAppDispatch } from '../../../app/hooks';
 import { useParams } from 'react-router-dom';
 import { isFetchBaseQueryError, isSerializedError } from '../../../app/typeGuards';
+import { useNotifyClubMembersMutation } from '../../../features/notification/notificationSlice';
+import { useGetClubQuery } from '../../../features/club/clubSlice';
 
 function CreateReading() {
     const dispatch = useAppDispatch();
     const [selectedBook, setSelectedBook] = useState<Book>();
+
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const { clubid } = useParams();
     const clubId = Number(clubid);
-    const [createReading, { isError: isCreateReadingError, error: createReadingError }] = useCreateReadingMutation();
-
+    const [createReading] = useCreateReadingMutation();
+    const [notifyClubMembers] = useNotifyClubMembersMutation();
+    const { data: club } = useGetClubQuery(clubId, { skip: isNaN(clubId) });
     // function used to generate an int value from a string
     const simpleStringToInt = (str: string) => {
         let hash = 0;
@@ -54,8 +58,11 @@ function CreateReading() {
         }
 
         try {
-            const result = await createReading(newReading).unwrap();
-            console.log(result);
+            await createReading(newReading).unwrap();
+            await notifyClubMembers({
+                ClubId: clubId,
+                Text: `New reading created in club: ${club?.name}!`
+            }).unwrap();
         } catch (error) {
             if (isSerializedError(error)) {
                 dispatch(updateErrorMessageThunk(error.message!));
