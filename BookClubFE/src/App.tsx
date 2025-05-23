@@ -26,7 +26,7 @@ function App() {
   const { isFetching } = useGetStatusQuery();
   const error = useAppSelector(selectError)
   useGetAllNotificationsQuery(undefined, {
-    pollingInterval: 5000,
+    pollingInterval: 30000,
     refetchOnMountOrArgChange: true
   });
 
