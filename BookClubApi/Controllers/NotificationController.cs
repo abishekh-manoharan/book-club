@@ -144,10 +144,12 @@ public class NotificationController : ControllerBase
     [Authorize]
     public async Task<ActionResult<NotificationDTO>> CreateNotificationForClubMembers([FromBody] CreateNotificationClubMembersValDTO notification)
     {
+        // getting the user class of the logged in user to emit them from recieving the notification
+        User? user = await authHelpers.GetUserClassOfLoggedInUser(User);
         if (ModelState.IsValid)
         {
-            // get all club users in the club
-            var clubUsers = await dbContext.ClubUsers.Where(cu => cu.ClubId == notification.ClubId).AsNoTracking().ToListAsync();
+            // get all club users in the club where the user isn't also the initiator of the notification
+            var clubUsers = await dbContext.ClubUsers.Where(cu => cu.ClubId == notification.ClubId && cu.UserId != user.UserId).AsNoTracking().ToListAsync();
             if (!clubUsers.IsNullOrEmpty())
             {
                 // create a notification for each club member
@@ -159,7 +161,6 @@ public class NotificationController : ControllerBase
                     Time = DateTime.UtcNow,
                     Read = false
                 }).ToList();
-
 
                 try
                 {
@@ -201,11 +202,13 @@ public class NotificationController : ControllerBase
     [Authorize]
     public async Task<ActionResult<NotificationDTO>> CreateNotificationForReadingMembers([FromBody] CreateNotificationReadingUsersValDTO notification)
     {
+        // getting the user class of the logged in user to emit them from recieving the notification
+        User? user = await authHelpers.GetUserClassOfLoggedInUser(User);
         if (ModelState.IsValid)
         {
             // get all club users in the club
             var readingUsers = await dbContext.Readingusers
-                .Where(ru => ru.ClubId == notification.ClubId && ru.BookId == notification.BookId)
+                .Where(ru => ru.ClubId == notification.ClubId && ru.BookId == notification.BookId && ru.UserId != user.UserId)
                 .AsNoTracking()
                 .ToListAsync();
 
