@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import NavHeaderMobile from './Nav/NavHeaderMobile';
 import NavMenuMobile from './Nav/NavMenuMobile';
+import { Outlet } from 'react-router-dom';
 
 function Layout() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -9,6 +10,7 @@ function Layout() {
         <div className='layout-mobile'>
             <NavHeaderMobile setMobileMenuOpen={setMobileMenuOpen}/>
             <NavMenuMobile mobileMenuOpen={mobileMenuOpen}/>
+            <Outlet/>
         </div>
     );
 }

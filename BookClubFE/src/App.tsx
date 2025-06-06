@@ -50,27 +50,9 @@ function App() {
         {/* <NotificationHeader/> */}
         <Routes>
           <Route path="/" element=<Main status={status ?? false}/> >
-            <Route path="/" element=<div>Home</div> />
-            <Route path="register" element=<Register /> />
-             <Route path="login" element=<Login /> />
-            <Route path="createClub" element=<Create /> />
-            <Route path="joinedClubs" element=<JoinedClubs /> />
-            <Route path="club/:clubid" element=<Club /> >
-              <Route path="createReading" element=<CreateReading /> /> 
-              <Route path="reading/:bookid" element=<ReadingHome /> /> 
-            </Route>
+            <Route path="home" element=<div>Home</div> />
           </Route>
-          // <Route element=<Header /> >
-          //   <Route path="/" element=<div>Home</div> />
-          //   <Route path="register" element=<Register /> />
-          //   <Route path="login" element=<Login /> />
-          //   <Route path="createClub" element=<Create /> />
-          //   <Route path="joinedClubs" element=<JoinedClubs /> />
-          //   <Route path="club/:clubid" element=<Club /> >
-          //     <Route path="createReading" element=<CreateReading /> /> 
-          //     <Route path="reading/:bookid" element=<ReadingHome /> /> 
-          //   </Route>
-          // </Route>
+
         </Routes >
     </div>
   )
