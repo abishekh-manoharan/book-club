@@ -17,7 +17,7 @@ import {  useAppSelector } from "./app/hooks"
 import { selectError } from "./features/error/errorSlice"
 import CreateReading from "./features/reading/CreateReading/CreateReading"
 import ReadingHome from "./features/reading/ReadingHome"
-import NotificationHeader from "./features/notification/NotificationHeader"
+// import NotificationHeader from "./features/notification/NotificationHeader"
 import { useGetAllNotificationsQuery } from "./features/notification/notificationSlice"
 import Main from "./components/Main"
 // import { useAppSelector } from "./app/hooks"
@@ -47,12 +47,12 @@ function App() {
   return (
     <div className={pageHiddenClassWrapper}>
       {error.error && <ErrorMsg msg={error.errorMsg}/>}
-        <NotificationHeader/>
+        {/* <NotificationHeader/> */}
         <Routes>
           <Route path="/" element=<Main status={status ?? false}/> >
             <Route path="/" element=<div>Home</div> />
             <Route path="register" element=<Register /> />
-            <Route path="login" element=<Login /> />
+             <Route path="login" element=<Login /> />
             <Route path="createClub" element=<Create /> />
             <Route path="joinedClubs" element=<JoinedClubs /> />
             <Route path="club/:clubid" element=<Club /> >
