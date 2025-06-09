@@ -5,33 +5,15 @@ import { updateErrorMessageThunk } from "../error/errorSlice";
 import { useAppDispatch } from "../../app/hooks";
 import NotifictionsToDisplay from "./NotifictionsToDisplay";
 
-// const BATCH_SIZE = 2;
-
 function NotificationHeader() {
     const unreadNotificationIds = useRef<number[]>([]);
 
     const dispatch = useAppDispatch();
 
-    // const [page, setPage] = useState(1);
     const [open, setOpen] = useState(false);
 
     const [updateNotificationsAsRead] = useUpdateNotificationsAsReadMutation();
     const { data: notifications, refetch: refetchNotifications } = useGetAllNotificationsQuery(undefined);
-    // const { data: notificationBatch, refetch: refetchBatchNotifications } = useGetNotificationBatchQuery({ batchSize: BATCH_SIZE, pageNumber: page }); // runs whenever page is updated
-    // const [notificationsToDisplay, setNotificationsToDisplay] = useState<NotificationType[]>([]);
-
-    // // whenever notificationBatch is updated, we append the new entries
-    // useEffect(() => {
-    //     setNotificationsToDisplay(notificationsToDisplay => {
-    //         if (notificationBatch) {
-    //             return notificationsToDisplay.concat(...notificationBatch!)
-    //         }
-    //         else return [];
-    //     })
-
-    // }, [notificationBatch]);
-
-
 
     // determining unread notification count whenever notifications cache is updated
     const unreadNotificationCount = useMemo(() => {
@@ -75,16 +57,10 @@ function NotificationHeader() {
 
 
     return (
-        <>
+        <div className="nav-header-mobile-notification">
             <div onClick={clickNotification}> notifs - {unreadNotificationCount}</div>
             {open && <NotifictionsToDisplay />}
-            {/* <div hidden={!open}>
-                {
-                    notificationsToDisplay?.map((n) => <><Notification notif={n} /><br /></>)
-                }
-            </div> */}
-            {/* <div onClick={() => setPage(p => p + 1)}> load more</div> */}
-        </>
+        </div>
     );
 }
 

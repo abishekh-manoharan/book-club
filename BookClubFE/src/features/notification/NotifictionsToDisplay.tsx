@@ -16,7 +16,7 @@ function NotifictionsToDisplay() {
     }, [notificationBatch])
 
     return (
-        <div>
+        <div className="nav-header-mobile-notification-list">
             <>{notificationsToDisplay?.map((n) => <NotificationComponent notif={n} />)}</>
             {page > 1 ? <div onClick={() => setPage(p => p - 1)}>newer</div> : <></>}
             <div onClick={() => setPage(p => p + 1)}>older</div>

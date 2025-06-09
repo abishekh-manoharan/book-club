@@ -21,13 +21,11 @@
   width: 100%;
 }
 
-body { 
+body {
   margin: 0px;
 }
 
-.layout-mobile {
-  
-}
+.layout-mobile {}
 
 .nav-header-mobile {
   position: relative;
@@ -39,16 +37,17 @@ body {
 
 .nav-menu-mobile {
   background-color: rgba(197, 197, 197, 0.45);
-  
+
   position: absolute;
   top: 0px;
   width: 100vw;
   height: 100vh;
   height: 100dvh;
   z-index: 0;
-  
+
   transition: left 1s;
 }
+
 .nav-menu-mobile-links {
   /* height: 100vh;
   height: 100dvh; */
@@ -62,9 +61,24 @@ body {
 .nav-menu-mobile-open {
   left: 0vw;
 }
+
 .nav-menu-mobile-close {
   left: 100vw;
 }
+
+.nav-header-mobile-notification {
+  position: relative;
+}
+
+.nav-header-mobile-notification-list {
+  background-color:black;
+  position: absolute;
+  top: 100%;
+  left: 60%;
+  width: 90vw;
+  transform: translateX(-80%);
+}
+
 
 .clubsearchresults {
   position: absolute;
@@ -75,15 +89,14 @@ body {
 }
 
 .unreadNotification {
-  background-color: rgba(41, 135, 135, 0.453);
+  background-color: rgba(41, 135, 135, 0.153);
 }
 
 .readNotification {
-  background-color: rgba(244, 244, 244, 0.453);
+  background-color: rgba(244, 244, 244, 0.153);
 }
 
 .hidden {
   display: none;
   background-color: pink;
 }
-
