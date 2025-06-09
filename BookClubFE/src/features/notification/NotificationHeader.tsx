@@ -59,7 +59,7 @@ function NotificationHeader() {
     return (
         <div className="nav-header-mobile-notification">
             <div onClick={clickNotification}> notifs - {unreadNotificationCount}</div>
-            {open && <NotifictionsToDisplay />}
+            {open && <NotifictionsToDisplay setOpen={setOpen}/>}
         </div>
     );
 }
