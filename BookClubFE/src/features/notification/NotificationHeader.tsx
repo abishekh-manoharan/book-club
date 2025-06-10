@@ -52,7 +52,13 @@ function NotificationHeader() {
                 }
             }
         }
-        setOpen(!open);
+        setOpen((state) => {
+            if(state){
+                return false;
+            } else {
+                return true;
+            }
+        });
     }
 
 
