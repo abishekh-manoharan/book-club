@@ -29,9 +29,6 @@ function NotifictionsToDisplay({ setOpen }: { setOpen: React.Dispatch<React.SetS
 
         // if notifications list doesnt contain the element clicked, close the notification modal
         const handleClick = (e: MouseEvent) => {
-
-            e.stopPropagation();
-            e.preventDefault();
             if (e.target instanceof Node && !notifModal?.contains(e.target)) {
                 console.log(e.target);
                 console.log('clicked outside')
