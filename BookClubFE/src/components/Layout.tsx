@@ -9,7 +9,7 @@ function Layout() {
     return (
         <div className='layout-mobile'>
             <NavHeaderMobile setMobileMenuOpen={setMobileMenuOpen}/>
-            <NavMenuMobile mobileMenuOpen={mobileMenuOpen}/>
+            <NavMenuMobile mobileMenuOpen={mobileMenuOpen} setMobileMenuOpen={setMobileMenuOpen}/>
             <Outlet/>
         </div>
     );

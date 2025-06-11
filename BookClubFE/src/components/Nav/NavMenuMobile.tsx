@@ -1,11 +1,15 @@
 import { Link } from "react-router-dom";
 
-function NavMenuMobile({mobileMenuOpen}:{mobileMenuOpen: boolean}) {
+function NavMenuMobile({mobileMenuOpen, setMobileMenuOpen}:{mobileMenuOpen: boolean, setMobileMenuOpen: React.Dispatch<React.SetStateAction<boolean>>}) {
+    const menuOptionClickHandler = () => {
+        setMobileMenuOpen(false);
+    }
+
     return (
         <div className={`nav-menu-mobile ${mobileMenuOpen ? "nav-menu-mobile-open" : "nav-menu-mobile-close"}`}>
             <nav className="nav-menu-mobile-links">
-                <Link onClick={() => console.log("clicked link")} to="/home">home</Link>
-                <Link to="/home">home</Link>
+                <Link onClick={menuOptionClickHandler} to="/home">home</Link>
+                <Link onClick={menuOptionClickHandler} to="/home">home</Link>
             </nav>
         </div>
     );
