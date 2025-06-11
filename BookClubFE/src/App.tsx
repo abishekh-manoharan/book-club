@@ -1,9 +1,9 @@
 import { Route, Routes } from "react-router-dom"
-import Header from './components/Header'
-import Register from './features/auth/Register'
-import Login from './features/auth/Login'
-import Create from "./features/club/Create"
-import JoinedClubs from "./features/club/JoinedClubs"
+// import Header from './components/Header'
+// import Register from './features/auth/Register'
+// import Login from './features/auth/Login'
+// import Create from "./features/club/Create"
+// import JoinedClubs from "./features/club/JoinedClubs"
 // import { authContext } from "./utils/context"
 // import AuthService from './services/auth';
 
@@ -13,7 +13,7 @@ import { useGetStatusQuery } from "./features/auth/authSlice"
 import classNames from "classnames"
 import Club from "./features/club/home/Club"
 import ErrorMsg from "./features/error/ErrorMsg"
-import {  useAppSelector } from "./app/hooks"
+import { useAppSelector } from "./app/hooks"
 import { selectError } from "./features/error/errorSlice"
 import CreateReading from "./features/reading/CreateReading/CreateReading"
 import ReadingHome from "./features/reading/ReadingHome"
@@ -46,14 +46,18 @@ function App() {
 
   return (
     <div className={pageHiddenClassWrapper}>
-      {error.error && <ErrorMsg msg={error.errorMsg}/>}
-        {/* <NotificationHeader/> */}
-        <Routes>
-          <Route path="/" element=<Main status={status ?? false}/> >
-            <Route path="home" element=<div>Home</div> />
+      {error.error && <ErrorMsg msg={error.errorMsg} />}
+      {/* <NotificationHeader/> */}
+      <Routes>
+        <Route path="/" element=<Main status={status ?? false} /> >
+          <Route path="home" element=<div>Home</div> />
+          <Route path="club/:clubid" element=<Club /> >
+            <Route path="createReading" element=<CreateReading /> />
+            <Route path="reading/:bookid" element=<ReadingHome /> />
           </Route>
+        </Route>
 
-        </Routes >
+      </Routes >
     </div>
   )
 }

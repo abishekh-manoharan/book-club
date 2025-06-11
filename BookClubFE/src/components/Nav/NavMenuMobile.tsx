@@ -1,3 +1,4 @@
+import SearchClubBar from "../../features/club/SearchClubBar";
 import { Link } from "react-router-dom";
 
 function NavMenuMobile({mobileMenuOpen, setMobileMenuOpen}:{mobileMenuOpen: boolean, setMobileMenuOpen: React.Dispatch<React.SetStateAction<boolean>>}) {
@@ -8,6 +9,7 @@ function NavMenuMobile({mobileMenuOpen, setMobileMenuOpen}:{mobileMenuOpen: bool
     return (
         <div className={`nav-menu-mobile ${mobileMenuOpen ? "nav-menu-mobile-open" : "nav-menu-mobile-close"}`}>
             <nav className="nav-menu-mobile-links">
+                <SearchClubBar/>
                 <Link onClick={menuOptionClickHandler} to="/home">home</Link>
                 <Link onClick={menuOptionClickHandler} to="/home">home</Link>
             </nav>
