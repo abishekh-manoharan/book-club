@@ -23,7 +23,6 @@ import Main from "./components/Main"
 import JoinedClubs from "./features/club/JoinedClubs"
 
 function App() {
-  // const [auth, setAuth] = useState(false);
   const { data: status, isFetching } = useGetStatusQuery();
   const error = useAppSelector(selectError)
   useGetAllNotificationsQuery(undefined, {
@@ -31,15 +30,6 @@ function App() {
     refetchOnMountOrArgChange: true
   });
 
-  // gets and sets the current session's auth status
-  // useEffect(() => {
-  //   AuthService.status().then(res => setAuth(res));
-  //   // add 1 second buffer time to page display on initial load to ensure correct auth-based elements are displayed
-  //   setTimeout(() => { 
-  //     document.querySelector('.page')?.classList.remove('hidden');
-  //   }, 1000);
-  // }, []);
-  // console.log('status '+data);
   const pageHiddenClassWrapper = classNames('page', {
     'hidden': isFetching
   })

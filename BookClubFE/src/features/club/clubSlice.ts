@@ -36,6 +36,20 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                 }
             })
         }),
+        getJoinedClubs: builder.query<Club[], void>({
+            query: () => ({
+                url: `club/joinedClubs`,
+                credentials: 'include',
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }),
+            transformResponse(res: {$values: Club[], id: string}){
+                console.log(res.$values);
+                return res.$values;
+            }
+        }),
         getClubUser: builder.query<{userId: number, clubId: number, admin: boolean}, {userId: number, clubId: number}> ({
             query: (clubUser) => ({
                 url: `club/getOneClubUser?clubId=${clubUser.clubId}&userId=${clubUser.userId}`,
@@ -98,6 +112,7 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
 export const { 
     useCreateClubMutation, 
     useGetClubQuery, 
+    useGetJoinedClubsQuery,
     useJoinClubMutation, 
     useGetClubUserQuery, 
     useGetJoinRequestQuery,
