@@ -11,7 +11,7 @@ function NavMenuMobile({mobileMenuOpen, setMobileMenuOpen}:{mobileMenuOpen: bool
             <nav className="nav-menu-mobile-links">
                 <SearchClubBar/>
                 <Link onClick={menuOptionClickHandler} to="/home">home</Link>
-                <Link onClick={menuOptionClickHandler} to="/home">home</Link>
+                <Link onClick={menuOptionClickHandler} to="/clubs">clubs</Link>
             </nav>
         </div>
     );

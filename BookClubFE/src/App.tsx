@@ -20,7 +20,7 @@ import ReadingHome from "./features/reading/ReadingHome"
 // import NotificationHeader from "./features/notification/NotificationHeader"
 import { useGetAllNotificationsQuery } from "./features/notification/notificationSlice"
 import Main from "./components/Main"
-// import { useAppSelector } from "./app/hooks"
+import JoinedClubs from "./features/club/JoinedClubs"
 
 function App() {
   // const [auth, setAuth] = useState(false);
@@ -51,6 +51,7 @@ function App() {
       <Routes>
         <Route path="/" element=<Main status={status ?? false} /> >
           <Route path="home" element=<div>Home</div> />
+          <Route path="clubs" element=<JoinedClubs /> />
           <Route path="club/:clubid" element=<Club /> >
             <Route path="createReading" element=<CreateReading /> />
             <Route path="reading/:bookid" element=<ReadingHome /> />
