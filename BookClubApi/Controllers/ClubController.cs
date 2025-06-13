@@ -167,6 +167,7 @@ public class ClubController : ControllerBase
 
     // this action method gets and returns all the clubs that are associated with the logged in user
     [HttpGet("joinedClubs")]
+    [Authorize]
     public ActionResult<List<ClubDTO>> GetJoinedClubs()
     {
         // getting logged in user's User class ID
