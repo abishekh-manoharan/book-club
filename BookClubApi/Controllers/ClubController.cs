@@ -201,6 +201,29 @@ public class ClubController : ControllerBase
 
     }
 
+    // action method retrieving clubs where the logged in user is the admin
+    [HttpGet("joinedClubsAdmin")]
+    [Authorize]
+    public ActionResult<List<ClubDTO>> GetJoinedClubsAdmin()
+    {
+        // getting logged in user's User class ID
+        var user = dbContext.Users
+            .Where(user => user.AspnetusersId == userManager.GetUserId(User))
+            .AsNoTracking()
+            .First();
+        
+        // finding the club user instances where the user id is that of the logged in user, and where the logged in user is an admin
+        var users = dbContext.ClubUsers
+            .Where(
+                cu => cu.UserId == user.UserId 
+                && cu.Admin == true
+            )
+            .AsNoTracking()
+            .ToList();
+        
+        return Ok(users);
+    }
+
     // action method joins a user to a club
     // returns true if join is successful
     // returns false if join is failed
