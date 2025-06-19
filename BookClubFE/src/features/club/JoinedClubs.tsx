@@ -1,23 +1,45 @@
 // this component is responsible for the display of clubs in which the logged in user is part of
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { Club } from "../../utils/types";
 import { Link } from "react-router-dom";
-import { useGetJoinedClubsQuery } from "./clubSlice";
+import { useGetJoinedClubsAdminQuery, useGetJoinedClubsQuery } from "./clubSlice";
+
+interface OrganizedClubs {
+    adminClubs: Club[];
+    nonAdminClubs: Club[];
+}
+
 
 function JoinedClubs() {
-    const [joinedClubs, setJoinedClubs] = useState<Club[]>([]);
     const { data: clubs } = useGetJoinedClubsQuery();
+    const { data: clubsWhereAdmin } = useGetJoinedClubsAdminQuery();
 
-    useEffect(() => {
-        if(clubs){
-            setJoinedClubs(clubs);
+    const organizedClubs: OrganizedClubs | undefined = useMemo(() => {
+        if (clubs && clubsWhereAdmin) {
+            const organizedClubs: OrganizedClubs = {adminClubs: [], nonAdminClubs: []};
+            const clubIdsWhereUserIsAdmin = clubsWhereAdmin.map(clubUsers => clubUsers.clubId)
+            
+            clubs.forEach(club => {
+                if(clubIdsWhereUserIsAdmin.includes(club.clubId)){
+                    organizedClubs.adminClubs.push(club);
+                } else {
+                    organizedClubs.nonAdminClubs.push(club);
+                }
+            })
+
+            return organizedClubs;
         }
-    }, [clubs])
-
+    }, [clubs, clubsWhereAdmin]);
+    
     return (
         <div>
+            <h2>admin clubs</h2>
             {
-                joinedClubs && joinedClubs.map((club) => <><Link to={`/club/${club.clubId}`}  key={club.clubId}>{club.name}</Link><br/></>)
+                organizedClubs && organizedClubs.adminClubs.map((club) => <><Link to={`/club/${club.clubId}`} key={club.clubId}>{club.name}</Link><br /></>)
+            }
+            <h2>non-admin clubs</h2>
+            {
+                organizedClubs && organizedClubs.nonAdminClubs.map((club) => <><Link to={`/club/${club.clubId}`} key={club.clubId}>{club.name}</Link><br /></>)
             }
         </div>
     );
