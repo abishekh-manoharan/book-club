@@ -21,6 +21,7 @@ import ReadingHome from "./features/reading/ReadingHome"
 import { useGetAllNotificationsQuery } from "./features/notification/notificationSlice"
 import Main from "./components/Main"
 import JoinedClubs from "./features/club/JoinedClubs"
+import ActiveReadings from "./features/reading/ActiveReadings"
 
 function App() {
   const { data: status, isFetching } = useGetStatusQuery();
@@ -46,8 +47,8 @@ function App() {
             <Route path="createReading" element=<CreateReading /> />
             <Route path="reading/:bookid" element=<ReadingHome /> />
           </Route>
+          <Route path="activeReadings" element=<ActiveReadings/>/>
         </Route>
-
       </Routes >
     </div>
   )

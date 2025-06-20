@@ -44,7 +44,7 @@ function ReadingHome() {
 
     const optIntoReadingButtonClick = async () => {
         try {
-            await optIntoReading({ BookId: bookId, ClubId: clubId }).unwrap();
+            await optIntoReading({ bookId: bookId, clubId: clubId }).unwrap();
         } catch (error) {
             if (isFetchBaseQueryError(error)) {
                 const errorMessage = (error.data as string) || "Unknown error";
@@ -58,7 +58,7 @@ function ReadingHome() {
     }
     const optOutOfReadingButtonClick = async () => {
         try {
-            await optOutOfReading({ BookId: bookId, ClubId: clubId }).unwrap();
+            await optOutOfReading({ bookId: bookId, clubId: clubId }).unwrap();
         } catch (error) {
             if (isFetchBaseQueryError(error)) {
                 const errorMessage = (error.data as string) || "Unknown error";

@@ -23,15 +23,22 @@ export interface NewReading {
     RatingsAverage?: number
 }
 
+// export interface ReadingUser {
+//     UserId: number,
+//     BookId: number,
+//     ClubId: number,
+//     Progress: number,
+//     ProgresstypeId: number,
+// }
 export interface ReadingUser {
-    UserId: number,
-    BookId: number,
-    ClubId: number,
-    Progress: number,
-    ProgresstypeId: number,
+    userId: number,
+    bookId: number,
+    clubId: number,
+    progress: number,
+    progresstypeId: number,
 }
 
-export type ReadingWithoutUserAndProgress = Pick<ReadingUser, "BookId" | "ClubId">
+export type ReadingWithoutUserAndProgress = Pick<ReadingUser, "bookId" | "clubId">
 
 export const apiSliceWithReading = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
@@ -75,6 +82,20 @@ export const apiSliceWithReading = apiSlice.injectEndpoints({
             },
             providesTags: [{type: 'Readings', id: 'all'}]
         }),
+        getReadingUsersOfLoggedInUsers: builder.query<ReadingUser[], void>({
+            query: () => ({
+                url: `reading/readingUsersOfLoggedInUser`,
+                credentials: 'include',
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }),
+            transformResponse(res: {$id: string, $values: ReadingUser[]}){
+                return res.$values;
+            },
+            providesTags: [{type: 'Readings', id: 'all'}]
+        }),
         getReadingUser: builder.query<ReadingUser, {UserId: number, BookId: number, ClubId: number}>({
             query: (readingUser) => ({
                 url: `reading/readingUser?clubId=${readingUser.ClubId}&bookId=${readingUser.BookId}&userId=${readingUser.UserId}`,
@@ -96,7 +117,7 @@ export const apiSliceWithReading = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            invalidatesTags: [{type: 'Readings', id: 'user'}]
+            invalidatesTags: [{type: 'Readings'}]
         }),
         optOutOfReading: builder.mutation<Reading, ReadingWithoutUserAndProgress>({
             query: (reading) => ({
@@ -108,7 +129,7 @@ export const apiSliceWithReading = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            invalidatesTags: [{type: 'Readings', id: 'user'}]
+            invalidatesTags: [{type: 'Readings'}]
         }),
         updateReadingProgress: builder.mutation<Reading, Omit<ReadingUser, "UserId">>({
             query: (reading) => ({
@@ -139,6 +160,7 @@ export const {
     useCreateReadingMutation,
     useGetReadingsOfAClubQuery,
     useGetReadingUserQuery,
+    useGetReadingUsersOfLoggedInUsersQuery,
     useGetOneReadingQuery,
     useOptIntoReadingMutation,
     useOptOutOfReadingMutation,
