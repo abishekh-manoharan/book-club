@@ -127,9 +127,9 @@ public class ReadingController : ControllerBase
     }
     
     // action method that returns all readings the user is a participant of 
-    [HttpGet("usersJoinedReadings")]
+    [HttpGet("readingUsersOfLoggedInUser")]
     [Authorize]
-    public async Task<ActionResult<List<Readinguser>>> GetUsersJoinedReadings()
+    public async Task<ActionResult<List<Readinguser>>> GetReadingUsersOfLoggedInUser()
     {
         if (ModelState.IsValid)
         {
