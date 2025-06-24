@@ -4,7 +4,14 @@ function NavHeaderMobile({setMobileMenuOpen}: { setMobileMenuOpen: React.Dispatc
 
     const menuButtonClickHandler = () => {
         console.log("click")
-        setMobileMenuOpen(state => !state);
+        // root!.style.setProperty = mobileMenuOpen ? "auto" : "hidden";
+        const root = document.getElementById("root");
+        // root!.setAttribute('style', 'overflow-y: hidden;')
+
+        setMobileMenuOpen(state => {
+            root?.style.setProperty('overflow-y', state ? "auto" : "hidden");
+            return !state;
+        });
     }
 
     return (

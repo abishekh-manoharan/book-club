@@ -1,9 +1,10 @@
 import SearchClubBar from "../../features/club/SearchClubBar";
 import { Link } from "react-router-dom";
 
+
 function NavMenuMobile({mobileMenuOpen, setMobileMenuOpen}:{mobileMenuOpen: boolean, setMobileMenuOpen: React.Dispatch<React.SetStateAction<boolean>>}) {
     const menuOptionClickHandler = () => {
-        setMobileMenuOpen(false);
+        setMobileMenuOpen(!mobileMenuOpen);
     }
 
     return (
