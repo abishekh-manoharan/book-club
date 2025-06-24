@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BookClubApi.Controllers;
 
@@ -121,6 +122,48 @@ public class ReadingController : ControllerBase
 
             // if club is private and user isn't a member, return Unauthorized status
             return Unauthorized("user isn't authorized to attain the readings from this club.");
+        }
+
+        return BadRequest(ModelState);
+    }
+
+    // action method that returns all reading records associated with a user, whether they have opted in or not
+    [HttpGet("GetAllReadingsOfUser")]
+    [Authorize]
+    public async Task<ActionResult<List<Reading>>> GetAllReadingsOfAUser()
+    {
+        if (ModelState.IsValid)
+        {
+            // get user id of logged in user
+            User? user = await authHelpers.GetUserClassOfLoggedInUser(User);
+            if(user == null){
+                return Unauthorized("User class associated with the logged in user not found.");
+            }
+
+            // get clubs that the user has joined
+            List<ClubUser> clubusers = await dbContext.ClubUsers
+                .Where(cu => cu.UserId == user.UserId)
+                .AsNoTracking()
+                .ToListAsync();
+            
+            List<ReadingDTO> readings = [];
+            if(clubusers.IsNullOrEmpty()) { return Ok(readings); } // return empty readings list if the user hasn't joined any clubs yet
+            
+            // get all active readings of each club then include them in the readings list
+            foreach (ClubUser cu in clubusers) {
+                List<Reading> readingsOfClub = await dbContext.Readings
+                    .Where(reading => reading.ClubId == cu.ClubId && reading.Status=="started")
+                    .AsNoTracking()
+                    .ToListAsync();
+                
+                // add the retrieved readings to the master list
+                foreach (Reading reading in readingsOfClub) {
+                    ReadingDTO readingDTO = new(reading.BookId, reading.ClubId, reading.Name, reading.Description, reading.Status, reading.StartDate);
+                    readings.Add(readingDTO);
+                }
+            }
+
+            return Ok(readings);
         }
 
         return BadRequest(ModelState);
