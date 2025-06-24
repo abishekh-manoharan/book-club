@@ -18,7 +18,9 @@ import { selectError } from "./features/error/errorSlice"
 import CreateReading from "./features/reading/CreateReading/CreateReading"
 import ReadingHome from "./features/reading/ReadingHome"
 // import NotificationHeader from "./features/notification/NotificationHeader"
-import { useGetAllNotificationsQuery } from "./features/notification/notificationSlice"
+
+//TODO: uncomment
+// import { useGetAllNotificationsQuery } from "./features/notification/notificationSlice"
 import Main from "./components/Main"
 import JoinedClubs from "./features/club/JoinedClubs"
 import ActiveReadings from "./features/reading/ActiveReadings"
@@ -26,10 +28,11 @@ import ActiveReadings from "./features/reading/ActiveReadings"
 function App() {
   const { data: status, isFetching } = useGetStatusQuery();
   const error = useAppSelector(selectError)
-  useGetAllNotificationsQuery(undefined, {
-    pollingInterval: 30000,
-    refetchOnMountOrArgChange: true
-  });
+  //TODO: uncomment
+  // useGetAllNotificationsQuery(undefined, {
+  //   pollingInterval: 30000,
+  //   refetchOnMountOrArgChange: true
+  // });
 
   const pageHiddenClassWrapper = classNames('page', {
     'hidden': isFetching
