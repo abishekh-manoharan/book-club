@@ -96,6 +96,20 @@ export const apiSliceWithReading = apiSlice.injectEndpoints({
             },
             providesTags: [{type: 'Readings', id: 'all'}]
         }),
+        getAllReadingsOfClubsJoinedByUser: builder.query<Reading[], void>({
+            query: () => ({
+                url: `reading/GetAllReadingsOfClubsJoinedByUser`,
+                credentials: 'include',
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }),
+            transformResponse(res: {$id: string, $values: Reading[]}){
+                return res.$values;
+            },
+            providesTags: [{type: 'Readings', id: 'all'}]
+        }),
         getReadingUser: builder.query<ReadingUser, {UserId: number, BookId: number, ClubId: number}>({
             query: (readingUser) => ({
                 url: `reading/readingUser?clubId=${readingUser.ClubId}&bookId=${readingUser.BookId}&userId=${readingUser.UserId}`,
@@ -164,5 +178,6 @@ export const {
     useGetOneReadingQuery,
     useOptIntoReadingMutation,
     useOptOutOfReadingMutation,
-    useUpdateReadingProgressMutation
+    useUpdateReadingProgressMutation,
+    useGetAllReadingsOfClubsJoinedByUserQuery
 } = apiSliceWithReading

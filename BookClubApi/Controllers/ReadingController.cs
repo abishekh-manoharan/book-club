@@ -128,9 +128,9 @@ public class ReadingController : ControllerBase
     }
 
     // action method that returns all reading records associated with a user, whether they have opted in or not
-    [HttpGet("GetAllReadingsOfUser")]
+    [HttpGet("GetAllReadingsOfClubsJoinedByUser")]
     [Authorize]
-    public async Task<ActionResult<List<Reading>>> GetAllReadingsOfAUser()
+    public async Task<ActionResult<List<Reading>>> GetAllReadingsOfClubsJoinedByUser()
     {
         if (ModelState.IsValid)
         {
