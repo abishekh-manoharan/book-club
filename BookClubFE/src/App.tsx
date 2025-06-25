@@ -23,7 +23,7 @@ import ReadingHome from "./features/reading/ReadingHome"
 // import { useGetAllNotificationsQuery } from "./features/notification/notificationSlice"
 import Main from "./components/Main"
 import JoinedClubs from "./features/club/JoinedClubs"
-import ActiveReadings from "./features/reading/ActiveReadings"
+import ActiveReadings from "./features/reading/ActiveReadings/ActiveReadings"
 
 function App() {
   const { data: status, isFetching } = useGetStatusQuery();
