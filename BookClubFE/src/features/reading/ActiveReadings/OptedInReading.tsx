@@ -1,4 +1,5 @@
-// import ReadingDetails from "./ReadingDetails";
+import { useGetClubQuery } from "../../../features/club/clubSlice";
+import { useGetBookQuery } from "../../../features/book/bookSlice";
 
 interface OptedInReadingProps {
     clubId: number,
@@ -6,19 +7,19 @@ interface OptedInReadingProps {
 }
 
 function OptedInReading(props: OptedInReadingProps) {
-    
-    
+    const { data: book } = useGetBookQuery(props.bookId);
+    const { data: club } = useGetClubQuery(props.clubId);
+
     return (
         <div className="optedInReading activeReadings-reading">
-            {/* <ReadingDetails bookId={props.bookId} clubId={props.clubId}/> */}
             <div className="activeReadings-reading-img">
-                image
+                <img src={`https://covers.openlibrary.org/b/ID/${book?.cover_Id}-M.jpg`}/>
             </div>
             <div className="activeReadings-reading-bookname">
-                {props.bookId}
+                {book?.title}
             </div>
             <div className="activeReadings-reading-clubname">
-                {props.clubId}
+                {club?.name}
             </div>
             <div className="activeReadings-reading-membercount">
                 123
