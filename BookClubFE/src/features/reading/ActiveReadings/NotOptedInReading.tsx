@@ -7,7 +7,7 @@ interface NotOptedInReadingProps {
 
 function NotOptedInReading(props: NotOptedInReadingProps) {
     return (
-        <div>
+        <div className="notOptedInReading activeReadings-reading">
             <ReadingDetails bookId={props.bookId} clubId={props.clubId}/>
             {props.bookId}
         </div>

@@ -26,6 +26,11 @@ body {
   margin: 0px;
 }
 
+.hidden {
+  display: none;
+  background-color: pink;
+}
+
 .layout-mobile {}
 
 .nav-header-mobile {
@@ -97,7 +102,38 @@ body {
   background-color: rgba(244, 244, 244, 0.153);
 }
 
-.hidden {
-  display: none;
-  background-color: pink;
+
+
+/* active readings list */
+.activeReadings-reading {
+  background-color: grey;
+  display: grid;
+  grid-template-columns: 1fr 6fr 1fr;
+  grid-template-rows: 1fr 2fr 2.5fr;
+  grid-template-areas: 
+  'img bookName memberCount'
+  'img clubName memberCount' 
+  'img progressOrOptInBtn progressOrOptInBtn';
+  margin:10px;
+
+}
+
+.activeReadings-reading-img{
+  grid-area: img;  
+}
+
+.activeReadings-reading-bookname{
+  grid-area: bookName;  
+}
+
+.activeReadings-reading-clubname{
+  grid-area: clubName;  
+}
+
+.activeReadings-reading-membercoun{
+  grid-area: memberCount;  
+}
+
+.activeReadings-reading-progressOrOptInBtn{
+  grid-area: progressOrOptInBtn;  
 }
