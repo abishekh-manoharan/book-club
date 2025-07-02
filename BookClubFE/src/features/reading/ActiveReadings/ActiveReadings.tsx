@@ -7,8 +7,13 @@ function ActiveReadings() {
     const { data: readingsOfClubsJoinedByUser, isFetching: isFetchingReadingsOfClubsJoinedByUser } = useGetAllReadingsOfClubsJoinedByUserQuery();
     const { data: readingUsersOfLoggedInUser, isFetching: isFetchingReadingUsersOfLoggedInUser, isSuccess } = useGetReadingUsersOfLoggedInUsersQuery(undefined, { skip: !readingsOfClubsJoinedByUser });
 
+    interface ReadingWithProgress extends Reading {
+        progress?: number,
+        progresstypeId?: number
+    }
+
     interface OrganizedReadings {
-        joinedReadings: Reading[],
+        joinedReadings: ReadingWithProgress[],
         notJoinedReadings: Reading[]
     }
 
@@ -19,7 +24,8 @@ function ActiveReadings() {
             const idsOfJoinedReadings = readingUsersOfLoggedInUser.map((ru) => { return { clubId: ru.clubId, bookId: ru.bookId } })
             readingsOfClubsJoinedByUser.forEach(reading => {
                 if (idsOfJoinedReadings.some((id) => id.bookId == reading.bookId && id.clubId == reading.clubId)) {
-                    organizedReadings.joinedReadings.push(reading);
+                    const readingUser = readingUsersOfLoggedInUser.find((readingUser => readingUser.bookId == reading.bookId && readingUser.clubId === readingUser.clubId))
+                    organizedReadings.joinedReadings.push({...reading, progress: readingUser?.progress, progresstypeId: readingUser?.progresstypeId});
                 } else {
                     organizedReadings.notJoinedReadings.push(reading);
                 }
@@ -40,7 +46,7 @@ function ActiveReadings() {
                     Active Readings
                     {
                         organizedReadings.joinedReadings.map((reading) => {
-                            return <OptedInReading key={reading.bookId+reading.clubId-1} bookId={reading.bookId} clubId={reading.clubId}/>;
+                            return <OptedInReading key={reading.bookId+reading.clubId-1} bookId={reading.bookId} clubId={reading.clubId} progress={reading.progress} progresstypeId={reading.progresstypeId}/>;
                         })
                     } <br/> <br/>
 

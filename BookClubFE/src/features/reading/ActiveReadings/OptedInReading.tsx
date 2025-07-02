@@ -3,13 +3,17 @@ import { useGetBookQuery } from "../../../features/book/bookSlice";
 
 interface OptedInReadingProps {
     clubId: number,
-    bookId: number
+    bookId: number,
+    progress?: number,
+    progresstypeId?: number
 }
 
-function OptedInReading(props: OptedInReadingProps) {
-    const { data: book } = useGetBookQuery(props.bookId);
-    const { data: club } = useGetClubQuery(props.clubId);
+function OptedInReading({clubId, bookId, progress, progresstypeId}: OptedInReadingProps) {
+    const { data: book } = useGetBookQuery(bookId);
+    const { data: club } = useGetClubQuery(clubId);
 
+    console.log('progress');
+    console.log(progresstypeId);
     return (
         <div className="optedInReading activeReadings-reading">
             <div className="activeReadings-reading-img">
@@ -25,7 +29,7 @@ function OptedInReading(props: OptedInReadingProps) {
                 123
             </div>
             <div className="activeReadings-reading-progressOrOptInBtn">
-                progress/optin button
+                {progress}
             </div>
         </div>
     );
