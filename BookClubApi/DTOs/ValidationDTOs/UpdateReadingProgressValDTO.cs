@@ -10,6 +10,9 @@ public class UpdateReadingProgressValDTO
     public int? BookId { get; set; }
     [Required]
     public int? Progress { get; set; }
+
+    public int? ProgressTotal { get; set; }
+    
     [Required]
     public int? ProgresstypeId { get; set; }
 }

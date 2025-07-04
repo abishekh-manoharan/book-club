@@ -9,6 +9,7 @@ function ActiveReadings() {
 
     interface ReadingWithProgress extends Reading {
         progress?: number,
+        progressTotal?: number,
         progresstypeId?: number
     }
 
@@ -22,10 +23,13 @@ function ActiveReadings() {
             const organizedReadings: OrganizedReadings = { joinedReadings: [], notJoinedReadings: [] };
 
             const idsOfJoinedReadings = readingUsersOfLoggedInUser.map((ru) => { return { clubId: ru.clubId, bookId: ru.bookId } })
+            console.log("idsOfJoinedReadings")
+            console.log(idsOfJoinedReadings[0].bookId)
+            console.log(...readingsOfClubsJoinedByUser)
             readingsOfClubsJoinedByUser.forEach(reading => {
-                if (idsOfJoinedReadings.some((id) => id.bookId == reading.bookId && id.clubId == reading.clubId)) {
-                    const readingUser = readingUsersOfLoggedInUser.find((readingUser => readingUser.bookId == reading.bookId && readingUser.clubId === readingUser.clubId))
-                    organizedReadings.joinedReadings.push({...reading, progress: readingUser?.progress, progresstypeId: readingUser?.progresstypeId});
+                if (idsOfJoinedReadings.some((id) => id.bookId === reading.bookId && id.clubId === reading.clubId)) {
+                    const readingUser = readingUsersOfLoggedInUser.find((readingUser => readingUser.bookId === reading.bookId && readingUser.clubId === reading.clubId))
+                    organizedReadings.joinedReadings.push({...reading, progress: readingUser?.progress, progressTotal: readingUser?.progressTotal, progresstypeId: readingUser?.progresstypeId});
                 } else {
                     organizedReadings.notJoinedReadings.push(reading);
                 }
@@ -46,7 +50,7 @@ function ActiveReadings() {
                     Active Readings
                     {
                         organizedReadings.joinedReadings.map((reading) => {
-                            return <OptedInReading key={reading.bookId+reading.clubId-1} bookId={reading.bookId} clubId={reading.clubId} progress={reading.progress} progresstypeId={reading.progresstypeId}/>;
+                            return <OptedInReading key={reading.bookId+reading.clubId-1} bookId={reading.bookId} clubId={reading.clubId} progress={reading.progress} progressTotal={reading.progressTotal} progresstypeId={reading.progresstypeId}/>;
                         })
                     } <br/> <br/>
 

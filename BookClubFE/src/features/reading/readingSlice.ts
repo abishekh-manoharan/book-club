@@ -35,6 +35,7 @@ export interface ReadingUser {
     bookId: number,
     clubId: number,
     progress: number,
+    progressTotal?: number,
     progresstypeId: number,
 }
 

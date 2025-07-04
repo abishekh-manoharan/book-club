@@ -341,7 +341,7 @@ public class ReadingController : ControllerBase
                             dbContext.Readingusers.Add(newReadingUser);
                             dbContext.SaveChanges();
 
-                            ReadingUserDTO readingUserDTO = new(clubUser.UserId, (int)readingDTO.BookId!, (int)readingDTO.ClubId!, 0, 1);
+                            ReadingUserDTO readingUserDTO = new(clubUser.UserId, (int)readingDTO.BookId!, (int)readingDTO.ClubId!, 0, null, 1);
 
                             return Ok(readingUserDTO);
                         }
@@ -479,7 +479,7 @@ public class ReadingController : ControllerBase
 
                                 dbContext.SaveChanges();
 
-                                ReadingUserDTO readingUserDTO = new(clubUser.UserId, readingUser.BookId, readingUser.ClubId, readingUser.Progress, readingUser.ProgresstypeId);
+                                ReadingUserDTO readingUserDTO = new(clubUser.UserId, readingUser.BookId, readingUser.ClubId, readingUser.Progress, readingUser.ProgressTotal, readingUser.ProgresstypeId);
                                 return Ok(readingUserDTO);
                             }
                             catch (DbUpdateException e)

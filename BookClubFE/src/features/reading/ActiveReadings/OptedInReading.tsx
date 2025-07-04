@@ -1,19 +1,19 @@
 import { useGetClubQuery } from "../../../features/club/clubSlice";
 import { useGetBookQuery } from "../../../features/book/bookSlice";
+import Progress from "./Progress";
 
 interface OptedInReadingProps {
     clubId: number,
     bookId: number,
     progress?: number,
+    progressTotal?: number,
     progresstypeId?: number
 }
 
-function OptedInReading({clubId, bookId, progress, progresstypeId}: OptedInReadingProps) {
+function OptedInReading({clubId, bookId, progress, progressTotal, progresstypeId}: OptedInReadingProps) {
     const { data: book } = useGetBookQuery(bookId);
     const { data: club } = useGetClubQuery(clubId);
 
-    console.log('progress');
-    console.log(progresstypeId);
     return (
         <div className="optedInReading activeReadings-reading">
             <div className="activeReadings-reading-img">
@@ -26,10 +26,10 @@ function OptedInReading({clubId, bookId, progress, progresstypeId}: OptedInReadi
                 {club?.name}
             </div>
             <div className="activeReadings-reading-membercount">
-                123
+                member count
             </div>
             <div className="activeReadings-reading-progressOrOptInBtn">
-                {progress}
+                <Progress progress={progress} progresstypeId={progresstypeId} progressTotal={progressTotal}/>
             </div>
         </div>
     );

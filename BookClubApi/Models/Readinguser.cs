@@ -21,6 +21,8 @@ public partial class Readinguser
     public int ClubId { get; set; }
 
     public int Progress { get; set; }
+    
+    public int? ProgressTotal { get; set; }
 
     public int ProgresstypeId { get; set; }
 

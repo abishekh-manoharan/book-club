@@ -5,7 +5,7 @@ namespace BookClubApi.DTOs;
 
 public partial class ReadingUserDTO
 {
-    public ReadingUserDTO(int userId, int bookId, int clubId, int? progress, int progresstypeId)
+    public ReadingUserDTO(int userId, int bookId, int clubId, int progress, int? progressTotal, int progresstypeId)
     {
         UserId = userId;
         BookId = bookId;
@@ -20,7 +20,9 @@ public partial class ReadingUserDTO
 
     public int ClubId { get; set; }
 
-    public int? Progress { get; set; }
+    public int Progress { get; set; }
+    
+    public int? ProgressTotal { get; set; }
 
     public int ProgresstypeId { get; set; }
 
