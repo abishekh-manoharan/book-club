@@ -137,3 +137,17 @@ body {
 .activeReadings-reading-progressOrOptInBtn{
   grid-area: progressOrOptInBtn;  
 }
+
+.barContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: start;
+  /* padding: 10px; */
+}
+
+.bar {
+  /* width: 99%; */
+  margin-left: 0%;
+}
