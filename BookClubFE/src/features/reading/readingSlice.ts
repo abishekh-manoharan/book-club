@@ -146,7 +146,7 @@ export const apiSliceWithReading = apiSlice.injectEndpoints({
             }),
             invalidatesTags: [{type: 'Readings'}]
         }),
-        updateReadingProgress: builder.mutation<Reading, Omit<ReadingUser, "UserId">>({
+        updateReadingProgress: builder.mutation<Reading, Omit<ReadingUser, "userId">>({
             query: (reading) => ({
                 url: 'reading/UpdateReadingProgress',
                 credentials: 'include',

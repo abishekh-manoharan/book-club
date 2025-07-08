@@ -3,13 +3,18 @@ import { useUpdateReadingProgressMutation } from "./readingSlice";
 import { updateErrorMessageThunk } from "../error/errorSlice";
 import { useAppDispatch } from "../../app/hooks";
 import { isFetchBaseQueryError, isSerializedError } from "../../app/typeGuards";
-import { useParams } from "react-router-dom";
 
-function UpdateReadingProgress() {
+
+interface UpdateReadingProgressProps {
+    clubid: number,
+    bookid: number,
+    setModalShow: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+function UpdateReadingProgress({clubid, bookid, setModalShow}: UpdateReadingProgressProps) {
     const [updateReadingProgress] = useUpdateReadingProgressMutation();
     const dispatch = useAppDispatch();
 
-    const { clubid, bookid } = useParams()
     const clubId = Number(clubid);
     const bookId = Number(bookid);
 
@@ -50,10 +55,10 @@ function UpdateReadingProgress() {
         }
 
         const progress = {
-            BookId: bookId,
-            ClubId: clubId,
-            Progress: progressValue,
-            ProgresstypeId: typeId
+            bookId: bookId,
+            clubId: clubId,
+            progress: progressValue,
+            progresstypeId: typeId,
         }
 
         try {
@@ -72,7 +77,7 @@ function UpdateReadingProgress() {
     }
 
     return (
-        <div hidden>
+        <div >
             <h4>update reading progress</h4>
             <form>
                 {maxProgressValue}
@@ -85,6 +90,7 @@ function UpdateReadingProgress() {
                     <option value="percent">Percent</option>
                 </select>
                 <input type="submit" onClick={submitClickHandler} />
+                <button onClick={()=>{setModalShow(false)}} >close</button>
             </form>
         </div>
     );

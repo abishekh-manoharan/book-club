@@ -29,7 +29,7 @@ function OptedInReading({clubId, bookId, progress, progressTotal, progresstypeId
                 member count
             </div>
             <div className="activeReadings-reading-progressOrOptInBtn">
-                <Progress progress={progress} progresstypeId={progresstypeId} progressTotal={progressTotal}/>
+                <Progress bookId={bookId} clubId={clubId} progress={progress} progresstypeId={progresstypeId} progressTotal={progressTotal}/>
             </div>
         </div>
     );
