@@ -50,6 +50,8 @@ function ActiveReadings() {
                     Active Readings
                     {
                         organizedReadings.joinedReadings.map((reading) => {
+                            console.log("reading-");
+                            console.log(reading.progressTotal);
                             return <OptedInReading key={reading.bookId+reading.clubId-1} bookId={reading.bookId} clubId={reading.clubId} progress={reading.progress} progressTotal={reading.progressTotal} progresstypeId={reading.progresstypeId}/>;
                         })
                     } <br/> <br/>
