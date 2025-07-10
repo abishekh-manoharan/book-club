@@ -26,8 +26,22 @@ function UpdateReadingProgress({clubid, bookid, setModalShow, progress, progress
 
     const [progressValue, setProgressValue] = useState(progress);
     const [progressTotal, setProgressTotal] = useState(progressTotalProp);
-    const [progressType, setProgressType] = useState("Pages");
+    const [progressType, setProgressType] = useState(()=>{
+        switch(progresstypeId){
+            case 1:
+                return "pages";
+            case 2:
+                return "chapters";
+            case 3:
+                return "percent";
+            default:
+                return "percent";
+        }
+    });
     const [maxProgressValue, setMaxProgressValue] = useState("");
+
+    console.log("--progresstype")
+    console.log(progresstypeId)
 
     const selectProgressTypeChangeHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setProgressType(e.target.value);
@@ -104,7 +118,7 @@ function UpdateReadingProgress({clubid, bookid, setModalShow, progress, progress
                     </>
                 }
                 <label htmlFor="progressTypes">Choose a type:</label>
-                <select onChange={selectProgressTypeChangeHandler} id="progressTypes" required>
+                <select onChange={selectProgressTypeChangeHandler} id="progressTypes" value={progressType} required>
                     <option value="pages">Pages</option>
                     <option value="chapters">Chapters</option>
                     <option value="percent">Percent</option>
