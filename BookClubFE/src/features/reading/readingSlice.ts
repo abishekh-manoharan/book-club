@@ -156,7 +156,7 @@ export const apiSliceWithReading = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            invalidatesTags: [{type: 'Readings', id: 'user'}]
+            invalidatesTags: [{type: 'Readings', id: 'all'}]
         }),
         // getClub: builder.query<Club, number>({
         //     query: (clubId) => ({
