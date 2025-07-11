@@ -89,12 +89,10 @@ function UpdateReadingProgress({ clubid, bookid, setModalShow, progress, progres
             progresstypeId: typeId,
         }
 
-        console.log("progressTotal");
-        console.log(progressTotal);
 
         try {
-            const result = await updateReadingProgress(progress).unwrap();
-            console.log("Success:", result);
+            await updateReadingProgress(progress).unwrap();
+            setModalShow(false);
         } catch (error) {
             if (isFetchBaseQueryError(error)) {
                 const errorMessage = (error.data as string) || "Unknown error";
