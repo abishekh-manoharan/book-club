@@ -8,7 +8,7 @@ import { isFetchBaseQueryError, isSerializedError } from "../../app/typeGuards";
 interface UpdateReadingProgressProps {
     clubid: number,
     bookid: number,
-    progress: number | undefined, 
+    progress: number, 
     progressTotalProp: number | undefined, 
     progresstypeId: number | undefined ,
     setModalShow: React.Dispatch<React.SetStateAction<boolean>>
@@ -24,8 +24,8 @@ function UpdateReadingProgress({clubid, bookid, setModalShow, progress, progress
     const clubId = Number(clubid);
     const bookId = Number(bookid);
 
-    const [progressValue, setProgressValue] = useState(progress);
-    const [progressTotal, setProgressTotal] = useState(progressTotalProp);
+    const [progressValue, setProgressValue] = useState<number>(progress);
+    const [progressTotal, setProgressTotal] = useState<number | undefined>(progressTotalProp);
     const [progressType, setProgressType] = useState(()=>{
         switch(progresstypeId){
             case 1:
@@ -62,9 +62,11 @@ function UpdateReadingProgress({clubid, bookid, setModalShow, progress, progress
             setProgressValue(100);
             return;
         } else {
-            if(progress > progressTotal!){
-                setProgressValue(progressTotal);
-                return;
+            if(progress > progressTotal!){      
+                if(progressTotal!=undefined){
+                    setProgressValue(progressTotal);
+                    return;
+                }          
             }
         }
         setProgressValue(progress);
@@ -90,6 +92,9 @@ function UpdateReadingProgress({clubid, bookid, setModalShow, progress, progress
             progresstypeId: typeId,
         }
 
+        console.log("progressTotal");
+        console.log(progressTotal);
+        
         try {
             const result = await updateReadingProgress(progress).unwrap();
             console.log("Success:", result);

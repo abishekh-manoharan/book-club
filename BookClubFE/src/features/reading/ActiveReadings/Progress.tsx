@@ -2,7 +2,7 @@ import { useState } from "react";
 import UpdateReadingProgress from "../UpdateReadingProgress";
 import ProgressBar from "./ProgressBar";
 
-function Progress({progress, progresstypeId, progressTotal, clubId, bookId}: {progress: number | undefined, progressTotal: number | undefined, progresstypeId: number | undefined, bookId: number, clubId: number}) {
+function Progress({progress, progresstypeId, progressTotal, clubId, bookId}: {progress: number, progressTotal: number | undefined, progresstypeId: number | undefined, bookId: number, clubId: number}) {
     const [modalShow, setModalShow] = useState(false);
     console.log("-P")
     console.log(progressTotal)

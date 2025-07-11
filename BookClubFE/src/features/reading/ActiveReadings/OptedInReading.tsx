@@ -5,7 +5,7 @@ import Progress from "./Progress";
 interface OptedInReadingProps {
     clubId: number,
     bookId: number,
-    progress?: number,
+    progress: number,
     progressTotal?: number,
     progresstypeId?: number
 }

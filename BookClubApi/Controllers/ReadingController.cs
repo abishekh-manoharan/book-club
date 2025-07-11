@@ -475,6 +475,7 @@ public class ReadingController : ControllerBase
                             {
                                 // update progress
                                 readingUser.Progress = (int) readingDTO.Progress!;
+                                readingUser.ProgressTotal = (int) readingDTO.ProgressTotal!;
                                 readingUser.ProgresstypeId = (int) readingDTO.ProgresstypeId!;
 
                                 dbContext.SaveChanges();
