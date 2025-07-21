@@ -4,9 +4,13 @@ import { Link } from "react-router-dom";
 
 function NavMenuMobile({mobileMenuOpen, setMobileMenuOpen}:{mobileMenuOpen: boolean, setMobileMenuOpen: React.Dispatch<React.SetStateAction<boolean>>}) {
     const menuOptionClickHandler = () => {
-        setMobileMenuOpen(!mobileMenuOpen);
-    }
+        const root = document.getElementById("root");
+        root?.style.setProperty('overflow-y', mobileMenuOpen ? "auto" : "hidden");
 
+        setMobileMenuOpen(!mobileMenuOpen);
+        // root!.setAttribute('style', 'overflow-y: hidden;')
+    }
+    
     return (
         <div className={`nav-menu-mobile ${mobileMenuOpen ? "nav-menu-mobile-open" : "nav-menu-mobile-close"}`}>
             <nav className="nav-menu-mobile-links">

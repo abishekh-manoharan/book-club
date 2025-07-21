@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useUpdateReadingProgressMutation } from "./readingSlice";
 import { updateErrorMessageThunk } from "../error/errorSlice";
 import { useAppDispatch } from "../../app/hooks";
@@ -15,8 +15,7 @@ interface UpdateReadingProgressProps {
 }
 
 function UpdateReadingProgress({ clubid, bookid, setModalShow, progress, progressTotalProp, progresstypeId }: UpdateReadingProgressProps) {
-    console.log('progressTotalProp');
-    console.log(progressTotalProp);
+    const form = useRef<HTMLFormElement>(null);
 
     const [updateReadingProgress] = useUpdateReadingProgressMutation();
     const dispatch = useAppDispatch();
@@ -45,7 +44,7 @@ function UpdateReadingProgress({ clubid, bookid, setModalShow, progress, progres
         setProgressValue(0);
         if (e.target.value === "percent") {
             setMaxProgressValue("100")
-            // setProgressTotal(100);
+            setProgressTotal(100);
             if (progressValue! > 100) setProgressValue(100);
             return;
         }
@@ -69,8 +68,12 @@ function UpdateReadingProgress({ clubid, bookid, setModalShow, progress, progres
         setProgressValue(progress);
     }
 
-    const submitClickHandler = async (e: React.SyntheticEvent) => {
+    const submitClickHandler = async (e: React.SyntheticEvent) => {        
         e.preventDefault();
+
+        if(!form.current?.checkValidity()){
+            form.current?.reportValidity();
+        }
 
         let typeId;
         if (progressType === "pages") {
@@ -108,7 +111,7 @@ function UpdateReadingProgress({ clubid, bookid, setModalShow, progress, progres
     return (
         <div >
             <h4>update reading progress</h4>
-            <form>
+            <form ref={form}>
                 <label htmlFor="progressValue">Progress:</label>
                 <input onChange={progressValueChangeHandler} value={progressValue} id="progressValue" type="number" min="0" max={maxProgressValue} required></input>
                 {
