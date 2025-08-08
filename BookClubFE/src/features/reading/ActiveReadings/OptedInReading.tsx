@@ -16,9 +16,10 @@ function OptedInReading({clubId, bookId, progress, progressTotal, progresstypeId
 
     return (
         <div className="optedInReading activeReadings-reading">
-            <div className="activeReadings-reading-img">
-                <img src={`https://covers.openlibrary.org/b/ID/${book?.cover_Id}-M.jpg`}/>
-            </div>
+            {book?.cover_Id ? 
+                <img className="activeReadings-reading-img" src={`https://covers.openlibrary.org/b/ID/${book?.cover_Id}-M.jpg`} /> 
+                : <img className="activeReadings-reading-img activeReadings-reading-img-noimg" src='src/assets/images/book-open.svg' />
+            }
             <div className="activeReadings-reading-bookname">
                 {book?.title}
             </div>
