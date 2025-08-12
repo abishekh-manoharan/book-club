@@ -10,7 +10,7 @@ interface OptedInReadingProps {
     progresstypeId?: number
 }
 
-function OptedInReading({clubId, bookId, progress, progressTotal, progresstypeId}: OptedInReadingProps) {
+function OptedInReading({ clubId, bookId, progress, progressTotal, progresstypeId }: OptedInReadingProps) {
     const { data: book } = useGetBookQuery(bookId);
     const { data: club } = useGetClubQuery(clubId);
 
@@ -27,10 +27,10 @@ function OptedInReading({clubId, bookId, progress, progressTotal, progresstypeId
                 {club?.name}
             </div>
             <div className="activeReadings-reading-membercount">
-                member count
+                997 members 
             </div>
             <div className="activeReadings-reading-progressOrOptInBtn">
-                <Progress bookId={bookId} clubId={clubId} progress={progress} progresstypeId={progresstypeId} progressTotal={progressTotal}/>
+                <Progress bookId={bookId} clubId={clubId} progress={progress} progresstypeId={progresstypeId} progressTotal={progressTotal} />
             </div>
         </div>
     );
