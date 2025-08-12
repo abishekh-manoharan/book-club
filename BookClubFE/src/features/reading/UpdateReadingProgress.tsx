@@ -110,13 +110,13 @@ function UpdateReadingProgress({ clubid, bookid, setModalShow, progress, progres
 
     return (
         <div >
-            <h4>update reading progress</h4>
+            <p>update reading progress</p>
             <form ref={form}>
-                <label htmlFor="progressValue">Progress:</label>
+                <label htmlFor="progressValue">Progress:</label><br/>
                 <input onChange={progressValueChangeHandler} value={progressValue} id="progressValue" type="number" min="0" max={maxProgressValue} required></input>
                 {
                     progressType != "percent" && <>
-                        <label htmlFor="progressTotal">Progress Total:</label>
+                        <br/><label htmlFor="progressTotal">Progress Total:</label>
                         <input onChange={(e) => {
                             setProgressTotal(Number(e.target.value))
                             if(Number(e.target.value) < progress){
@@ -126,12 +126,12 @@ function UpdateReadingProgress({ clubid, bookid, setModalShow, progress, progres
                         } value={progressTotal} id="progressTotal" type="number" min={progressValue} required></input>
                     </>
                 }
-                <label htmlFor="progressTypes">Choose a type:</label>
+                <br/><label htmlFor="progressTypes">Choose a type:</label><br/>
                 <select onChange={selectProgressTypeChangeHandler} id="progressTypes" value={progressType} required>
                     <option value="pages">Pages</option>
                     <option value="chapters">Chapters</option>
                     <option value="percent">Percent</option>
-                </select>
+                </select><br/>
                 <input type="submit" onClick={submitClickHandler} />
                 <button onClick={() => { setModalShow(false) }} >close</button>
             </form>

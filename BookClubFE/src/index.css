@@ -110,7 +110,7 @@ body {
   /* background-color: grey; */
   display: grid;
   grid-template-columns: 2.5fr 5fr 1fr;
-  grid-template-rows: 1fr 1fr 2.5fr;
+  grid-template-rows: auto auto 2.5fr;
   grid-template-areas:
     'img bookName memberCount'
     'img clubName memberCount'
