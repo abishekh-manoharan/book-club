@@ -136,7 +136,8 @@ public class ReadingController : ControllerBase
         {
             // get user id of logged in user
             User? user = await authHelpers.GetUserClassOfLoggedInUser(User);
-            if(user == null){
+            if (user == null)
+            {
                 return Unauthorized("User class associated with the logged in user not found.");
             }
 
@@ -145,19 +146,21 @@ public class ReadingController : ControllerBase
                 .Where(cu => cu.UserId == user.UserId)
                 .AsNoTracking()
                 .ToListAsync();
-            
+
             List<ReadingDTO> readings = [];
-            if(clubusers.IsNullOrEmpty()) { return Ok(readings); } // return empty readings list if the user hasn't joined any clubs yet
-            
+            if (clubusers.IsNullOrEmpty()) { return Ok(readings); } // return empty readings list if the user hasn't joined any clubs yet
+
             // get all active readings of each club then include them in the readings list
-            foreach (ClubUser cu in clubusers) {
+            foreach (ClubUser cu in clubusers)
+            {
                 List<Reading> readingsOfClub = await dbContext.Readings
-                    .Where(reading => reading.ClubId == cu.ClubId && reading.Status=="started")
+                    .Where(reading => reading.ClubId == cu.ClubId && reading.Status == "started")
                     .AsNoTracking()
                     .ToListAsync();
-                
+
                 // add the retrieved readings to the master list
-                foreach (Reading reading in readingsOfClub) {
+                foreach (Reading reading in readingsOfClub)
+                {
                     ReadingDTO readingDTO = new(reading.BookId, reading.ClubId, reading.Name, reading.Description, reading.Status, reading.StartDate);
                     readings.Add(readingDTO);
                 }
@@ -168,7 +171,7 @@ public class ReadingController : ControllerBase
 
         return BadRequest(ModelState);
     }
-    
+
     // action method that returns all readings the user is a participant of 
     [HttpGet("readingUsersOfLoggedInUser")]
     [Authorize]
@@ -181,13 +184,13 @@ public class ReadingController : ControllerBase
                 .Where(user => user.AspnetusersId == userManager.GetUserId(User))
                 .AsNoTracking()
                 .First();
-        
+
             // getting all readinguser instances associated with the user
             var readingUsers = await dbContext.Readingusers
                 .Where(ru => ru.UserId == user.UserId)
                 .AsNoTracking()
                 .ToListAsync();
-            
+
             return Ok(readingUsers);
         }
 
@@ -221,6 +224,27 @@ public class ReadingController : ControllerBase
 
             // if club is private and user isn't a member, return Unauthorized status
             return Unauthorized("user isn't authorized to attain the readings from this club.");
+        }
+
+        return BadRequest(ModelState);
+    }
+
+    // action method to retrieve the number of club members opted into a reading 
+    [HttpGet("ReadingMemberCount")]
+    public async Task<ActionResult<int>> GetReadingMemberCount([FromQuery] ReadingGetOneValDTO readingDTO)
+    {
+        if (ModelState.IsValid)
+        {
+            // getting members of the reading
+            var readingUsers = await dbContext.Readingusers.Where(ru =>
+                ru.BookId == readingDTO.BookId &&
+                ru.ClubId == readingDTO.ClubId)
+                .AsNoTracking()
+                .ToListAsync();
+
+            int readingUsersCount = readingUsers.Count;
+            
+            return Ok(readingUsersCount);
         }
 
         return BadRequest(ModelState);
@@ -449,7 +473,7 @@ public class ReadingController : ControllerBase
         if (ModelState.IsValid)
         {
             // ensure logged in user is member of club
-            ClubUser? clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, (int) readingDTO.ClubId!);
+            ClubUser? clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, (int)readingDTO.ClubId!);
             if (clubUser != null)
             {
                 // ensure reading exists already
@@ -474,9 +498,9 @@ public class ReadingController : ControllerBase
                             try
                             {
                                 // update progress
-                                readingUser.Progress = (int) readingDTO.Progress!;
-                                readingUser.ProgressTotal = (int) readingDTO.ProgressTotal!;
-                                readingUser.ProgresstypeId = (int) readingDTO.ProgresstypeId!;
+                                readingUser.Progress = (int)readingDTO.Progress!;
+                                readingUser.ProgressTotal = (int)readingDTO.ProgressTotal!;
+                                readingUser.ProgresstypeId = (int)readingDTO.ProgresstypeId!;
 
                                 dbContext.SaveChanges();
 

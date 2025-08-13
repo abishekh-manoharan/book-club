@@ -1,6 +1,7 @@
 import { useGetClubQuery } from "../../../features/club/clubSlice";
 import { useGetBookQuery } from "../../../features/book/bookSlice";
 import Progress from "./Progress";
+import { useGetReadingMemberCountQuery } from "../readingSlice";
 
 interface OptedInReadingProps {
     clubId: number,
@@ -13,11 +14,12 @@ interface OptedInReadingProps {
 function OptedInReading({ clubId, bookId, progress, progressTotal, progresstypeId }: OptedInReadingProps) {
     const { data: book } = useGetBookQuery(bookId);
     const { data: club } = useGetClubQuery(clubId);
+    const { data: readingMemberCount } = useGetReadingMemberCountQuery({ BookId: bookId, ClubId: clubId });
 
     return (
         <div className="optedInReading activeReadings-reading">
-            {book?.cover_Id ? 
-                <img className="activeReadings-reading-img" src={`https://covers.openlibrary.org/b/ID/${book?.cover_Id}-M.jpg`} /> 
+            {book?.cover_Id ?
+                <img className="activeReadings-reading-img" src={`https://covers.openlibrary.org/b/ID/${book?.cover_Id}-M.jpg`} />
                 : <img className="activeReadings-reading-img activeReadings-reading-img-noimg" src='src/assets/images/book-open.svg' />
             }
             <div className="activeReadings-reading-bookname">
@@ -27,7 +29,8 @@ function OptedInReading({ clubId, bookId, progress, progressTotal, progresstypeI
                 {club?.name}
             </div>
             <div className="activeReadings-reading-membercount">
-                997 members 
+                <img className="active-readings-user user" src='src/assets/images/user.svg' />
+                {readingMemberCount}
             </div>
             <div className="activeReadings-reading-progressOrOptInBtn">
                 <Progress bookId={bookId} clubId={clubId} progress={progress} progresstypeId={progresstypeId} progressTotal={progressTotal} />

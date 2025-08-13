@@ -1,6 +1,6 @@
 import { useGetBookQuery } from "../../../features/book/bookSlice";
 import { useGetClubQuery } from "../../../features/club/clubSlice";
-import { useOptIntoReadingMutation } from "../readingSlice";
+import { useGetReadingMemberCountQuery, useOptIntoReadingMutation } from "../readingSlice";
 
 import { updateErrorMessageThunk } from "../../error/errorSlice";
 import { useAppDispatch } from "../../../app/hooks";
@@ -16,11 +16,12 @@ function NotOptedInReading({ clubId, bookId }: NotOptedInReadingProps) {
 
     const { data: book } = useGetBookQuery(bookId);
     const { data: club } = useGetClubQuery(clubId);
-    
-    const [ optIntoReading, { isLoading: optIntoReadingLoading } ] = useOptIntoReadingMutation();
+    const { data: readingMemberCount } = useGetReadingMemberCountQuery({ BookId: bookId, ClubId: clubId });
+
+    const [optIntoReading, { isLoading: optIntoReadingLoading }] = useOptIntoReadingMutation();
     const optIntoReadingBtnClickHandler = async () => {
         try {
-            const result = await optIntoReading({bookId, clubId}).unwrap()
+            const result = await optIntoReading({ bookId, clubId }).unwrap()
             console.log(result);
         } catch (error) {
             if (isFetchBaseQueryError(error)) {
@@ -29,15 +30,15 @@ function NotOptedInReading({ clubId, bookId }: NotOptedInReadingProps) {
             } else if (isSerializedError(error)) {
                 dispatch(updateErrorMessageThunk(error.message!));
             } else {
-                    dispatch(updateErrorMessageThunk("Unknown error occured."));
+                dispatch(updateErrorMessageThunk("Unknown error occured."));
             }
         }
     }
 
     return (
         <div className="optedInReading activeReadings-reading">
-            {book?.cover_Id ? 
-                <img className="activeReadings-reading-img" src={`https://covers.openlibrary.org/b/ID/${book?.cover_Id}-M.jpg`} /> 
+            {book?.cover_Id ?
+                <img className="activeReadings-reading-img" src={`https://covers.openlibrary.org/b/ID/${book?.cover_Id}-M.jpg`} />
                 : <img className="activeReadings-reading-img activeReadings-reading-img-noimg" src='src/assets/images/book-open.svg' />
             }
             <div className="activeReadings-reading-bookname">
@@ -47,7 +48,8 @@ function NotOptedInReading({ clubId, bookId }: NotOptedInReadingProps) {
                 {club?.name}
             </div>
             <div className="activeReadings-reading-membercount">
-                997 members 
+                <img className="active-readings-user user" src='src/assets/images/user.svg' />
+                {readingMemberCount}
             </div>
             <div className="activeReadings-reading-OptInBtn">
                 <button onClick={optIntoReadingBtnClickHandler} disabled={optIntoReadingLoading}>Opt in</button>
