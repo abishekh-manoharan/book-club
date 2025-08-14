@@ -56,7 +56,7 @@ function ActiveReadings() {
             {organizedReadings && isSuccess &&
                 <>
                     <div className="readingsListHeader" onClick={toggleJoinedReadingsList}>
-                        {!joinedReadingsHidden ? <img className="readingsListHeader-plus" src='src/assets/images/plus.svg' /> :
+                        {joinedReadingsHidden ? <img className="readingsListHeader-plus" src='src/assets/images/plus.svg' /> :
                             <img className="readingsListHeader-plus" src='src/assets/images/minus.svg' />}
                         Joined Readings
                     </div>
@@ -70,7 +70,7 @@ function ActiveReadings() {
                     <br />
 
                     <div className="readingsListHeader" onClick={toggleNotJoinedReadingsList}>
-                    {!notJoinedReadingsHidden ? <img className="readingsListHeader-plus" src='src/assets/images/plus.svg' /> :
+                    {notJoinedReadingsHidden ? <img className="readingsListHeader-plus" src='src/assets/images/plus.svg' /> :
                             <img className="readingsListHeader-plus" src='src/assets/images/minus.svg' />}
                         Not Joined Readings
                     </div>
