@@ -22,6 +22,12 @@
   /* overflow-y: hidden */
 }
 
+h2 {
+  font-size: 21px;
+  font-weight: 300;
+  display: inline;
+}
+
 body {
   margin: 0px;
 }
@@ -162,6 +168,11 @@ body {
 }
 
 .readingsListHeader{
+  display: flex;
+  gap: 5px;
+}
+
+.clubsListHeader {
   display: flex;
   gap: 5px;
 }
