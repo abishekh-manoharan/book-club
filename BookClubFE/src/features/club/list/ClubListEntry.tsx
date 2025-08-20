@@ -9,7 +9,7 @@ function ClubListEntry({ club }: { club: Club }) {
     const { data: creator } = useGetUserQuery(Number(club.userID));
 
     return (
-        <Link to={`/club/${club.clubId}`} key={club.clubId}>
+        <Link className="clubListEntry-link" to={`/club/${club.clubId}`} key={club.clubId}>
             <div className="clubListEntry">
                 {/* <div className="clubListEntry-profileImg"> */}
                 <img src="https://placecats.com/400/400" alt="club profile picture" className='clubListEntry-profileImg' />
