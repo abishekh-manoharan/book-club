@@ -515,7 +515,7 @@ public class ClubController : ControllerBase
     // takes in ClubId as agument
     // returns a list of User objects
     [HttpGet("clubUsers")]
-    public ActionResult<List<UserDTO>> GetUsersOfAClub([Required] int ClubId)
+    public ActionResult<List<UserDTO>> GetUsersOfAClub([FromQuery] int ClubId)
     {
         if (ModelState.IsValid)
         {

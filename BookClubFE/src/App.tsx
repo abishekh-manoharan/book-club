@@ -22,7 +22,7 @@ import ReadingHome from "./features/reading/ReadingHome"
 //TODO: uncomment
 // import { useGetAllNotificationsQuery } from "./features/notification/notificationSlice"
 import Main from "./components/Main"
-import JoinedClubs from "./features/club/JoinedClubs"
+import JoinedClubs from "./features/club/list/JoinedClubs"
 import ActiveReadings from "./features/reading/ActiveReadings/ActiveReadings"
 
 function App() {

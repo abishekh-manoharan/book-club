@@ -29,7 +29,7 @@ function OptedInReading({ clubId, bookId, progress, progressTotal, progresstypeI
                 {club?.name}
             </div>
             <div className="activeReadings-reading-membercount">
-                <img className="active-readings-user user" src='src/assets/images/user.svg' />
+                <img className="userLogo user" src='src/assets/images/user.svg' />
                 {readingMemberCount}
             </div>
             <div className="activeReadings-reading-progressOrOptInBtn">
