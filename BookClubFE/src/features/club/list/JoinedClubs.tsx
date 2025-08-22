@@ -1,7 +1,6 @@
 // this component is responsible for the display of clubs in which the logged in user is part of
 import { useMemo, useState } from "react";
 import { Club } from "../../../utils/types";
-import { Link } from "react-router-dom";
 import { useGetJoinedClubsAdminQuery, useGetJoinedClubsQuery } from "../clubSlice";
 import ClubListEntry from "./ClubListEntry";
 
@@ -40,7 +39,7 @@ function JoinedClubs() {
         setMemberClubsHidden((state) => !state);
     }
     return (
-        <div>
+        <div className="joinedClubs">
             <div className="clubsListHeader" onClick={toggleAdminClubsList}>
                 {adminClubsHidden ? <img className="ListHeader-plus" src='src/assets/images/plus.svg' /> :
                     <img className="ListHeader-plus" src='src/assets/images/minus.svg' />}
@@ -59,8 +58,12 @@ function JoinedClubs() {
             </div>
             <div className="clubsList clubsListMember" hidden={memberClubsHidden}>
                 {
-                    organizedClubs && organizedClubs.nonAdminClubs.map((club) => <><Link to={`/club/${club.clubId}`} key={club.clubId}>{club.name}</Link><br /></>)
+                    organizedClubs && organizedClubs.nonAdminClubs.map((club) => <ClubListEntry club={club}/>)
                 }
+            </div>
+
+            <div className="createClubBtn circleBtn">
+                <img className="ListHeader-plus" src='src/assets/images/plusNoCircle.svg' />
             </div>
         </div>
     );
