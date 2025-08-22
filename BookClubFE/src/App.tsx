@@ -24,6 +24,7 @@ import ReadingHome from "./features/reading/ReadingHome"
 import Main from "./components/Main"
 import JoinedClubs from "./features/club/list/JoinedClubs"
 import ActiveReadings from "./features/reading/ActiveReadings/ActiveReadings"
+import Login from "./features/auth/Login"
 
 function App() {
   const { data: status, isFetching } = useGetStatusQuery();
@@ -51,6 +52,7 @@ function App() {
             <Route path="reading/:bookid" element=<ReadingHome /> />
           </Route>
           <Route path="activeReadings" element=<ActiveReadings/>/>
+          <Route path="login" element=<Login/>/>
         </Route>
       </Routes >
     </div>
