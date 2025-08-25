@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { Club } from "../../../utils/types";
 import { useGetJoinedClubsAdminQuery, useGetJoinedClubsQuery } from "../clubSlice";
 import ClubListEntry from "./ClubListEntry";
+import { Link } from "react-router-dom";
 
 interface OrganizedClubs {
     adminClubs: Club[];
@@ -47,7 +48,7 @@ function JoinedClubs() {
             </div>
             <div className="clubsList clubsListAdmin" hidden={adminClubsHidden}>
                 {organizedClubs && organizedClubs.adminClubs.map((club) =>
-                    <ClubListEntry club={club}/>
+                    <ClubListEntry club={club} />
                 )}
             </div>
 
@@ -58,13 +59,15 @@ function JoinedClubs() {
             </div>
             <div className="clubsList clubsListMember" hidden={memberClubsHidden}>
                 {
-                    organizedClubs && organizedClubs.nonAdminClubs.map((club) => <ClubListEntry club={club}/>)
+                    organizedClubs && organizedClubs.nonAdminClubs.map((club) => <ClubListEntry club={club} />)
                 }
             </div>
 
-            <div className="createClubBtn circleBtn">
-                <img className="ListHeader-plus" src='src/assets/images/plusNoCircle.svg' />
-            </div>
+            <Link to="/createClub">
+                <div className="createClubBtn circleBtn">
+                    <img className="ListHeader-plus" src='src/assets/images/plusNoCircle.svg' />
+                </div>
+            </Link>
         </div>
     );
 }
