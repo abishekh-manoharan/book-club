@@ -23,14 +23,49 @@
 }
 
 
+h1 {
+  font-weight: 600;
+  display: inline;
+  font-size: 21px;
+  line-height: normal;
+}
+
 h2 {
   font-weight: 400;
   display: inline;
   font-size: 16px;
 }
 
+label {
+  font-size: 14px;
+  font-weight: 450;
+  display: block;
+  margin-top: 7px;
+}
+
 body {
   margin: 0px;
+}
+
+.page {
+  padding: 12px;
+}
+
+.textInput {
+  height: 28px;
+  margin-top: 4px;
+  padding: 4px 10px;
+  
+  border-radius: 10px;
+  border: none;
+  width: 95%;
+
+  position: relative;
+  left: 50%;
+  top: 50%;
+  transform: translateX(-50%);
+
+  font-weight: 600;
 }
 
 .circleBtn {
@@ -236,6 +271,10 @@ body {
   font-size: 12px;
 }
 
+.clubsListMember {
+  margin-bottom: 70px;
+}
+
 .createClubBtn {
   background-color: aqua;
   position: fixed;
@@ -246,8 +285,14 @@ body {
   align-items: center;
 }
 
-.clubsListMember {
-  margin-bottom: 70px;
+.createClubHeading {
+  line-height: normal;
+  text-align: center;
+}
+
+.createClubHeading p {
+  margin-top: 7px; 
+  font-size: 14px;
 }
 
 .barContainer {
