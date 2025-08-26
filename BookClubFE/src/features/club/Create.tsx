@@ -56,9 +56,11 @@ function Create({ backLocation }: { backLocation: string }) { // the backLocatio
                 <label htmlFor="ProfileImg">ProfileImg</label>
                 <input className="textInput" name="ProfileImg" id="ProfileImg" value={profileImg} onChange={(e) => { setProfileImg(e.target.value) }} /><br />
                 <label htmlFor="Private">Private</label>
-                <input className="private" name="Private" id="Private" type="checkbox" checked={privateClub} value="private" onChange={(e) => setPrivateClub(e.target.checked)} />
-
-                <br/>
+                <div className="private">
+                    <input className="privateCheckbox" name="Private" id="Private" type="checkbox" checked={privateClub} value="private" onChange={(e) => setPrivateClub(e.target.checked)} />
+                    <p className="privateCheckboxInfo">Make your club private if you want greater control over who can join and view your club's activities.</p>
+                </div>
+                <br />
                 <button onClick={createButtonClickHandler}>Create</button>
                 {isLoading && <>Loading</>}
                 {isSuccess && <>Success</>}

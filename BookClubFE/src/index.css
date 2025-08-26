@@ -54,11 +54,11 @@ body {
 .textInput {
   height: 28px;
   margin-top: 4px;
-  padding: 4px 10px;
+  padding: 6px 3%;
   
   border-radius: 10px;
   border: none;
-  width: 95%;
+  width: 95.5%;
 
   position: relative;
   left: 50%;
@@ -293,6 +293,18 @@ body {
 .createClubHeading p {
   margin-top: 7px; 
   font-size: 14px;
+}
+
+.private {
+  display: flex;
+  align-items: center;
+  height: 35px;
+  gap: 7px;
+}
+
+.privateCheckboxInfo {
+  display: inline;
+  font-size: 12px;
 }
 
 .barContainer {
