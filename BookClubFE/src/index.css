@@ -275,6 +275,12 @@ body {
   margin-bottom: 70px;
 }
 
+.createClubPage {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
 .createClubBtn {
   background-color: aqua;
   position: fixed;
