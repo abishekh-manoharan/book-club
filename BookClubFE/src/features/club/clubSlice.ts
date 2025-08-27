@@ -18,6 +18,7 @@ export interface ClubUser {
     fName: string,
     lName: string,
     profileImg: string,
+    admin: boolean
 }
 
 export const apiSliceWithClub = apiSlice.injectEndpoints({
@@ -72,7 +73,7 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                 return res.$values;
             }
         }),
-        getClubUser: builder.query<Club, { userId: number, clubId: number }>({
+        getClubUser: builder.query<ClubUser, { userId: number, clubId: number }>({
             query: (clubUser) => ({
                 url: `club/getOneClubUser?clubId=${clubUser.clubId}&userId=${clubUser.userId}`,
                 credentials: 'include',

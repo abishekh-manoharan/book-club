@@ -24,18 +24,33 @@ function Club() {
 
     return (
         <div>
-            {isGetClubError ? <>club not found</> : <>
-                <>{club?.name}</><br></br>
-                {isClubUserSuccess && clubUser.admin && <Link to="./createREading">create reading</Link>}
-                <Outlet />
-                <ReadingsList clubId={clubId} />
-                {/* // <>{userId}</><br />  */}
-                {/* hide joing button if use isn't logged in or if the user is a club member already */}
-                <JoinButton clubId={clubId} />
-                <JoinRequests clubId={clubId} />
-                <br />
-            </>
+            {isGetClubError ?
+                <h2>club not found</h2> :
+                <div className="clubPage">
+                    <img className="clubImg" src='https://placecats.com/400/400' alt='club profile picture' />
+                    <div className="clubName">name</div>
+                    <div className="clubDescription">desc</div>
+                    <div className="clubSettings">settings</div>
+                    <div className="clubNavBar">
+                        <div className="item">readings</div>
+                        <div className="item">meetings</div>
+                        <div className="item">discussions</div>
+                    </div>
+                    <Outlet/>
+                </div>
+                // <>
+                //     <>{club?.name}</><br></br>
+                //     {isClubUserSuccess && clubUser.admin && <Link to="./createREading">create reading</Link>}
+                //     <Outlet />
+                //     <ReadingsList clubId={clubId} />
+                //     {/* // <>{userId}</><br />  */}
+                //     {/* hide joing button if use isn't logged in or if the user is a club member already */}
+                //     <JoinButton clubId={clubId} />
+                //     <JoinRequests clubId={clubId} />
+                //     <br />
+                // </>
             }
+
         </div>
     );
 }

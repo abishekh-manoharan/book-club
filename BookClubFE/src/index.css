@@ -55,7 +55,7 @@ body {
   height: 28px;
   margin-top: 4px;
   padding: 6px 3%;
-  
+
   border-radius: 10px;
   border: none;
   width: 95.5%;
@@ -234,8 +234,7 @@ body {
     'profileimg clubName memberCount'
     'profileimg creator creator';
   grid-template-columns: 64px 5fr 1fr;
-  grid-template-rows: 16px 32px;
-  padding: 8px;
+  grid-template-rows: 16px 48px;
   gap: 8px;
   text-decoration: none;
 }
@@ -244,9 +243,10 @@ body {
   text-decoration: none;
   font-weight: 400;
 }
+
 .clubListEntry-profileImg {
   grid-area: profileimg;
-  height: 100%;
+  height: 64px;
   width: 100%;
   object-fit: fill;
 }
@@ -297,7 +297,7 @@ body {
 }
 
 .createClubHeading p {
-  margin-top: 7px; 
+  margin-top: 7px;
   font-size: 14px;
 }
 
@@ -311,6 +311,51 @@ body {
 .privateCheckboxInfo {
   display: inline;
   font-size: 12px;
+}
+
+/* Club home */
+.clubPage {
+  display: grid;
+  grid-template-columns: 96px 5fr 1fr;
+  grid-template-rows: 32px 64px 32px auto;
+  grid-template-areas: 
+    'clubImg clubName clubSettings'
+    'clubImg clubDescription clubSettings'
+    'clubNavBar clubNavBar clubNavBar'
+    'outlet outlet outlet';
+}
+
+.clubNavBar {
+  grid-area: clubNavBar;
+  display: flex;
+  flex-direction: row;
+  gap: 7px;
+  align-items: center;
+  justify-content: center;
+  padding: 7px;
+}
+
+.clubName {
+  grid-area: clubName;
+  padding: 7px;
+  align-self: center;
+}
+
+.clubDescription {
+  grid-area: clubDescription;
+  padding: 7px;
+}
+
+.clubSettings {
+  grid-area: clubSettings;
+  padding: 7px;
+}
+
+.clubImg {
+  grid-area: clubImg;
+  height: 96px;
+  width: 100%;
+  border-radius: 7px;
 }
 
 .barContainer {
