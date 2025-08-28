@@ -36,6 +36,11 @@ h2 {
   font-size: 16px;
 }
 
+p {
+  margin: 0;
+  line-height: 16px;
+}
+
 label {
   font-size: 14px;
   font-weight: 450;
@@ -317,10 +322,10 @@ body {
 .clubPage {
   display: grid;
   grid-template-columns: 96px 5fr 1fr;
-  grid-template-rows: 32px 64px 32px auto;
+  grid-template-rows: 32px auto 24px 32px auto;
   grid-template-areas: 
     'clubImg clubName clubSettings'
-    'clubImg clubDescription clubSettings'
+    'clubImg clubDescription clubDescription'
     'clubNavBar clubNavBar clubNavBar'
     'outlet outlet outlet';
 }
@@ -333,29 +338,50 @@ body {
   align-items: center;
   justify-content: center;
   padding: 7px;
+  margin-top: 24px;
 }
 
 .clubName {
   grid-area: clubName;
   padding: 7px;
   align-self: center;
+  margin: 0px;
 }
 
 .clubDescription {
   grid-area: clubDescription;
-  padding: 7px;
+  font-size: 14px;
+  padding: 0 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+  align-self: end;
+}
+
+.clubCreator {
+  /* grid-area: clubCreator; */
+  align-self: end;
+  font-size: 12px;
+  width: 100%;
+  /* margin:0px 10px; */
 }
 
 .clubSettings {
   grid-area: clubSettings;
+  justify-self: end;
   padding: 7px;
 }
 
 .clubImg {
   grid-area: clubImg;
   height: 96px;
-  width: 100%;
+  width: 96px;
   border-radius: 7px;
+}
+
+.readingsList {
+  grid-area: outlet;
 }
 
 .barContainer {

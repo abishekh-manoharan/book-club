@@ -26,6 +26,7 @@ import JoinedClubs from "./features/club/list/JoinedClubs"
 import ActiveReadings from "./features/reading/ActiveReadings/ActiveReadings"
 import Login from "./features/auth/Login"
 import Create from "./features/club/Create"
+import ReadingsList from "./features/reading/ReadingsList"
 
 function App() {
   const { data: status, isFetching } = useGetStatusQuery();
@@ -50,6 +51,7 @@ function App() {
           <Route path="clubs" element=<JoinedClubs />/>
           <Route path="createClub" element=<Create backLocation="clubs" /> />
           <Route path="club/:clubid" element=<Club /> >
+            <Route path="readings" element=<ReadingsList /> />
             <Route path="createReading" element=<CreateReading /> />
             <Route path="reading/:bookid" element=<ReadingHome /> />
           </Route>
