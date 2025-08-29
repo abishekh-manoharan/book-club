@@ -24,9 +24,6 @@ function ActiveReadings() {
             const organizedReadings: OrganizedReadings = { joinedReadings: [], notJoinedReadings: [] };
 
             const idsOfJoinedReadings = readingUsersOfLoggedInUser.map((ru) => { return { clubId: ru.clubId, bookId: ru.bookId } })
-            console.log("idsOfJoinedReadings")
-            console.log(idsOfJoinedReadings[0].bookId)
-            console.log(...readingsOfClubsJoinedByUser)
             readingsOfClubsJoinedByUser.forEach(reading => {
                 if (idsOfJoinedReadings.some((id) => id.bookId === reading.bookId && id.clubId === reading.clubId)) {
                     const readingUser = readingUsersOfLoggedInUser.find((readingUser => readingUser.bookId === reading.bookId && readingUser.clubId === reading.clubId))

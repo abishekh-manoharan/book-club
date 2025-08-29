@@ -38,7 +38,7 @@ function Club() {
                     </div>
                     <div className="clubSettings">settings</div>
                     <div className="clubNavBar">
-                        <div className="item">readings</div>
+                        <Link to="readings" className="item">readings</Link>
                         <div className="item">meetings</div>
                         <div className="item">discussions</div>
                     </div>
