@@ -1,7 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { Reading, useGetAllReadingsOfClubsJoinedByUserQuery, useGetReadingsOfAClubQuery, useGetReadingUsersOfLoggedInUsersQuery } from './readingSlice';
 import { Link, useParams } from 'react-router-dom';
 import OptedInReading from './ActiveReadings/OptedInReading';
+import NotOptedInReading from './ActiveReadings/NotOptedInReading';
 
 interface ReadingsListOrganizedReadings {
     joinedReadings: ReadingWithProgress[] | undefined;
@@ -17,11 +18,17 @@ interface ReadingWithProgress extends Reading {
 
 function ReadingsList() {
     const params = useParams();
+    const optedInReadingsRef = useRef<HTMLDivElement | null>(null);
+    const notOptedInReadingsRef = useRef<HTMLDivElement | null>(null);
+
+    const [joinedReadingsHidden, setJoinedReadingsHidden] = useState(false);
+    const [notJoinedReadingsHidden, setNotJoinedReadingsHidden] = useState(false);
+
     // getting all the readings of the club
     const { data: readings } = useGetReadingsOfAClubQuery(Number(params.clubid));
     // getting readings of the club that the user has joined
     const { data: readingUsersOfLoggedInUser, isFetching: isFetchingReadingUsersOfLoggedInUser, isSuccess } = useGetReadingUsersOfLoggedInUsersQuery(undefined);
-    const { data: readingsOfClubsJoinedByUser, isFetching: isFetchingReadingsOfClubsJoinedByUser } = useGetAllReadingsOfClubsJoinedByUserQuery();
+    // const { data: readingsOfClubsJoinedByUser, isFetching: isFetchingReadingsOfClubsJoinedByUser } = useGetAllReadingsOfClubsJoinedByUserQuery();
 
     const organizedReadings = useMemo(() => {
         const organizedReadings: ReadingsListOrganizedReadings = { joinedReadings: [], notJoinedReadings: [], concludedReadings: [] };
@@ -43,18 +50,39 @@ function ReadingsList() {
 
     }, [readingUsersOfLoggedInUser, readings, params.clubid])
 
-    console.log(organizedReadings);
-
-
+    const toggleJoinedReadingsList = () => {
+        setJoinedReadingsHidden((state) => !state);
+    }
+    const toggleNotJoinedReadingsList = () => {
+        setNotJoinedReadingsHidden((state) => !state);
+    }
+    
     return (
         <div className="readingsList">
-            <h3>readings List</h3>
-            {
-                organizedReadings && organizedReadings!.joinedReadings?.map((r) =>
-                    <OptedInReading key={r.bookId + r.clubId - 1} bookId={r.bookId} clubId={r.clubId} progress={r.progress!} progressTotal={r.progressTotal} progresstypeId={r.progresstypeId} />
-                    // <Link key={r.bookId + "" + r.clubId + "" + i} to={`reading/${r.bookId}`}>{r.name}<br /></Link>
-                )
-            }
+            <div className="readingsListHeader" onClick={toggleJoinedReadingsList}>
+                {joinedReadingsHidden ? <img className="readingsListHeader-plus" src='/src/assets/images/plus.svg' /> :
+                    <img className="ListHeader-plus" src='/src/assets/images/minus.svg' />}
+                <h2>Joined Readings</h2>
+            </div>
+            <div ref={optedInReadingsRef} className="optedInReadingsDropdown" hidden={joinedReadingsHidden}>
+                {
+                    organizedReadings && organizedReadings!.joinedReadings?.map((r) =>
+                        <OptedInReading key={r.bookId + r.clubId - 1} bookId={r.bookId} clubId={r.clubId} progress={r.progress!} progressTotal={r.progressTotal} progresstypeId={r.progresstypeId} />
+                    )
+                }
+            </div>
+            <div className="readingsListHeader" onClick={toggleNotJoinedReadingsList}>
+                {notJoinedReadingsHidden ? <img className="readingsListHeader-plus" src='/src/assets/images/plus.svg' /> :
+                    <img className="ListHeader-plus" src='/src/assets/images/minus.svg' />}
+                <h2>Not Joined Readings</h2>
+            </div>
+            <div ref={notOptedInReadingsRef} className="notOptedInReadingsDropdown" hidden={notJoinedReadingsHidden}>
+                {
+                    organizedReadings && organizedReadings!.notJoinedReadings?.map((r) =>
+                        <NotOptedInReading key={r.bookId + r.clubId - 1} bookId={r.bookId} clubId={r.clubId} />
+                    )
+                }
+            </div>
         </div>
     );
 }
