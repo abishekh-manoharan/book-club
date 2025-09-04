@@ -2,7 +2,7 @@ import { Club } from '@/utils/types';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useGetClubUsersQuery } from '../clubSlice';
-import { useGetUserQuery } from '../../../features/auth/authSlice';
+import { useGetUserQuery } from '../../auth/authSlice';
 
 function ClubListEntry({ club }: { club: Club }) {
     const { data: clubUsers } = useGetClubUsersQuery({ clubId: Number(club.clubId) });

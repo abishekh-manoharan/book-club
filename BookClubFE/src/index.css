@@ -380,7 +380,8 @@ body {
   border-radius: 7px;
 }
 
-.readingsList {
+.clubPageOutlet {
+  margin-top: 28px;
   grid-area: outlet;
 }
 

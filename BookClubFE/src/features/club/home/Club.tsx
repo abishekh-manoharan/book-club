@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link, Outlet, useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, Outlet, useNavigate, useParams } from 'react-router-dom';
 // import { useGetClubQuery, useGetClubUserQuery, useGetJoinRequestQuery, useJoinClubMutation } from '../clubSlice';
 // import { selectLoginStatus, useGetUserIdQuery } from '../../auth/authSlice';
 // import { useAppSelector } from '../../../app/hooks';
@@ -10,6 +10,8 @@ import { useGetUserIdQuery, useGetUserQuery } from '../../auth/authSlice';
 import ReadingsList from '../../reading/ReadingsList';
 
 function Club() {
+    const nav = useNavigate();
+
     const { clubid } = useParams();
     const clubId = Number(clubid);
     const { data: userId } = useGetUserIdQuery();
@@ -23,6 +25,10 @@ function Club() {
     );
 
     const { data: creator } = useGetUserQuery(Number(club?.userID), { skip: !club });
+
+    useEffect(()=>{
+        nav("readings");
+    }, [nav])
 
     return (
         <div>
@@ -42,7 +48,9 @@ function Club() {
                         <div className="item">meetings</div>
                         <div className="item">discussions</div>
                     </div>
-                    <Outlet />
+                    <div className="clubPageOutlet">
+                        <Outlet />
+                    </div>
                 </div>
                 // <>
                 //     <>{club?.name}</><br></br>
