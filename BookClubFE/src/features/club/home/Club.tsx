@@ -10,8 +10,6 @@ import { useGetUserIdQuery, useGetUserQuery } from '../../auth/authSlice';
 import ReadingsList from '../../reading/ReadingsList';
 
 function Club() {
-    const nav = useNavigate();
-
     const { clubid } = useParams();
     const clubId = Number(clubid);
     const { data: userId } = useGetUserIdQuery();
@@ -25,10 +23,6 @@ function Club() {
     );
 
     const { data: creator } = useGetUserQuery(Number(club?.userID), { skip: !club });
-
-    useEffect(()=>{
-        nav("readings");
-    }, [nav])
 
     return (
         <div>
@@ -44,9 +38,9 @@ function Club() {
                     </div>
                     <div className="clubSettings">settings</div>
                     <div className="clubNavBar">
-                        <Link to="readings" className="item">readings</Link>
-                        <div className="item">meetings</div>
-                        <div className="item">discussions</div>
+                        <Link to="readings" className="item">Readings</Link>
+                        <Link to="members" className="item">Members</Link>
+                        <Link to="readings" className="item">Discussions</Link>
                     </div>
                     <div className="clubPageOutlet">
                         <Outlet />

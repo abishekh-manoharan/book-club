@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom"
+import { Navigate, Route, Routes } from "react-router-dom"
 // import Header from './components/Header'
 // import Register from './features/auth/Register'
 // import Login from './features/auth/Login'
@@ -27,6 +27,7 @@ import ActiveReadings from "./features/reading/ActiveReadings/ActiveReadings"
 import Login from "./features/auth/Login"
 import Create from "./features/club/Create"
 import ReadingsList from "./features/reading/ReadingsList"
+import MembersList from "./features/club/MembersList"
 
 function App() {
   const { data: status, isFetching } = useGetStatusQuery();
@@ -51,7 +52,9 @@ function App() {
           <Route path="clubs" element=<JoinedClubs />/>
           <Route path="createClub" element=<Create backLocation="clubs" /> />
           <Route path="club/:clubid" element=<Club /> >
+            <Route index element={<Navigate to="readings" replace />} />
             <Route path="readings" element=<ReadingsList /> />
+            <Route path="members" element=<MembersList /> />
             <Route path="createReading" element=<CreateReading /> />
             <Route path="reading/:bookid" element=<ReadingHome /> />
           </Route>
