@@ -19,6 +19,7 @@ export interface ClubUser {
     lName: string,
     profileImg: string,
     admin: boolean
+    aspnetusersId: string
 }
 
 export const apiSliceWithClub = apiSlice.injectEndpoints({

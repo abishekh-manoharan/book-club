@@ -526,7 +526,7 @@ public class ClubController : ControllerBase
                 .ToList();
 
             // filling empty users list with users in the club
-            List<UserDTO> users = new();
+            List<ClubUserDetailedDTO> users = new();
             foreach (var clubUser in clubUsers)
             {
                 var user = dbContext.Users
@@ -534,8 +534,8 @@ public class ClubController : ControllerBase
                     .AsNoTracking()
                     .First();
 
-                UserDTO userDTO = new(user.UserId, user.Bio, user.FName, user.LName, user.ProfileImg, user.AspnetusersId);
-                users.Add(userDTO);
+                ClubUserDetailedDTO clubUserDetailedDTO = new(clubUser.ClubId, user.UserId, clubUser.Admin, user.Bio, user.FName, user.LName, user.ProfileImg, user.AspnetusersId);
+                users.Add(clubUserDetailedDTO);
             }
 
             return Ok(users);
