@@ -27,7 +27,7 @@ import ActiveReadings from "./features/reading/ActiveReadings/ActiveReadings"
 import Login from "./features/auth/Login"
 import Create from "./features/club/Create"
 import ReadingsList from "./features/reading/ReadingsList"
-import MembersList from "./features/club/MembersList"
+import MembersList from "./features/club/members/MembersList"
 
 function App() {
   const { data: status, isFetching } = useGetStatusQuery();
