@@ -211,16 +211,16 @@ public class ClubController : ControllerBase
             .Where(user => user.AspnetusersId == userManager.GetUserId(User))
             .AsNoTracking()
             .First();
-        
+
         // finding the club user instances where the user id is that of the logged in user, and where the logged in user is an admin
         var users = dbContext.ClubUsers
             .Where(
-                cu => cu.UserId == user.UserId 
+                cu => cu.UserId == user.UserId
                 && cu.Admin == true
             )
             .AsNoTracking()
             .ToList();
-        
+
         return Ok(users);
     }
 
@@ -515,30 +515,39 @@ public class ClubController : ControllerBase
     // takes in ClubId as agument
     // returns a list of User objects
     [HttpGet("clubUsers")]
-    public ActionResult<List<UserDTO>> GetUsersOfAClub([FromQuery] int ClubId)
+    public async Task<ActionResult<List<UserDTO>>> GetUsersOfAClub([FromQuery] int ClubId)
     {
         if (ModelState.IsValid)
         {
-            // getting all club users where the ClubId matches the argument
-            var clubUsers = dbContext.ClubUsers
-                .Where(clubUser => clubUser.ClubId == ClubId)
-                .AsNoTracking()
-                .ToList();
+            // ensure client is a member of the club or that the club is public
+            Club? club = dbContext.Clubs.Where(club => club.ClubId == ClubId).AsNoTracking().FirstOrDefault();
+            ClubUser? loggedInClubUser = await authHelpers.GetClubUserOfLoggedInUser(User, ClubId);
 
-            // filling empty users list with users in the club
-            List<ClubUserDetailedDTO> users = new();
-            foreach (var clubUser in clubUsers)
+            if (club != null && !club.Private || loggedInClubUser != null)
             {
-                var user = dbContext.Users
-                    .Where(user => user.UserId == clubUser.UserId)
+
+                // getting all club users where the ClubId matches the argument
+                var clubUsers = dbContext.ClubUsers
+                    .Where(clubUser => clubUser.ClubId == ClubId)
                     .AsNoTracking()
-                    .First();
+                    .ToList();
 
-                ClubUserDetailedDTO clubUserDetailedDTO = new(clubUser.ClubId, user.UserId, clubUser.Admin, user.Bio, user.FName, user.LName, user.ProfileImg, user.AspnetusersId);
-                users.Add(clubUserDetailedDTO);
+                // filling empty users list with users in the club
+                List<ClubUserDetailedDTO> users = new();
+                foreach (var clubUser in clubUsers)
+                {
+                    var user = dbContext.Users
+                        .Where(user => user.UserId == clubUser.UserId)
+                        .AsNoTracking()
+                        .First();
+
+                    ClubUserDetailedDTO clubUserDetailedDTO = new(clubUser.ClubId, user.UserId, clubUser.Admin, user.Bio, user.FName, user.LName, user.ProfileImg, user.AspnetusersId);
+                    users.Add(clubUserDetailedDTO);
+                }
+
+                return Ok(users);
             }
-
-            return Ok(users);
+            return Unauthorized("User isnt authorized to view club members.");
         }
         return BadRequest(ModelState);
     }
