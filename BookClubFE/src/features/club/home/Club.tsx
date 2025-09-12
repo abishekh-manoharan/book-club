@@ -15,20 +15,25 @@ function Club() {
     const { data: userId } = useGetUserIdQuery();
     // const status = useAppSelector(selectLoginStatus);
 
-    const { data: club, isError: isGetClubError, isFetching: isGetClubFetching } = useGetClubQuery(clubId);
+    const { data: club, isError: isGetClubError, isSuccess: isGetClubSuccess, isFetching: isGetClubFetching } = useGetClubQuery(clubId);
 
-    const { data: clubUser, error: getClubUserError, isError: isClubUserError, isSuccess: isClubUserSuccess, refetch: refetchGetClubUser } = useGetClubUserQuery(
+    const { data: clubUser, error: getClubUserError, isError: isClubUserError, isSuccess: isClubUserSuccess, isFetching: isClubUserFetching, refetch: refetchGetClubUser } = useGetClubUserQuery(
         { clubId: clubId, userId: userId as number },
         { skip: !userId }
     );
 
     const { data: creator } = useGetUserQuery(Number(club?.userID), { skip: !club });
 
+    // flag indicating that the club is private, and the user isn't a member of the club
+    const privateNonMember: boolean = !isClubUserFetching && !isGetClubFetching && isGetClubSuccess && isClubUserError && club.private;
+
     return (
         <div>
             {isGetClubError && !isGetClubFetching ?
                 <h2>club not found</h2> :
                 <div className="clubPage">
+                    <JoinButton clubId={clubId} privateClub={club?.private} />
+                    <JoinRequests clubId={clubId} />
                     <img className="clubImg" src='https://placecats.com/400/400' alt='club profile picture' />
                     <h1 className="clubName">{club?.name}</h1>
                     <div className="clubDescription">
@@ -37,14 +42,18 @@ function Club() {
                         <p className="clubCreator">Created by {creator?.fName} {creator?.lName}</p>
                     </div>
                     <div className="clubSettings">settings</div>
-                    <div className="clubNavBar">
-                        <Link to="readings" className="item">Readings</Link>
-                        <Link to="members" className="item">Members</Link>
-                        <Link to="readings" className="item">Discussions</Link>
-                    </div>
-                    <div className="clubPageOutlet">
-                        <Outlet />
-                    </div>
+                    {!privateNonMember && !isClubUserFetching && !isGetClubFetching &&
+                        <>
+                            <div className="clubNavBar">
+                                <Link to="readings" className="item">Readings</Link>
+                                <Link to="members" className="item">Members</Link>
+                                <Link to="readings" className="item">Discussions</Link>
+                            </div>
+                            <div className="clubPageOutlet">
+                                <Outlet />
+                            </div>
+                        </>
+                    }
                 </div>
                 // <>
                 //     <>{club?.name}</><br></br>
@@ -53,8 +62,7 @@ function Club() {
                 //     <ReadingsList clubId={clubId} />
                 //     {/* // <>{userId}</><br />  */}
                 //     {/* hide joing button if use isn't logged in or if the user is a club member already */}
-                //     <JoinButton clubId={clubId} />
-                //     <JoinRequests clubId={clubId} />
+
                 //     <br />
                 // </>
             }

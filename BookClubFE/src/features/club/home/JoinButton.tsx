@@ -4,7 +4,7 @@ import { selectLoginStatus, useGetUserIdQuery } from "../../../features/auth/aut
 import { useGetClubQuery, useGetClubUserQuery, useGetJoinRequestQuery, useJoinClubMutation } from "../clubSlice";
 
 
-function JoinButton(props: { clubId: number }) {
+function JoinButton(props: { clubId: number, privateClub: boolean }) {
     const status = useAppSelector(selectLoginStatus);
     const { data: club } = useGetClubQuery(props.clubId);
     const { data: userId } = useGetUserIdQuery();
@@ -37,6 +37,14 @@ function JoinButton(props: { clubId: number }) {
             status
             && isClubUserError && 'originalStatus' in getClubUserError && getClubUserError.originalStatus === 404
             && isJoinRequestError && 'originalStatus' in getJoinRequestError && getJoinRequestError.originalStatus === 404
+            && props.privateClub
+        ) {
+            setJoinButton(<button onClick={joinClubBtnClickHandler}>Request Join club</button>);
+        } if ( // case where user is logged in, the user isn't a club member (clubUser doesn't exist), and there isnt a join request already
+            status
+            && isClubUserError && 'originalStatus' in getClubUserError && getClubUserError.originalStatus === 404
+            && isJoinRequestError && 'originalStatus' in getJoinRequestError && getJoinRequestError.originalStatus === 404
+            && !props.privateClub
         ) {
             setJoinButton(<button onClick={joinClubBtnClickHandler}>Join club</button>);
         } else if ( // case where user is logged in, the user isn't a club member (clubUser doesn't exist), and there is join request already
@@ -48,7 +56,7 @@ function JoinButton(props: { clubId: number }) {
         } else if (!status || !getClubUserError) {
             setJoinButton(<></>)
         }
-    }, [clubUser, joinRequest, getClubUserError, getJoinRequestError, status, club, userId, joinClub, isClubUserError, isJoinRequestError, refetchGetJoinRequest, refetchGetClubUser]);
+    }, [clubUser, joinRequest, getClubUserError, getJoinRequestError, status, club, userId, joinClub, isClubUserError, isJoinRequestError, refetchGetJoinRequest, refetchGetClubUser, props.privateClub]);
 
     return (
         <>
