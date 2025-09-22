@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { Link, Outlet, useNavigate, useParams } from 'react-router-dom';
+import { Link, Outlet, useParams } from 'react-router-dom';
 // import { useGetClubQuery, useGetClubUserQuery, useGetJoinRequestQuery, useJoinClubMutation } from '../clubSlice';
 // import { selectLoginStatus, useGetUserIdQuery } from '../../auth/authSlice';
 // import { useAppSelector } from '../../../app/hooks';
@@ -7,7 +6,6 @@ import JoinButton from './JoinButton';
 import { useGetClubQuery, useGetClubUserQuery } from '../clubSlice';
 import JoinRequests from './JoinRequests/JoinRequests';
 import { useGetUserIdQuery, useGetUserQuery } from '../../auth/authSlice';
-import ReadingsList from '../../reading/ReadingsList';
 
 function Club() {
     const { clubid } = useParams();
@@ -15,10 +13,10 @@ function Club() {
     const { data: userId } = useGetUserIdQuery();
     // const status = useAppSelector(selectLoginStatus);
 
-    const { data: club, isError: isGetClubError, isSuccess: isGetClubSuccess, isFetching: isGetClubFetching, isLoading: isGetClubLoading }
+    const { data: club, isError: isGetClubError, isSuccess: isGetClubSuccess, isFetching: isGetClubFetching }
         = useGetClubQuery(clubId);
 
-    const { data: clubUser, error: getClubUserError, isError: isClubUserError, refetch: refetchGetClubUser, isSuccess: isClubUserSuccess, isFetching: isClubUserFetching, isLoading: isClubUserLoading }
+    const { data: clubUser, error: getClubUserError, isError: isClubUserError, refetch: refetchGetClubUser, isFetching: isClubUserFetching }
         = useGetClubUserQuery(
             { clubId: clubId, userId: userId as number },
             { skip: !userId }
@@ -33,7 +31,7 @@ function Club() {
         <>
             {isGetClubError && !isGetClubFetching ?
                 <h2>club not found</h2> :
-                <div className="clubPagePublic">
+                <div className={!privateNonMember && !isClubUserFetching && !isGetClubFetching ? "clubPagePublic" : "clubPagePrivate"}>
                     {/* <div className={!privateNonMember && !isClubUserFetching && !isGetClubFetching ? "clubPagePublic" : "clubPagePrivate"}> */}
                     <JoinRequests clubId={clubId} />
                     <img className="clubImg" src='https://placecats.com/400/400' alt='club profile picture' />
@@ -47,7 +45,6 @@ function Club() {
                         <>
                             <div className="clubSettings">
                                 settings
-                                <JoinButton clubId={clubId} privateClub={club?.private || false} clubUser={clubUser} getClubUserError={getClubUserError} isClubUserError={isClubUserError} refetchGetClubUser={refetchGetClubUser} club={club} userId={userId} />
                             </div>
                             <div className="clubNavBar">
                                 <Link to="readings" className="item">Readings</Link>
@@ -56,15 +53,24 @@ function Club() {
                             </div>
                             <div className="clubPageOutlet">
                                 <Outlet />
+                                <JoinButton clubId={clubId} privateClub={club?.private || false} clubUser={clubUser} getClubUserError={getClubUserError} isClubUserError={isClubUserError} refetchGetClubUser={refetchGetClubUser} club={club} userId={userId} />
                             </div>
                         </>
                     }
                     {privateNonMember && !isClubUserFetching && !isGetClubFetching &&
-                        <div className="privateClub-screen outlet">
-                            <div className="asd">Private club</div>
-                            Always here
+                        <>
+                            <div className="privateClub-screen outlet">
+                                <div className="lockDesign">
+                                    <hr className='line'/>
+                                    <img className="lock" src='/src/assets/images/lock.svg' alt='image of a lock indicating a private club' />
+                                    <hr className='line'/>
+                                </div>
+                                <div className="privateClubNotice">
+                                    Private Club
+                                </div>
+                            </div>
                             <JoinButton clubId={clubId} privateClub={club?.private || false} clubUser={clubUser} getClubUserError={getClubUserError} isClubUserError={isClubUserError} refetchGetClubUser={refetchGetClubUser} club={club} userId={userId} />
-                        </div>
+                        </>
                     }
 
                 </div>

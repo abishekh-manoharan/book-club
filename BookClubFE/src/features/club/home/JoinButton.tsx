@@ -49,7 +49,7 @@ function JoinButton({ clubId, privateClub, clubUser, getClubUserError, isClubUse
             && isJoinRequestError && getJoinRequestError != undefined && 'originalStatus' in getJoinRequestError && getJoinRequestError.originalStatus === 404
             && privateClub
         ) {
-            setJoinButton(<button onClick={joinClubBtnClickHandler}>Request Join club</button>);
+            setJoinButton(<button onClick={joinClubBtnClickHandler}>Send Join Request</button>);
         } if ( // case where user is logged in, the user isn't a club member (clubUser doesn't exist), and there isnt a join request already
             status
             && isClubUserError && getClubUserError != undefined && 'originalStatus' in getClubUserError && getClubUserError.originalStatus === 404
@@ -70,9 +70,9 @@ function JoinButton({ clubId, privateClub, clubUser, getClubUserError, isClubUse
     }, [clubUser, joinRequest, getClubUserError, getJoinRequestError, status, club, userId, joinClub, isClubUserError, isJoinRequestError, refetchGetJoinRequest, refetchGetClubUser, privateClub]);
 
     return (
-        <>
+        <div className="joinBtn">
             {joinButton}
-        </>
+        </div>
     );
 }
 
