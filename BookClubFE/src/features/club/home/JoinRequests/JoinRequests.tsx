@@ -1,13 +1,15 @@
 import React from 'react';
 import { useGetJoinRequestsQuery } from '../../clubSlice';
 import JoinRequest from './JoinRequest';
+import { useParams } from 'react-router-dom';
 
-interface JoinRequestProps {
-    clubId: number
-}
+// interface JoinRequestProps {
+//     clubId: number
+// }
 
-function JoinRequests(props: JoinRequestProps) {
-    const { data: joinRequests, isSuccess: joinRequestsIsSuccess } = useGetJoinRequestsQuery(props.clubId)
+function JoinRequests() {
+    const { clubid } = useParams();
+    const { data: joinRequests, isSuccess: joinRequestsIsSuccess } = useGetJoinRequestsQuery(Number(clubid))
 
     if (joinRequestsIsSuccess) {
         if(joinRequests) {

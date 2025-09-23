@@ -25,6 +25,9 @@
   display: inline;
 }
 
+Link {
+  text-decoration: none;
+}
 .line {
   border: none;
   border-top: 1px solid #5a5a5a;
@@ -33,6 +36,8 @@
 
 a {
   text-decoration: none;
+  color: white;
+  font-weight: 450;
 }
 
 h1 {
@@ -472,6 +477,17 @@ body {
   position: relative;
   bottom: 5px;
   
+}
+
+
+.membersNavBar {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 7px; 
+  margin-top: -5px; 
+  margin-bottom: 7px; 
 }
 
 .barContainer {

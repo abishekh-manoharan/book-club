@@ -4,7 +4,7 @@ import { Link, Outlet, useParams } from 'react-router-dom';
 // import { useAppSelector } from '../../../app/hooks';
 import JoinButton from './JoinButton';
 import { useGetClubQuery, useGetClubUserQuery } from '../clubSlice';
-import JoinRequests from './JoinRequests/JoinRequests';
+// import JoinRequests from './JoinRequests/JoinRequests';
 import { useGetUserIdQuery, useGetUserQuery } from '../../auth/authSlice';
 
 function Club() {
@@ -33,7 +33,7 @@ function Club() {
                 <h2>club not found</h2> :
                 <div className={!privateNonMember && !isClubUserFetching && !isGetClubFetching ? "clubPagePublic" : "clubPagePrivate"}>
                     {/* <div className={!privateNonMember && !isClubUserFetching && !isGetClubFetching ? "clubPagePublic" : "clubPagePrivate"}> */}
-                    <JoinRequests clubId={clubId} />
+                    {/* <JoinRequests clubId={clubId} /> */}
                     <img className="clubImg" src='https://placecats.com/400/400' alt='club profile picture' />
                     <h1 className="clubName">{club?.name}</h1>
                     <div className="clubDescription">
