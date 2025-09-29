@@ -1,4 +1,4 @@
-import { Link, Outlet, useParams } from 'react-router-dom';
+import { Outlet, useParams } from 'react-router-dom';
 // import { useGetClubQuery, useGetClubUserQuery, useGetJoinRequestQuery, useJoinClubMutation } from '../clubSlice';
 // import { selectLoginStatus, useGetUserIdQuery } from '../../auth/authSlice';
 // import { useAppSelector } from '../../../app/hooks';
@@ -6,6 +6,7 @@ import JoinButton from './JoinButton';
 import { useGetClubQuery, useGetClubUserQuery } from '../clubSlice';
 // import JoinRequests from './JoinRequests/JoinRequests';
 import { useGetUserIdQuery, useGetUserQuery } from '../../auth/authSlice';
+import ClubNavBar from './ClubNavBar';
 
 function Club() {
     const { clubid } = useParams();
@@ -46,11 +47,12 @@ function Club() {
                             <div className="clubSettings">
                                 settings
                             </div>
-                            <div className="clubNavBar">
+                            <ClubNavBar/>
+                            {/* <div className="clubNavBar">
                                 <Link to="readings" className="item">Readings</Link>
                                 <Link to="members" className="item">Members</Link>
                                 <Link to="readings" className="item">Discussions</Link>
-                            </div>
+                            </div> */}
                             <div className="clubPageOutlet">
                                 <Outlet />
                                 <JoinButton clubId={clubId} privateClub={club?.private || false} clubUser={clubUser} getClubUserError={getClubUserError} isClubUserError={isClubUserError} refetchGetClubUser={refetchGetClubUser} club={club} userId={userId} />

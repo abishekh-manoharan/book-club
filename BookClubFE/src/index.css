@@ -37,7 +37,7 @@ Link {
 a {
   text-decoration: none;
   color: white;
-  font-weight: 450;
+  font-weight: 550;
 }
 
 h1 {
@@ -369,6 +369,10 @@ body {
   justify-content: center;
   padding: 7px;
   margin-top: 24px;
+}
+
+.clubNavBar a {
+  color: rgba(255, 255, 255, 0.698);
 }
 
 .clubName {
