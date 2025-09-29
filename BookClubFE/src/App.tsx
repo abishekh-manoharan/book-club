@@ -27,8 +27,6 @@ import ActiveReadings from "./features/reading/ActiveReadings/ActiveReadings"
 import Login from "./features/auth/Login"
 import Create from "./features/club/Create"
 import ReadingsList from "./features/reading/ReadingsList"
-// import MembersList from "./features/club/members/MembersList"
-import Members from "./features/club/members/Members"
 import MembersList from "./features/club/members/MembersList"
 import JoinRequests from "./features/club/home/JoinRequests/JoinRequests"
 

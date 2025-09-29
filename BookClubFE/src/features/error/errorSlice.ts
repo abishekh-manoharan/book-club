@@ -6,8 +6,6 @@ const errorInitialState = {
     error: false
 }
 
-
-
 const errorSlice = createSlice({
     name: 'error',
     initialState: errorInitialState,

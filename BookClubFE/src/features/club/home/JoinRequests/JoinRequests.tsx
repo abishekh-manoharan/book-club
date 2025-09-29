@@ -12,14 +12,14 @@ function JoinRequests() {
     const { data: joinRequests, isSuccess: joinRequestsIsSuccess } = useGetJoinRequestsQuery(Number(clubid))
 
     if (joinRequestsIsSuccess) {
-        if(joinRequests) {
+        if(joinRequests.length > 0) {
             return joinRequests.map((req) => <JoinRequest key={`${req.clubId}${req.userId}`} userId={req.userId} clubId={req.clubId} userName={req.userName} fName={req.fName} lName={req.lName}/>)
         }
+        return <div className='mediumText textAlignCenter'>No join requests</div>
     }
-
-    return (
-        <></>
-    );
+    else {
+        return <div className='mediumText textAlignCenter'>error retrieving join requests. Please try again later.</div>
+    }
 }
 
 export default JoinRequests;
