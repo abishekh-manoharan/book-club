@@ -40,10 +40,19 @@ function JoinRequest(props: JoinRequestProps) {
     }
 
     return (
-        <div>
-            {props.userName} {props.fName} {props.lName} {props.userId}
-            <button onClick={handleAcceptButtonClick}>accept</button>
-            <button onClick={handleRejectButtonClick}>reject</button>  <br />
+        <div className="join-request">
+            <div className="request-identifier">
+                <div className="username">
+                    {props.userName}
+                </div>
+                <div className="name">
+                    {props.fName} {props.lName}
+                </div>
+            </div>
+            <div className="request-buttons">
+                <img src="/src/assets/images/check.svg" onClick={handleAcceptButtonClick}/>
+                <img src="/src/assets/images/x.svg" onClick={handleRejectButtonClick}/>
+            </div>
         </div>
     );
 }

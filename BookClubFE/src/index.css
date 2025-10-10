@@ -504,6 +504,21 @@ body {
   
 }
 
+.join-request {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.request-buttons {
+  display: flex;
+  gap: 7px;
+  margin-left: auto;
+  align-self: center;
+}
+
+.request-identifier {
+  gap: 7px;
+}
 
 .membersNavBar {
   width: 100%;
