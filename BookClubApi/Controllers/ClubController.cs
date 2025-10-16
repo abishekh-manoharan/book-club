@@ -473,7 +473,7 @@ public class ClubController : ControllerBase
 
     // action method that remove a user from a club
     [HttpPost("leave")]
-    public ActionResult<bool> LeaveClub([FromBody] ClubUserGetValDTO clubUserIn)
+    public async Task<ActionResult<bool>> LeaveClub([FromBody] ClubUserGetValDTO clubUserIn)
     {
         if (ModelState.IsValid)
         {
@@ -495,6 +495,11 @@ public class ClubController : ControllerBase
                     .Where(clubUser => clubUser.ClubId == clubUserIn.ClubId && clubUser.UserId == clubUserIn.UserId)
                     .AsNoTracking()
                     .FirstOrDefault();
+
+                // delete any existing readinguser instances associated with the clubuser
+                await dbContext.Readingusers
+                    .Where(ru => ru.ClubId == clubUserIn.ClubId && ru.UserId == clubUserIn.UserId)
+                    .ExecuteDeleteAsync();
 
                 if (clubUser != null)
                 {
