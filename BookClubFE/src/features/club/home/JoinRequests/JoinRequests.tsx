@@ -17,9 +17,6 @@ function JoinRequests() {
         }
         return <div className='mediumText textAlignCenter'>No join requests</div>
     }
-    else {
-        return <div className='mediumText textAlignCenter'>error retrieving join requests. Please try again later.</div>
-    }
 }
 
 export default JoinRequests;

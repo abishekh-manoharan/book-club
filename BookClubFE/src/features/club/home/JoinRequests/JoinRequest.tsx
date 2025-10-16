@@ -42,11 +42,11 @@ function JoinRequest(props: JoinRequestProps) {
     return (
         <div className="join-request">
             <div className="request-identifier">
-                <div className="username">
-                    {props.userName}
-                </div>
                 <div className="name">
                     {props.fName} {props.lName}
+                </div>
+                <div className="username mediumText">
+                    {props.userName}
                 </div>
             </div>
             <div className="request-buttons">

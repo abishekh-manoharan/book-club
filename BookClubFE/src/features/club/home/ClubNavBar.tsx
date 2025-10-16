@@ -2,7 +2,8 @@ import { NavLink } from "react-router-dom";
 
 function ClubNavBar() {
     const navLinkActiveStyle = {
-        color: "white"
+        color: "white",
+        fontWeight: "500"
     };
 
     return (

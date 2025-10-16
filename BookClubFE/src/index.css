@@ -394,6 +394,7 @@ body {
 
 .clubNavBar a {
   color: rgba(255, 255, 255, 0.698);
+  font-weight: 450;
 }
 
 .clubName {
@@ -461,6 +462,10 @@ body {
   width: 50px;
 }
 
+.memberListEntry .name{
+  font-weight: 500;
+}
+
 .privateClub-screen {
   grid-area: outlet;
   margin-top: 7px;
@@ -518,6 +523,10 @@ body {
 
 .request-identifier {
   gap: 7px;
+}
+
+.request-identifier .name{
+ font-weight: 550;
 }
 
 .membersNavBar {
