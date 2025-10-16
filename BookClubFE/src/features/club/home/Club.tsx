@@ -3,16 +3,19 @@ import { Outlet, useParams } from 'react-router-dom';
 // import { selectLoginStatus, useGetUserIdQuery } from '../../auth/authSlice';
 // import { useAppSelector } from '../../../app/hooks';
 import JoinButton from './JoinButton';
-import { useGetClubQuery, useGetClubUserQuery } from '../clubSlice';
+import { useGetClubQuery, useGetClubUserQuery, useLeaveClubMutation } from '../clubSlice';
 // import JoinRequests from './JoinRequests/JoinRequests';
 import { useGetUserIdQuery, useGetUserQuery } from '../../auth/authSlice';
 import ClubNavBar from './ClubNavBar';
+import { isFetchBaseQueryError, isSerializedError } from "../../../app/typeGuards";
+import { updateErrorMessageThunk } from "../../error/errorSlice";
+import { useAppDispatch } from "../../../app/hooks";
 
 function Club() {
     const { clubid } = useParams();
     const clubId = Number(clubid);
     const { data: userId } = useGetUserIdQuery();
-    // const status = useAppSelector(selectLoginStatus);
+    const dispatch = useAppDispatch();
 
     const { data: club, isError: isGetClubError, isSuccess: isGetClubSuccess, isFetching: isGetClubFetching }
         = useGetClubQuery(clubId);
@@ -24,6 +27,30 @@ function Club() {
         );
 
     const { data: creator } = useGetUserQuery(Number(club?.userID), { skip: !club });
+
+    const [leave] = useLeaveClubMutation();
+
+
+    const leaveButtonClickHandler = async () => {
+        const user = {
+            UserId: userId!,
+            ClubId: clubId
+        }
+
+        try {
+            const result = await leave(user).unwrap();
+            console.log("Success:", result);
+        } catch (error) {
+            if (isFetchBaseQueryError(error)) {
+                const errorMessage = (error.data as string) || "Unknown error";
+                dispatch(updateErrorMessageThunk(errorMessage));
+            } else if (isSerializedError(error)) {
+                dispatch(updateErrorMessageThunk(error.message!));
+            } else {
+                    dispatch(updateErrorMessageThunk("Unknown error occured."));
+            }
+        }
+    }
 
     // flag indicating that the club is private, and the user isn't a member of the club
     const privateNonMember: boolean = !isClubUserFetching && !isGetClubFetching && isGetClubSuccess && isClubUserError && club.private;
@@ -45,14 +72,9 @@ function Club() {
                     {!privateNonMember && !isClubUserFetching && !isGetClubFetching &&
                         <>
                             <div className="clubSettings">
-                                settings
+                                {clubId && userId && <button onClick={leaveButtonClickHandler}>Leave</button>}
                             </div>
-                            <ClubNavBar/>
-                            {/* <div className="clubNavBar">
-                                <Link to="readings" className="item">Readings</Link>
-                                <Link to="members" className="item">Members</Link>
-                                <Link to="readings" className="item">Discussions</Link>
-                            </div> */}
+                            <ClubNavBar />
                             <div className="clubPageOutlet">
                                 <Outlet />
                                 <JoinButton clubId={clubId} privateClub={club?.private || false} clubUser={clubUser} getClubUserError={getClubUserError} isClubUserError={isClubUserError} refetchGetClubUser={refetchGetClubUser} club={club} userId={userId} />
@@ -63,9 +85,9 @@ function Club() {
                         <>
                             <div className="privateClub-screen outlet">
                                 <div className="lockDesign">
-                                    <hr className='line'/>
+                                    <hr className='line' />
                                     <img className="lock" src='/src/assets/images/lock.svg' alt='image of a lock indicating a private club' />
-                                    <hr className='line'/>
+                                    <hr className='line' />
                                 </div>
                                 <div className="privateClubNotice">
                                     Private Club

@@ -144,6 +144,17 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                 }
             })
         }),
+        leaveClub: builder.mutation<boolean, { UserId: number, ClubId: number }>({
+            query: (clubUser) => ({
+                url: `club/leave`,
+                credentials: 'include',
+                method: 'POST',
+                body: JSON.stringify(clubUser),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+        }),
     })
 })
 
@@ -157,7 +168,8 @@ export const {
     useGetClubUsersQuery,
     useGetJoinRequestQuery,
     useGetJoinRequestsQuery,
-    useRejectJoinRequestMutation
+    useRejectJoinRequestMutation,
+    useLeaveClubMutation
 } = apiSliceWithClub
 
 // export const apiSliceWithCl= apiSlice.injectEndpoints({

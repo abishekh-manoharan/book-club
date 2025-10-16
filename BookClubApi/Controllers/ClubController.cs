@@ -473,17 +473,17 @@ public class ClubController : ControllerBase
 
     // action method that remove a user from a club
     [HttpPost("leave")]
-    public ActionResult<bool> LeaveClub([Required] int UserId, [Required] int ClubId)
+    public ActionResult<bool> LeaveClub([FromBody] ClubUserGetValDTO clubUserIn)
     {
         if (ModelState.IsValid)
         {
             // ensure club and user exists
             User? user = dbContext.Users
-                .Where(user => user.UserId == UserId)
+                .Where(user => user.UserId == clubUserIn.UserId)
                 .AsNoTracking()
                 .FirstOrDefault();
             Club? club = dbContext.Clubs
-                .Where(club => club.ClubId == ClubId)
+                .Where(club => club.ClubId == clubUserIn.ClubId)
                 .AsNoTracking()
                 .FirstOrDefault();
 
@@ -492,7 +492,7 @@ public class ClubController : ControllerBase
             {
                 // ensure clubUser exists
                 var clubUser = dbContext.ClubUsers
-                    .Where(clubUser => clubUser.ClubId == ClubId && clubUser.UserId == UserId)
+                    .Where(clubUser => clubUser.ClubId == clubUserIn.ClubId && clubUser.UserId == clubUserIn.UserId)
                     .AsNoTracking()
                     .FirstOrDefault();
 
