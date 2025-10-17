@@ -153,7 +153,8 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                 headers: {
                     'Content-Type': 'application/json'
                 }
-            })
+            }),
+            invalidatesTags: [{type: 'Readings', id: 'all'}]
         }),
     })
 })
