@@ -3,33 +3,39 @@ import { Outlet, useParams } from 'react-router-dom';
 // import { selectLoginStatus, useGetUserIdQuery } from '../../auth/authSlice';
 // import { useAppSelector } from '../../../app/hooks';
 import JoinButton from './JoinButton';
-import { useGetClubQuery, useGetClubUserQuery, useLeaveClubMutation } from '../clubSlice';
+import { useGetClubQuery, useGetClubUserQuery, useGetJoinedClubsAdminQuery, useLeaveClubMutation } from '../clubSlice';
 // import JoinRequests from './JoinRequests/JoinRequests';
 import { useGetUserIdQuery, useGetUserQuery } from '../../auth/authSlice';
 import ClubNavBar from './ClubNavBar';
 import { isFetchBaseQueryError, isSerializedError } from "../../../app/typeGuards";
 import { updateErrorMessageThunk } from "../../error/errorSlice";
 import { useAppDispatch } from "../../../app/hooks";
+import { useMemo, useRef } from 'react';
 
 function Club() {
+    const dispatch = useAppDispatch();
+    const leaveBtn = useRef(null);
+    
     const { clubid } = useParams();
     const clubId = Number(clubid);
     const { data: userId } = useGetUserIdQuery();
-    const dispatch = useAppDispatch();
-
+    const { data: adminClubsOfUser } = useGetJoinedClubsAdminQuery(undefined, { skip: !userId });
     const { data: club, isError: isGetClubError, isSuccess: isGetClubSuccess, isFetching: isGetClubFetching }
         = useGetClubQuery(clubId);
-
-    const { data: clubUser, error: getClubUserError, isError: isClubUserError, refetch: refetchGetClubUser, isFetching: isClubUserFetching }
+    const { data: clubUser, isSuccess: isClubUserSuccess, error: getClubUserError, isError: isClubUserError, refetch: refetchGetClubUser, isFetching: isClubUserFetching }
         = useGetClubUserQuery(
             { clubId: clubId, userId: userId as number },
             { skip: !userId }
         );
-
-    const { data: creator } = useGetUserQuery(Number(club?.userID), { skip: !club });
-
+    const { data: creator, isSuccess: getCreatorSuccess } = useGetUserQuery(Number(club?.userID), { skip: !club });
     const [leave] = useLeaveClubMutation();
 
+    const transformedAdminClubsOfUser = useMemo(()=>{
+        if(adminClubsOfUser && adminClubsOfUser.length > 0) {
+            return adminClubsOfUser.map((club)=>club.clubId!);
+        }
+        return null;
+    }, [adminClubsOfUser])
 
     const leaveButtonClickHandler = async () => {
         const user = {
@@ -54,7 +60,7 @@ function Club() {
 
     // flag indicating that the club is private, and the user isn't a member of the club
     const privateNonMember: boolean = !isClubUserFetching && !isGetClubFetching && isGetClubSuccess && isClubUserError && club.private;
-
+    //transformedAdminClubsOfUser && transformedAdminClubsOfUser.includes(clubId) 
     return (
         <>
             {isGetClubError && !isGetClubFetching ?
@@ -72,7 +78,8 @@ function Club() {
                     {!privateNonMember && !isClubUserFetching && !isGetClubFetching &&
                         <>
                             <div className="clubSettings">
-                                {clubId && userId && <button onClick={leaveButtonClickHandler}>Leave</button>}
+                                {/* leave button displayed if the user is a club member and not the creator  */}
+                                {clubId && userId && isClubUserSuccess && clubUser && getCreatorSuccess && creator && creator.userId != userId && <button ref={leaveBtn} onClick={leaveButtonClickHandler}>Leave</button>}
                             </div>
                             <ClubNavBar />
                             <div className="clubPageOutlet">
