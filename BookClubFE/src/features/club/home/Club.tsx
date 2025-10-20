@@ -3,14 +3,14 @@ import { Outlet, useParams } from 'react-router-dom';
 // import { selectLoginStatus, useGetUserIdQuery } from '../../auth/authSlice';
 // import { useAppSelector } from '../../../app/hooks';
 import JoinButton from './JoinButton';
-import { useGetClubQuery, useGetClubUserQuery, useGetJoinedClubsAdminQuery, useLeaveClubMutation } from '../clubSlice';
+import { useGetClubQuery, useGetClubUserQuery, useLeaveClubMutation } from '../clubSlice';
 // import JoinRequests from './JoinRequests/JoinRequests';
 import { useGetUserIdQuery, useGetUserQuery } from '../../auth/authSlice';
 import ClubNavBar from './ClubNavBar';
 import { isFetchBaseQueryError, isSerializedError } from "../../../app/typeGuards";
 import { updateErrorMessageThunk } from "../../error/errorSlice";
 import { useAppDispatch } from "../../../app/hooks";
-import { useMemo, useRef } from 'react';
+import { useRef } from 'react';
 
 function Club() {
     const dispatch = useAppDispatch();
@@ -19,7 +19,7 @@ function Club() {
     const { clubid } = useParams();
     const clubId = Number(clubid);
     const { data: userId } = useGetUserIdQuery();
-    const { data: adminClubsOfUser } = useGetJoinedClubsAdminQuery(undefined, { skip: !userId });
+
     const { data: club, isError: isGetClubError, isSuccess: isGetClubSuccess, isFetching: isGetClubFetching }
         = useGetClubQuery(clubId);
     const { data: clubUser, isSuccess: isClubUserSuccess, error: getClubUserError, isError: isClubUserError, refetch: refetchGetClubUser, isFetching: isClubUserFetching }
@@ -30,12 +30,7 @@ function Club() {
     const { data: creator, isSuccess: getCreatorSuccess } = useGetUserQuery(Number(club?.userID), { skip: !club });
     const [leave] = useLeaveClubMutation();
 
-    const transformedAdminClubsOfUser = useMemo(()=>{
-        if(adminClubsOfUser && adminClubsOfUser.length > 0) {
-            return adminClubsOfUser.map((club)=>club.clubId!);
-        }
-        return null;
-    }, [adminClubsOfUser])
+
 
     const leaveButtonClickHandler = async () => {
         const user = {
