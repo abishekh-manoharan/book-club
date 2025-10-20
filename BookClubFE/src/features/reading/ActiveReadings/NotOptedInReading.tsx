@@ -1,10 +1,11 @@
 import { useGetBookQuery } from "../../../features/book/bookSlice";
-import { useGetClubQuery } from "../../../features/club/clubSlice";
+import { useGetClubQuery, useGetClubUserQuery } from "../../../features/club/clubSlice";
 import { useGetReadingMemberCountQuery, useOptIntoReadingMutation } from "../readingSlice";
 
 import { updateErrorMessageThunk } from "../../error/errorSlice";
 import { useAppDispatch } from "../../../app/hooks";
 import { isFetchBaseQueryError, isSerializedError } from "../../../app/typeGuards";
+import { useGetUserIdQuery } from "../../../features/auth/authSlice";
 
 interface NotOptedInReadingProps {
     clubId: number,
@@ -14,11 +15,19 @@ interface NotOptedInReadingProps {
 function NotOptedInReading({ clubId, bookId }: NotOptedInReadingProps) {
     const dispatch = useAppDispatch();
 
+    const { data: userId } = useGetUserIdQuery();
+    const { data: clubUser, isSuccess: isGetClubUserSuccess }
+        = useGetClubUserQuery(
+            { clubId: clubId, userId: userId as number },
+            { skip: !userId }
+        );
+
     const { data: book } = useGetBookQuery(bookId);
     const { data: club } = useGetClubQuery(clubId);
     const { data: readingMemberCount } = useGetReadingMemberCountQuery({ BookId: bookId, ClubId: clubId });
 
     const [optIntoReading, { isLoading: optIntoReadingLoading }] = useOptIntoReadingMutation();
+
     const optIntoReadingBtnClickHandler = async () => {
         try {
             const result = await optIntoReading({ bookId, clubId }).unwrap()
@@ -51,9 +60,11 @@ function NotOptedInReading({ clubId, bookId }: NotOptedInReadingProps) {
                 <img className="userLogo user" src='/src/assets/images/user.svg' />
                 {readingMemberCount}
             </div>
-            <div className="activeReadings-reading-OptInBtn">
-                <button onClick={optIntoReadingBtnClickHandler} disabled={optIntoReadingLoading}>Opt in</button>
-            </div>
+            {
+                isGetClubUserSuccess && clubUser && <div className="activeReadings-reading-OptInBtn">
+                    <button onClick={optIntoReadingBtnClickHandler} disabled={optIntoReadingLoading}>Opt in</button>
+                </div>
+            }
         </div>
     );
 }
