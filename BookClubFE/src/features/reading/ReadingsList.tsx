@@ -56,7 +56,7 @@ function ReadingsList() {
     const toggleNotJoinedReadingsList = () => {
         setNotJoinedReadingsHidden((state) => !state);
     }
-    
+
     return (
         <div className="readingsList">
             <div className="readingsListHeader" onClick={toggleJoinedReadingsList}>
@@ -78,8 +78,11 @@ function ReadingsList() {
             </div>
             <div ref={notOptedInReadingsRef} className="notOptedInReadingsDropdown" hidden={notJoinedReadingsHidden}>
                 {
-                    organizedReadings && organizedReadings!.notJoinedReadings?.map((r) =>
-                        <NotOptedInReading key={r.bookId + r.clubId - 1} bookId={r.bookId} clubId={r.clubId} />
+                    organizedReadings && organizedReadings!.notJoinedReadings?.map((r) => {
+                        if (r.status != 'concluded') {
+                            return <NotOptedInReading key={r.bookId + r.clubId - 1} bookId={r.bookId} clubId={r.clubId} />
+                        }
+                    }
                     )
                 }
             </div>
