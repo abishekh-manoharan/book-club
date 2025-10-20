@@ -39,8 +39,8 @@ function Club() {
         }
 
         try {
-            const result = await leave(user).unwrap();
-            console.log("Success:", result);
+            await leave(user).unwrap();
+            refetchGetClubUser();
         } catch (error) {
             if (isFetchBaseQueryError(error)) {
                 const errorMessage = (error.data as string) || "Unknown error";
