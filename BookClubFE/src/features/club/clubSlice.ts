@@ -96,7 +96,8 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
             transformResponse(res: { $values: ClubUser[], id: string }) {
                 console.log(res.$values);
                 return res.$values;
-            }
+            },
+            providesTags: [{type: 'Clubs', id: 'members'}]
         }),
         joinClub: builder.mutation<boolean, { UserId: number, ClubId: number }>({
             query: (clubUser) => ({
@@ -107,7 +108,8 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                 headers: {
                     'Content-Type': 'application/json'
                 }
-            })
+            }),
+            invalidatesTags: [{type: 'Clubs', id: 'members'}]
         }),
         getJoinRequest: builder.query<JoinRequest, { userId: number, clubId: number }>({
             query: (joinRequest) => ({
@@ -154,7 +156,7 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            invalidatesTags: [{type: 'Readings', id: 'all'}]
+            invalidatesTags: [{type: 'Readings', id: 'all'}, {type: 'Clubs', id: 'members'}]
         }),
     })
 })
