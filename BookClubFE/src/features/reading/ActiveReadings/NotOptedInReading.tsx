@@ -62,15 +62,10 @@ function NotOptedInReading({ clubId, bookId }: NotOptedInReadingProps) {
                 {readingMemberCount}
             </div>
             {
-                <div className="activeReadings-reading-OptInBtn">
-                    <button onClick={optIntoReadingBtnClickHandler} disabled={optIntoReadingLoading}>Opt in</button>
-                </div>
-            }
-            {/* {
                 isGetClubUserSuccess && clubUser && <div className="activeReadings-reading-OptInBtn">
                     <button onClick={optIntoReadingBtnClickHandler} disabled={optIntoReadingLoading}>Opt in</button>
                 </div>
-            } */}
+            }
         </div>
     );
 }

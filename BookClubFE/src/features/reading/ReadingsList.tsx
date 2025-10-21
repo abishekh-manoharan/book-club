@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useState } from 'react';
-import { Reading, useGetAllReadingsOfClubsJoinedByUserQuery, useGetReadingsOfAClubQuery, useGetReadingUsersOfLoggedInUsersQuery } from './readingSlice';
-import { Link, useParams } from 'react-router-dom';
+import { Reading, useGetReadingsOfAClubQuery, useGetReadingUsersOfLoggedInUsersQuery } from './readingSlice';
+import { useParams } from 'react-router-dom';
 import OptedInReading from './ActiveReadings/OptedInReading';
 import NotOptedInReading from './ActiveReadings/NotOptedInReading';
 import { useGetUserIdQuery } from '../auth/authSlice';
@@ -27,8 +27,7 @@ function ReadingsList() {
     const [notJoinedReadingsHidden, setNotJoinedReadingsHidden] = useState(false);
 
     const { data: userId } = useGetUserIdQuery();
-
-    const { data: clubUser, isSuccess: isGetClubUserSuccess }
+    const { isSuccess: isGetClubUserSuccess, isError: isGetClubUserError }
         = useGetClubUserQuery(
             { clubId: Number(params.clubid), userId: userId as number },
             { skip: !userId }
@@ -37,7 +36,7 @@ function ReadingsList() {
     // getting all the readings of the club
     const { data: readings } = useGetReadingsOfAClubQuery(Number(params.clubid));
     // getting readings of the club that the user has joined
-    const { data: readingUsersOfLoggedInUser, isFetching: isFetchingReadingUsersOfLoggedInUser, isSuccess } = useGetReadingUsersOfLoggedInUsersQuery(undefined);
+    const { data: readingUsersOfLoggedInUser } = useGetReadingUsersOfLoggedInUsersQuery(undefined);
     // const { data: readingsOfClubsJoinedByUser, isFetching: isFetchingReadingsOfClubsJoinedByUser } = useGetAllReadingsOfClubsJoinedByUserQuery();
 
     const organizedReadings = useMemo(() => {
@@ -69,35 +68,46 @@ function ReadingsList() {
 
     return (
         <div className="readingsList">
-            <div className="readingsListHeader" onClick={toggleJoinedReadingsList}>
-                {joinedReadingsHidden ? <img className="readingsListHeader-plus" src='/src/assets/images/plus.svg' /> :
-                    <img className="ListHeader-plus" src='/src/assets/images/minus.svg' />}
-                <h2>Joined Readings</h2>
-            </div>
-            <div ref={optedInReadingsRef} className="optedInReadingsDropdown" hidden={joinedReadingsHidden}>
-                {
-                    organizedReadings && organizedReadings!.joinedReadings?.map((r) =>
-                        <OptedInReading key={r.bookId + r.clubId - 1} bookId={r.bookId} clubId={r.clubId} progress={r.progress!} progressTotal={r.progressTotal} progresstypeId={r.progresstypeId} />
-                    )
-                }
-            </div>
-            <div className="readingsListHeader" onClick={toggleNotJoinedReadingsList}>
-                {notJoinedReadingsHidden ? <img className="readingsListHeader-plus" src='/src/assets/images/plus.svg' /> :
-                    <img className="ListHeader-plus" src='/src/assets/images/minus.svg' />}
-                <h2>Not Joined Readings</h2>
-            </div>
-                
-
-            <div ref={notOptedInReadingsRef} className="notOptedInReadingsDropdown" hidden={notJoinedReadingsHidden}>
-                {
-                    organizedReadings && organizedReadings!.notJoinedReadings?.map((r) => {
-                        if (r.status != 'concluded') {
-                            return <NotOptedInReading key={r.bookId + r.clubId - 1} bookId={r.bookId} clubId={r.clubId} />
+            {isGetClubUserSuccess &&
+                <>
+                    <div className="readingsListHeader" onClick={toggleJoinedReadingsList}>
+                        {joinedReadingsHidden ? <img className="readingsListHeader-plus" src='/src/assets/images/plus.svg' /> :
+                            <img className="ListHeader-plus" src='/src/assets/images/minus.svg' />}
+                        <h2>Joined Readings</h2>
+                    </div>
+                    <div ref={optedInReadingsRef} className="optedInReadingsDropdown" hidden={joinedReadingsHidden}>
+                        {
+                            organizedReadings && organizedReadings!.joinedReadings?.map((r) =>
+                                <OptedInReading key={r.bookId + r.clubId - 1} bookId={r.bookId} clubId={r.clubId} progress={r.progress!} progressTotal={r.progressTotal} progresstypeId={r.progresstypeId} />
+                            )
                         }
+                    </div>
+                    <div className="readingsListHeader" onClick={toggleNotJoinedReadingsList}>
+                        {notJoinedReadingsHidden ? <img className="readingsListHeader-plus" src='/src/assets/images/plus.svg' /> :
+                            <img className="ListHeader-plus" src='/src/assets/images/minus.svg' />}
+                        <h2>Not Joined Readings</h2>
+                    </div>
+
+
+                    <div ref={notOptedInReadingsRef} className="notOptedInReadingsDropdown" hidden={notJoinedReadingsHidden}>
+                        {
+                            organizedReadings && organizedReadings!.notJoinedReadings?.map((r) => {
+                                if (r.status != 'concluded') {
+                                    return <NotOptedInReading key={r.bookId + r.clubId - 1} bookId={r.bookId} clubId={r.clubId} />
+                                }
+                            }
+                            )
+                        }
+                    </div>
+                </>
+            }
+            { isGetClubUserError && 
+                organizedReadings && organizedReadings!.notJoinedReadings?.map((r) => {
+                    if (r.status != 'concluded') {
+                        return <NotOptedInReading key={r.bookId + r.clubId - 1} bookId={r.bookId} clubId={r.clubId} />
                     }
-                    )
-                }
-            </div>
+                })
+            }
         </div>
     );
 }
