@@ -54,13 +54,13 @@ function Club() {
     }
 
     // flag indicating that the club is private, and the user isn't a member of the club
-    const privateNonMember: boolean = !isClubUserFetching && !isGetClubFetching && isGetClubSuccess && isClubUserError && club.private;
+    const privateNonMember: boolean = !isGetClubFetching && isGetClubSuccess && isClubUserError && club.private;
     //transformedAdminClubsOfUser && transformedAdminClubsOfUser.includes(clubId) 
     return (
         <>
             {isGetClubError && !isGetClubFetching ?
                 <h2>club not found</h2> :
-                <div className={!privateNonMember && !isClubUserFetching && !isGetClubFetching ? "clubPagePublic" : "clubPagePrivate"}>
+                <div className={!privateNonMember && !isGetClubFetching ? "clubPagePublic" : "clubPagePrivate"}>
                     {/* <div className={!privateNonMember && !isClubUserFetching && !isGetClubFetching ? "clubPagePublic" : "clubPagePrivate"}> */}
                     {/* <JoinRequests clubId={clubId} /> */}
                     <img className="clubImg" src='https://placecats.com/400/400' alt='club profile picture' />
@@ -70,7 +70,7 @@ function Club() {
                         {/* Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus ante metus, fermentum id enim tempor, accumsan semper dolor. Morbi sagittis, diam eu finibus ullamcorper, justo ligula malesuada lectus, eu varius nisl nulla nec metus. Suspendisse nec eros scelerisque, tristique sem eu, aliquet sapien. Aliquam fe */}
                         <p className="clubCreator">Created by {creator?.fName} {creator?.lName}</p>
                     </div>
-                    {!privateNonMember && !isClubUserFetching && !isGetClubFetching &&
+                    {!privateNonMember && !isGetClubFetching &&
                         <>
                             <div className="clubSettings">
                                 {/* leave button displayed if the user is a club member and not the creator  */}

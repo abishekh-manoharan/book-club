@@ -16,6 +16,7 @@ function NotOptedInReading({ clubId, bookId }: NotOptedInReadingProps) {
     const dispatch = useAppDispatch();
 
     const { data: userId } = useGetUserIdQuery();
+
     const { data: clubUser, isSuccess: isGetClubUserSuccess }
         = useGetClubUserQuery(
             { clubId: clubId, userId: userId as number },
@@ -61,10 +62,15 @@ function NotOptedInReading({ clubId, bookId }: NotOptedInReadingProps) {
                 {readingMemberCount}
             </div>
             {
-                isGetClubUserSuccess && clubUser && <div className="activeReadings-reading-OptInBtn">
+                <div className="activeReadings-reading-OptInBtn">
                     <button onClick={optIntoReadingBtnClickHandler} disabled={optIntoReadingLoading}>Opt in</button>
                 </div>
             }
+            {/* {
+                isGetClubUserSuccess && clubUser && <div className="activeReadings-reading-OptInBtn">
+                    <button onClick={optIntoReadingBtnClickHandler} disabled={optIntoReadingLoading}>Opt in</button>
+                </div>
+            } */}
         </div>
     );
 }

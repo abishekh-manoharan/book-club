@@ -3,6 +3,8 @@ import { Reading, useGetAllReadingsOfClubsJoinedByUserQuery, useGetReadingsOfACl
 import { Link, useParams } from 'react-router-dom';
 import OptedInReading from './ActiveReadings/OptedInReading';
 import NotOptedInReading from './ActiveReadings/NotOptedInReading';
+import { useGetUserIdQuery } from '../auth/authSlice';
+import { useGetClubUserQuery } from '../club/clubSlice';
 
 interface ReadingsListOrganizedReadings {
     joinedReadings: ReadingWithProgress[] | undefined;
@@ -23,6 +25,14 @@ function ReadingsList() {
 
     const [joinedReadingsHidden, setJoinedReadingsHidden] = useState(false);
     const [notJoinedReadingsHidden, setNotJoinedReadingsHidden] = useState(false);
+
+    const { data: userId } = useGetUserIdQuery();
+
+    const { data: clubUser, isSuccess: isGetClubUserSuccess }
+        = useGetClubUserQuery(
+            { clubId: Number(params.clubid), userId: userId as number },
+            { skip: !userId }
+        );
 
     // getting all the readings of the club
     const { data: readings } = useGetReadingsOfAClubQuery(Number(params.clubid));
@@ -76,6 +86,8 @@ function ReadingsList() {
                     <img className="ListHeader-plus" src='/src/assets/images/minus.svg' />}
                 <h2>Not Joined Readings</h2>
             </div>
+                
+
             <div ref={notOptedInReadingsRef} className="notOptedInReadingsDropdown" hidden={notJoinedReadingsHidden}>
                 {
                     organizedReadings && organizedReadings!.notJoinedReadings?.map((r) => {
