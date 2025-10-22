@@ -76,7 +76,7 @@ function Club() {
                                 {/* leave button displayed if the user is a club member and not the creator  */}
                                 {clubId && userId && isClubUserSuccess && clubUser && getCreatorSuccess && creator && creator.userId != userId && <button ref={leaveBtn} onClick={leaveButtonClickHandler}>Leave</button>}
                             </div>
-                            <ClubNavBar />
+                            <ClubNavBar privateClub={club?.private}/>
                             <div className="clubPageOutlet">
                                 <Outlet />
                                 <JoinButton clubId={clubId} privateClub={club?.private || false} clubUser={clubUser} getClubUserError={getClubUserError} isClubUserError={isClubUserError} refetchGetClubUser={refetchGetClubUser} club={club} userId={userId} />
