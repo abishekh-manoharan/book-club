@@ -64,7 +64,10 @@ function Club() {
                     {/* <div className={!privateNonMember && !isClubUserFetching && !isGetClubFetching ? "clubPagePublic" : "clubPagePrivate"}> */}
                     {/* <JoinRequests clubId={clubId} /> */}
                     <img className="clubImg" src='https://placecats.com/400/400' alt='club profile picture' />
-                    <h1 className="clubName">{club?.name}</h1>
+                    <h1 className="clubName">
+                        <div>{club?.name}</div>
+                        {club?.private && <img className="lock" src='/src/assets/images/lock.svg' alt='image of a lock indicating a private club' />}
+                    </h1>
                     <div className="clubDescription">
                         <p className="clubDescriptionDisc">{club?.description}</p>
                         {/* Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus ante metus, fermentum id enim tempor, accumsan semper dolor. Morbi sagittis, diam eu finibus ullamcorper, justo ligula malesuada lectus, eu varius nisl nulla nec metus. Suspendisse nec eros scelerisque, tristique sem eu, aliquet sapien. Aliquam fe */}
