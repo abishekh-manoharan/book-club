@@ -57,9 +57,9 @@ function App() {
             <Route path="readings" element=<ReadingsList /> />
             <Route path="members" element=<MembersList /> />
             <Route path="requests" element=<JoinRequests /> />
-            <Route path="createReading" element=<CreateReading /> />
-            <Route path="reading/:bookid" element=<ReadingHome /> />
           </Route>
+          <Route path="club/:clubid/createReading" element=<CreateReading /> />
+          <Route path="reading/:bookid" element=<ReadingHome /> />
           <Route path="activeReadings" element=<ActiveReadings /> />
           <Route path="login" element=<Login /> />
         </Route>

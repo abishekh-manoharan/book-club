@@ -405,13 +405,12 @@ body {
 
   display: flex;
   gap: 7px;
+  align-items: center;
 }
 
 .clubName .lock {
   width: 20px;
   height: 20px;
-  justify-self: center;
-  align-self: center;
 }
 
 .clubDescription {

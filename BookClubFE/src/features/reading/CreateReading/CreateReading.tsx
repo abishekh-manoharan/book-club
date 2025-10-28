@@ -20,6 +20,7 @@ function CreateReading() {
     const [createReading] = useCreateReadingMutation();
     const [notifyClubMembers] = useNotifyClubMembersMutation();
     const { data: club } = useGetClubQuery(clubId, { skip: isNaN(clubId) });
+    
     // function used to generate an int value from a string
     const simpleStringToInt = (str: string) => {
         let hash = 0;

@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { Reading, useGetReadingsOfAClubQuery, useGetReadingUsersOfLoggedInUsersQuery } from './readingSlice';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import OptedInReading from './ActiveReadings/OptedInReading';
 import NotOptedInReading from './ActiveReadings/NotOptedInReading';
 import { useGetUserIdQuery } from '../auth/authSlice';
@@ -19,6 +19,8 @@ interface ReadingWithProgress extends Reading {
 }
 
 function ReadingsList() {
+    const nav = useNavigate();
+
     const params = useParams();
     const optedInReadingsRef = useRef<HTMLDivElement | null>(null);
     const notOptedInReadingsRef = useRef<HTMLDivElement | null>(null);
@@ -66,6 +68,10 @@ function ReadingsList() {
         setNotJoinedReadingsHidden((state) => !state);
     }
 
+    const createReadingBtn = () => {
+        nav(`/club/${params.clubid}/createReading`);
+    }
+
     return (
         <div className="readingsList">
             {isGetClubUserSuccess &&
@@ -99,9 +105,15 @@ function ReadingsList() {
                             )
                         }
                     </div>
+
+                    <div className="createClubBtn circleBtn" onClick={createReadingBtn}>
+                        <img className="ListHeader-plus" src='/src/assets/images/plusNoCircle.svg' />
+                    </div>
+
                 </>
             }
-            { isGetClubUserError && 
+            {/* case where the user isn't a club member. readings are listed without a seperate sections for joined and not joined readings. */}
+            {isGetClubUserError &&
                 organizedReadings && organizedReadings!.notJoinedReadings?.map((r) => {
                     if (r.status != 'concluded') {
                         return <NotOptedInReading key={r.bookId + r.clubId - 1} bookId={r.bookId} clubId={r.clubId} />
