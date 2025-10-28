@@ -49,6 +49,7 @@
 Link {
   text-decoration: none;
 }
+
 .line {
   border: none;
   border-top: 1px solid #5a5a5a;
@@ -102,7 +103,7 @@ body {
 
   border-radius: 10px;
   border: none;
-  width: 95.5%;
+  width: 94%;
 
   position: relative;
   left: 50%;
@@ -323,6 +324,7 @@ body {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
+  width: 95%;
 }
 
 .createClubBtn {
@@ -363,7 +365,7 @@ body {
   display: grid;
   grid-template-columns: 96px 5fr 1fr;
   grid-template-rows: 32px auto 24px 32px auto;
-  grid-template-areas: 
+  grid-template-areas:
     'clubImg clubName clubSettings'
     'clubImg clubDescription clubDescription'
     'clubNavBar clubNavBar clubNavBar'
@@ -375,7 +377,7 @@ body {
   display: grid;
   grid-template-columns: 96px 5fr 1fr;
   grid-template-rows: 32px auto 1fr;
-  grid-template-areas: 
+  grid-template-areas:
     'clubImg clubName clubName'
     'clubImg clubDescription clubDescription'
     'outlet outlet outlet';
@@ -458,7 +460,7 @@ body {
   margin: 12px 0;
 }
 
-.memberListEntry .adminStatus {  
+.memberListEntry .adminStatus {
   width: 24px;
   height: 24px;
   justify-self: center;
@@ -471,7 +473,7 @@ body {
   width: 50px;
 }
 
-.memberListEntry .name{
+.memberListEntry .name {
   font-weight: 500;
 }
 
@@ -515,7 +517,7 @@ body {
   height: 40px;
   position: relative;
   bottom: 5px;
-  
+
 }
 
 .join-request {
@@ -534,8 +536,26 @@ body {
   gap: 7px;
 }
 
-.request-identifier .name{
- font-weight: 550;
+.request-identifier .name {
+  font-weight: 550;
+}
+
+
+.createReadingHeading {
+  line-height: normal;
+  text-align: center;
+}
+
+.createReadingPage {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 95%;
+}
+
+.createReadingHeading p {
+  margin-top: 7px;
+  font-size: 14px;
 }
 
 .membersNavBar {
@@ -543,9 +563,9 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 7px; 
-  margin-top: -5px; 
-  margin-bottom: 7px; 
+  gap: 7px;
+  margin-top: -5px;
+  margin-bottom: 7px;
 }
 
 .barContainer {

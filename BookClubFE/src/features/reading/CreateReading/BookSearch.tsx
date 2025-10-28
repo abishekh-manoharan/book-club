@@ -3,7 +3,7 @@ import { Book, useSearchQuery } from '../readingSliceOpenLibrary';
 import BookSearchResult from './BookSearchResult';
 
 interface BookSearchProps {
-    selectedBook: Book | undefined, 
+    selectedBook: Book | undefined,
     setSelectedBook: React.Dispatch<React.SetStateAction<Book | undefined>>
 }
 
@@ -19,7 +19,7 @@ function BookSearch(props: BookSearchProps) {
         console.log(data)
         if (data && data?.length > 0) {
             const results = data.map(result => {
-                return <BookSearchResult result={result} setSelectedBook={props.setSelectedBook}/>
+                return <BookSearchResult result={result} setSelectedBook={props.setSelectedBook} />
             })
             setSearchResults(results);
             setHideSearchResults(false);
@@ -43,9 +43,10 @@ function BookSearch(props: BookSearchProps) {
 
     return (
         <div>
-            <input type='text' value={searchValue} onFocus={onSearchInputFocus} onBlur={onSearchInputBlur} onChange={(e) => setSearchValuePrep(e.target.value)} /> <br />
+            <label htmlFor="book">Book</label>
+            <input name="book" className="textInput" type='text' value={searchValue} onFocus={onSearchInputFocus} onBlur={onSearchInputBlur} onChange={(e) => setSearchValuePrep(e.target.value)} /> <br />
             {hideSearchResults && <>true</>}
-            <div className="searchResults" hidden={hideSearchResults} style={{ "backgroundColor": "white", "width": 500 }}>
+            <div className="searchResults" hidden={hideSearchResults} style={{ "backgroundColor": "black", "width": 500 }}>
                 {searchResults}
             </div>
         </div>
