@@ -13,7 +13,7 @@ function CreateReading() {
     const dispatch = useAppDispatch();
     const [selectedBook, setSelectedBook] = useState<Book>();
 
-    const [name, setName] = useState('');
+    const [name] = useState('');
     const [description, setDescription] = useState('');
     const { clubid } = useParams();
     const clubId = Number(clubid);
@@ -49,6 +49,18 @@ function CreateReading() {
             return;
         }
 
+        // specify the name of the book club, depending on if a name was provided or not.
+        // let nameToSend = "";
+        // // case where the name wasn't provided
+        // if (name === "") {
+        //     const now = new Date();
+        //     const monthName = now.toLocaleString('default', { month: 'long' });
+        //     const year = now.getFullYear();
+        //     nameToSend = `${selectedBook.Title}, ${selectedBook.AuthorName}`
+        // } else {
+        //     nameToSend = name;
+        // }
+
         const newReading: NewReading = {
             ...selectedBook,
             AuthorName: selectedBook.AuthorName ? selectedBook.AuthorName[0] : undefined, // ensuring author name isn't array when sent to api
@@ -69,6 +81,7 @@ function CreateReading() {
                 dispatch(updateErrorMessageThunk(error.message!));
             } else if (isFetchBaseQueryError(error)) {
                 const errormsg = error.data as string;
+                if(errormsg === "No club users found with the associated clubid.") return;
                 dispatch(updateErrorMessageThunk(errormsg));
             }
         }
@@ -81,8 +94,6 @@ function CreateReading() {
                 <p>Let's get reading</p>
             </div>
             <form className='createReadingForm'>
-                <label htmlFor="name">Name</label>
-                <input className="textInput" name="name" type="text" value={name} onChange={(e) => { setName(e.target.value) }} required /> <br />
                 <label htmlFor="description">Description</label>
                 <input className="textInput" name="description" type="text" value={description} onChange={(e) => { setDescription(e.target.value) }} />
 
