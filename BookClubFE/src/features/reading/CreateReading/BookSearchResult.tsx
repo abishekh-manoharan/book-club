@@ -24,8 +24,11 @@ function BookSearchResult(props: BookSearchResultProps) {
     }
 
     return (
-        <div>
-            <a href="" onClick={searchResultClickHandler}>{props.result.title}</a>
+        <div className="bookSearchResult">
+            <a href="" onClick={searchResultClickHandler}>
+                <div className="bookSearchResultTitle">{props.result.title}</div>
+                <div className="bookSearchResultAuthorName">{props.result.author_name}</div>
+            </a>
         </div>
     );
 }

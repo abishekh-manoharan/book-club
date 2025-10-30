@@ -81,7 +81,7 @@ function CreateReading() {
                 dispatch(updateErrorMessageThunk(error.message!));
             } else if (isFetchBaseQueryError(error)) {
                 const errormsg = error.data as string;
-                if(errormsg === "No club users found with the associated clubid.") return;
+                if (errormsg === "No club users found with the associated clubid.") return;
                 dispatch(updateErrorMessageThunk(errormsg));
             }
         }
@@ -94,11 +94,12 @@ function CreateReading() {
                 <p>Let's get reading</p>
             </div>
             <form className='createReadingForm'>
+                <BookSearch selectedBook={selectedBook} setSelectedBook={setSelectedBook} />
+                {selectedBook?.Title}
+
                 <label htmlFor="description">Description</label>
                 <input className="textInput" name="description" type="text" value={description} onChange={(e) => { setDescription(e.target.value) }} />
 
-                <BookSearch selectedBook={selectedBook} setSelectedBook={setSelectedBook} />
-                {selectedBook?.Title}
                 <br /><button onClick={createReadingClickHandler}>Create</button>
             </form>
         </div>

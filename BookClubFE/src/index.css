@@ -558,6 +558,26 @@ body {
   font-size: 14px;
 }
 
+.bookSearchResults {
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  height: 35vh;
+  overflow: scroll;
+}
+
+.bookSearchResult {
+  margin-bottom: 7px;
+}
+
+.bookSearchResultTitle{
+  font-weight: 500;
+}
+.bookSearchResultAuthorName{
+  font-weight: 300;
+  font-size: 14px;
+}
+
 .membersNavBar {
   width: 100%;
   display: flex;

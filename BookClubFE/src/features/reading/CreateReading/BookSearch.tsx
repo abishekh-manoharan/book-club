@@ -43,10 +43,9 @@ function BookSearch(props: BookSearchProps) {
 
     return (
         <div>
-            <label htmlFor="book">Book</label>
+            <label htmlFor="book">Book*</label>
             <input name="book" className="textInput" type='text' value={searchValue} onFocus={onSearchInputFocus} onBlur={onSearchInputBlur} onChange={(e) => setSearchValuePrep(e.target.value)} /> <br />
-            {hideSearchResults && <>true</>}
-            <div className="searchResults" hidden={hideSearchResults} style={{ "backgroundColor": "black", "width": 500 }}>
+            <div className="bookSearchResults" hidden={hideSearchResults} style={{ "backgroundColor": "black"}}>
                 {searchResults}
             </div>
         </div>
