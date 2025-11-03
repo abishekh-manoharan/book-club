@@ -29,7 +29,7 @@ function ReadingsList() {
     const [notJoinedReadingsHidden, setNotJoinedReadingsHidden] = useState(false);
 
     const { data: userId } = useGetUserIdQuery();
-    const { isSuccess: isGetClubUserSuccess, isError: isGetClubUserError }
+    const { data: clubUser, isSuccess: isGetClubUserSuccess, isError: isGetClubUserError }
         = useGetClubUserQuery(
             { clubId: Number(params.clubid), userId: userId as number },
             { skip: !userId }
@@ -105,10 +105,11 @@ function ReadingsList() {
                             )
                         }
                     </div>
-
-                    <div className="createClubBtn circleBtn" onClick={createReadingBtn}>
-                        <img className="ListHeader-plus" src='/src/assets/images/plusNoCircle.svg' />
-                    </div>
+                    {clubUser.admin ??
+                        <div className="createClubBtn circleBtn" onClick={createReadingBtn}>
+                            <img className="ListHeader-plus" src='/src/assets/images/plusNoCircle.svg' />
+                        </div>
+                    }
 
                 </>
             }
