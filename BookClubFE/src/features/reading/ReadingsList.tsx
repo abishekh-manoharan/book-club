@@ -105,7 +105,7 @@ function ReadingsList() {
                             )
                         }
                     </div>
-                    {clubUser.admin ??
+                    {clubUser.admin &&
                         <div className="createClubBtn circleBtn" onClick={createReadingBtn}>
                             <img className="ListHeader-plus" src='/src/assets/images/plusNoCircle.svg' />
                         </div>
