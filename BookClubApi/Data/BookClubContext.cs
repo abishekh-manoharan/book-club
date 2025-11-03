@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using BookClubApi.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -302,6 +302,7 @@ public partial class BookClubContext : IdentityDbContext<ApplicationUser>
 
             entity.HasOne(d => d.Reading).WithMany(p => p.Meetings)
                 .HasForeignKey(d => new { d.BookId, d.ClubId })
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("meetings_ibfk_1");
         });
 
