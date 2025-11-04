@@ -4,7 +4,7 @@ import { useGetUserIdQuery } from "../auth/authSlice";
 import { useAppDispatch } from "../../app/hooks";
 import { updateErrorMessageThunk } from "../error/errorSlice";
 import { isFetchBaseQueryError, isSerializedError } from "../../app/typeGuards";
-import UpdateReadingProgress from "./UpdateReadingProgress";
+// import UpdateReadingProgress from "./UpdateReadingProgress";
 import { useGetClubUserQuery } from "../club/clubSlice";
 import CreateMeeting from "../meeting/CreateMeeting";
 import MeetingList from "../meeting/MeetingList";
@@ -18,7 +18,6 @@ function ReadingHome() {
     const clubId = Number(clubid);
     const bookId = Number(bookid);
 
-
     const { data: userId, isSuccess: getUserIsSuccess, isFetching: getUserIsFetching } = useGetUserIdQuery();
     const { data: reading, isSuccess: getReadingIsSuccess, isFetching: getReadingIsFetching } = useGetOneReadingQuery(
         { ClubId: clubId, BookId: bookId },
@@ -26,11 +25,11 @@ function ReadingHome() {
     );
     const { isSuccess: getReadingUserSuccess, isError: getReadingUserError, isFetching: getReadingUserIsFetching } = useGetReadingUserQuery(
         { BookId: bookId, ClubId: clubId, UserId: userId! },
-        { skip: !getUserIsSuccess || !clubId || isNaN(clubId) || !bookId || isNaN(bookId) || !getReadingIsSuccess }
+        { skip: !getUserIsSuccess || !userId || !clubId || isNaN(clubId) || !bookId || isNaN(bookId) || !getReadingIsSuccess }
     );
     const { data: clubUser, isSuccess: clubUserIsSuccess, isError: clubUserIsFetching } = useGetClubUserQuery(
         { clubId: clubId, userId: userId as number },
-        { skip: !userId }
+        { skip: !getUserIsSuccess || !userId || !clubId || isNaN(clubId)}
     );
 
     const [optIntoReading] = useOptIntoReadingMutation();
@@ -85,7 +84,7 @@ function ReadingHome() {
 
                 {isAdmin && optedIn && <CreateMeeting />}
                 {optedIn && <MeetingList />}
-                {optedIn && loggedIn && <UpdateReadingProgress />}
+                {/* {optedIn && loggedIn && <UpdateReadingProgress />} */}
                 {optedIn && loggedIn && <DiscussionBoard />}
             </>}
         </div>

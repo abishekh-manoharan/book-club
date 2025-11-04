@@ -59,7 +59,7 @@ function App() {
             <Route path="requests" element=<JoinRequests /> />
           </Route>
           <Route path="club/:clubid/createReading" element=<CreateReading /> />
-          <Route path="reading/:bookid" element=<ReadingHome /> />
+          <Route path="club/:clubid/:bookid" element=<ReadingHome /> />
           <Route path="activeReadings" element=<ActiveReadings /> />
           <Route path="login" element=<Login /> />
         </Route>

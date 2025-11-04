@@ -10,15 +10,13 @@ interface BookSearchProps {
 function BookSearch(props: BookSearchProps) {
     const [searchValue, setSearchValue] = useState('');
     const [searchValuePrepared, setSearchValuePrepared] = useState('');
-    const { data, isFetching, isError } = useSearchQuery({ query: searchValuePrepared })
+    const { data, isFetching } = useSearchQuery({ query: searchValuePrepared })
     const [searchResults, setSearchResults] = useState([<></>]);
     const [hideSearchResults, setHideSearchResults] = useState(false);
 
 
     useEffect(() => {
-        console.log(data)
-        console.log(isFetching);
-        console.log(isError);
+
         if (isFetching && searchValuePrepared!=""){
             setSearchResults([<>Loading...</>])
             setHideSearchResults(false);

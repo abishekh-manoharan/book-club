@@ -2,6 +2,7 @@ import { useGetClubQuery } from "../../../features/club/clubSlice";
 import { useGetBookQuery } from "../../../features/book/bookSlice";
 import Progress from "./Progress";
 import { useGetReadingMemberCountQuery } from "../readingSlice";
+import { Link } from "react-router-dom";
 
 interface OptedInReadingProps {
     clubId: number,
@@ -19,19 +20,19 @@ function OptedInReading({ clubId, bookId, progress, progressTotal, progresstypeI
     return (
         <div className="optedInReading activeReadings-reading">
             {book?.cover_Id ?
-                <img className="activeReadings-reading-img" src={`https://covers.openlibrary.org/b/ID/${book?.cover_Id}-M.jpg`} />
-                : <img className="activeReadings-reading-img activeReadings-reading-img-noimg" src='/src/assets/images/book-open.svg' />
+                <Link className="activeReadings-reading-img" to={`../${book?.bookId}`}><img className="activeReadings-reading-img" src={`https://covers.openlibrary.org/b/ID/${book?.cover_Id}-M.jpg`} /></Link>
+                : <Link className="activeReadings-reading-img" to={`../${book?.bookId}`}><img className="activeReadings-reading-img activeReadings-reading-img-noimg" src='/src/assets/images/book-open.svg' /></Link>
             }
             <div className="activeReadings-reading-bookname">
-                {book?.title}
+                <Link to={`../${book?.bookId}`}>{book?.title}</Link>
             </div>
             <div className="activeReadings-reading-clubname">
-                {club?.name}
+                <Link to={`../${book?.bookId}`}>{club?.name}</Link>
             </div>
-            <div className="activeReadings-reading-membercount">
+            <Link to={`../${book?.bookId}`}><div className="activeReadings-reading-membercount">
                 <img className="userLogo user" src='/src/assets/images/user.svg' />
                 {readingMemberCount}
-            </div>
+            </div></Link>
             <div className="activeReadings-reading-progressOrOptInBtn">
                 <Progress bookId={bookId} clubId={clubId} progress={progress} progresstypeId={progresstypeId} progressTotal={progressTotal} />
             </div>

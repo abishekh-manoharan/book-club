@@ -6,6 +6,7 @@ import { updateErrorMessageThunk } from "../../error/errorSlice";
 import { useAppDispatch } from "../../../app/hooks";
 import { isFetchBaseQueryError, isSerializedError } from "../../../app/typeGuards";
 import { useGetUserIdQuery } from "../../../features/auth/authSlice";
+import { Link } from "react-router-dom";
 
 interface NotOptedInReadingProps {
     clubId: number,
@@ -48,19 +49,19 @@ function NotOptedInReading({ clubId, bookId }: NotOptedInReadingProps) {
     return (
         <div className="optedInReading activeReadings-reading">
             {book?.cover_Id ?
-                <img className="activeReadings-reading-img" src={`https://covers.openlibrary.org/b/ID/${book?.cover_Id}-M.jpg`} />
-                : <img className="activeReadings-reading-img activeReadings-reading-img-noimg" src='/src/assets/images/book-open.svg' />
+                <Link className="activeReadings-reading-img" to={`../${book?.bookId}`}><img className="activeReadings-reading-img" src={`https://covers.openlibrary.org/b/ID/${book?.cover_Id}-M.jpg`} /></Link>
+                : <Link className="activeReadings-reading-img" to={`../${book?.bookId}`}><img className="activeReadings-reading-img activeReadings-reading-img-noimg" src='/src/assets/images/book-open.svg' /></Link>
             }
-            <div className="activeReadings-reading-bookname">
+            <Link to={`../${book?.bookId}`}><div className="activeReadings-reading-bookname">
                 {book?.title}
-            </div>
+            </div></Link>
             <div className="activeReadings-reading-clubname">
-                {club?.name}
+                <Link to={`../${book?.bookId}`}>{club?.name}</Link>
             </div>
-            <div className="activeReadings-reading-membercount">
+            <Link to={`../${book?.bookId}`}><div className="activeReadings-reading-membercount">
                 <img className="userLogo user" src='/src/assets/images/user.svg' />
                 {readingMemberCount}
-            </div>
+            </div></Link>
             {
                 isGetClubUserSuccess && clubUser && <div className="activeReadings-reading-OptInBtn">
                     <button onClick={optIntoReadingBtnClickHandler} disabled={optIntoReadingLoading}>Opt in</button>
