@@ -96,8 +96,11 @@ function CreateReading() {
                 {selectedBook === undefined ? <>
                     <img className="selectedBookCover" src="/src/assets/images/book-open.svg" alt="image indicating no books has been selected" />
                     <div className="noBookSelectedLabel"><i>No book selected</i></div>
-                </> : <>
+                </> : <>{
+                    selectedBook.Cover_Id ? 
                     <img className="selectedBookCover" src={`https://covers.openlibrary.org/b/ID/${selectedBook?.Cover_Id}-M.jpg`} alt="image indicating no books has been selected" />
+                    : <img className="selectedBookCover" src='/src/assets/images/book-open.svg' alt="image indicating no books has been selected" />
+                }
                     <div className="BookSelectedLabel">
                             <div className="bookSearchResultTitle">{selectedBook?.Title}</div>
                             <div className="bookSearchResultAuthorName">{selectedBook.AuthorName}</div>
