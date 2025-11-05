@@ -9,6 +9,9 @@ import { useGetClubUserQuery } from "../club/clubSlice";
 import CreateMeeting from "../meeting/CreateMeeting";
 import MeetingList from "../meeting/MeetingList";
 import DiscussionBoard from "../discussion/DiscussionBoard";
+import { useGetBookQuery } from "../book/bookSlice";
+import Progress from "./ActiveReadings/Progress";
+import NavBar from "./NavBar";
 
 
 function ReadingHome() {
@@ -18,18 +21,19 @@ function ReadingHome() {
     const clubId = Number(clubid);
     const bookId = Number(bookid);
 
+    const { data: book } = useGetBookQuery(bookId);
     const { data: userId, isSuccess: getUserIsSuccess, isFetching: getUserIsFetching } = useGetUserIdQuery();
     const { data: reading, isSuccess: getReadingIsSuccess, isFetching: getReadingIsFetching } = useGetOneReadingQuery(
         { ClubId: clubId, BookId: bookId },
         { skip: !bookId || !clubId || isNaN(clubId) || isNaN(bookId) }
     );
-    const { isSuccess: getReadingUserSuccess, isError: getReadingUserError, isFetching: getReadingUserIsFetching } = useGetReadingUserQuery(
+    const { data: readingUser, isSuccess: getReadingUserSuccess, isError: getReadingUserError, isFetching: getReadingUserIsFetching } = useGetReadingUserQuery(
         { BookId: bookId, ClubId: clubId, UserId: userId! },
         { skip: !getUserIsSuccess || !userId || !clubId || isNaN(clubId) || !bookId || isNaN(bookId) || !getReadingIsSuccess }
     );
     const { data: clubUser, isSuccess: clubUserIsSuccess, isError: clubUserIsFetching } = useGetClubUserQuery(
         { clubId: clubId, userId: userId as number },
-        { skip: !getUserIsSuccess || !userId || !clubId || isNaN(clubId)}
+        { skip: !getUserIsSuccess || !userId || !clubId || isNaN(clubId) }
     );
 
     const [optIntoReading] = useOptIntoReadingMutation();
@@ -76,16 +80,17 @@ function ReadingHome() {
     const loggedIn = getUserIsSuccess;
 
     return (
-        <div>
-            <h1>Reading home</h1>
+        <div className="readingHome">
             {!getUserIsFetching && !getReadingIsFetching && !getReadingUserIsFetching && !clubUserIsFetching && <>
-                {optedIn && loggedIn && <button onClick={optOutOfReadingButtonClick}>opt out of reading</button>}
-                {optedOut && loggedIn && <button onClick={optIntoReadingButtonClick}>opt into reading</button>}<br /><br />
-
-                {isAdmin && optedIn && <CreateMeeting />}
-                {optedIn && <MeetingList />}
-                {/* {optedIn && loggedIn && <UpdateReadingProgress />} */}
-                {optedIn && loggedIn && <DiscussionBoard />}
+                {book?.cover_Id ?
+                    <img className="selectedBookCover" src={`https://covers.openlibrary.org/b/ID/${book?.cover_Id}-M.jpg`} /> :
+                    <img className="selectedBookCover" src='/src/assets/images/book-open.svg' />
+                }
+                <h1>{book?.title}</h1>
+                {book?.authorName && <p className='bookSearchResultAuthorName'>{book?.authorName}</p>}
+                <Progress bookId={bookId} clubId={clubId} progress={readingUser!.progress} progresstypeId={readingUser!.progresstypeId} progressTotal={readingUser!.progressTotal} />
+                <NavBar/>
+                
             </>}
         </div>
     );

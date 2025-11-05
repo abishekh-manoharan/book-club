@@ -4,10 +4,9 @@ import ProgressBar from "./ProgressBar";
 
 function Progress({progress, progresstypeId, progressTotal, clubId, bookId}: {progress: number, progressTotal: number | undefined, progresstypeId: number | undefined, bookId: number, clubId: number}) {
     const [modalShow, setModalShow] = useState(false);
-    console.log("-P")
-    console.log(progressTotal)
+    
     return (
-        <div>
+        <div className="progress">
             {progress}
             <ProgressBar progress={progress} progresstypeId={progresstypeId} progressTotal={progressTotal}/>
             <button className="button" onClick={() => setModalShow((state) => !state)}>Update Progress</button>

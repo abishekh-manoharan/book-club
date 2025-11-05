@@ -619,6 +619,17 @@ body {
   margin-bottom: 7px;
 }
 
+.readingHome {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+}
+
+.readingHome .progress {
+  width: 100%;
+}
+
 .barContainer {
   width: 100%;
   display: flex;
