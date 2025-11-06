@@ -16,7 +16,7 @@ import ErrorMsg from "./features/error/ErrorMsg"
 import { useAppSelector } from "./app/hooks"
 import { selectError } from "./features/error/errorSlice"
 import CreateReading from "./features/reading/CreateReading/CreateReading"
-import ReadingHome from "./features/reading/ReadingHome"
+import ReadingHome from "./features/reading/Home/ReadingHome"
 // import NotificationHeader from "./features/notification/NotificationHeader"
 
 //TODO: uncomment

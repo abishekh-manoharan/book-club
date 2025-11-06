@@ -1,17 +1,17 @@
 import { useParams } from "react-router-dom";
-import { useGetOneReadingQuery, useGetReadingUserQuery, useOptIntoReadingMutation, useOptOutOfReadingMutation } from "./readingSlice";
-import { useGetUserIdQuery } from "../auth/authSlice";
-import { useAppDispatch } from "../../app/hooks";
-import { updateErrorMessageThunk } from "../error/errorSlice";
-import { isFetchBaseQueryError, isSerializedError } from "../../app/typeGuards";
+import { useGetOneReadingQuery, useGetReadingUserQuery, useOptIntoReadingMutation, useOptOutOfReadingMutation } from "../readingSlice";
+import { useGetUserIdQuery } from "../../auth/authSlice";
+import { useAppDispatch } from "../../../app/hooks";
+import { updateErrorMessageThunk } from "../../error/errorSlice";
+import { isFetchBaseQueryError, isSerializedError } from "../../../app/typeGuards";
 // import UpdateReadingProgress from "./UpdateReadingProgress";
-import { useGetClubUserQuery } from "../club/clubSlice";
-import CreateMeeting from "../meeting/CreateMeeting";
-import MeetingList from "../meeting/MeetingList";
-import DiscussionBoard from "../discussion/DiscussionBoard";
-import { useGetBookQuery } from "../book/bookSlice";
-import Progress from "./ActiveReadings/Progress";
-import NavBar from "./NavBar";
+import { useGetClubUserQuery } from "../../club/clubSlice";
+import CreateMeeting from "../../meeting/CreateMeeting";
+import MeetingList from "../../meeting/MeetingList";
+import DiscussionBoard from "../../discussion/DiscussionBoard";
+import { useGetBookQuery } from "../../book/bookSlice";
+import Progress from "../ActiveReadings/Progress";
+import NavBar from "../NavBar";
 
 
 function ReadingHome() {
@@ -89,7 +89,7 @@ function ReadingHome() {
                 <h1>{book?.title}</h1>
                 {book?.authorName && <p className='bookSearchResultAuthorName'>{book?.authorName}</p>}
                 <Progress bookId={bookId} clubId={clubId} progress={readingUser!.progress} progresstypeId={readingUser!.progresstypeId} progressTotal={readingUser!.progressTotal} />
-                <NavBar/>
+                <NavBar />
                 
             </>}
         </div>
