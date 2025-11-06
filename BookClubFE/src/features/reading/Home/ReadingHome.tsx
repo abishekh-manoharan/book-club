@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Outlet, useParams } from "react-router-dom";
 import { useGetOneReadingQuery, useGetReadingUserQuery, useOptIntoReadingMutation, useOptOutOfReadingMutation } from "../readingSlice";
 import { useGetUserIdQuery } from "../../auth/authSlice";
 import { useAppDispatch } from "../../../app/hooks";
@@ -90,7 +90,7 @@ function ReadingHome() {
                 {book?.authorName && <p className='bookSearchResultAuthorName'>{book?.authorName}</p>}
                 <Progress bookId={bookId} clubId={clubId} progress={readingUser!.progress} progresstypeId={readingUser!.progresstypeId} progressTotal={readingUser!.progressTotal} />
                 <NavBar />
-                
+                <Outlet />
             </>}
         </div>
     );

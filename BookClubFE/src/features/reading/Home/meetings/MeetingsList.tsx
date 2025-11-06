@@ -1,7 +1,7 @@
 function MeetingsList() {
     return (
         <div>
-            
+            Meetings List
         </div>
     );
 }

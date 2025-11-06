@@ -8,8 +8,9 @@ function NavBar() {
 
     return (
         <div className="clubNavBar">
-            <NavLink style={({ isActive }) => isActive ? navLinkActiveStyle : {}} to="readings" className="item">Readings</NavLink>
-            <NavLink style={({ isActive }) => isActive ? navLinkActiveStyle : {}} to="members" className="item">Members</NavLink>
+            <NavLink style={({ isActive }) => isActive ? navLinkActiveStyle : {}} to="meetings" className="item">Meetings</NavLink>
+            <NavLink style={({ isActive }) => isActive ? navLinkActiveStyle : {}} to="readers" className="item">Readers</NavLink>
+            <NavLink style={({ isActive }) => isActive ? navLinkActiveStyle : {}} to="discussions" className="item">Discussions</NavLink>
         </div>
     );
 }
