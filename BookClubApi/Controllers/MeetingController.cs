@@ -58,7 +58,23 @@ public class MeetingController : ControllerBase
                 };
 
                 dbContext.Meetings.Add(newMeeting);
-                dbContext.SaveChanges();
+                await dbContext.SaveChangesAsync();
+
+                // ensuring that there are only 3 concluded meetings for a reading in db
+                // retrieve meetings that are past, and are not a part of the most recent 3 concluded meetings
+                DateTime now = DateTime.Now;
+                var concludedMeetingsToRemove = dbContext.Meetings
+                    .Where(
+                        m => m.BookId == meeting.BookId && m.ClubId == meeting.ClubId // ensure we only get the meetings associated with the reading
+                        && m.EndTime < now // ensure meetings are past
+                    )
+                    .OrderByDescending(m => m.EndTime)
+                    .Skip(3) // ensure the meetings are not the last 3 meetings
+                    .ToList();
+
+                // delete those meetings 
+                dbContext.Meetings.RemoveRange(concludedMeetingsToRemove);
+                await dbContext.SaveChangesAsync();
 
                 MeetingDTO newMeetingDTO = new()
                 {
