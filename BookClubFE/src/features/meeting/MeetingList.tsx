@@ -21,7 +21,7 @@ function MeetingList() {
     }
 
     return (
-        <div hidden>
+        <div>
             <h3>Meetings</h3>
             {meetings?.length === 0 ? <>no meetings to display</> : <>
                 {sortedMeetings && sortedMeetings.map((meeting) => {

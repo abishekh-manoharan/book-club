@@ -31,7 +31,7 @@ import MembersList from "./features/club/members/MembersList"
 import JoinRequests from "./features/club/home/JoinRequests/JoinRequests"
 import ReadingMembersList from "./features/reading/Home/ReadingMembersList"
 import DiscussionBoard from "./features/reading/Home/DiscussionBoard"
-import MeetingsList from "./features/reading/Home/meetings/MeetingsList"
+import MeetingsList from "./features/meeting/MeetingList"
 
 function App() {
   const { data: status, isFetching } = useGetStatusQuery();
