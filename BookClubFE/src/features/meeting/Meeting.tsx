@@ -43,8 +43,7 @@ function Meeting({ meeting, concluded }: { meeting: MeetingType, concluded: bool
     return (
         <div>
             {meeting.name} {meeting.startTime}
-            {isAdmin && <button onClick={deleteMeetingBtnClick}>delete</button>}
-            {concluded && <>concluded</>}
+            {!concluded && isAdmin && <button onClick={deleteMeetingBtnClick}>delete</button>}
         </div>
     );
 }

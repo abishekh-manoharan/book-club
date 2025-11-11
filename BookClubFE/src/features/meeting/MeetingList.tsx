@@ -13,7 +13,14 @@ function MeetingList() {
     // sorting meetings by start date 
     const sortedMeetings = useMemo(() => {
         const meetingsCopy = meetings?.slice();
-        return meetingsCopy?.sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
+        const concludedMeetings = meetingsCopy?.filter(m => { return new Date(m.endTime!).getTime() - Date.now() < 0 }).sort((a, b) => new Date(a.endTime!).getTime() - new Date(b.endTime!).getTime());
+        const upcomingMeetings = meetingsCopy?.filter(m => { return new Date(m.endTime!).getTime() - Date.now() > 0 }).sort((a, b) => new Date(a.endTime!).getTime() - new Date(b.endTime!).getTime());
+
+        return {
+            concludedMeetings,
+            upcomingMeetings
+        }
+        // return meetingsCopy?.sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
     }, [meetings]);
 
     if (isGetMettingsError) {
@@ -24,7 +31,14 @@ function MeetingList() {
         <div>
             <h3>Meetings</h3>
             {meetings?.length === 0 ? <>no meetings to display</> : <>
-                {sortedMeetings && sortedMeetings.map((meeting) => {
+                <>upcomingMeetings</>
+                {sortedMeetings && sortedMeetings.upcomingMeetings && sortedMeetings.upcomingMeetings?.map((meeting) => {
+                    const now = new Date();
+                    return <Meeting meeting={meeting} concluded={now.getTime() - new Date(meeting.endTime!).getTime() > 0} />
+                }
+                )}
+                <br/><>concludedMeetings</>
+                {sortedMeetings && sortedMeetings.upcomingMeetings && sortedMeetings.concludedMeetings?.map((meeting) => {
                     const now = new Date();
                     return <Meeting meeting={meeting} concluded={now.getTime() - new Date(meeting.endTime!).getTime() > 0} />
                 }
