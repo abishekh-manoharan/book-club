@@ -40,10 +40,63 @@ function Meeting({ meeting, concluded }: { meeting: MeetingType, concluded: bool
         }
     }
 
+    const startTimeString = new Date(meeting.startTime).toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+    });
+
+    let endTimeString = null;
+    if (meeting.endTime) {
+        endTimeString = new Date(meeting.endTime!).toLocaleTimeString("en-US", {
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true,
+        });
+    }
+
+    // 2. Format to "Month, Day"
+    const monthString = new Date(meeting.startTime).toLocaleDateString("en-US", {
+        month: "long",
+    });
+
+    // 2. Format to "Month, Day"
+    const dayString = new Date(meeting.startTime).toLocaleDateString("en-US", {
+        day: "numeric",
+    });
+
     return (
-        <div>
-            {meeting.name} {meeting.startTime}
-            {!concluded && isAdmin && <button onClick={deleteMeetingBtnClick}>delete</button>}
+        <div className="meeting">
+            <div className="meetingDate">
+                <div className="date" style={concluded ? {backgroundColor: "rgb(170 69 74)"} : {}}> 
+                    <div className="dateContainer">
+                        <div className="day">
+                            {dayString}
+                        </div>
+                        <div className="month">
+                            {monthString}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div className="meetingInfo">
+                <div className="meetingName">
+                    {meeting.name}
+                </div>
+                {meeting.description && <div className="meetingDescription mediumText">
+                    {meeting.description}
+                </div>
+                }
+                <div className="meetingTime">
+                    <div className="timeLogo">
+                        <img src="/src/assets/images/clock.svg" />
+                    </div>
+                    <div className="time">
+                        {startTimeString} {endTimeString != undefined ? <>- {endTimeString}</> : <></>}
+                    </div>
+                </div>
+                {/* {!concluded && isAdmin && <button onClick={deleteMeetingBtnClick}>delete</button>} */}
+            </div>
         </div>
     );
 }

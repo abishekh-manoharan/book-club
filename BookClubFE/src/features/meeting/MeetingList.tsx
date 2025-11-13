@@ -28,16 +28,14 @@ function MeetingList() {
     }
 
     return (
-        <div>
-            <h3>Meetings</h3>
+        <div className="meetings">
             {meetings?.length === 0 ? <>no meetings to display</> : <>
-                <>upcomingMeetings</>
                 {sortedMeetings && sortedMeetings.upcomingMeetings && sortedMeetings.upcomingMeetings?.map((meeting) => {
                     const now = new Date();
                     return <Meeting meeting={meeting} concluded={now.getTime() - new Date(meeting.endTime!).getTime() > 0} />
                 }
                 )}
-                <br/><>concludedMeetings</>
+                <br/><div style={{marginBottom:'7px', fontSize: "15px"}}>Recently concluded meetings:</div>
                 {sortedMeetings && sortedMeetings.upcomingMeetings && sortedMeetings.concludedMeetings?.map((meeting) => {
                     const now = new Date();
                     return <Meeting meeting={meeting} concluded={now.getTime() - new Date(meeting.endTime!).getTime() > 0} />

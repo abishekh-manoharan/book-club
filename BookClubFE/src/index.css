@@ -70,9 +70,10 @@ h1 {
 }
 
 h2 {
-  font-weight: 400;
   display: inline;
   font-size: 16px;
+  line-height: normal;
+  display: inline;
 }
 
 p {
@@ -628,6 +629,77 @@ body {
 
 .readingHome .progress {
   width: 100%;
+}
+
+.meetings {
+  width: 100%;
+  margin-top: 7px;
+}
+
+.meeting {
+  display: flex;
+  margin-bottom: 7px;
+}
+
+.meetingDate {
+  height: 100px;
+  min-height: 100px;
+  max-height: 100px;
+  width: 85px;
+  min-width: 85px;
+  max-width: 85px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.meetingDate .date {
+  height: 90%;
+  width: 90%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(77, 105, 188);
+}
+
+.meetingInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 7px;
+  max-width: 71vw;
+}
+
+.meetingTime {
+  display: flex;
+  gap: 7px;
+  /* margin: auto;
+  margin-bottom: 0; */
+}
+
+.dateContainer .day {
+  font-size: 24px;
+}
+.dateContainer .month {
+  font-size: 14px;
+}
+
+.timeLogo {
+  height: 24px;
+}
+
+.meetingTime .time {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.dateContainer {
+  text-align: center;
+}
+
+.meetingName {
+  font-size: 16px;
+  font-weight: 600;
 }
 
 .barContainer {
