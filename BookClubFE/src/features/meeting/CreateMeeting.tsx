@@ -14,12 +14,12 @@ function CreateMeeting() {
 
     const [createMeeting] = useCreateMeetingMutation();
     const [notifyReadingUsers] = useNotifyReadingUsersMutation();
-    
+
     const { clubid, bookid } = useParams();
     const clubId = Number(clubid);
     const bookId = Number(bookid);
-    
-    const {data: reading} = useGetOneReadingQuery({BookId: bookId, ClubId: clubId}, { skip: isNaN(clubId) || isNaN(bookId)});
+
+    const { data: reading } = useGetOneReadingQuery({ BookId: bookId, ClubId: clubId }, { skip: isNaN(clubId) || isNaN(bookId) });
 
 
     // getting the current date in the format yyyy-mm-dd to use as a minimum value for the start date of the meeting 
@@ -53,10 +53,10 @@ function CreateMeeting() {
         try {
             const result = await createMeeting(newMeeting).unwrap();
             const result2 = await notifyReadingUsers({
-                    ClubId: clubId,
-                    BookId: bookId,
-                    Text: `New meeting created in ${reading?.name}`
-                })
+                ClubId: clubId,
+                BookId: bookId,
+                Text: `New meeting created in ${reading?.name}`
+            })
                 .unwrap();
             console.log(result + " " + result2);
         } catch (error) {
@@ -74,6 +74,21 @@ function CreateMeeting() {
 
     return (
         <div>
+            <div className="meeting">
+                <div className="meetingDate">
+                    <div className="date" style={{ backgroundColor: "rgb(159 176 209)" }}>
+                        <div className="dateContainer">
+                            +
+                        </div>
+                    </div>
+                </div>
+                <div className="meetingInfo">
+                    <div className="meetingName">
+                        Create a meeting
+                    </div>
+                    {/* {!concluded && isAdmin && <button onClick={deleteMeetingBtnClick}>delete</button>} */}
+                </div>
+            </div>
             <form className="createMeetingForm">
                 Create Meeting
                 <label htmlFor="meetingName">Name</label>

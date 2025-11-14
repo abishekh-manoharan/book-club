@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { useGetAllMeetingsQuery } from "./meetingSlice";
 import { useMemo } from "react";
 import Meeting from "./Meeting";
+import CreateMeeting from "./CreateMeeting";
 
 function MeetingList() {
     const { clubid, bookid } = useParams();
@@ -29,6 +30,7 @@ function MeetingList() {
 
     return (
         <div className="meetings">
+            <CreateMeeting/>
             {meetings?.length === 0 ? <>no meetings to display</> : <>
                 {sortedMeetings && sortedMeetings.upcomingMeetings && sortedMeetings.upcomingMeetings?.map((meeting) => {
                     const now = new Date();

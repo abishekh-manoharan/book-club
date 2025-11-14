@@ -55,12 +55,10 @@ function Meeting({ meeting, concluded }: { meeting: MeetingType, concluded: bool
         });
     }
 
-    // 2. Format to "Month, Day"
     const monthString = new Date(meeting.startTime).toLocaleDateString("en-US", {
         month: "long",
     });
 
-    // 2. Format to "Month, Day"
     const dayString = new Date(meeting.startTime).toLocaleDateString("en-US", {
         day: "numeric",
     });
