@@ -34,6 +34,7 @@ public class MeetingController : ControllerBase
     [Authorize]
     public async Task<ActionResult<Reading>> CreateMeeting([FromBody] MeetingCreationValidationDto meeting)
     {
+        Console.WriteLine("TEST");
         // ensure required params are included
         if (ModelState.IsValid)
         {
@@ -62,7 +63,7 @@ public class MeetingController : ControllerBase
 
                 // ensuring that there are only 3 concluded meetings for a reading in db
                 // retrieve meetings that are past, and are not a part of the most recent 3 concluded meetings
-                DateTime now = DateTime.Now;
+                DateTime now = DateTime.UtcNow;
                 var concludedMeetingsToRemove = dbContext.Meetings
                     .Where(
                         m => m.BookId == meeting.BookId && m.ClubId == meeting.ClubId // ensure we only get the meetings associated with the reading
@@ -71,7 +72,10 @@ public class MeetingController : ControllerBase
                     .OrderByDescending(m => m.EndTime)
                     .Skip(3) // ensure the meetings are not the last 3 meetings
                     .ToList();
-
+                
+                Console.WriteLine(now);
+                Console.WriteLine(concludedMeetingsToRemove[0]!.EndTime);
+                
                 // delete those meetings 
                 dbContext.Meetings.RemoveRange(concludedMeetingsToRemove);
                 await dbContext.SaveChangesAsync();
