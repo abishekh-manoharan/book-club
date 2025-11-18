@@ -88,11 +88,10 @@ function CreateMeeting() {
                 {/* <input id="meetingStartDate" type="datetime-local" min={minDate} required  value="2025-04-08T19:30"/> <br /> */}
                 <input className="textInput" id="meetingStartDate" type="datetime-local" value={startDate} onChange={(e) => setStartDate(e.target.value)}  min={minDate} required /> <br />
                 <label htmlFor="meetingEndDate">Meeting End Time</label>
-                <input className="textInput" id="meetingEndDate" type="datetime-local" min={startDate ?? minDate} required />
+                {/* <input className="textInput" id="meetingEndDate" type="datetime-local" min={startDate ?? minDate} required /> */}
+                <input className="textInput" id="meetingEndDate" type="datetime-local" required />
                 <button onClick={createMeetingClickHandler}>Create</button>
             </form>
-            {startDate}<br/>
-            {minDate}
         </div>
     );
 }

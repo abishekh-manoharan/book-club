@@ -57,6 +57,7 @@ function Meeting({ meeting, concluded }: { meeting: MeetingType, concluded: bool
 
     const monthString = new Date(meeting.startTime).toLocaleDateString("en-US", {
         month: "long",
+        year: "numeric"
     });
 
     const dayString = new Date(meeting.startTime).toLocaleDateString("en-US", {
@@ -92,6 +93,7 @@ function Meeting({ meeting, concluded }: { meeting: MeetingType, concluded: bool
                     <div className="time">
                         {startTimeString} {endTimeString != undefined ? <>- {endTimeString}</> : <></>}
                     </div>
+                    
                 </div>
                 {/* {!concluded && isAdmin && <button onClick={deleteMeetingBtnClick}>delete</button>} */}
             </div>
