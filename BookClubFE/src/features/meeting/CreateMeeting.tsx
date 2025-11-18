@@ -11,6 +11,7 @@ function CreateMeeting() {
     const dispatch = useAppDispatch();
     const [Name, setName] = useState("");
     const [Description, setDescription] = useState("");
+    const [startDate, setStartDate] = useState<string | undefined>();
 
     const [createMeeting] = useCreateMeetingMutation();
     const [notifyReadingUsers] = useNotifyReadingUsersMutation();
@@ -73,38 +74,25 @@ function CreateMeeting() {
     }
 
     return (
-        <div>
-            <div className="meeting">
-                <div className="meetingDate">
-                    <div className="date" style={{ backgroundColor: "rgb(159 176 209)" }}>
-                        <div className="dateContainer">
-                            +
-                        </div>
-                    </div>
-                </div>
-                <div className="meetingInfo">
-                    <div className="meetingName">
-                        Create a meeting
-                    </div>
-                    {/* {!concluded && isAdmin && <button onClick={deleteMeetingBtnClick}>delete</button>} */}
-                </div>
-            </div>
+        <div className="createClubPage">
+            <div className="createClubHeading"><h1>Create A Meeting</h1><p>Create a meeting and meet with your friends!</p></div>
             <form className="createMeetingForm">
-                Create Meeting
-                <label htmlFor="meetingName">Name</label>
-                <input id="meetingName" type="text" onChange={(e) => setName(e.target.value)} value={Name} required /> <br />
+                <label htmlFor="meetingName">Name*</label>
+                <input className="textInput" id="meetingName" type="text" onChange={(e) => setName(e.target.value)} value={Name} required /> <br />
 
                 <label htmlFor="meetingDescription">Description</label>
-                <textarea id="meetingDescription" rows={5} cols={20} onChange={(e) => setDescription(e.target.value)} value={Description} /> <br />
+                <textarea className="textInput" id="meetingDescription" style={{height: "auto"}} rows={5} cols={20} onChange={(e) => setDescription(e.target.value)} value={Description} /> <br />
 
-                <label htmlFor="meetingStartDate">Meeting Start Time</label>
+                <label htmlFor="meetingStartDate">Meeting Start Time*</label>
                 {/* <input id="meetingStartDate" type="datetime-local" min={minDate} value="2030-06-12T19:30" required /> <br /> */}
                 {/* <input id="meetingStartDate" type="datetime-local" min={minDate} required  value="2025-04-08T19:30"/> <br /> */}
-                <input id="meetingStartDate" type="datetime-local" min={minDate} required /> <br />
+                <input className="textInput" id="meetingStartDate" type="datetime-local" value={startDate} onChange={(e) => setStartDate(e.target.value)}  min={minDate} required /> <br />
                 <label htmlFor="meetingEndDate">Meeting End Time</label>
-                <input id="meetingEndDate" type="datetime-local" required />
+                <input className="textInput" id="meetingEndDate" type="datetime-local" min={startDate ?? minDate} required />
                 <button onClick={createMeetingClickHandler}>Create</button>
             </form>
+            {startDate}<br/>
+            {minDate}
         </div>
     );
 }

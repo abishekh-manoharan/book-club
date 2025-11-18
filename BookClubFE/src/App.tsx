@@ -32,6 +32,7 @@ import JoinRequests from "./features/club/home/JoinRequests/JoinRequests"
 import ReadingMembersList from "./features/reading/Home/ReadingMembersList"
 import DiscussionBoard from "./features/reading/Home/DiscussionBoard"
 import MeetingsList from "./features/meeting/MeetingList"
+import CreateMeeting from "./features/meeting/CreateMeeting"
 
 function App() {
   const { data: status, isFetching } = useGetStatusQuery();
@@ -68,6 +69,7 @@ function App() {
             <Route path="readers" element=<ReadingMembersList /> />
             <Route path="discussions" element=<DiscussionBoard /> />
           </Route>
+          <Route path="club/:clubid/:bookid/meetings/create" element=<CreateMeeting /> />
           <Route path="activeReadings" element=<ActiveReadings /> />
           <Route path="login" element=<Login /> />
         </Route>

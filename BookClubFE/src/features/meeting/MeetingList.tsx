@@ -1,8 +1,7 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useGetAllMeetingsQuery } from "./meetingSlice";
 import { useMemo } from "react";
 import Meeting from "./Meeting";
-import CreateMeeting from "./CreateMeeting";
 
 function MeetingList() {
     const { clubid, bookid } = useParams();
@@ -14,8 +13,12 @@ function MeetingList() {
     // sorting meetings by start date 
     const sortedMeetings = useMemo(() => {
         const meetingsCopy = meetings?.slice();
-        const concludedMeetings = meetingsCopy?.filter(m => { return new Date(m.endTime!).getTime() - Date.now() < 0 }).sort((a, b) => new Date(a.endTime!).getTime() - new Date(b.endTime!).getTime());
-        const upcomingMeetings = meetingsCopy?.filter(m => { return new Date(m.endTime!).getTime() - Date.now() > 0 }).sort((a, b) => new Date(a.endTime!).getTime() - new Date(b.endTime!).getTime());
+        const concludedMeetings = meetingsCopy?.filter(m => { return new Date(m.endTime!).getTime() - new Date(Date.now()).getTime() < 0 }).sort((a, b) => new Date(a.endTime!).getTime() - new Date(b.endTime!).getTime());
+        const upcomingMeetings = meetingsCopy?.filter(m => { return new Date(m.endTime!).getTime() - new Date(Date.now()).getTime() > 0 }).sort((a, b) => new Date(a.endTime!).getTime() - new Date(b.endTime!).getTime());
+
+        // console.log(new Date(meetings![0].endTime!).getTime() - Date.now())
+        // console.log(new Date(Date.now()).getTime())
+        // console.log(new Date(meetings![0].endTime!))
 
         return {
             concludedMeetings,
@@ -30,20 +33,24 @@ function MeetingList() {
 
     return (
         <div className="meetings">
-            <CreateMeeting/>
             {meetings?.length === 0 ? <>no meetings to display</> : <>
                 {sortedMeetings && sortedMeetings.upcomingMeetings && sortedMeetings.upcomingMeetings?.map((meeting) => {
                     const now = new Date();
                     return <Meeting meeting={meeting} concluded={now.getTime() - new Date(meeting.endTime!).getTime() > 0} />
                 }
                 )}
-                <br/><div style={{marginBottom:'7px', fontSize: "15px"}}>Recently concluded meetings:</div>
+                <br /><div style={{ marginBottom: '7px', fontSize: "15px" }}>Recently concluded meetings:</div>
                 {sortedMeetings && sortedMeetings.upcomingMeetings && sortedMeetings.concludedMeetings?.map((meeting) => {
                     const now = new Date();
                     return <Meeting meeting={meeting} concluded={now.getTime() - new Date(meeting.endTime!).getTime() > 0} />
                 }
                 )}
             </>}
+            <Link to={`/club/${clubid}/${bookid}/meetings/create`}>
+                <div className="circleBtn">
+                    <img className="ListHeader-plus" src='/src/assets/images/plusNoCircle.svg' />
+                </div>
+            </Link>
         </div>
     );
 }
