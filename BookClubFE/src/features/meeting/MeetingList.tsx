@@ -13,7 +13,8 @@ function MeetingList() {
     // sorting meetings by start date 
     const sortedMeetings = useMemo(() => {
         const meetingsCopy = meetings?.slice();
-        const concludedMeetings = meetingsCopy?.filter(m => { return new Date(m.endTime!).getTime() - new Date(Date.now()).getTime() < 0 }).sort((a, b) => new Date(a.endTime!).getTime() - new Date(b.endTime!).getTime());
+        const allConcludedMeetings = meetingsCopy?.filter(m => { return new Date(m.endTime!).getTime() - new Date(Date.now()).getTime() < 0 }).sort((a, b) => new Date(a.endTime!).getTime() - new Date(b.endTime!).getTime());
+        const firstThreeConcludedMeetings = allConcludedMeetings?.slice(0,3);
         const upcomingMeetings = meetingsCopy?.filter(m => { return new Date(m.endTime!).getTime() - new Date(Date.now()).getTime() > 0 }).sort((a, b) => new Date(a.endTime!).getTime() - new Date(b.endTime!).getTime());
 
         // console.log(new Date(meetings![0].endTime!).getTime() - Date.now())
@@ -21,7 +22,7 @@ function MeetingList() {
         // console.log(new Date(meetings![0].endTime!))
 
         return {
-            concludedMeetings,
+            concludedMeetings: firstThreeConcludedMeetings,
             upcomingMeetings
         }
         // return meetingsCopy?.sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
