@@ -646,6 +646,7 @@ body {
 .meeting {
   display: flex;
   margin-bottom: 7px;
+  position: relative;
 }
 
 .meetingDate {
@@ -707,6 +708,13 @@ body {
 .meetingName {
   font-size: 16px;
   font-weight: 600;
+}
+
+.dropdownButton {
+  position: absolute;
+  bottom: 7px;
+  right: 0px;
+  height: 24px;
 }
 
 .barContainer {

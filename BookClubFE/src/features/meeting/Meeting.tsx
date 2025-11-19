@@ -66,6 +66,9 @@ function Meeting({ meeting, concluded }: { meeting: MeetingType, concluded: bool
 
     return (
         <div className="meeting">
+            <div className="dropdownButton">
+                <img src="/src/assets/images/edit.svg" />
+            </div>
             <div className="meetingDate">
                 <div className="date" style={concluded ? {backgroundColor: "rgb(170 69 74)"} : {}}> 
                     <div className="dateContainer">
@@ -93,7 +96,6 @@ function Meeting({ meeting, concluded }: { meeting: MeetingType, concluded: bool
                     <div className="time">
                         {startTimeString} {endTimeString != undefined ? <>- {endTimeString}</> : <></>}
                     </div>
-                    
                 </div>
                 {/* {!concluded && isAdmin && <button onClick={deleteMeetingBtnClick}>delete</button>} */}
             </div>
