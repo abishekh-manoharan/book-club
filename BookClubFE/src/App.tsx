@@ -33,6 +33,7 @@ import ReadingMembersList from "./features/reading/Home/ReadingMembersList"
 import DiscussionBoard from "./features/reading/Home/DiscussionBoard"
 import MeetingsList from "./features/meeting/MeetingList"
 import CreateMeeting from "./features/meeting/CreateMeeting"
+import EditMeeting from "./features/meeting/EditMeeting"
 
 function App() {
   const { data: status, isFetching } = useGetStatusQuery();
@@ -70,6 +71,7 @@ function App() {
             <Route path="discussions" element=<DiscussionBoard /> />
           </Route>
           <Route path="club/:clubid/:bookid/meetings/create" element=<CreateMeeting /> />
+          <Route path="club/:clubid/:bookid/meetings/:meetingId/edit" element=<EditMeeting /> />
           <Route path="activeReadings" element=<ActiveReadings /> />
           <Route path="login" element=<Login /> />
         </Route>

@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useGetUserIdQuery } from "../auth/authSlice";
 import { useGetClubUserQuery } from "../club/clubSlice";
 import { isFetchBaseQueryError, isSerializedError } from "../../app/typeGuards";
@@ -67,7 +67,9 @@ function Meeting({ meeting, concluded }: { meeting: MeetingType, concluded: bool
     return (
         <div className="meeting">
             <div className="dropdownButton">
-                <img src="/src/assets/images/edit.svg" />
+                <Link to={`${meeting.meetingId}/edit`}>
+                    <img src="/src/assets/images/edit.svg" />
+                </Link>
             </div>
             <div className="meetingDate">
                 <div className="date" style={concluded ? {backgroundColor: "rgb(170 69 74)"} : {}}> 
