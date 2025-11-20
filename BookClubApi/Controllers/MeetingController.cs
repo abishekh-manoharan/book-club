@@ -179,7 +179,7 @@ public class MeetingController : ControllerBase
 
     // action method that returns a specific meeting
     [HttpGet("GetAMeeting")]
-    public async Task<ActionResult<List<MeetingDTO>>> GetAMeeting([Required] int meetingId)
+    public async Task<ActionResult<List<MeetingDTO>>> GetAMeeting([FromQuery][Required] int meetingId)
     {
         // ensure required parameters are included
         if (ModelState.IsValid)
