@@ -72,6 +72,29 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                 return meetingsWithUpdatedDates;
             },
             providesTags: [{type: "Meetings", id: "all"}]
+        }),
+        getOneMeeting: builder.query<Meeting, number>({
+            query: (meetingId) => ({
+                url: `meeting/GetAMeeting?meetingId=${meetingId}`,
+                credentials: 'include',
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }),            
+            transformResponse(res: Meeting){
+                const updatedStartDate = new Date(res.startTime+"Z").toLocaleString()
+                const updatedEndDate = new Date(res.endTime!+"Z").toLocaleString();
+                
+                const updatedMeeting: Meeting = {
+                    ...res,
+                    startTime: updatedStartDate,
+                    endTime: updatedEndDate
+                }
+
+                return updatedMeeting;
+            },
+            providesTags: [{type: "Meetings", id: "all"}]
         })
         // getClub: builder.query<Club, number>({
         //     query: (clubId) => ({
@@ -90,5 +113,6 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
 export const {
     useCreateMeetingMutation,
     useDeleteMeetingMutation,
-    useGetAllMeetingsQuery
+    useGetAllMeetingsQuery,
+    useGetOneMeetingQuery
 } = apiSliceWithClub
