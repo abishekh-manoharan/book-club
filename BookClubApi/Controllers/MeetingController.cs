@@ -217,6 +217,7 @@ public class MeetingController : ControllerBase
                     StartTime = meeting.StartTime,
                     EndTime = meeting.EndTime,
                     Description = meeting.Description,
+                    Name = meeting.Name
                 };
                 return Ok(meetingDTO);
             }
