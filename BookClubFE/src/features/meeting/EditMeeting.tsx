@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useGetOneMeetingQuery } from "./meetingSlice";
+import { Meeting, useGetOneMeetingQuery, useUpdateMeetingMutation } from "./meetingSlice";
 import { useEffect, useState } from "react"
 import { NewMeeting } from "./meetingSlice";
 import { isFetchBaseQueryError, isSerializedError } from "../../app/typeGuards";
@@ -14,6 +14,7 @@ function EditMeeting() {
     const meetingid = Number(meetingId);
 
     const { data: meeting } = useGetOneMeetingQuery(meetingid, { skip: !meetingid || isNaN(meetingid) });
+    const [updateMeeting] = useUpdateMeetingMutation();
 
 
     const dispatch = useAppDispatch();
@@ -39,7 +40,9 @@ function EditMeeting() {
             const startDay = start.getDate()
             const startYear = start.getFullYear()
             const startMonth = start.getMonth() + 1;
-            const startDate = `${startYear}-${startMonth < 10 ? "0" + startMonth : startMonth}-${startDay < 10 ? "0" + startDay : startDay}T00:00`;
+            const startHour = start.getHours();
+            const startMinute = start.getMinutes();
+            const startDate = `${startYear}-${startMonth < 10 ? "0" + startMonth : startMonth}-${startDay < 10 ? "0" + startDay : startDay}T${startHour.toString().padStart(2, "0")}:${startMinute.toString().padStart(2, "0")}`;
             // set the start date
             setStartDate(startDate);
 
@@ -48,7 +51,9 @@ function EditMeeting() {
             const endDay = end.getDate()
             const endYear = end.getFullYear()
             const endMonth = end.getMonth() + 1;
-            const endDate = `${endYear}-${endMonth < 10 ? "0" + endMonth : endMonth}-${endDay < 10 ? "0" + endDay : endDay}T00:00`;
+            const endHour = end.getHours();
+            const endMinute = end.getMinutes();
+            const endDate = `${endYear}-${endMonth < 10 ? "0" + endMonth : endMonth}-${endDay < 10 ? "0" + endDay : endDay}T${endHour.toString().padStart(2, "0")}:${endMinute.toString().padStart(2, "0")}`;
             // set the end date
             setEndDate(endDate);
         }
@@ -73,24 +78,24 @@ function EditMeeting() {
         const meetingStartDate: HTMLInputElement = document.getElementById("meetingStartDate")! as HTMLInputElement;
         const meetingEndDate: HTMLInputElement = document.getElementById("meetingEndDate")! as HTMLInputElement;
 
-        const newMeeting: NewMeeting = {
+        const updatedMeeting: Meeting = {
+            meetingId: meetingid,
             bookId: bookId,
             clubId: clubId,
             name: Name,
             description: Description,
-            startTime: new Date(meetingStartDate.value),
-            endTime: new Date(meetingEndDate.value),
+            startTime: meetingStartDate.value,
+            endTime: meetingEndDate.value
         }
 
         try {
-            // const result = await createMeeting(newMeeting).unwrap();
+            const result = await updateMeeting(updatedMeeting).unwrap();
             const result2 = await notifyReadingUsers({
                 ClubId: clubId,
                 BookId: bookId,
-                Text: `New meeting created in ${reading?.name}`
-            })
-                .unwrap();
-            // console.log(result + " " + result2);
+                Text: `${meeting?.name} Meeting updated`
+            }).unwrap();
+            console.log(result + " " + result2);
         } catch (error) {
             if (isFetchBaseQueryError(error)) {
                 const errorMessage = (error.data as string) || "Unknown error";
