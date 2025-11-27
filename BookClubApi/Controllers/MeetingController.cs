@@ -229,12 +229,13 @@ public class MeetingController : ControllerBase
     // action method that updates a meeting's information
     [HttpPut("update")]
     [Authorize]
-    public async Task<ActionResult<Meeting>> UpdateMeeting([Required] int meetingId, string? description, [Required] DateTime startTime, DateTime? endTime)
+    // public async Task<ActionResult<Meeting>> UpdateMeeting([Required] int meetingId, string? description, [Required] DateTime startTime, [Required] DateTime? endTime)
+    public async Task<ActionResult<Meeting>> UpdateMeeting([FromBody] MeetingUpdateValidationDTO meetingVal)
     {
         // ensure required params are included
         if (ModelState.IsValid)
         {
-            var meeting = dbContext.Meetings.Where(meeting => meeting.MeetingId == meetingId).FirstOrDefault();
+            var meeting = dbContext.Meetings.Where(meeting => meeting.MeetingId == meetingVal.MeetingId).FirstOrDefault();
             if (meeting != null)
             {
                 // ensure logged in user is the club's admin
@@ -243,9 +244,10 @@ public class MeetingController : ControllerBase
                 {
                     try
                     {
-                        meeting.Description = description;
-                        meeting.StartTime = startTime;
-                        meeting.EndTime = endTime;
+                        meeting.Name = meetingVal.Name;
+                        meeting.Description = meetingVal.Description;
+                        meeting.StartTime = (DateTime) meetingVal.StartTime!;
+                        meeting.EndTime = meetingVal.EndTime;
                         dbContext.SaveChanges();
 
                         MeetingDTO meetingDTO = new() { MeetingId = meeting.MeetingId, BookId = meeting.BookId, ClubId = meeting.ClubId, Description = meeting.Description, StartTime = meeting.StartTime, EndTime = meeting.EndTime };
