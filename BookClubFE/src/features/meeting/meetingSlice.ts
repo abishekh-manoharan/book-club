@@ -6,8 +6,8 @@ export interface Meeting {
     clubId: number,
     name: string,
     description?: string,
-    startTime: string,
-    endTime?: string,
+    startTime: string | Date,
+    endTime?: string | Date
 }
 
 export interface NewMeeting {

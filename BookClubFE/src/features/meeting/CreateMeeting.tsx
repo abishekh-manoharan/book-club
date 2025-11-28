@@ -51,6 +51,8 @@ function CreateMeeting() {
             endTime: new Date(meetingEndDate.value),
         }
 
+        console.log(newMeeting);
+
         try {
             const result = await createMeeting(newMeeting).unwrap();
             const result2 = await notifyReadingUsers({

@@ -1,7 +1,6 @@
 import { useParams } from "react-router-dom";
 import { Meeting, useGetOneMeetingQuery, useUpdateMeetingMutation } from "./meetingSlice";
 import { useEffect, useState } from "react"
-import { NewMeeting } from "./meetingSlice";
 import { isFetchBaseQueryError, isSerializedError } from "../../app/typeGuards";
 import { updateErrorMessageThunk } from "../error/errorSlice";
 import { useAppDispatch } from "../../app/hooks";
@@ -28,7 +27,7 @@ function EditMeeting() {
     const bookId = Number(bookid);
         
     const [notifyReadingUsers] = useNotifyReadingUsersMutation();
-    const { data: reading } = useGetOneReadingQuery({ BookId: bookId, ClubId: clubId }, { skip: isNaN(clubId) || isNaN(bookId) });
+    // const { data: reading } = useGetOneReadingQuery({ BookId: bookId, ClubId: clubId }, { skip: isNaN(clubId) || isNaN(bookId) });
 
     useEffect(()=>{
         if(meeting){
@@ -84,8 +83,8 @@ function EditMeeting() {
             clubId: clubId,
             name: Name,
             description: Description,
-            startTime: meetingStartDate.value,
-            endTime: meetingEndDate.value
+            startTime: new Date(meetingStartDate.value),
+            endTime: new Date(meetingEndDate.value)
         }
 
         try {
@@ -113,7 +112,6 @@ function EditMeeting() {
         <div className="createClubPage">
             <div className="createClubHeading"><h1>Edit Your Meeting</h1>
                 <form className="createMeetingForm">
-                {meeting?.startTime}
                     <label htmlFor="meetingName">Name*</label>
                     <input className="textInput" id="meetingName" type="text" onChange={(e) => setName(e.target.value)} value={Name} required /> <br />
 

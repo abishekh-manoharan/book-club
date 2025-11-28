@@ -34,7 +34,7 @@ public class MeetingController : ControllerBase
     [Authorize]
     public async Task<ActionResult<Reading>> CreateMeeting([FromBody] MeetingCreationValidationDto meeting)
     {
-        Console.WriteLine("TEST");
+        // Console.WriteLine();
         // ensure required params are included
         if (ModelState.IsValid)
         {
