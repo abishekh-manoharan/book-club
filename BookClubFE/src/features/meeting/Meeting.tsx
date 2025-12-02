@@ -6,6 +6,7 @@ import { updateErrorMessageThunk } from "../error/errorSlice";
 import { useAppDispatch } from "../../app/hooks";
 import { Meeting as MeetingType, useDeleteMeetingMutation } from "./meetingSlice";
 import React from "react";
+import { log } from "console";
 
 function Meeting({ meeting, concluded }: { meeting: MeetingType, concluded: boolean }) {
     const { clubid } = useParams();
@@ -40,10 +41,17 @@ function Meeting({ meeting, concluded }: { meeting: MeetingType, concluded: bool
         }
     }
 
+    
     const startTimeString = new Date(meeting.startTime).toLocaleTimeString("en-US", {
         hour: "numeric",
         minute: "2-digit",
         hour12: true,
+    });
+    
+    const startDayString = new Date(meeting.startTime).toLocaleDateString("en-US", {
+        day: "numeric",
+        month: "long",
+        year: "numeric"
     });
 
     let endTimeString = null;
@@ -63,6 +71,24 @@ function Meeting({ meeting, concluded }: { meeting: MeetingType, concluded: bool
     const dayString = new Date(meeting.startTime).toLocaleDateString("en-US", {
         day: "numeric",
     });
+
+    const endDayString = new Date(meeting.endTime!).toLocaleDateString("en-US", {
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+    });
+//  && {startDayString === endDayString ? {endTimeString} : {endTimeString}}
+    let endTimeDisplay = ""; 
+    if (endTimeString != undefined) {
+        console.log("log")
+        console.log(startDayString)
+        console.log(endDayString)
+        if(startDayString === endDayString){
+            endTimeDisplay = endTimeString;
+        } else {
+            endTimeDisplay = `${endDayString}, ${endTimeString}` 
+        }
+    }
 
     return (
         <div className="meeting">
@@ -96,7 +122,7 @@ function Meeting({ meeting, concluded }: { meeting: MeetingType, concluded: bool
                         <img src="/src/assets/images/clock.svg" />
                     </div>
                     <div className="time">
-                        {startTimeString} {endTimeString != undefined ? <>- {endTimeString}</> : <></>}
+                        {startTimeString} - {endTimeDisplay}
                     </div>
                 </div>
                 {/* {!concluded && isAdmin && <button onClick={deleteMeetingBtnClick}>delete</button>} */}
