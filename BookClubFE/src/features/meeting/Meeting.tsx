@@ -11,10 +11,6 @@ function Meeting({ meeting, concluded }: { meeting: MeetingType, concluded: bool
     const { clubid } = useParams();
     const clubId = Number(clubid);
 
-    const dispatch = useAppDispatch();
-
-    const [deleteMeeting] = useDeleteMeetingMutation();
-
     const { data: userId } = useGetUserIdQuery();
 
     const { data: clubUser, isSuccess: clubUserIsSuccess } = useGetClubUserQuery(
@@ -24,29 +20,13 @@ function Meeting({ meeting, concluded }: { meeting: MeetingType, concluded: bool
 
     const isAdmin = clubUserIsSuccess && clubUser && clubUser.admin;
 
-    const deleteMeetingBtnClick = async () => {
-        try {
-            const result = await deleteMeeting(meeting.meetingId).unwrap();
-            console.log(result);
-        } catch (error) {
-            if (isFetchBaseQueryError(error)) {
-                const errorMessage = (error.data as string) || "Unknown error";
-                dispatch(updateErrorMessageThunk(errorMessage));
-            } else if (isSerializedError(error)) {
-                dispatch(updateErrorMessageThunk(error.message!));
-            } else {
-                dispatch(updateErrorMessageThunk("Unknown error occured."));
-            }
-        }
-    }
 
-    
     const startTimeString = new Date(meeting.startTime).toLocaleTimeString("en-US", {
         hour: "numeric",
         minute: "2-digit",
         hour12: true,
     });
-    
+
     const startDayString = new Date(meeting.startTime).toLocaleDateString("en-US", {
         day: "numeric",
         month: "long",
@@ -76,28 +56,30 @@ function Meeting({ meeting, concluded }: { meeting: MeetingType, concluded: bool
         month: "long",
         year: "numeric"
     });
-//  && {startDayString === endDayString ? {endTimeString} : {endTimeString}}
-    let endTimeDisplay = ""; 
+    //  && {startDayString === endDayString ? {endTimeString} : {endTimeString}}
+    let endTimeDisplay = "";
     if (endTimeString != undefined) {
         console.log("log")
         console.log(startDayString)
         console.log(endDayString)
-        if(startDayString === endDayString){
+        if (startDayString === endDayString) {
             endTimeDisplay = endTimeString;
         } else {
-            endTimeDisplay = `${endDayString}, ${endTimeString}` 
+            endTimeDisplay = `${endDayString}, ${endTimeString}`
         }
     }
 
     return (
         <div className="meeting">
-            <div className="dropdownButton">
-                <Link to={`${meeting.meetingId}/edit`}>
-                    <img src="/src/assets/images/edit.svg" />
-                </Link>
-            </div>
+            {isAdmin &&
+                <div className="dropdownButton">
+                    <Link to={`${meeting.meetingId}/edit`}>
+                        <img src="/src/assets/images/edit.svg" />
+                    </Link>
+                </div>
+            }
             <div className="meetingDate">
-                <div className="date" style={concluded ? {backgroundColor: "rgb(170 69 74)"} : {}}> 
+                <div className="date" style={concluded ? { backgroundColor: "rgb(170 69 74)" } : {}}>
                     <div className="dateContainer">
                         <div className="day">
                             {dayString}
