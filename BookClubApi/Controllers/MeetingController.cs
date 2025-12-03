@@ -38,6 +38,8 @@ public class MeetingController : ControllerBase
         // ensure required params are included
         if (ModelState.IsValid)
         {
+            MeetingDTO meetingtoReturn;
+
             // ensure logged in user is the club's admin
             bool? admin = await authHelpers.IsUserAdminOfClub(User, (int)meeting.ClubId!); // we can ignore this warning because ClubId will not be null here
             if (admin == null || admin == false)
@@ -61,25 +63,6 @@ public class MeetingController : ControllerBase
                 dbContext.Meetings.Add(newMeeting);
                 await dbContext.SaveChangesAsync();
 
-                // ensuring that there are only 3 concluded meetings for a reading in db
-                // retrieve meetings that are past, and are not a part of the most recent 3 concluded meetings
-                DateTime now = DateTime.UtcNow;
-                var concludedMeetingsToRemove = dbContext.Meetings
-                    .Where(
-                        m => m.BookId == meeting.BookId && m.ClubId == meeting.ClubId // ensure we only get the meetings associated with the reading
-                        && m.EndTime < now // ensure meetings are past
-                    )
-                    .OrderByDescending(m => m.EndTime)
-                    .Skip(3) // ensure the meetings are not the last 3 meetings
-                    .ToList();
-                
-                Console.WriteLine(now);
-                Console.WriteLine(concludedMeetingsToRemove[0]!.EndTime);
-                
-                // delete those meetings 
-                dbContext.Meetings.RemoveRange(concludedMeetingsToRemove);
-                await dbContext.SaveChangesAsync();
-
                 MeetingDTO newMeetingDTO = new()
                 {
                     MeetingId = newMeeting.MeetingId,
@@ -90,8 +73,7 @@ public class MeetingController : ControllerBase
                     Name = newMeeting.Name,
                     Description = newMeeting.Description
                 };
-
-                return Ok(newMeetingDTO);
+                meetingtoReturn = newMeetingDTO;
             }
             catch (DbUpdateException dbe)
             {
@@ -105,13 +87,62 @@ public class MeetingController : ControllerBase
                     return BadRequest("FK constraint violated. Ensure reading is valid.");
                 }
 
-                return StatusCode(500, "Error saving the reading to the database. \n" + dbe.Message);
+                return StatusCode(500, "Error saving the meeting to the database. \n" + dbe.Message);
             }
             catch (Exception e)
             {
                 // handling all other errors when trying to save to db
-                return StatusCode(500, "Error saving the reading to the database. \n" + e.Message);
+                return StatusCode(500, "Error saving the meeting to the database. \n" + e.Message);
             }
+
+
+            try
+            {
+                // ensuring that there are only 3 concluded meetings for a reading in db
+                // retrieve meetings that are past, and are not a part of the most recent 3 concluded meetings
+                DateTime now = DateTime.UtcNow;
+                var concludedMeetingsToRemove = dbContext.Meetings
+                    .AsNoTracking()
+                    .Where(
+                        m => m.BookId == meeting.BookId && m.ClubId == meeting.ClubId // ensure we only get the meetings associated with the reading
+                        && m.EndTime < now // ensure meetings are past
+                    )
+                    .OrderByDescending(m => m.EndTime)
+                    .Skip(3) // ensure the meetings are not the last 3 meetings
+                    .ToList();
+
+                // delete those meetings 
+                foreach (var c in concludedMeetingsToRemove)
+                    dbContext.Entry(c).State = EntityState.Deleted;
+
+                await dbContext.SaveChangesAsync();
+
+                return Ok(meetingtoReturn);
+            }
+            catch (DbUpdateException dbe)
+            {
+                // if reading exists already, return 409 conflict status
+                if (dbe.InnerException!.Message.Contains("Duplicate"))
+                {
+                    return Conflict("Meeting already exists.");
+                }
+                else if (dbe.InnerException!.Message.Contains("foreign key constraint fails"))
+                {
+                    return BadRequest("FK constraint violated. Ensure reading is valid.");
+                }
+                // log full detail (stack + inner exceptions)
+                var entries = dbContext.ChangeTracker.Entries().ToList();
+                return StatusCode(500, "Error updating concluded readings in database. \n" + dbe.ToString() + "\n\n" + entries);
+                return StatusCode(500, "Error updating concluded readings in database. \n" + dbe.Message);
+            }
+            catch (Exception e)
+            {
+                var entries = dbContext.ChangeTracker.Entries().ToList();
+                // handling all other errors when trying to save to db
+                return StatusCode(500, "Error updating concluded readings in database. \n" + e.ToString() + "\n\n" + entries);
+                return StatusCode(500, "Error updating concluded readings in database. \n" + e.Message);
+            }
+
         }
         // if a required parameter is not included
         return BadRequest(ModelState);
@@ -246,7 +277,7 @@ public class MeetingController : ControllerBase
                     {
                         meeting.Name = meetingVal.Name;
                         meeting.Description = meetingVal.Description;
-                        meeting.StartTime = (DateTime) meetingVal.StartTime!;
+                        meeting.StartTime = (DateTime)meetingVal.StartTime!;
                         meeting.EndTime = meetingVal.EndTime;
                         dbContext.SaveChanges();
 
