@@ -6,7 +6,6 @@ import { updateErrorMessageThunk } from "../error/errorSlice";
 import { useAppDispatch } from "../../app/hooks";
 import { Meeting as MeetingType, useDeleteMeetingMutation } from "./meetingSlice";
 import React from "react";
-import { log } from "console";
 
 function Meeting({ meeting, concluded }: { meeting: MeetingType, concluded: boolean }) {
     const { clubid } = useParams();
