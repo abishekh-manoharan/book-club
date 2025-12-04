@@ -1,10 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { useGetUserIdQuery } from "../auth/authSlice";
 import { useGetClubUserQuery } from "../club/clubSlice";
-import { isFetchBaseQueryError, isSerializedError } from "../../app/typeGuards";
-import { updateErrorMessageThunk } from "../error/errorSlice";
-import { useAppDispatch } from "../../app/hooks";
-import { Meeting as MeetingType, useDeleteMeetingMutation } from "./meetingSlice";
+import { Meeting as MeetingType } from "./meetingSlice";
 import React from "react";
 
 function Meeting({ meeting, concluded }: { meeting: MeetingType, concluded: boolean }) {

@@ -1,11 +1,13 @@
 import { useParams } from "react-router-dom";
-import { Meeting, useGetOneMeetingQuery, useUpdateMeetingMutation } from "./meetingSlice";
+import { Meeting, useDeleteMeetingMutation, useGetOneMeetingQuery, useUpdateMeetingMutation } from "./meetingSlice";
 import { useEffect, useState } from "react"
 import { isFetchBaseQueryError, isSerializedError } from "../../app/typeGuards";
 import { updateErrorMessageThunk } from "../error/errorSlice";
 import { useAppDispatch } from "../../app/hooks";
 import { useNotifyReadingUsersMutation } from "../notification/notificationSlice";
 import { useGetOneReadingQuery } from "../reading/readingSlice";
+import { useGetUserIdQuery } from "../auth/authSlice";
+import { useGetClubUserQuery } from "../club/clubSlice";
 
 
 function EditMeeting() {
@@ -25,12 +27,12 @@ function EditMeeting() {
     const { clubid, bookid } = useParams();
     const clubId = Number(clubid);
     const bookId = Number(bookid);
-        
+
     const [notifyReadingUsers] = useNotifyReadingUsersMutation();
     // const { data: reading } = useGetOneReadingQuery({ BookId: bookId, ClubId: clubId }, { skip: isNaN(clubId) || isNaN(bookId) });
 
-    useEffect(()=>{
-        if(meeting){
+    useEffect(() => {
+        if (meeting) {
             setName(meeting?.name);
             setDescription(meeting.description ?? "");
 
@@ -65,7 +67,7 @@ function EditMeeting() {
     const minMonth = now.getMonth() + 1;
     const minDate = `${minYear}-${minMonth < 10 ? "0" + minMonth : minMonth}-${minDay < 10 ? "0" + minDay : minDay}T00:00`;
 
-    const createMeetingClickHandler = async (e: React.SyntheticEvent) => {
+    const editMeetingClickHandler = async (e: React.SyntheticEvent) => {
         e.preventDefault();
 
         const form: HTMLFormElement = document.querySelector(".createMeetingForm")!;
@@ -108,9 +110,47 @@ function EditMeeting() {
 
     }
 
+    const [deleteMeeting] = useDeleteMeetingMutation();
+
+    const { data: userId } = useGetUserIdQuery();
+
+    const { data: clubUser, isSuccess: clubUserIsSuccess } = useGetClubUserQuery(
+        { clubId: clubId, userId: userId as number },
+        { skip: !userId }
+    );
+
+    const isAdmin = clubUserIsSuccess && clubUser && clubUser.admin;
+
+    const deleteMeetingBtnClickHandler = async () => {
+        try {
+            const result = await deleteMeeting(meeting!.meetingId).unwrap();
+            console.log(result);
+        } catch (error) {
+            if (isFetchBaseQueryError(error)) {
+                const errorMessage = (error.data as string) || "Unknown error";
+                dispatch(updateErrorMessageThunk(errorMessage));
+            } else if (isSerializedError(error)) {
+                dispatch(updateErrorMessageThunk(error.message!));
+            } else {
+                dispatch(updateErrorMessageThunk("Unknown error occured."));
+            }
+        }
+    }
+
     return (
-        <div className="createClubPage">
-            <div className="createClubHeading"><h1>Edit Your Meeting</h1>
+        <div>
+            <div className="deleteModal">
+                <div className="deleteModalInner">
+                    Are you sure you want to delete this meeting?
+                    This action cannot be undone and all reading members will be notified.<br />
+                <button>delete</button>
+                <button>no</button>
+                </div>
+            </div>
+            <div className="createClubPage">
+                <div className="createClubHeading">
+                    <h1>Edit Your Meeting</h1>
+                </div>
                 <form className="createMeetingForm">
                     <label htmlFor="meetingName">Name*</label>
                     <input className="textInput" id="meetingName" type="text" onChange={(e) => setName(e.target.value)} value={Name} required /> <br />
@@ -125,7 +165,8 @@ function EditMeeting() {
                     <label htmlFor="meetingEndDate">Meeting End Time</label>
                     <input className="textInput" id="meetingEndDate" type="datetime-local" value={endDate} min={startDate ?? minDate} onChange={(e) => setEndDate(e.target.value)} required />
                     {/* <input className="textInput" id="meetingEndDate" type="datetime-local" required /> */}
-                    <button onClick={createMeetingClickHandler}>Create</button>
+                    <button onClick={editMeetingClickHandler}>Save</button>
+                    <button onClick={deleteMeetingBtnClickHandler}>Delete</button>
                 </form>
             </div>
         </div>
