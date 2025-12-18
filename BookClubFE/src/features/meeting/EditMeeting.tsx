@@ -8,6 +8,7 @@ import { useNotifyReadingUsersMutation } from "../notification/notificationSlice
 import { useGetOneReadingQuery } from "../reading/readingSlice";
 import { useGetUserIdQuery } from "../auth/authSlice";
 import { useGetClubUserQuery } from "../club/clubSlice";
+import DeleteModal from "./DeleteModal";
 
 
 function EditMeeting() {
@@ -23,6 +24,7 @@ function EditMeeting() {
     const [Description, setDescription] = useState("");
     const [startDate, setStartDate] = useState<string | undefined>("");
     const [endDate, setEndDate] = useState<string | undefined>("");
+    const [hideDeleteModal, setHideDeleteModal ] = useState(true);
 
     const { clubid, bookid } = useParams();
     const clubId = Number(clubid);
@@ -139,14 +141,7 @@ function EditMeeting() {
 
     return (
         <div>
-            <div className="deleteModal">
-                <div className="deleteModalInner">
-                    Are you sure you want to delete this meeting?
-                    This action cannot be undone and all reading members will be notified.<br />
-                <button>delete</button>
-                <button>no</button>
-                </div>
-            </div>
+            <DeleteModal hideDeleteModal={hideDeleteModal} setHideDeleteModal={setHideDeleteModal}/>
             <div className="createClubPage">
                 <div className="createClubHeading">
                     <h1>Edit Your Meeting</h1>
@@ -166,7 +161,7 @@ function EditMeeting() {
                     <input className="textInput" id="meetingEndDate" type="datetime-local" value={endDate} min={startDate ?? minDate} onChange={(e) => setEndDate(e.target.value)} required />
                     {/* <input className="textInput" id="meetingEndDate" type="datetime-local" required /> */}
                     <button onClick={editMeetingClickHandler}>Save</button>
-                    <button onClick={deleteMeetingBtnClickHandler}>Delete</button>
+                    <button type="button" onClick={() => setHideDeleteModal(false)}>Delete</button>
                 </form>
             </div>
         </div>

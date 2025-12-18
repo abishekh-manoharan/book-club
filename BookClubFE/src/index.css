@@ -711,8 +711,8 @@ body {
 }
 
 .deleteModal {
-  height: 100vh;
-  width: 100vw;
+  height: 94vh;
+  width: 94vw;
   z-index: 1;
   background-color: #24242495;
 }
@@ -725,6 +725,7 @@ body {
   width: 90vw;
   background-color: #242424;
   padding: 7px;
+  z-index: inherit;
 }
 
 .dropdownButton {
