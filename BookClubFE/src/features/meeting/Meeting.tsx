@@ -68,7 +68,7 @@ function Meeting({ meeting, concluded }: { meeting: MeetingType, concluded: bool
 
     return (
         <div className="meeting">
-            {isAdmin &&
+            {isAdmin && !concluded &&
                 <div className="dropdownButton">
                     <Link to={`${meeting.meetingId}/edit`}>
                         <img src="/src/assets/images/edit.svg" />

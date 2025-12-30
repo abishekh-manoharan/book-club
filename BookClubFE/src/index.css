@@ -726,8 +726,8 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
   width: 93vw;
-  background-color: #242424;
-  padding: 7px;
+  max-width: 93vw;
+  background-color: #1a1a1af2;
   z-index: inherit;
 }
 
@@ -738,6 +738,23 @@ body {
   height: 24px;
 }
 
+.deleteModalInner .warningMain {
+  display: block;
+  margin: 14px;
+}
+
+.deleteModalInner .warningSub {
+  display: block;
+  margin: 7px 14px;
+}
+
+.deleteModalInner .buttons {
+  display: flex;
+  justify-content: end;
+  gap: 7px;
+  margin: 7px 14px 14px;
+}
+
 .barContainer {
   width: 100%;
   display: flex;
@@ -746,6 +763,7 @@ body {
   justify-content: start;
   /* padding: 10px; */
 }
+
 
 .bar {
   /* width: 99%; */

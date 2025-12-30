@@ -11,11 +11,11 @@ interface DeleteModalProps {
     meeting: Meeting | undefined
 }
 
-function DeleteModal({hideDeleteModal, setHideDeleteModal, meeting}: DeleteModalProps) {
+function DeleteModal({ hideDeleteModal, setHideDeleteModal, meeting }: DeleteModalProps) {
     const nav = useNavigate();
-    
+
     const dispatch = useAppDispatch();
-    
+
     const [deleteMeeting] = useDeleteMeetingMutation();
     const deleteMeetingBtnClickHandler = async () => {
         try {
@@ -36,10 +36,12 @@ function DeleteModal({hideDeleteModal, setHideDeleteModal, meeting}: DeleteModal
     return (
         <div className="deleteModal" hidden={hideDeleteModal}>
             <div className="deleteModalInner">
-                Are you sure you want to delete this meeting?
-                This action cannot be undone and all reading members will be notified.<br />
-                <button onClick={deleteMeetingBtnClickHandler}>delete</button>
-                <button onClick={() => { setHideDeleteModal(true) }}>no</button>
+                <h1 className="warningMain">Are you sure you want to delete this meeting?</h1>
+                <div className="warningSub mediumText">This action cannot be undone and all reading members will be notified.</div>
+                <div className="buttons">
+                    <button className="btn" onClick={deleteMeetingBtnClickHandler}>Yes, delete</button>
+                    <button className="btn" onClick={() => { setHideDeleteModal(true) }}>No, don't delete</button>
+                </div>
             </div>
         </div>
     );
