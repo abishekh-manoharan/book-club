@@ -3,21 +3,24 @@ import { Meeting, useDeleteMeetingMutation } from './meetingSlice';
 import { isFetchBaseQueryError, isSerializedError } from '../../app/typeGuards';
 import { updateErrorMessageThunk } from '../error/errorSlice';
 import { useAppDispatch } from '../../app/hooks';
+import { useNavigate } from 'react-router-dom';
 
 interface DeleteModalProps {
     hideDeleteModal: boolean,
     setHideDeleteModal: React.Dispatch<React.SetStateAction<boolean>>,
-    meeting: Meeting
+    meeting: Meeting | undefined
 }
 
 function DeleteModal({hideDeleteModal, setHideDeleteModal, meeting}: DeleteModalProps) {
+    const nav = useNavigate();
+    
     const dispatch = useAppDispatch();
     
     const [deleteMeeting] = useDeleteMeetingMutation();
     const deleteMeetingBtnClickHandler = async () => {
         try {
-            const result = await deleteMeeting(meeting!.meetingId).unwrap();
-            console.log(result);
+            await deleteMeeting(meeting!.meetingId).unwrap();
+            nav(-1);
         } catch (error) {
             if (isFetchBaseQueryError(error)) {
                 const errorMessage = (error.data as string) || "Unknown error";

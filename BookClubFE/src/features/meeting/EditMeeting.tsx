@@ -1,11 +1,10 @@
 import { useParams } from "react-router-dom";
-import { Meeting, useDeleteMeetingMutation, useGetOneMeetingQuery, useUpdateMeetingMutation } from "./meetingSlice";
+import { Meeting, useGetOneMeetingQuery, useUpdateMeetingMutation } from "./meetingSlice";
 import { useEffect, useState } from "react"
 import { isFetchBaseQueryError, isSerializedError } from "../../app/typeGuards";
 import { updateErrorMessageThunk } from "../error/errorSlice";
 import { useAppDispatch } from "../../app/hooks";
 import { useNotifyReadingUsersMutation } from "../notification/notificationSlice";
-import { useGetOneReadingQuery } from "../reading/readingSlice";
 import { useGetUserIdQuery } from "../auth/authSlice";
 import { useGetClubUserQuery } from "../club/clubSlice";
 import DeleteModal from "./DeleteModal";
