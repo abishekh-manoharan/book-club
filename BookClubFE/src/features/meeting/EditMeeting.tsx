@@ -112,8 +112,6 @@ function EditMeeting() {
 
     }
 
-    const [deleteMeeting] = useDeleteMeetingMutation();
-
     const { data: userId } = useGetUserIdQuery();
 
     const { data: clubUser, isSuccess: clubUserIsSuccess } = useGetClubUserQuery(
@@ -123,25 +121,9 @@ function EditMeeting() {
 
     const isAdmin = clubUserIsSuccess && clubUser && clubUser.admin;
 
-    const deleteMeetingBtnClickHandler = async () => {
-        try {
-            const result = await deleteMeeting(meeting!.meetingId).unwrap();
-            console.log(result);
-        } catch (error) {
-            if (isFetchBaseQueryError(error)) {
-                const errorMessage = (error.data as string) || "Unknown error";
-                dispatch(updateErrorMessageThunk(errorMessage));
-            } else if (isSerializedError(error)) {
-                dispatch(updateErrorMessageThunk(error.message!));
-            } else {
-                dispatch(updateErrorMessageThunk("Unknown error occured."));
-            }
-        }
-    }
-
     return (
         <div>
-            <DeleteModal hideDeleteModal={hideDeleteModal} setHideDeleteModal={setHideDeleteModal}/>
+            <DeleteModal hideDeleteModal={hideDeleteModal} setHideDeleteModal={setHideDeleteModal} meeting={meeting}/>
             <div className="createClubPage">
                 <div className="createClubHeading">
                     <h1>Edit Your Meeting</h1>
