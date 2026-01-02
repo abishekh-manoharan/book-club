@@ -3,7 +3,8 @@ import { Meeting, useDeleteMeetingMutation } from './meetingSlice';
 import { isFetchBaseQueryError, isSerializedError } from '../../app/typeGuards';
 import { updateErrorMessageThunk } from '../error/errorSlice';
 import { useAppDispatch } from '../../app/hooks';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useNotifyReadingUsersMutation } from '../notification/notificationSlice';
 
 interface DeleteModalProps {
     hideDeleteModal: boolean,
@@ -12,14 +13,24 @@ interface DeleteModalProps {
 }
 
 function DeleteModal({ hideDeleteModal, setHideDeleteModal, meeting }: DeleteModalProps) {
+    const { clubid, bookid } = useParams();
+    const clubId = Number(clubid);
+    const bookId = Number(bookid);
+
     const nav = useNavigate();
 
     const dispatch = useAppDispatch();
-
+    const [notifyReadingUsers] = useNotifyReadingUsersMutation();
     const [deleteMeeting] = useDeleteMeetingMutation();
+
     const deleteMeetingBtnClickHandler = async () => {
         try {
             await deleteMeeting(meeting!.meetingId).unwrap();
+            await notifyReadingUsers({
+                ClubId: clubId,
+                BookId: bookId,
+                Text: `${meeting?.name} meeting has been cancelled.`
+            }).unwrap();
             nav(-1);
         } catch (error) {
             if (isFetchBaseQueryError(error)) {
