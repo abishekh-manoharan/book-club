@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Org.BouncyCastle.Crypto.Engines;
 
 namespace BookClubApi.Controllers;
 
@@ -243,12 +244,47 @@ public class ReadingController : ControllerBase
                 .ToListAsync();
 
             int readingUsersCount = readingUsers.Count;
-            
+
             return Ok(readingUsersCount);
         }
 
         return BadRequest(ModelState);
     }
+
+    // action method to retrieve all reading members of a reading
+    [HttpGet("readingMembers")]
+    public async Task<ActionResult<List<ReadingUserExpandedDTO>>> GetReadingMembers([FromQuery] ReadingGetOneValDTO readingDTO)
+    {
+        if (ModelState.IsValid)
+        {
+            // getting members of the reading
+            var readingUsers = await dbContext.Readingusers.Where(ru =>
+                ru.BookId == readingDTO.BookId &&
+                ru.ClubId == readingDTO.ClubId)
+                .AsNoTracking()
+                .ToListAsync();
+
+            // getting user classes of reading members
+            var readingMembersUsers = new List<ReadingUserExpandedDTO>();
+            foreach (Readinguser ru in readingUsers)
+            {
+                User? user = await dbContext.Users.Where(user => user.UserId == ru.UserId).FirstOrDefaultAsync();
+                if (user != null)
+                {
+                    ReadingUserExpandedDTO ruExpanded = new(user.UserId, ru.BookId, ru.ClubId, ru.Progress, ru.ProgressTotal, ru.ProgresstypeId, user?.FName, user?.LName, user?.ProfileImg, user?.AspnetusersId);
+                    readingMembersUsers.Add(ruExpanded);
+                }
+                else
+                {
+                    return NotFound("User class associated with a reading member wasn't found.");
+                }
+            }
+
+            return Ok(readingMembersUsers);
+        }
+        return BadRequest(ModelState);
+    }
+
 
     // action method that updates the name, description, and status of an existing reading
     [HttpPut("update")]
