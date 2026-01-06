@@ -39,6 +39,19 @@ export interface ReadingUser {
     progresstypeId: number,
 }
 
+export interface ReadingUserExpanded {
+    userId: number,
+    bookId: number,
+    clubId: number,
+    progress: number,
+    progressTotal?: number | undefined,
+    progresstypeId: number,
+    fName: string,
+    lName: string,
+    profileImg: string,
+    aspnetuserId: string
+}
+
 export type ReadingWithoutUserAndProgress = Pick<ReadingUser, "bookId" | "clubId">
 
 export const apiSliceWithReading = apiSlice.injectEndpoints({
@@ -80,7 +93,7 @@ export const apiSliceWithReading = apiSlice.injectEndpoints({
             // },
             providesTags: [{type: 'Readings', id: 'all'}]
         }),
-        getReadingMembers: builder.query<number, {ClubId: number, BookId: number}>({
+        getReadingMembers: builder.query<ReadingUserExpanded[], {ClubId: number, BookId: number}>({
             query: (reading) => ({
                 url: `reading/readingMembers?ClubId=${reading.ClubId}&BookId=${reading.BookId}`,
                 credentials: 'include',
@@ -89,9 +102,9 @@ export const apiSliceWithReading = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            // transformResponse(res: {$id: string, $values: Reading}){
-            //     return res.$values;
-            // },
+            transformResponse(res: {$id: string, $values: ReadingUserExpanded[]}){
+                return res.$values;
+            },
             providesTags: [{type: 'Readings', id: 'all'}]
         }),
         getReadingsOfAClub: builder.query<Reading[], number>({
