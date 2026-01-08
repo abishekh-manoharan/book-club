@@ -756,16 +756,30 @@ body {
 }
 
 .barContainer {
+  position: relative;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: start;
-  /* padding: 10px; */
+  border: white solid 1px;
 }
 
+.barFull {
+  position: relative;
+  width: 100%;
+  height: 1.5dvh;
+  /* border: .05dvh solid pink; */
+  background-color: white;
+  z-index: 1;
+}
 
 .bar {
-  /* width: 99%; */
-  margin-left: 0%;
+  position: absolute;
+  max-width: 100%;
+  top: 50%;
+  transform: translate(0, -50%);
+  height: 1.5dvh;
+  background-color: blue;
+  z-index: 2;
 }

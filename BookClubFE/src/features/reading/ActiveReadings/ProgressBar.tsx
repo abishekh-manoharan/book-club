@@ -17,7 +17,8 @@ function ProgressBar({ progress, progressTotal, progresstypeId }: { progress: nu
 
     return (
         <div className='barContainer'>
-            <hr className='bar' style={barStyle} />
+            <div className='bar' style={barStyle} />
+            <div className='barFull' />
         </div>
     );
 }
