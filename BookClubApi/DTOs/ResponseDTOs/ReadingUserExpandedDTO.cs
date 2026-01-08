@@ -12,6 +12,7 @@ public class ReadingUserExpandedDTO
         ClubId = clubId;
         Progress = progress;
         ProgresstypeId = progresstypeId;
+        ProgressTotal = progressTotal;
         FName = fName;
         LName = lName;
         ProfileImg = profileImg;
