@@ -589,10 +589,11 @@ body {
   margin-bottom: 7px;
 }
 
-.bookSearchResultTitle{
+.bookSearchResultTitle {
   font-weight: 500;
 }
-.bookSearchResultAuthorName{
+
+.bookSearchResultAuthorName {
   font-weight: 300;
   font-size: 14px;
 }
@@ -693,6 +694,7 @@ body {
 .dateContainer .day {
   font-size: 24px;
 }
+
 .dateContainer .month {
   font-size: 14px;
 }
@@ -717,7 +719,7 @@ body {
 
 .deleteModal {
   position: absolute;
-  top:0px;
+  top: 0px;
   right: 0px;
   height: 100dvh;
   width: 100vw;
@@ -793,7 +795,7 @@ body {
 .progressValueContainer {
   width: 100%;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-direction: row;
+  justify-content: center;
   margin-bottom: 7px;
 }

@@ -5,8 +5,6 @@ import { ReadingUserExpanded } from "../../readingSlice";
 function ReadingMembersListEntry({ ReadingUser: ru }: { ReadingUser: ReadingUserExpanded }) {
     const {data: cu} = useGetClubUserQuery({ userId: ru.userId, clubId: ru.clubId});
 
-    console.log("ru");
-    console.log(ru);
     return (
         <div className="memberListEntry">
             <div className="memberListEntryDetails">
