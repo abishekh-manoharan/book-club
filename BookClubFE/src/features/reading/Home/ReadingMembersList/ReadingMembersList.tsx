@@ -10,7 +10,7 @@ function ReadingMembersList() {
     const { data: readingMembers } = useGetReadingMembersQuery({ ClubId: clubId, BookId: bookId });
 
     return (
-        <div>
+        <div style={{"width":"100%"}}>
             {readingMembers?.map((ru) => <ReadingMembersListEntry key={ru.fName+" "+ru.lName+" "+ru.bookId+ru.clubId} ReadingUser={ru}/>)}
         </div>
     );
