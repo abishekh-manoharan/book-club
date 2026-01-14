@@ -81,11 +81,11 @@ function ReadingHome() {
 
     return (
         <div className="readingHome">
+            {book?.cover_Id ?
+                <img className="selectedBookCover" src={`https://covers.openlibrary.org/b/ID/${book?.cover_Id}-M.jpg`} /> :
+                <img className="selectedBookCover" src='/src/assets/images/book-open.svg' />
+            }
             {!getUserIsFetching && !getReadingIsFetching && !getReadingUserIsFetching && !clubUserIsFetching && <>
-                {book?.cover_Id ?
-                    <img className="selectedBookCover" src={`https://covers.openlibrary.org/b/ID/${book?.cover_Id}-M.jpg`} /> :
-                    <img className="selectedBookCover" src='/src/assets/images/book-open.svg' />
-                }
                 <h1>{book?.title}</h1>
                 {book?.authorName && <p className='bookSearchResultAuthorName'>{book?.authorName}</p>}
                 <Progress bookId={bookId} clubId={clubId} progress={readingUser!.progress} progresstypeId={readingUser!.progresstypeId} progressTotal={readingUser!.progressTotal} />

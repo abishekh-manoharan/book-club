@@ -21,7 +21,9 @@ function Progress({ progress, progresstypeId, progressTotal, clubId, bookId, upd
 
     return (
         <div className="progress">
+            <ProgressBar progress={progress} progresstypeId={progresstypeId} progressTotal={progressTotal} />
             <div className="progressValueContainer">
+                <button className="button" onClick={() => setModalShow((state) => !state)} hidden={updateOption}>Update Progress</button>
                 <p className="progressValue">
                     {progress} 
                 </p>
@@ -29,8 +31,6 @@ function Progress({ progress, progresstypeId, progressTotal, clubId, bookId, upd
                     {progresstypeId == 1 && <>&nbsp;</> || progresstypeId == 2 && <>&nbsp;</>}{progressType}
                 </p>
             </div>
-            <ProgressBar progress={progress} progresstypeId={progresstypeId} progressTotal={progressTotal} />
-            <button className="button" onClick={() => setModalShow((state) => !state)} hidden={updateOption}>Update Progress</button>
             {modalShow && <UpdateReadingProgress progress={progress} progresstypeId={progresstypeId} progressTotalProp={progressTotal} clubid={clubId} bookid={bookId} setModalShow={setModalShow} />}
         </div>
     );
