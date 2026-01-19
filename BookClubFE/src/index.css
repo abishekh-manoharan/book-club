@@ -148,7 +148,7 @@ body {
   width: 100vw;
   height: 100vh;
   height: 100dvh;
-  z-index: 1;
+  z-index: 3;
 
   transition: left 1s;
 }
@@ -811,4 +811,16 @@ body {
 
 .progressValueContainer .button {
   margin-right: auto;
+}
+
+.progressInputValue {
+  width: 48px;
+}
+.progressTotal {
+  width: 48px;
+}
+.updateReadingModal {
+  position: absolute;
+  background-color: slategrey;
+  z-index: 3;
 }

@@ -111,14 +111,13 @@ function UpdateReadingProgress({ clubid, bookid, setModalShow, progress, progres
     }
 
     return (
-        <div >
-            <p>update reading progress</p>
+        <div className="updateReadingModal">
             <form ref={form}>
-                <label htmlFor="progressValue">Progress:</label><br />
-                <input onChange={progressValueChangeHandler} value={progressValue} id="progressValue" type="number" min="0" max={maxProgressValue} required></input>
+                <label htmlFor="progressValue" className="inline">Currently on:&nbsp;</label>
+                <input onChange={progressValueChangeHandler} value={progressValue} id="progressValue" type="number" min="0" max={maxProgressValue} className="progressInputValue inline" required></input>
                 {
                     progressType != "percent" && <>
-                        <br /><label htmlFor="progressTotal">Progress Total:</label>
+                        <label htmlFor="progressTotal" className="inline">&nbsp;of total:&nbsp;</label>
                         <input onChange={(e) => {
                             setProgressTotal(Number(e.target.value))
                         }
@@ -127,17 +126,17 @@ function UpdateReadingProgress({ clubid, bookid, setModalShow, progress, progres
                             if (Number(e.target.value) < progressValue) {
                                 setProgressTotal(progressValue);
                             }
-                        }} value={progressTotal} id="progressTotal" type="number" min={progressValue} required></input>
+                        }} value={progressTotal} id="progressTotal" type="number" min={progressValue} className="progressTotal inline"  required></input>
                     </>
                 }
-                <br /><label htmlFor="progressTypes">Choose a type:</label><br />
+
                 <select onChange={selectProgressTypeChangeHandler} id="progressTypes" value={progressType} required>
                     <option value="pages">Pages</option>
                     <option value="chapters">Chapters</option>
                     <option value="percent">Percent</option>
                 </select><br />
-                <input type="submit" onClick={submitClickHandler} />
                 <button onClick={() => { setModalShow(false) }} >close</button>
+                <input type="submit" onClick={submitClickHandler} />
             </form>
         </div>
     );
