@@ -54,10 +54,12 @@ function UpdateReadingProgress({ clubid, bookid, setModalShow, progress, progres
     const progressValueChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         const progress = Number(e.target.value);
 
+        // if progress value exceeds 100%, update it to 100%
         if (progressType === "percent" && progress > 100) {
             setProgressValue(100);
             return;
         } else {
+            // never allow the progress value to exceed progress total
             if (progress > progressTotal!) {
                 if (progressTotal != undefined) {
                     setProgressValue(progressTotal);
@@ -68,10 +70,10 @@ function UpdateReadingProgress({ clubid, bookid, setModalShow, progress, progres
         setProgressValue(progress);
     }
 
-    const submitClickHandler = async (e: React.SyntheticEvent) => {        
+    const submitClickHandler = async (e: React.SyntheticEvent) => {
         e.preventDefault();
 
-        if(!form.current?.checkValidity()){
+        if (!form.current?.checkValidity()) {
             form.current?.reportValidity();
         }
 
@@ -112,26 +114,28 @@ function UpdateReadingProgress({ clubid, bookid, setModalShow, progress, progres
         <div >
             <p>update reading progress</p>
             <form ref={form}>
-                <label htmlFor="progressValue">Progress:</label><br/>
+                <label htmlFor="progressValue">Progress:</label><br />
                 <input onChange={progressValueChangeHandler} value={progressValue} id="progressValue" type="number" min="0" max={maxProgressValue} required></input>
                 {
                     progressType != "percent" && <>
-                        <br/><label htmlFor="progressTotal">Progress Total:</label>
+                        <br /><label htmlFor="progressTotal">Progress Total:</label>
                         <input onChange={(e) => {
                             setProgressTotal(Number(e.target.value))
-                            if(Number(e.target.value) < progress){
-                                setProgressTotal(progress);
-                            }
                         }
-                        } value={progressTotal} id="progressTotal" type="number" min={progressValue} required></input>
+                        } onBlur={(e) => {
+                            // ensure progress total is never less than selected progress value
+                            if (Number(e.target.value) < progressValue) {
+                                setProgressTotal(progressValue);
+                            }
+                        }} value={progressTotal} id="progressTotal" type="number" min={progressValue} required></input>
                     </>
                 }
-                <br/><label htmlFor="progressTypes">Choose a type:</label><br/>
+                <br /><label htmlFor="progressTypes">Choose a type:</label><br />
                 <select onChange={selectProgressTypeChangeHandler} id="progressTypes" value={progressType} required>
                     <option value="pages">Pages</option>
                     <option value="chapters">Chapters</option>
                     <option value="percent">Percent</option>
-                </select><br/>
+                </select><br />
                 <input type="submit" onClick={submitClickHandler} />
                 <button onClick={() => { setModalShow(false) }} >close</button>
             </form>
