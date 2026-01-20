@@ -113,30 +113,34 @@ function UpdateReadingProgress({ clubid, bookid, setModalShow, progress, progres
     return (
         <div className="updateReadingModal">
             <form ref={form}>
-                <label htmlFor="progressValue" className="inline">Currently on:&nbsp;</label>
-                <input onChange={progressValueChangeHandler} value={progressValue} id="progressValue" type="number" min="0" max={maxProgressValue} className="progressInputValue inline" required></input>
-                {
-                    progressType != "percent" && <>
-                        <label htmlFor="progressTotal" className="inline">&nbsp;of total:&nbsp;</label>
-                        <input onChange={(e) => {
-                            setProgressTotal(Number(e.target.value))
-                        }
-                        } onBlur={(e) => {
-                            // ensure progress total is never less than selected progress value
-                            if (Number(e.target.value) < progressValue) {
-                                setProgressTotal(progressValue);
+                <div className="inputs">
+                    <label htmlFor="progressValue" className="inline">Currently on:&nbsp;</label>
+                    <input onChange={progressValueChangeHandler} value={progressValue} id="progressValue" type="number" min="0" max={maxProgressValue} className="progressInputValue inline" required></input>
+                    {
+                        progressType != "percent" && <>
+                            <label htmlFor="progressTotal" className="inline">&nbsp;of total:&nbsp;</label>
+                            <input onChange={(e) => {
+                                setProgressTotal(Number(e.target.value))
                             }
-                        }} value={progressTotal} id="progressTotal" type="number" min={progressValue} className="progressTotal inline"  required></input>
-                    </>
-                }
+                            } onBlur={(e) => {
+                                // ensure progress total is never less than selected progress value
+                                if (Number(e.target.value) < progressValue) {
+                                    setProgressTotal(progressValue);
+                                }
+                            }} value={progressTotal} id="progressTotal" type="number" min={progressValue} className="progressTotal inline" required></input>
+                        </>
+                    }
 
-                <select onChange={selectProgressTypeChangeHandler} id="progressTypes" value={progressType} required>
-                    <option value="pages">Pages</option>
-                    <option value="chapters">Chapters</option>
-                    <option value="percent">Percent</option>
-                </select><br />
-                <button onClick={() => { setModalShow(false) }} >close</button>
-                <input type="submit" onClick={submitClickHandler} />
+                    <select onChange={selectProgressTypeChangeHandler} id="progressTypes" value={progressType} required>
+                        <option value="pages">Pages</option>
+                        <option value="chapters">Chapters</option>
+                        <option value="percent">Percent</option>
+                    </select><br />
+                </div>
+                <div className="buttons">
+                    <button onClick={() => { setModalShow(false) }} >close</button>
+                    <input type="submit" onClick={submitClickHandler} />
+                </div>
             </form>
         </div>
     );
