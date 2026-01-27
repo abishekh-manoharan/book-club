@@ -816,9 +816,11 @@ body {
 .progressInputValue {
   width: 24px;
 }
+
 .progressTotal {
   width: 24px;
 }
+
 .updateReadingModal {
   position: absolute;
   background-color: slategrey;
@@ -847,4 +849,36 @@ body {
   align-items: center;
   gap: 2px;
   margin-bottom: 14px;
+}
+
+.discussionCreateThreadTextArea {
+  width: 100%;
+  resize: none;
+  overflow: hidden;
+  border-radius: 10px;
+  font-size: .9rem;
+  line-height: 1.2rem;
+  min-height: unset;
+  padding-top: 9px;
+  padding-bottom: 0px;
+  padding-left: 9px;
+  padding-right: 9px;
+  height: 28px;
+}
+
+.discussionPostThreadForm {
+  width: 93dvw;
+}
+
+.discussionPostThreadForm .profilePicture {
+  border-radius: 100%;
+  height: 50px;
+  width: 50px;
+}
+
+.discussionPostThreadForm .pfpAndText {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  gap: 7px;
 }
