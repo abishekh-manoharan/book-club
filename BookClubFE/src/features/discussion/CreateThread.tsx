@@ -19,9 +19,10 @@ function CreateThread() {
         ref.current.style.height = `${ref.current.scrollHeight}px`;
     };
 
+    
     const [text, setText] = useState("");
-    const [active, setActive] = useState(false);
-
+    const [active, setActive] = useState<boolean>(false);
+    
     const [createThread] = useCreateThreadMutation();
     const [notifyReadingUsers] = useNotifyReadingUsersMutation();
     const { data: userId } = useGetUserIdQuery();
@@ -60,9 +61,7 @@ function CreateThread() {
         <div>
             <form className="discussionPostThreadForm" hidden={isFetching || !user}>
                 <div className="pfpAndText">
-
-                    <img src="https://placecats.com/100/100" className="profilePicture" alt='member profile picture' />
-                    <textarea className="discussionCreateThreadTextArea" ref={ref} value={text} onChange={(e) => setText(e.target.value)} onFocus={() => { resize(); setActive(true); }} onInput={resize} required /><br />
+                    <textarea className="discussionCreateThreadTextArea" placeholder={active == false ? "Join the conversation" : ""} ref={ref} value={text} onChange={(e) => setText(e.target.value)} onFocus={() => { resize(); setActive(true); }} onInput={resize} style={{ lineHeight: active ? "1.2em" : ".6em" }}required /><br />
                 </div>
                 <button onClick={postThreadClickHandler} hidden={!active}>Post</button>
                 <input type="button" value="Cancel" onClick={() => {

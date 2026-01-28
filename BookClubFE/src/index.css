@@ -863,11 +863,12 @@ body {
   padding-bottom: 0px;
   padding-left: 9px;
   padding-right: 9px;
-  height: 28px;
+  height: 18px;
 }
 
 .discussionPostThreadForm {
   width: 93dvw;
+  margin-bottom: 18px;
 }
 
 .discussionPostThreadForm .profilePicture {
@@ -881,4 +882,10 @@ body {
   justify-content: start;
   align-items: center;
   gap: 7px;
+}
+
+.thread .profilePicture {
+  border-radius: 100%;
+  height: 40px;
+  width: 40px;
 }
