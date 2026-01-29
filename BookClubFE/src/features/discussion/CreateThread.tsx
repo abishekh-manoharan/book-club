@@ -19,10 +19,10 @@ function CreateThread() {
         ref.current.style.height = `${ref.current.scrollHeight}px`;
     };
 
-    
+
     const [text, setText] = useState("");
     const [active, setActive] = useState<boolean>(false);
-    
+
     const [createThread] = useCreateThreadMutation();
     const [notifyReadingUsers] = useNotifyReadingUsersMutation();
     const { data: userId } = useGetUserIdQuery();
@@ -42,6 +42,11 @@ function CreateThread() {
         try {
             await createThread({ bookId, clubId, text }).unwrap();
 
+            // clearing and deactivating post creation form
+            setText("");
+            setActive(false);
+            if (ref.current) ref.current.style.height = "18px";
+
             const notificationText = "New post from " + user?.fName + ": " + text;
             await notifyReadingUsers({ ClubId: clubId, BookId: bookId, Text: notificationText })
         } catch (error) {
@@ -56,18 +61,21 @@ function CreateThread() {
         }
     }
 
+    const cancelPostClickHandler = () => {
+        setActive(false); if (!ref.current) return;
+        setText("");
+        ref.current.style.height = "18px";
+    }
+
 
     return (
         <div>
             <form className="discussionPostThreadForm" hidden={isFetching || !user}>
                 <div className="pfpAndText">
-                    <textarea className="discussionCreateThreadTextArea" placeholder={active == false ? "Join the conversation" : ""} ref={ref} value={text} onChange={(e) => setText(e.target.value)} onFocus={() => { resize(); setActive(true); }} onInput={resize} style={{ lineHeight: active ? "1.2em" : ".6em" }}required /><br />
+                    <textarea className="discussionCreateThreadTextArea" placeholder={active == false ? "Join the conversation" : ""} ref={ref} value={text} onChange={(e) => setText(e.target.value)} onFocus={() => { resize(); setActive(true); }} onInput={resize} style={{ lineHeight: active ? "1.2em" : ".6em" }} required /><br />
                 </div>
                 <button onClick={postThreadClickHandler} hidden={!active}>Post</button>
-                <input type="button" value="Cancel" onClick={() => {
-                    setActive(false); if (!ref.current) return;
-                    if (ref.current.value === "" || ref.current.value === " ") { ref.current.style.height = "18px"; }
-                }} hidden={!active} />
+                <input type="button" value="Cancel" onClick={cancelPostClickHandler} hidden={!active} />
             </form>
         </div>
     );

@@ -72,7 +72,9 @@ function Thread({ thread, offset, reading }: { thread: NestedThread, offset: num
     return (
         <div className="thread" style={{ position: "relative", left: offset, textAlign: "left" }}>
             <img src="https://placecats.com/100/100" className="profilePicture" alt='member profile picture' />
-            {thread.deleted ? "deleted post" : thread.text}
+            <div className="threadText">
+                {thread.deleted ? "This post has been deleted." : thread.text}
+                </div>
             <span> -- {user?.fName} {user?.lName}</span>
             <button onClick={replyBtnClickHandler}>reply</button>
             {(userId === thread.userId || clubUser?.admin) && !thread.deleted && <button onClick={deleteBtnClickHandler}>delete</button>}
