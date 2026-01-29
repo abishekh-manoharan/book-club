@@ -889,3 +889,8 @@ body {
   height: 40px;
   width: 40px;
 }
+
+.threadText {
+  word-break: break-word;
+  white-space: normal;
+}
