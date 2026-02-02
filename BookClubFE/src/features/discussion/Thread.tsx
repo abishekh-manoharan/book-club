@@ -70,10 +70,8 @@ function Thread({ thread, offset, reading }: { thread: NestedThread, offset: num
     }
 
     return (
-        <div className="thread" style={{ position: "relative", left: offset, textAlign: "left" }}>
-            <img src="https://placecats.com/100/100" className="profilePicture" alt='member profile picture' />
-            <div className="threadText">
-                {thread.deleted ? "This post has been deleted." : thread.text}
+        <div className="threadContainer">
+            <div className="thread" style={{ position: "relative", paddingLeft: offset, textAlign: "left" }}>
                 </div>
             <span> -- {user?.fName} {user?.lName}</span>
             <button onClick={replyBtnClickHandler}>reply</button>
