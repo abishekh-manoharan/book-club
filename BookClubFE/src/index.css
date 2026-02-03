@@ -724,7 +724,7 @@ body {
 }
 
 .deleteModal {
-  position: absolute;
+  position: fixed;
   top: 0px;
   right: 0px;
   height: 100dvh;
@@ -890,7 +890,30 @@ body {
   width: 40px;
 }
 
+.thread {
+  margin-bottom: 14px;
+}
+
 .threadText {
   word-break: break-word;
   white-space: pre-wrap;
+  font-size: 1rem;
+}
+
+.thread .name {
+  font-size: .95rem;
+  font-weight: 700;
+}
+
+.thread .header {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 7px;
+}
+
+.thread .options {
+  display: flex;
+  width: 100%;
+  justify-content: end;
 }
