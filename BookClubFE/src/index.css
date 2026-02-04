@@ -850,7 +850,9 @@ body {
   gap: 2px;
   margin-bottom: 14px;
 }
-
+.threadsFunctionsContainer{
+  max-width: 100%;
+}
 .discussionCreateThreadTextArea {
   width: 100%;
   resize: none;
@@ -867,7 +869,7 @@ body {
 }
 
 .discussionPostThreadForm {
-  width: 93dvw;
+  width: 100%;
   margin-bottom: 18px;
 }
 
@@ -879,9 +881,9 @@ body {
 
 .discussionPostThreadForm .pfpAndText {
   display: flex;
+  flex-direction: column;
   justify-content: start;
   align-items: center;
-  gap: 7px;
 }
 
 .thread .profilePicture {
@@ -903,6 +905,7 @@ body {
 .thread .name {
   font-size: .95rem;
   font-weight: 700;
+  line-height: 1;
 }
 
 .thread .header {
@@ -916,4 +919,9 @@ body {
   display: flex;
   width: 100%;
   justify-content: end;
+}
+
+.thread .timeAgo {
+  font-size: 13px;
+  color: #b8c0c8;
 }

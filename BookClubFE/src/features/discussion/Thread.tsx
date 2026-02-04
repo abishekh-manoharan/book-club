@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { NestedThread, NewThreadReply, useReplyToThreadMutation } from './discussionSlice';
 import { isFetchBaseQueryError, isSerializedError } from "../../app/typeGuards";
 import { updateErrorMessageThunk } from "../error/errorSlice";
@@ -8,7 +8,50 @@ import { useGetClubUserQuery } from '../club/clubSlice';
 import { useNotifySingleUserMutation } from '../notification/notificationSlice';
 import DeleteModal from './DeleteModal';
 
+const timeAgo = (input: string | Date) => {
+    const date = typeof input === "string" ? new Date(input) : input
+    const now = new Date()
+
+    const seconds = Math.floor((now.getTime() - date.getTime()) / 1000)
+
+    if (seconds < 0) return "just now"
+
+    const intervals: [number, string][] = [
+        [60, "second"],
+        [60, "minute"],
+        [24, "hour"],
+        [7, "day"],
+        [4.34524, "week"], // avg weeks/month
+        [12, "month"],
+        [Number.POSITIVE_INFINITY, "year"],
+    ]
+
+    let count = seconds
+    let unit = "second"
+
+    for (const [threshold, name] of intervals) {
+        if (count < threshold) {
+            unit = name
+            break
+        }
+        count = Math.floor(count / threshold)
+    }
+
+    return `${count} ${unit}${count !== 1 ? "s" : ""} ago`
+}
+
 function Thread({ thread, offset, reading }: { thread: NestedThread, offset: number, reading: { bookId: number, clubId: number } }) {
+    const [timeAgoDisplay, setTimeAgoDisplay] = useState("");
+
+    const localDate = new Date(thread.timePosted + "Z").toLocaleString();
+    
+    useEffect(() => {
+        setInterval(( )=> {
+            setTimeAgoDisplay(timeAgo(localDate));
+        }, 60000)
+    }, [localDate, setTimeAgoDisplay]);
+    
+
     const replyInput = useRef<HTMLDivElement>(null);
 
     const [hideDeleteModal, setHideDeleteModal] = useState(false);
@@ -69,6 +112,7 @@ function Thread({ thread, offset, reading }: { thread: NestedThread, offset: num
                 <div className="header">
                     <img src="https://placecats.com/100/100" className="profilePicture" alt='member profile picture' />
                     <div className="name"> {user?.fName} {user?.lName}</div>
+                    <div className="timeAgo">{timeAgoDisplay}</div>
                 </div>
                 <div className="threadText">
                     {thread.deleted ? "This post has been deleted." : thread.text}

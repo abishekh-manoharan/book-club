@@ -5,7 +5,7 @@ import Thread from "./Thread";
 function Threads({bookId, clubId}: {bookId: number, clubId: number}) {
     const threads = useAppSelector(makeSelectNestedThreads({BookId: bookId, ClubId: clubId}));
     return (
-        <div>
+        <div className="allThreads">
             {threads.map(thread => <Thread thread={thread} offset={0} reading={{bookId, clubId}}/>)}
         </div>
     );

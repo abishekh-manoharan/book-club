@@ -16,7 +16,7 @@ function DiscussionBoard() {
     }
     
     return (
-        <div>
+        <div className="threadsFunctionsContainer">
             <CreateThread />
             <Threads clubId={clubId} bookId={bookId}/>
         </div>
