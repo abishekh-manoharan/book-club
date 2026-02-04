@@ -53,7 +53,7 @@ public class DiscussionController : ControllerBase
                     ClubId = (int)thread.ClubId!,
                     UserId = user!.UserId,
                     Text = thread.Text,
-                    TimePosted = DateTime.Now,
+                    TimePosted = DateTime.UtcNow,
                     Deleted = false
                 };
 
@@ -115,7 +115,7 @@ public class DiscussionController : ControllerBase
                     ClubId = (int)thread.ClubId!,
                     UserId = user!.UserId,
                     Text = thread.Text,
-                    TimePosted = DateTime.Now,
+                    TimePosted = DateTime.UtcNow,
                     Deleted = false
                 };
 
