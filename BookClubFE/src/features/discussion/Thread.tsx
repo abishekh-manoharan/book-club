@@ -44,15 +44,15 @@ function Thread({ thread, offset, reading, depth }: { thread: NestedThread, offs
     const [timeAgoDisplay, setTimeAgoDisplay] = useState("");
 
     console.log(depth)
-    console.log(depth % 3)
+    console.log(depth%3)
     const localDate = new Date(thread.timePosted + "Z").toLocaleString();
-
+    
     useEffect(() => {
-        setInterval(() => {
+        setInterval(( )=> {
             setTimeAgoDisplay(timeAgo(localDate));
         }, 60000)
     }, [localDate, setTimeAgoDisplay]);
-
+    
 
     const replyInput = useRef<HTMLDivElement>(null);
 
@@ -129,8 +129,8 @@ function Thread({ thread, offset, reading, depth }: { thread: NestedThread, offs
                     <button onClick={closeBtnClickHandler}>close</button>
                 </div>
             </div>
-            {depth % 3 == 0 && depth !== 0 ? <>show replies</> : <>
-                {thread.replies.map(replyThread => <Thread thread={replyThread} offset={offset + 30} reading={reading} depth={depth + 1} />)}
+            {depth % 3 == 0 && depth !== 0 ? <>show more replies</> : <>
+            {thread.replies.map(replyThread => <Thread thread={replyThread} offset={offset + 30} reading={reading} depth={depth + 1}/>)}
             </>}
         </div>
     );
