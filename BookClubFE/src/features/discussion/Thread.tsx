@@ -43,8 +43,6 @@ const timeAgo = (input: string | Date) => {
 function Thread({ thread, offset, reading, depth }: { thread: NestedThread, offset: number, reading: { bookId: number, clubId: number }, depth: number }) {
     const [timeAgoDisplay, setTimeAgoDisplay] = useState("");
 
-    console.log(depth)
-    console.log(depth%3)
     const localDate = new Date(thread.timePosted + "Z").toLocaleString();
     
     useEffect(() => {
@@ -102,6 +100,9 @@ function Thread({ thread, offset, reading, depth }: { thread: NestedThread, offs
         }
     }
 
+    const loadReplies = () => {
+
+    }
 
     return (
         <div className="threadContainer">
@@ -129,7 +130,7 @@ function Thread({ thread, offset, reading, depth }: { thread: NestedThread, offs
                     <button onClick={closeBtnClickHandler}>close</button>
                 </div>
             </div>
-            {depth % 3 == 0 && depth !== 0 ? <>show more replies</> : <>
+            {depth % 3 == 0 && depth !== 0 ? <a>show replies</a> : <>
             {thread.replies.map(replyThread => <Thread thread={replyThread} offset={offset + 30} reading={reading} depth={depth + 1}/>)}
             </>}
         </div>

@@ -111,7 +111,7 @@ export const makeThreadSelectors = (reading: { ClubId: number, BookId: number })
 
 export const makeSelectNestedThreads = (reading: { ClubId: number, BookId: number }) => createSelector(
     makeThreadSelectors(reading).selectAll,
-    (threads): NestedThread[] => {
+    (threads): {rootThreads: NestedThread[], threadMap: Record<string, NestedThread>}=> {
         const threadMap: Record<string, NestedThread> = {}
         const rootThreads: NestedThread[] = []
 
@@ -128,7 +128,7 @@ export const makeSelectNestedThreads = (reading: { ClubId: number, BookId: numbe
             }
         }
 
-        return rootThreads
+        return {rootThreads, threadMap}
     }
 )
 
