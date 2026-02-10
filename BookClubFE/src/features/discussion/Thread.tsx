@@ -7,6 +7,7 @@ import { useGetUserIdQuery, useGetUserQuery } from '../auth/authSlice';
 import { useGetClubUserQuery } from '../club/clubSlice';
 import { useNotifySingleUserMutation } from '../notification/notificationSlice';
 import DeleteModal from './DeleteModal';
+import { useNavigate } from 'react-router-dom';
 
 const timeAgo = (input: string | Date) => {
     const date = typeof input === "string" ? new Date(input) : input
@@ -65,6 +66,7 @@ function Thread({ thread, offset, reading, depth }: { thread: NestedThread, offs
 
 
     const dispatch = useAppDispatch();
+    const nav = useNavigate();
 
     const [reply, setReply] = useState("");
 
@@ -101,7 +103,7 @@ function Thread({ thread, offset, reading, depth }: { thread: NestedThread, offs
     }
 
     const loadReplies = () => {
-
+        nav(`${thread.threadId}`)
     }
 
     return (
@@ -130,7 +132,7 @@ function Thread({ thread, offset, reading, depth }: { thread: NestedThread, offs
                     <button onClick={closeBtnClickHandler}>close</button>
                 </div>
             </div>
-            {depth % 3 == 0 && depth !== 0 ? <a>show replies</a> : <>
+            {depth % 3 == 0 && depth !== 0 ? <a onClick={loadReplies}>shows replies</a> : <>
             {thread.replies.map(replyThread => <Thread thread={replyThread} offset={offset + 30} reading={reading} depth={depth + 1}/>)}
             </>}
         </div>
