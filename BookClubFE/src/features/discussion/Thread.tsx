@@ -132,7 +132,7 @@ function Thread({ thread, offset, reading, depth }: { thread: NestedThread, offs
                     <button onClick={closeBtnClickHandler}>close</button>
                 </div>
             </div>
-            {depth % 3 == 0 && depth !== 0 ? <a onClick={loadReplies}>shows replies</a> : <>
+            {depth % 3 == 0 && depth !== 0 ? <a  style={{ position: "relative", paddingLeft: offset+7, textAlign: "left", marginBottom: "7px" }} onClick={loadReplies}>shows replies</a> : <>
             {thread.replies.map(replyThread => <Thread thread={replyThread} offset={offset + 30} reading={reading} depth={depth + 1}/>)}
             </>}
         </div>
