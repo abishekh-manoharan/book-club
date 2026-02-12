@@ -74,8 +74,10 @@ function CreateThread() {
                 <div className="pfpAndText">
                     <textarea className="discussionCreateThreadTextArea" placeholder={active == false ? "Join the conversation" : ""} ref={ref} value={text} onChange={(e) => setText(e.target.value)} onFocus={() => { resize(); setActive(true); }} onInput={resize} style={{ lineHeight: active ? "1.2em" : ".6em" }} required />
                 </div>
-                <button onClick={postThreadClickHandler} hidden={!active}>Post</button>
-                <input type="button" value="Cancel" onClick={cancelPostClickHandler} hidden={!active} />
+                <div className="buttons">
+                    <button onClick={postThreadClickHandler} hidden={!active}>Post</button>
+                    <input type="button" value="Cancel" onClick={cancelPostClickHandler} hidden={!active} />
+                </div>
             </form>
         </div>
     );

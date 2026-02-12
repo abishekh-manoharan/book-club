@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { LegacyRef, useEffect, useRef, useState } from 'react';
 import { NestedThread, NewThreadReply, useReplyToThreadMutation } from './discussionSlice';
 import { isFetchBaseQueryError, isSerializedError } from "../../app/typeGuards";
 import { updateErrorMessageThunk } from "../error/errorSlice";
@@ -42,19 +42,21 @@ const timeAgo = (input: string | Date) => {
 }
 
 function Thread({ thread, offset, reading, depth }: { thread: NestedThread, offset: number, reading: { bookId: number, clubId: number }, depth: number }) {
+    const threadElementRef = useRef<HTMLTextAreaElement>();
+    const replyInput = useRef<LegacyRef<HTMLDivElement> | undefined>();
+    const replyBtnRef = useRef<LegacyRef<HTMLDivElement> | undefined | null>();
+
     const [timeAgoDisplay, setTimeAgoDisplay] = useState("");
 
     const localDate = new Date(thread.timePosted + "Z").toLocaleString();
     
     useEffect(() => {
+        setTimeAgoDisplay(timeAgo(localDate));
         setInterval(( )=> {
             setTimeAgoDisplay(timeAgo(localDate));
         }, 60000)
     }, [localDate, setTimeAgoDisplay]);
     
-
-    const replyInput = useRef<HTMLDivElement>(null);
-
     const [hideDeleteModal, setHideDeleteModal] = useState(false);
 
     const { data: userId } = useGetUserIdQuery();
@@ -73,10 +75,15 @@ function Thread({ thread, offset, reading, depth }: { thread: NestedThread, offs
 
     const replyBtnClickHandler = () => {
         replyInput.current?.classList.remove("hidden");
+        replyBtnRef.current!.style.display = "none";
+        threadElementRef.current!.style.marginBottom = "12dvh";
     }
     const closeBtnClickHandler = () => {
         replyInput.current?.classList.add("hidden");
+        replyBtnRef.current!.style.display = "flex";
+        threadElementRef.current!.style.marginBottom = "0px";
     }
+
     const commentBtnClickHandler = async () => {
         const newReply: NewThreadReply = {
             parentthreadid: thread.threadId,
@@ -87,7 +94,9 @@ function Thread({ thread, offset, reading, depth }: { thread: NestedThread, offs
         try {
             await createReply(newReply).unwrap();
             replyInput.current?.classList.add("hidden");
-
+            replyBtnRef.current?.classList.remove("hidden");
+            threadElementRef.current!.style.marginBottom = "0px";
+            
             const notificationText = `${loggedInUser?.fName} replied to your post: ${newReply.text}`;
             await notifySingleUser({ UserId: thread.userId, Text: notificationText })
         } catch (error) {
@@ -113,7 +122,7 @@ function Thread({ thread, offset, reading, depth }: { thread: NestedThread, offs
                     <DeleteModal hideDeleteModal={hideDeleteModal} setHideDeleteModal={setHideDeleteModal} thread={thread} />
                 }
             </>
-            <div className="thread" style={{ position: "relative", paddingLeft: offset, textAlign: "left" }}>
+            <div className="thread" ref={threadElementRef} style={{ paddingLeft: offset, textAlign: "left" }}>
                 <div className="header">
                     <img src="https://placecats.com/100/100" className="profilePicture" alt='member profile picture' />
                     <div className="name"> {user?.fName} {user?.lName}</div>
@@ -122,14 +131,16 @@ function Thread({ thread, offset, reading, depth }: { thread: NestedThread, offs
                 <div className="threadText">
                     {thread.deleted ? "This post has been deleted." : thread.text}
                 </div>
-                <div className="options">
+                <div ref={replyBtnRef} className="options">
                     <button onClick={replyBtnClickHandler}>reply</button>
                     {(userId === thread.userId || clubUser?.admin) && !thread.deleted && <button onClick={() => setHideDeleteModal(true)}>delete</button>}
                 </div>
-                <div ref={replyInput} className="hidden">
+                <div ref={replyInput} className="reply hidden">
                     <textarea value={reply} onChange={(e) => setReply(e.target.value)} />
-                    <button onClick={commentBtnClickHandler}>comment</button>
-                    <button onClick={closeBtnClickHandler}>close</button>
+                    <div className="buttons">
+                        <button onClick={commentBtnClickHandler}>comment</button>
+                        <button onClick={closeBtnClickHandler}>close</button>
+                    </div>
                 </div>
             </div>
             {depth % 3 == 0 && depth !== 0 ? <a  style={{ position: "relative", paddingLeft: offset+7, textAlign: "left", marginBottom: "7px" }} onClick={loadReplies}>shows replies</a> : <>
