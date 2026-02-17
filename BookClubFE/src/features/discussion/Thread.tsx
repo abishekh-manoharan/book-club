@@ -115,7 +115,7 @@ function Thread({ thread, offset, reading, depth }: { thread: NestedThread, offs
     }
 
     const loadReplies = () => {
-        nav(`${thread.threadId}`)
+        nav(`/club/${thread.clubId}/${thread.bookId}/discussions/${thread.threadId}`)
     }
 
     return (
