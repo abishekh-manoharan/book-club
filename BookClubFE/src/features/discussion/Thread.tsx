@@ -49,14 +49,14 @@ function Thread({ thread, offset, reading, depth }: { thread: NestedThread, offs
     const [timeAgoDisplay, setTimeAgoDisplay] = useState("");
 
     const localDate = new Date(thread.timePosted + "Z").toLocaleString();
-    
+
     useEffect(() => {
         setTimeAgoDisplay(timeAgo(localDate));
-        setInterval(( )=> {
+        setInterval(() => {
             setTimeAgoDisplay(timeAgo(localDate));
         }, 60000)
     }, [localDate, setTimeAgoDisplay]);
-    
+
     const [hideDeleteModal, setHideDeleteModal] = useState(false);
 
     const { data: userId } = useGetUserIdQuery();
@@ -95,8 +95,11 @@ function Thread({ thread, offset, reading, depth }: { thread: NestedThread, offs
             await createReply(newReply).unwrap();
             replyInput.current?.classList.add("hidden");
             replyBtnRef.current?.classList.remove("hidden");
+            replyInput.current?.classList.add("hidden");
+            replyBtnRef.current!.style.display = "flex";
             threadElementRef.current!.style.marginBottom = "0px";
-            
+            threadElementRef.current!.style.marginBottom = "0px";
+
             const notificationText = `${loggedInUser?.fName} replied to your post: ${newReply.text}`;
             await notifySingleUser({ UserId: thread.userId, Text: notificationText })
         } catch (error) {
@@ -143,8 +146,8 @@ function Thread({ thread, offset, reading, depth }: { thread: NestedThread, offs
                     </div>
                 </div>
             </div>
-            {depth % 3 == 0 && depth !== 0 ? <a  style={{ position: "relative", paddingLeft: offset+7, textAlign: "left", marginBottom: "7px" }} onClick={loadReplies}>shows replies</a> : <>
-            {thread.replies.map(replyThread => <Thread thread={replyThread} offset={offset + 30} reading={reading} depth={depth + 1}/>)}
+            {depth % 3 == 0 && depth !== 0 && thread.replies.length > 0 ? <a style={{ position: "relative", paddingLeft: offset + 7, textAlign: "left", marginBottom: "7px" }} onClick={loadReplies}>shows replies</a> : <>
+                {thread.replies.map(replyThread => <Thread thread={replyThread} offset={offset + 30} reading={reading} depth={depth + 1} />)}
             </>}
         </div>
     );
