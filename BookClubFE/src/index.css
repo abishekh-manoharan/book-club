@@ -828,7 +828,7 @@ body {
 .updateReadingModal {
   position: absolute;
   background-color: slategrey;
-  z-index: 3;
+  z-index: 2;
   padding: 12px;
   border: solid rgba(255, 255, 255, 0.313) 1px;
   background-color: #242424;
