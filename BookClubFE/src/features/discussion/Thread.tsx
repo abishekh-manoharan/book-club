@@ -100,8 +100,11 @@ function Thread({ thread, offset, reading, depth }: { thread: NestedThread, offs
             threadElementRef.current!.style.marginBottom = "0px";
             threadElementRef.current!.style.marginBottom = "0px";
 
-            const notificationText = `${loggedInUser?.fName} replied to your post: ${newReply.text}`;
-            await notifySingleUser({ UserId: thread.userId, Text: notificationText })
+            // only send notification if user exists and user isnt replying to themselves
+            if(userId && userId != thread.userId) {   
+                const notificationText = `${loggedInUser?.fName} replied to your post: ${newReply.text}`;
+                await notifySingleUser({ UserId: thread.userId, Text: notificationText })
+            }
         } catch (error) {
             if (isFetchBaseQueryError(error)) {
                 const errorMessage = (error.data as string) || "Unknown error";
