@@ -99,7 +99,7 @@ function Thread({ thread, offset, reading, depth }: { thread: NestedThread, offs
             replyBtnRef.current!.style.display = "flex";
             threadElementRef.current!.style.marginBottom = "0px";
             threadElementRef.current!.style.marginBottom = "0px";
-
+ 
             // only send notification if user exists and user isnt replying to themselves
             if(userId && userId != thread.userId) {   
                 const notificationText = `${loggedInUser?.fName} replied to your post: ${newReply.text}`;
