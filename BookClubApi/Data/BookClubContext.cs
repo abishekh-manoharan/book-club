@@ -42,7 +42,7 @@ public partial class BookClubContext : IdentityDbContext<ApplicationUser>
     public virtual DbSet<JoinRequest> JoinRequests { get; set; }
 
     public virtual DbSet<Meeting> Meetings { get; set; }
-    
+
     public virtual DbSet<Notification> Notification { get; set; }
 
     public virtual DbSet<Poll> Polls { get; set; }
@@ -519,6 +519,21 @@ public partial class BookClubContext : IdentityDbContext<ApplicationUser>
                 .HasForeignKey(d => new { d.BookId, d.ClubId })
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("thread_ibfk_2");
+
+            entity.HasIndex(t => new
+                {
+                    t.ClubId,
+                    t.BookId,
+                    t.ParentThreadId,
+                    t.TimePosted,
+                    t.ThreadId
+                })
+                .HasDatabaseName("idx_root_threads")
+                .IsDescending(false, false, false, true, true);
+
+
+            entity.HasIndex(t => t.ParentThreadId)
+                .HasDatabaseName("idx_parent");
         });
 
         modelBuilder.Entity<User>(entity =>
