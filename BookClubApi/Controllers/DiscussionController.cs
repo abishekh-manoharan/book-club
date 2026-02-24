@@ -233,4 +233,29 @@ public class DiscussionController : ControllerBase
         }
         return BadRequest(ModelState);
     }
+
+    // action method that returns a batch of threads for a reading 
+    [HttpGet("getThreadBatch")]
+    public async Task<ActionResult<List<ThreadDTO>>> GetThreadBatch([FromQuery] ThreadCursorValDTO c)
+    {
+        if (ModelState.IsValid)
+        {
+            // retrieving the 20 root thread after the specified cursor thread
+            var roots = await dbContext.Threads
+                .Where(t => t.ClubId == c.ClubId && t.BookId == c.BookId)
+                .Where(t => t.ParentThreadId == null)
+                .Where(t =>
+                    t.TimePosted < c.CursorTimeAgo ||
+                    (t.TimePosted == c.CursorTimeAgo && t.ThreadId < c.CursorThreadId))
+                .OrderByDescending(t => t.TimePosted)
+                .ThenByDescending(t => t.ThreadId)  // fallback if two threads are posted at the same time
+                .Take(20)
+                .AsNoTracking()
+                .ToListAsync();
+
+
+            return Ok(roots);
+        }
+        return BadRequest(ModelState);
+    }
 }
