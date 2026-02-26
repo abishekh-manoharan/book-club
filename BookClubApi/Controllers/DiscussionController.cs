@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Data.Common;
+using System.Text.Json;
 using BookClubApi.Data;
 using BookClubApi.DTOs;
 using BookClubApi.Models;
@@ -7,7 +8,9 @@ using BookClubApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using MySql.Data.MySqlClient;
 
 namespace BookClubApi.Controllers;
 
@@ -245,17 +248,49 @@ public class DiscussionController : ControllerBase
                 .Where(t => t.ClubId == c.ClubId && t.BookId == c.BookId)
                 .Where(t => t.ParentThreadId == null)
                 .Where(t =>
-                    t.TimePosted < c.CursorTimeAgo ||
-                    (t.TimePosted == c.CursorTimeAgo && t.ThreadId < c.CursorThreadId))
+                    t.TimePosted > c.CursorTimeAgo ||
+                    (t.TimePosted == c.CursorTimeAgo && t.ThreadId > c.CursorThreadId))
                 .OrderByDescending(t => t.TimePosted)
                 .ThenByDescending(t => t.ThreadId)  // fallback if two threads are posted at the same time
                 .Take(20)
                 .AsNoTracking()
                 .ToListAsync();
 
+            var rootIds = roots.Select(r => r.ThreadId).ToList();
+            var sql = """
+                SELECT *
+                FROM (
+                    SELECT
+                        t.*,
+                        ROW_NUMBER() OVER (
+                            PARTITION BY t.parent_thread_id
+                            ORDER BY t.time_posted DESC, t.thread_id DESC
+                        ) AS rn
+                    FROM Thread t
+                    JOIN JSON_TABLE(
+                        @rootIds,
+                        '$[*]' COLUMNS (
+                            parent_thread_id BIGINT PATH '$'
+                            )
+                        ) roots
+                        ON t.parent_thread_id = roots.parent_thread_id
+                ) ranked
+                WHERE rn <= 2;
+            """;
 
-            return Ok(roots);
-        }
+            var children = await dbContext.Threads
+                .FromSqlRaw(sql, new MySqlParameter("@rootIds", JsonSerializer.Serialize(rootIds)))
+                .AsNoTracking()
+                .ToListAsync();
+            
+            var allThreads = roots
+                .Concat(children)
+                .OrderByDescending(t => t.TimePosted)
+                .ThenByDescending(t => t.ThreadId)
+                .ToList();
+
+            return Ok(allThreads);
+           }
         return BadRequest(ModelState);
     }
 }
