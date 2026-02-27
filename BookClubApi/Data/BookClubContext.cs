@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using BookClubApi.Models;
+﻿using BookClubApi.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -534,6 +532,12 @@ public partial class BookClubContext : IdentityDbContext<ApplicationUser>
 
             entity.HasIndex(t => t.ParentThreadId)
                 .HasDatabaseName("idx_parent");
+            
+            entity.HasIndex(t => new {
+                    t.ParentThreadId,
+                    t.TimePosted
+                })
+                .HasDatabaseName("idx_parentBatch_threads");
         });
 
         modelBuilder.Entity<User>(entity =>
