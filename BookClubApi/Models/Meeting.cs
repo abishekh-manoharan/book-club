@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-
-namespace BookClubApi.Models;
+﻿namespace BookClubApi.Models;
 
 public partial class Meeting
 {

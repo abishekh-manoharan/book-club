@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace BookClubApi.Models;
+﻿namespace BookClubApi.Models;
 
 public partial class AspNetUserLogin
 {

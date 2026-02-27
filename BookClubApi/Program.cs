@@ -8,6 +8,8 @@ using BookClubApi.Services;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Pomelo.EntityFrameworkCore.MySql.Internal;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,9 +25,20 @@ builder.Services.AddSwaggerGen();
 // builder.Services.Configure<IdentityOptions>(options => options.)
 
 builder.Services.AddDbContext<BookClubContext>(options =>
-    options.UseMySQL(builder.Configuration.GetConnectionString("BookClubDB")!)
-        .EnableSensitiveDataLogging()
-);
+    options
+        .UseMySql(builder.Configuration.GetConnectionString("BookClubDB")!, 
+        ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("BookClubDB")), 
+        mySqlOptions => { mySqlOptions.SchemaBehavior(MySqlSchemaBehavior.Ignore); }
+));
+
+// builder.Services.AddDbContext<BookClubContext>(options =>
+//     options.UseMySql(builder.Configuration.GetConnectionString("BookClubDB")!, 
+//     ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("BookClubDB"))),
+//     mySqlOptions =>
+//     {
+//         mySqlOptions.SchemaBehavior(MySqlSchemaBehavior.Ignore); 
+//     });
+
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<BookClubContext>()

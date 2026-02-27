@@ -1,6 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using MySql.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
@@ -18,7 +17,7 @@ namespace BookClubApi.Migrations
                 columns: table => new
                 {
                     NotificationId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySQL:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     Text = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false),
                     Link = table.Column<string>(type: "varchar(300)", maxLength: 300, nullable: true),

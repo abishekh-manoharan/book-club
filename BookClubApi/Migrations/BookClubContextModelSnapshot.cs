@@ -730,6 +730,9 @@ namespace BookClubApi.Migrations
                     b.HasIndex("ParentThreadId")
                         .HasDatabaseName("idx_parent");
 
+                    b.HasIndex("ParentThreadId", "TimePosted")
+                        .HasDatabaseName("idx_parentBatch_threads");
+
                     b.HasIndex("ClubId", "BookId", "ParentThreadId", "TimePosted", "ThreadId")
                         .IsDescending(false, false, false, true, true)
                         .HasDatabaseName("idx_root_threads");

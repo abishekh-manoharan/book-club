@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace BookClubApi.DTOs;
 
 public partial class ReadingUserDTO

@@ -1,6 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using MySql.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
@@ -123,7 +122,7 @@ namespace BookClubApi.Migrations
                 columns: table => new
                 {
                     book_id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySQL:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     title = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false),
                     author_name = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false),
                     first_publish_year = table.Column<int>(type: "int", nullable: true),
@@ -142,7 +141,7 @@ namespace BookClubApi.Migrations
                 columns: table => new
                 {
                     club_id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySQL:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     name = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true),
                     description = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: true),
                     profile_img = table.Column<string>(type: "varchar(300)", maxLength: 300, nullable: true)
@@ -159,7 +158,7 @@ namespace BookClubApi.Migrations
                 columns: table => new
                 {
                     progresstype_id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySQL:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     progress_type = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true)
                 },
                 constraints: table =>
@@ -173,7 +172,7 @@ namespace BookClubApi.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySQL:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     RoleId = table.Column<string>(type: "varchar(255)", nullable: false),
                     ClaimType = table.Column<string>(type: "longtext", nullable: true),
                     ClaimValue = table.Column<string>(type: "longtext", nullable: true)
@@ -219,7 +218,7 @@ namespace BookClubApi.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySQL:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<string>(type: "varchar(255)", nullable: false),
                     ClaimType = table.Column<string>(type: "longtext", nullable: true),
                     ClaimValue = table.Column<string>(type: "longtext", nullable: true)
@@ -407,7 +406,7 @@ namespace BookClubApi.Migrations
                 columns: table => new
                 {
                     user_id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySQL:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     bio = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: true),
                     username = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true),
                     hash = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: true),
@@ -436,7 +435,7 @@ namespace BookClubApi.Migrations
                 columns: table => new
                 {
                     poll_id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySQL:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     club_id = table.Column<int>(type: "int", nullable: true),
                     name = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: true),
                     open = table.Column<bool>(type: "tinyint(1)", nullable: true),
@@ -657,7 +656,7 @@ namespace BookClubApi.Migrations
                 columns: table => new
                 {
                     meeting_id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySQL:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     book_id = table.Column<int>(type: "int", nullable: true),
                     club_id = table.Column<int>(type: "int", nullable: true),
                     start_time = table.Column<DateTime>(type: "datetime", nullable: true),
@@ -711,7 +710,7 @@ namespace BookClubApi.Migrations
                 columns: table => new
                 {
                     thread_id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySQL:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     parent_thread_id = table.Column<int>(type: "int", nullable: true),
                     book_id = table.Column<int>(type: "int", nullable: true),
                     club_id = table.Column<int>(type: "int", nullable: true),

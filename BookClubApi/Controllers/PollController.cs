@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.Data.Common;
 using BookClubApi.Data;
 using BookClubApi.DTOs;
 using BookClubApi.Models;
@@ -8,8 +7,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Mysqlx.Notice;
 
 namespace BookClubApi.Controllers;
 

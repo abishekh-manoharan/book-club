@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace BookClubApi.Models;
 
 public partial class PollVote
