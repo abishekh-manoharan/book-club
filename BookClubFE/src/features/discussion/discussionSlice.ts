@@ -31,6 +31,13 @@ export interface NestedThread extends Thread {
     replies: NestedThread[]
 }
 
+export interface ThreadCursor {
+    BookId: number,
+    ClubId: number,
+    CursorThreadId: number,
+    CursorTimeAgo: string | Date
+}
+
 const threadsAdapter = createEntityAdapter<Thread, number>({
     selectId: (thread) => thread.threadId
 });
@@ -63,9 +70,24 @@ export const apiSliceWithDiscussions = apiSlice.injectEndpoints({
             }),
             invalidatesTags: [{ type: 'Threads', id: 'all' }]
         }),
-        getThreads: builder.query<EntityState<Thread, number>, { ClubId: number, BookId: number }>({
+        // getThreads: builder.query<EntityState<Thread, number>, { ClubId: number, BookId: number }>({
+        //     query: (reading) => ({
+        //         url: `discussion/getAllThreadsOfAReading?ClubId=${reading.ClubId}&BookId=${reading.BookId}`,
+        //         credentials: 'include',
+        //         method: 'GET',
+        //         headers: {
+        //             'Content-Type': 'application/json'
+        //         }
+        //     }),
+        //     transformResponse(res: { $id: string, $values: Thread[] }) {
+        //         return threadsAdapter.setAll(initialState, res.$values);
+        //     },
+        //     providesTags: [{ type: 'Threads', id: 'all' }],
+        //     // keepUnusedDataFor: 60
+        // }),
+        getThreadsBatch: builder.query<EntityState<Thread, number>, ThreadCursor>({
             query: (reading) => ({
-                url: `discussion/getAllThreadsOfAReading?ClubId=${reading.ClubId}&BookId=${reading.BookId}`,
+                url: `discussion/getThreadBatch?ClubId=${reading.ClubId}&BookId=${reading.BookId}&CursorThreadId=${reading.CursorThreadId}&CursorTimeAgo=${reading.CursorTimeAgo}`,
                 credentials: 'include',
                 method: 'GET',
                 headers: {
@@ -95,9 +117,9 @@ export const apiSliceWithDiscussions = apiSlice.injectEndpoints({
 
 
 
-export const selectThreadsResult = (reading: { ClubId: number, BookId: number }) =>
-    apiSliceWithDiscussions.endpoints.getThreads.select(reading)
-export const selectThreadsData = (reading: { ClubId: number, BookId: number }) => createSelector(
+export const selectThreadsResult = (reading: ThreadCursor) =>
+    apiSliceWithDiscussions.endpoints.getThreadsBatch.select(reading)
+export const selectThreadsData = (reading: ThreadCursor) => createSelector(
     selectThreadsResult(reading),
     (result) => {
         return result.data ?? initialState;
@@ -105,11 +127,11 @@ export const selectThreadsData = (reading: { ClubId: number, BookId: number }) =
 )
 
 
-export const makeThreadSelectors = (reading: { ClubId: number, BookId: number }) => {
+export const makeThreadSelectors = (reading: ThreadCursor) => {
     return threadsAdapter.getSelectors<RootState>(selectThreadsData(reading))
 }
 
-export const makeSelectNestedThreads = (reading: { ClubId: number, BookId: number }) => createSelector(
+export const makeSelectNestedThreads = (reading: ThreadCursor) => createSelector(
     makeThreadSelectors(reading).selectAll,
     (threads): {rootThreads: NestedThread[], threadMap: Record<string, NestedThread>}=> {
         const threadMap: Record<string, NestedThread> = {}
@@ -136,6 +158,7 @@ export const makeSelectNestedThreads = (reading: { ClubId: number, BookId: numbe
 export const {
     useCreateThreadMutation,
     useReplyToThreadMutation,
-    useGetThreadsQuery,
+    useGetThreadsBatchQuery,
+    // useGetThreadsQuery,
     useDeleteThreadMutation
 } = apiSliceWithDiscussions
