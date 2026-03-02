@@ -262,7 +262,7 @@ public class DiscussionController : ControllerBase
                         t.*,
                         ROW_NUMBER() OVER (
                             PARTITION BY t.parent_thread_id
-                            ORDER BY t.time_posted DESC, t.thread_id DESC
+                            ORDER BY t.time_posted ASC, t.thread_id ASC
                         ) AS rn
                     FROM Thread t
                     JOIN JSON_TABLE(
