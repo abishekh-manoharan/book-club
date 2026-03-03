@@ -519,25 +519,31 @@ public partial class BookClubContext : IdentityDbContext<ApplicationUser>
                 .HasConstraintName("thread_ibfk_2");
 
             entity.HasIndex(t => new
-                {
-                    t.ClubId,
-                    t.BookId,
-                    t.ParentThreadId,
-                    t.TimePosted,
-                    t.ThreadId
-                })
+            {
+                t.ClubId,
+                t.BookId,
+                t.ParentThreadId,
+                t.TimePosted,
+                t.ThreadId
+            })
                 .HasDatabaseName("idx_root_threads")
                 .IsDescending(false, false, false, true, true);
 
 
             entity.HasIndex(t => t.ParentThreadId)
                 .HasDatabaseName("idx_parent");
-            
-            entity.HasIndex(t => new {
-                    t.ParentThreadId,
-                    t.TimePosted
-                })
+
+            entity.HasIndex(t => new
+            {
+                t.ParentThreadId,
+                t.TimePosted
+            })
                 .HasDatabaseName("idx_parentBatch_threads");
+
+            entity.HasIndex(t => new { t.ParentThreadId, t.TimePosted, t.ThreadId })
+                .HasDatabaseName("idx_thread_tree")
+                .IsDescending(false, true, true);
+
         });
 
         modelBuilder.Entity<User>(entity =>
