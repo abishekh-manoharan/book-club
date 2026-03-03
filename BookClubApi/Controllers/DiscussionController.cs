@@ -256,7 +256,34 @@ public class DiscussionController : ControllerBase
 
             var rootIds = roots.Select(r => r.ThreadId).ToList();
             var sql = """
-                SELECT *
+            WITH RECURSIVE thread_tree AS (
+                SELECT
+                    t.*,
+                    0 AS depth
+                FROM Thread t
+                WHERE t.thread_id IN (
+                    SELECT jt.thread_id
+                    FROM JSON_TABLE(
+                        @rootIds,
+                        '$[*]' COLUMNS (
+                            thread_id BIGINT PATH '$'
+                        )
+                    ) jt
+                )
+
+                UNION ALL
+
+                -- Recursive step
+                SELECT
+                    child.thread_id,
+                    child.parent_thread_id,
+                    child.book_id,
+                    child.club_id,
+                    child.user_id,
+                    child.time_posted,
+                    child.Text,         
+                    child.Deleted,        
+                    parent.depth + 1 AS depth
                 FROM (
                     SELECT
                         t.*,
@@ -265,22 +292,23 @@ public class DiscussionController : ControllerBase
                             ORDER BY t.time_posted ASC, t.thread_id ASC
                         ) AS rn
                     FROM Thread t
-                    JOIN JSON_TABLE(
-                        @rootIds,
-                        '$[*]' COLUMNS (
-                            parent_thread_id BIGINT PATH '$'
-                            )
-                        ) roots
-                        ON t.parent_thread_id = roots.parent_thread_id
-                ) ranked
-                WHERE rn <= 2;
+                ) child
+                JOIN thread_tree parent
+                    ON child.parent_thread_id = parent.thread_id
+                WHERE
+                    child.rn <= 2
+                    AND parent.depth < 4
+            )
+
+            SELECT *
+            FROM thread_tree;
             """;
 
             var children = await dbContext.Threads
                 .FromSqlRaw(sql, new MySqlParameter("@rootIds", JsonSerializer.Serialize(rootIds)))
                 .AsNoTracking()
                 .ToListAsync();
-            
+
             var allThreads = roots
                 .Concat(children)
                 .OrderByDescending(t => t.TimePosted)
@@ -288,7 +316,7 @@ public class DiscussionController : ControllerBase
                 .ToList();
 
             return Ok(allThreads);
-           }
+        }
         return BadRequest(ModelState);
     }
 }
