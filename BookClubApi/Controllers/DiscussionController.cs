@@ -296,12 +296,13 @@ public class DiscussionController : ControllerBase
                 JOIN thread_tree parent
                     ON child.parent_thread_id = parent.thread_id
                 WHERE
-                    child.rn <= 2
+                    child.rn <= 3
                     AND parent.depth < 4
             )
 
             SELECT *
             FROM thread_tree;
+            ORDER BY time_posted ASC, thread_id ASC;
             """;
 
             var children = await dbContext.Threads
@@ -311,8 +312,8 @@ public class DiscussionController : ControllerBase
 
             var allThreads = roots
                 .Concat(children)
-                .OrderByDescending(t => t.TimePosted)
-                .ThenByDescending(t => t.ThreadId)
+                // .OrderByDescending(t => t.TimePosted)
+                // .ThenByDescending(t => t.ThreadId)
                 .ToList();
 
             return Ok(allThreads);
