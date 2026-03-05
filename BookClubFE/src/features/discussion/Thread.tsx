@@ -41,7 +41,7 @@ const timeAgo = (input: string | Date) => {
     return `${count} ${unit}${count !== 1 ? "s" : ""} ago`
 }
 
-function Thread({ thread, offset, reading, depth }: { thread: NestedThread, offset: number, reading: { bookId: number, clubId: number }, depth: number }) {
+function Thread({ thread, offset, reading, depth, index, root }: { thread: NestedThread, offset: number, reading: { bookId: number, clubId: number }, depth: number, index?: number, root: bool }) {
     const threadElementRef = useRef<HTMLTextAreaElement>();
     const replyInput = useRef<LegacyRef<HTMLDivElement> | undefined>();
     const replyBtnRef = useRef<LegacyRef<HTMLDivElement> | undefined | null>();
@@ -99,9 +99,9 @@ function Thread({ thread, offset, reading, depth }: { thread: NestedThread, offs
             replyBtnRef.current!.style.display = "flex";
             threadElementRef.current!.style.marginBottom = "0px";
             threadElementRef.current!.style.marginBottom = "0px";
- 
+
             // only send notification if user exists and user isnt replying to themselves
-            if(userId && userId != thread.userId) {   
+            if (userId && userId != thread.userId) {
                 const notificationText = `${loggedInUser?.fName} replied to your post: ${newReply.text}`;
                 await notifySingleUser({ UserId: thread.userId, Text: notificationText })
             }
@@ -117,8 +117,8 @@ function Thread({ thread, offset, reading, depth }: { thread: NestedThread, offs
         }
     }
 
-    const loadReplies = () => {
-        nav(`/club/${thread.clubId}/${thread.bookId}/discussions/${thread.threadId}`)
+    const loadReplies = (id: number) => {
+        nav(`/club/${thread.clubId}/${thread.bookId}/discussions/${id}`)
     }
 
     return (
@@ -128,30 +128,34 @@ function Thread({ thread, offset, reading, depth }: { thread: NestedThread, offs
                     <DeleteModal hideDeleteModal={hideDeleteModal} setHideDeleteModal={setHideDeleteModal} thread={thread} />
                 }
             </>
-            <div className="thread" ref={threadElementRef} style={{ paddingLeft: offset, textAlign: "left" }}>
-                <div className="header">
-                    <img src="https://placecats.com/100/100" className="profilePicture" alt='member profile picture' />
-                    <div className="name"> {user?.fName} {user?.lName}</div>
-                    <div className="timeAgo">{timeAgoDisplay}</div>
-                </div>
-                <div className="threadText">
-                    {thread.deleted ? "This post has been deleted." : thread.text}
-                </div>
-                <div ref={replyBtnRef} className="options">
-                    <button onClick={replyBtnClickHandler}>reply</button>
-                    {(userId === thread.userId || clubUser?.admin) && !thread.deleted && <button onClick={() => setHideDeleteModal(true)}>delete</button>}
-                </div>
-                <div ref={replyInput} className="reply hidden">
-                    <textarea value={reply} onChange={(e) => setReply(e.target.value)} />
-                    <div className="buttons">
-                        <button onClick={commentBtnClickHandler}>comment</button>
-                        <button onClick={closeBtnClickHandler}>close</button>
+            { index == 2 && !root || index != 20 && <>
+                <div className="thread" ref={threadElementRef} style={{ paddingLeft: offset, textAlign: "left" }}>
+                    <div className="header">
+                        <img src="https://placecats.com/100/100" className="profilePicture" alt='member profile picture' />
+                        <div className="name"> {root && "root"} {index} {user?.fName} {user?.lName}</div>
+                        <div className="timeAgo">{timeAgoDisplay}</div>
+                    </div>
+                    <div className="threadText">
+                        {thread.deleted ? "This post has been deleted." : thread.text}
+                    </div>
+                    <div ref={replyBtnRef} className="options">
+                        <button onClick={replyBtnClickHandler}>reply</button>
+                        {(userId === thread.userId || clubUser?.admin) && !thread.deleted && <button onClick={() => setHideDeleteModal(true)}>delete</button>}
+                    </div>
+                    <div ref={replyInput} className="reply hidden">
+                        <textarea value={reply} onChange={(e) => setReply(e.target.value)} />
+                        <div className="buttons">
+                            <button onClick={commentBtnClickHandler}>comment</button>
+                            <button onClick={closeBtnClickHandler}>close</button>
+                        </div>
                     </div>
                 </div>
-            </div>
-            {depth % 3 == 0 && depth !== 0 && thread.replies.length > 0 ? <a style={{ position: "relative", paddingLeft: offset + 7, textAlign: "left", marginBottom: "7px" }} onClick={loadReplies}>shows replies</a> : <>
-                {thread.replies.map(replyThread => <Thread thread={replyThread} offset={offset + 30} reading={reading} depth={depth + 1} />)}
+            {depth % 3 == 0 && depth !== 0 && thread.replies.length > 0 ? <a style={{ position: "relative", paddingLeft: offset + 7, textAlign: "left", marginBottom: "7px" }} onClick={() => loadReplies(thread.threadId)}>shows replies</a> : <>
+                    {thread.replies.map((replyThread, i) => <Thread thread={replyThread} offset={offset + 30} reading={reading} depth={depth + 1} index={i} root={false}/>)}
+                </>}
             </>}
+            {index == 20 && <>show more</>}
+            {index == 2 && !root && <>show more</>}
         </div>
     );
 }

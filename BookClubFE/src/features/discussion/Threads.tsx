@@ -19,7 +19,7 @@ function Threads({bookId, clubId}: {bookId: number, clubId: number}) {
     
     return (
         <div className="allThreads">
-            {threads.rootThreads.map(thread => <Thread thread={thread} offset={0} reading={{ bookId, clubId }} depth={0}/>)}
+            {threads.rootThreads.map((thread, i) => <Thread thread={thread} offset={0} reading={{ bookId, clubId }} depth={0} index={i} root={true}/>)}
         </div>
     );
 }
