@@ -250,7 +250,7 @@ public class DiscussionController : ControllerBase
                     (t.TimePosted == c.CursorTimeAgo && t.ThreadId > c.CursorThreadId))
                 .OrderByDescending(t => t.TimePosted)
                 .ThenByDescending(t => t.ThreadId)  // fallback if two threads are posted at the same time
-                .Take(20)
+                .Take(21)
                 .AsNoTracking()
                 .ToListAsync();
 
