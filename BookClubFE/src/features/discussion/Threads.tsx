@@ -47,9 +47,10 @@ function Threads({ bookId, clubId, cursorThreadId, cursorTimeAgo }: { bookId: nu
                     threads?.rootThreads[i - 1]
                         ? {
                             threadId: threads.rootThreads[i - 1].threadId,
-                            timePosted: new Date(
-                                threads.rootThreads[i - 1].timePosted
-                            ).toISOString()
+                            timePosted: threads.rootThreads[i - 1].timePosted
+                            // timePosted: new Date(
+                            //     threads.rootThreads[i - 1].timePosted
+                            // ).toTimeString()
                         }
                         : undefined
                 } />)

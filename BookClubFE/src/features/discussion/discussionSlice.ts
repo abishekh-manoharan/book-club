@@ -23,7 +23,7 @@ interface Thread {
     clubId: number,
     userId: number,
     text: string,
-    timePosted: Date,
+    timePosted: Date | string,
     deleted: boolean,
 }
 

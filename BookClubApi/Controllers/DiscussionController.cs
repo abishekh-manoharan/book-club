@@ -241,18 +241,30 @@ public class DiscussionController : ControllerBase
     {
         if (ModelState.IsValid)
         {
-            // retrieving the 20 root thread after the specified cursor thread
-            var roots = await dbContext.Threads
+            var query = dbContext.Threads
                 .Where(t => t.ClubId == c.ClubId && t.BookId == c.BookId)
-                .Where(t => t.ParentThreadId == null)
-                .Where(t =>
+                .Where(t => t.ParentThreadId == null);
+
+            if (c.CursorTimeAgo == new DateTime(2000, 1, 1, 5, 0, 0, DateTimeKind.Utc))
+            {
+                query = query.Where(t =>
                     t.TimePosted > c.CursorTimeAgo ||
-                    (t.TimePosted == c.CursorTimeAgo && t.ThreadId > c.CursorThreadId))
+                    (t.TimePosted == c.CursorTimeAgo && t.ThreadId > c.CursorThreadId));
+            }
+            else
+            {
+                query = query.Where(t =>
+                    t.TimePosted < c.CursorTimeAgo ||
+                    (t.TimePosted == c.CursorTimeAgo && t.ThreadId < c.CursorThreadId));
+            }
+
+            var roots = await query
                 .OrderByDescending(t => t.TimePosted)
-                .ThenByDescending(t => t.ThreadId)  // fallback if two threads are posted at the same time
+                .ThenByDescending(t => t.ThreadId)
                 .Take(21)
                 .AsNoTracking()
                 .ToListAsync();
+
 
             var rootIds = roots.Select(r => r.ThreadId).ToList();
             var sql = """

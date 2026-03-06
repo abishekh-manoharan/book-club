@@ -8,6 +8,7 @@ import { useGetClubUserQuery } from '../club/clubSlice';
 import { useNotifySingleUserMutation } from '../notification/notificationSlice';
 import DeleteModal from './DeleteModal';
 import { useNavigate } from 'react-router-dom';
+import Threads from './Threads';
 
 const timeAgo = (input: string | Date) => {
     const date = typeof input === "string" ? new Date(input) : input
@@ -41,7 +42,7 @@ const timeAgo = (input: string | Date) => {
     return `${count} ${unit}${count !== 1 ? "s" : ""} ago`
 }
 
-function Thread({ thread, offset, reading, depth, index, root }:
+function Thread({ thread, offset, reading, depth, index, root, prev }:
     {
         thread: NestedThread,
         offset: number,
@@ -51,7 +52,7 @@ function Thread({ thread, offset, reading, depth, index, root }:
         root: boolean,
         prev?: {
             threadId: number | undefined,
-            timePosted: string | undefined
+            timePosted: string | Date | undefined
         }
     }) {
     const threadElementRef = useRef<HTMLTextAreaElement>();
@@ -59,6 +60,7 @@ function Thread({ thread, offset, reading, depth, index, root }:
     const replyBtnRef = useRef<LegacyRef<HTMLDivElement> | undefined | null>();
 
     const [timeAgoDisplay, setTimeAgoDisplay] = useState("");
+    const [showMoreThreads, setShowMoreThreads] = useState(false);
 
     const localDate = new Date(thread.timePosted + "Z").toLocaleString();
 
@@ -132,57 +134,80 @@ function Thread({ thread, offset, reading, depth, index, root }:
     const loadReplies = (id: number) => {
         nav(`/club/${thread.clubId}/${thread.bookId}/discussions/${id}`)
     }
+    
+    const loadMoreThreads = () => {
+        console.log("click")
+        console.log(prev?.threadId)
+        console.log(prev?.timePosted)
+        setShowMoreThreads(true);
+    }
 
     return (
-        <div className="threadContainer">
-            <>
-                {hideDeleteModal &&
-                    <DeleteModal hideDeleteModal={hideDeleteModal} setHideDeleteModal={setHideDeleteModal} thread={thread} />
-                }
-            </>
-            {index == 2 && !root || index != 20 && <>
-                <div className="thread" ref={threadElementRef} style={{ paddingLeft: offset, textAlign: "left" }}>
-                    <div className="header">
-                        <img src="https://placecats.com/100/100" className="profilePicture" alt='member profile picture' />
-                        <div className="name"> {root && "root"} {index} {user?.fName} {user?.lName}</div>
-                        <div className="timeAgo">{timeAgoDisplay}</div>
-                    </div>
-                    <div className="threadText">
-                        {thread.deleted ? "This post has been deleted." : thread.text}
-                    </div>
-                    <div ref={replyBtnRef} className="options">
-                        <button onClick={replyBtnClickHandler}>reply</button>
-                        {(userId === thread.userId || clubUser?.admin) && !thread.deleted && <button onClick={() => setHideDeleteModal(true)}>delete</button>}
-                    </div>
-                    <div ref={replyInput} className="reply hidden">
-                        <textarea value={reply} onChange={(e) => setReply(e.target.value)} />
-                        <div className="buttons">
-                            <button onClick={commentBtnClickHandler}>comment</button>
-                            <button onClick={closeBtnClickHandler}>close</button>
+        <>
+            <div className="threadContainer">
+                <>
+                    {hideDeleteModal &&
+                        <DeleteModal hideDeleteModal={hideDeleteModal} setHideDeleteModal={setHideDeleteModal} thread={thread} />
+                    }
+                </>
+                {index == 2 && !root || index != 20 && <>
+                    <div className="thread" ref={threadElementRef} style={{ paddingLeft: offset, textAlign: "left" }}>
+                        <div className="header">
+                            <img src="https://placecats.com/100/100" className="profilePicture" alt='member profile picture' />
+                            <div className="name"> {root && "root"} {index} {user?.fName} {user?.lName}</div>
+                            <div className="timeAgo">{timeAgoDisplay}</div>
+                        </div>
+                        <div className="threadText">
+                            {thread.deleted ? "This post has been deleted." : thread.text}
+                        </div>
+                        <div ref={replyBtnRef} className="options">
+                            <button onClick={replyBtnClickHandler}>reply</button>
+                            {(userId === thread.userId || clubUser?.admin) && !thread.deleted && <button onClick={() => setHideDeleteModal(true)}>delete</button>}
+                        </div>
+                        <div ref={replyInput} className="reply hidden">
+                            <textarea value={reply} onChange={(e) => setReply(e.target.value)} />
+                            <div className="buttons">
+                                <button onClick={commentBtnClickHandler}>comment</button>
+                                <button onClick={closeBtnClickHandler}>close</button>
+                            </div>
                         </div>
                     </div>
-                </div>
-                {depth % 3 == 0 && depth !== 0 && thread.replies.length > 0 ? <a style={{ position: "relative", paddingLeft: offset + 20, textAlign: "left", marginBottom: "7px" }} onClick={() => loadReplies(thread.threadId)}>shows replies</a> : <>
-                    {thread.replies.map((replyThread, i) => <Thread
-                        thread={replyThread}
-                        offset={offset + 30}
-                        reading={reading}
-                        depth={depth + 1}
-                        index={i}
-                        root={false}
-                        prev={thread.replies[i - 1]
-                            ? {
-                                threadId: thread.replies[i - 1].threadId,
-                                timePosted: new Date(thread.replies[i - 1]?.timePosted).toISOString()
-                            }
-                            : undefined
-                        } />
-                    )}
+                    {depth % 3 == 0 && depth !== 0 && thread.replies.length > 0 ? <a style={{ position: "relative", paddingLeft: offset + 20, textAlign: "left", marginBottom: "7px" }} onClick={() => loadReplies(thread.threadId)}>shows replies</a> : <>
+                        {thread.replies.map((replyThread, i) => <Thread
+                            thread={replyThread}
+                            offset={offset + 30}
+                            reading={reading}
+                            depth={depth + 1}
+                            index={i}
+                            root={false}
+                            prev={thread.replies[i - 1]
+                                ? {
+                                    threadId: thread.replies[i - 1].threadId,
+                                    timePosted: new Date(thread.replies[i - 1]?.timePosted).toLocaleTimeString()
+                                }
+                                : undefined
+                            } />
+                        )}
+                    </>}
                 </>}
-            </>}
-            {index == 20 && <div>show more</div>} {/* if there is a 21st thread, show the "show more" button*/}
-            {index == 2 && !root && <div style={{ position: "relative", paddingLeft: offset, textAlign: "left", marginBottom: "7px" }}>show more</div>} {/* for replies, if there is a 3rd thread, show the "show more" button*/}
-        </div>
+                {index == 20 && <a onClick={loadMoreThreads}>show more</a>} {/* if there is a 21st thread, show the "show more" button*/}
+                {index == 2 && !root &&
+                    <a style={{
+                        position: "relative",
+                        paddingLeft: offset,
+                        textAlign: "left",
+                        marginBottom: "7px"
+                    }}>
+                        show more
+                    </a>
+                } {/* for replies, if there is a 3rd thread, show the "show more" button*/}
+            </div>
+            {
+            showMoreThreads ? 
+                <Threads clubId={thread.clubId} bookId={thread.bookId} cursorThreadId={prev?.threadId} cursorTimeAgo={prev?.timePosted}/>
+                : <></>
+            }
+        </>
     );
 }
 
