@@ -41,7 +41,19 @@ const timeAgo = (input: string | Date) => {
     return `${count} ${unit}${count !== 1 ? "s" : ""} ago`
 }
 
-function Thread({ thread, offset, reading, depth, index, root }: { thread: NestedThread, offset: number, reading: { bookId: number, clubId: number }, depth: number, index?: number, root: boolean }) {
+function Thread({ thread, offset, reading, depth, index, root }:
+    {
+        thread: NestedThread,
+        offset: number,
+        reading: { bookId: number, clubId: number },
+        depth: number,
+        index?: number,
+        root: boolean,
+        prev?: {
+            threadId: number | undefined,
+            timePosted: string | undefined
+        }
+    }) {
     const threadElementRef = useRef<HTMLTextAreaElement>();
     const replyInput = useRef<LegacyRef<HTMLDivElement> | undefined>();
     const replyBtnRef = useRef<LegacyRef<HTMLDivElement> | undefined | null>();
@@ -128,7 +140,7 @@ function Thread({ thread, offset, reading, depth, index, root }: { thread: Neste
                     <DeleteModal hideDeleteModal={hideDeleteModal} setHideDeleteModal={setHideDeleteModal} thread={thread} />
                 }
             </>
-            { index == 2 && !root || index != 20 && <>
+            {index == 2 && !root || index != 20 && <>
                 <div className="thread" ref={threadElementRef} style={{ paddingLeft: offset, textAlign: "left" }}>
                     <div className="header">
                         <img src="https://placecats.com/100/100" className="profilePicture" alt='member profile picture' />
@@ -150,12 +162,26 @@ function Thread({ thread, offset, reading, depth, index, root }: { thread: Neste
                         </div>
                     </div>
                 </div>
-            {depth % 3 == 0 && depth !== 0 && thread.replies.length > 0 ? <a style={{ position: "relative", paddingLeft: offset + 7, textAlign: "left", marginBottom: "7px" }} onClick={() => loadReplies(thread.threadId)}>shows replies</a> : <>
-                    {thread.replies.map((replyThread, i) => <Thread thread={replyThread} offset={offset + 30} reading={reading} depth={depth + 1} index={i} root={false}/>)}
+                {depth % 3 == 0 && depth !== 0 && thread.replies.length > 0 ? <a style={{ position: "relative", paddingLeft: offset + 20, textAlign: "left", marginBottom: "7px" }} onClick={() => loadReplies(thread.threadId)}>shows replies</a> : <>
+                    {thread.replies.map((replyThread, i) => <Thread
+                        thread={replyThread}
+                        offset={offset + 30}
+                        reading={reading}
+                        depth={depth + 1}
+                        index={i}
+                        root={false}
+                        prev={thread.replies[i - 1]
+                            ? {
+                                threadId: thread.replies[i - 1].threadId,
+                                timePosted: new Date(thread.replies[i - 1]?.timePosted).toISOString()
+                            }
+                            : undefined
+                        } />
+                    )}
                 </>}
             </>}
             {index == 20 && <div>show more</div>} {/* if there is a 21st thread, show the "show more" button*/}
-            {index == 2 && !root && <div style={{ position: "relative", paddingLeft: offset + 7, textAlign: "left", marginBottom: "7px" }}>show more</div>} {/* for replies, if there is a 3rd thread, show the "show more" button*/}
+            {index == 2 && !root && <div style={{ position: "relative", paddingLeft: offset, textAlign: "left", marginBottom: "7px" }}>show more</div>} {/* for replies, if there is a 3rd thread, show the "show more" button*/}
         </div>
     );
 }
