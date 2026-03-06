@@ -19,7 +19,7 @@ function SubThreads() {
     
     return (
         <div className="allThreads">
-            <Thread thread={threads.threadMap[threadid!]} offset={0} reading={{ bookId, clubId }} depth={0}/>
+            <Thread thread={threads.threadMap[threadid!]} offset={0} reading={{ bookId, clubId }} depth={0} root={true}/>
         </div>
     );
 }

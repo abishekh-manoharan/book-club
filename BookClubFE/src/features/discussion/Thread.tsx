@@ -41,7 +41,7 @@ const timeAgo = (input: string | Date) => {
     return `${count} ${unit}${count !== 1 ? "s" : ""} ago`
 }
 
-function Thread({ thread, offset, reading, depth, index, root }: { thread: NestedThread, offset: number, reading: { bookId: number, clubId: number }, depth: number, index?: number, root: bool }) {
+function Thread({ thread, offset, reading, depth, index, root }: { thread: NestedThread, offset: number, reading: { bookId: number, clubId: number }, depth: number, index?: number, root: boolean }) {
     const threadElementRef = useRef<HTMLTextAreaElement>();
     const replyInput = useRef<LegacyRef<HTMLDivElement> | undefined>();
     const replyBtnRef = useRef<LegacyRef<HTMLDivElement> | undefined | null>();
@@ -154,8 +154,8 @@ function Thread({ thread, offset, reading, depth, index, root }: { thread: Neste
                     {thread.replies.map((replyThread, i) => <Thread thread={replyThread} offset={offset + 30} reading={reading} depth={depth + 1} index={i} root={false}/>)}
                 </>}
             </>}
-            {index == 20 && <>show more</>}
-            {index == 2 && !root && <>show more</>}
+            {index == 20 && <div>show more</div>} {/* if there is a 21st thread, show the "show more" button*/}
+            {index == 2 && !root && <div style={{ position: "relative", paddingLeft: offset + 7, textAlign: "left", marginBottom: "7px" }}>show more</div>} {/* for replies, if there is a 3rd thread, show the "show more" button*/}
         </div>
     );
 }
