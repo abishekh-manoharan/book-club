@@ -243,15 +243,16 @@ public class DiscussionController : ControllerBase
         {
             var query = dbContext.Threads
                 .Where(t => t.ClubId == c.ClubId && t.BookId == c.BookId)
-                .Where(t => t.ParentThreadId == null);
+                .Where(t => t.ParentThreadId == c.ParentThreadId);
 
+            // case for initial batch grab
             if (c.CursorTimeAgo == new DateTime(2000, 1, 1, 5, 0, 0, DateTimeKind.Utc))
             {
                 query = query.Where(t =>
                     t.TimePosted > c.CursorTimeAgo ||
                     (t.TimePosted == c.CursorTimeAgo && t.ThreadId > c.CursorThreadId));
             }
-            else
+            else // case for remaining batch grabs
             {
                 query = query.Where(t =>
                     t.TimePosted < c.CursorTimeAgo ||

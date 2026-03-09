@@ -15,5 +15,7 @@ public partial class ThreadCursorValDTO
 
     [Required]
     public int? ClubId { get; set; }
+    
+    public int? ParentThreadId { get; set; }   // nullable
 }
 
