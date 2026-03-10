@@ -2,7 +2,15 @@ import { useAppSelector } from "../../app/hooks";
 import { makeSelectNestedThreads, useGetThreadsBatchQuery } from "./discussionSlice";
 import Thread from "./Thread";
 
-function Threads({ bookId, clubId, cursorThreadId, cursorTimeAgo }: { bookId: number, clubId: number, cursorThreadId?: number, cursorTimeAgo?: string }) {
+function Threads({ bookId, clubId, cursorThreadId, cursorTimeAgo, parentThreadId }: {
+    bookId: number,
+    clubId: number,
+    cursorThreadId?: number,
+    cursorTimeAgo?: string | Date,
+    parentThreadId?: number 
+}) {
+    console.log("parentThreadId ?? 1")
+    console.log(parentThreadId ?? 1)
     const defaultCursorValues = {
         CursorThreadId: 0,
         CursorTimeAgo: new Date("2000-01-01T05:00:00.000Z").toISOString()
@@ -13,6 +21,7 @@ function Threads({ bookId, clubId, cursorThreadId, cursorTimeAgo }: { bookId: nu
             ClubId: clubId,
             CursorThreadId: cursorThreadId ?? defaultCursorValues.CursorThreadId,
             CursorTimeAgo: cursorTimeAgo ?? defaultCursorValues.CursorTimeAgo,
+            ParentThreadId: parentThreadId ?? ""
         }
         ));
 
@@ -22,6 +31,7 @@ function Threads({ bookId, clubId, cursorThreadId, cursorTimeAgo }: { bookId: nu
         ClubId: clubId,
         CursorThreadId: cursorThreadId ?? defaultCursorValues.CursorThreadId,
         CursorTimeAgo: cursorTimeAgo ?? defaultCursorValues.CursorTimeAgo,
+        ParentThreadId: parentThreadId ?? ""
     });
     if (isError) {
         console.log(error)

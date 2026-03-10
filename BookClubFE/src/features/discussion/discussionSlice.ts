@@ -35,7 +35,8 @@ export interface ThreadCursor {
     BookId: number,
     ClubId: number,
     CursorThreadId: number,
-    CursorTimeAgo: string | Date
+    CursorTimeAgo: string | Date,
+    ParentThreadId?: number | null | ""
 }
 
 const threadsAdapter = createEntityAdapter<Thread, number>({
@@ -87,7 +88,7 @@ export const apiSliceWithDiscussions = apiSlice.injectEndpoints({
         // }),
         getThreadsBatch: builder.query<EntityState<Thread, number>, ThreadCursor>({
             query: (reading) => ({
-                url: `discussion/getThreadBatch?ClubId=${reading.ClubId}&BookId=${reading.BookId}&CursorThreadId=${reading.CursorThreadId}&CursorTimeAgo=${reading.CursorTimeAgo}`,
+                url: `discussion/getThreadBatch?ClubId=${reading.ClubId}&BookId=${reading.BookId}&CursorThreadId=${reading.CursorThreadId}&CursorTimeAgo=${reading.CursorTimeAgo}&ParentThreadId=${reading.ParentThreadId}`,
                 credentials: 'include',
                 method: 'GET',
                 headers: {
