@@ -131,8 +131,9 @@ function Thread({ thread, offset, reading, depth, index, root, prev }:
         }
     }
 
-    const loadReplies = (id: number) => {
-        nav(`/club/${thread.clubId}/${thread.bookId}/discussions/${id}`)
+    const loadReplies = (id: number, parentThreadId: number, timePosted: string 
+    | Date) => {
+        nav(`/club/${thread.clubId}/${thread.bookId}/discussions/${id}/${timePosted}/${parentThreadId}`)
     }
     
     const loadMoreThreads = () => {
@@ -172,7 +173,7 @@ function Thread({ thread, offset, reading, depth, index, root, prev }:
                             </div>
                         </div>
                     </div>
-                    {depth % 3 == 0 && depth !== 0 && thread.replies.length > 0 ? <a style={{ position: "relative", paddingLeft: offset + 20, textAlign: "left", marginBottom: "7px" }} onClick={() => loadReplies(thread.threadId)}>shows replies</a> : <>
+                    {depth % 3 == 0 && depth !== 0 && thread.replies.length > 0 ? <a style={{ position: "relative", paddingLeft: offset + 20, textAlign: "left", marginBottom: "7px" }} onClick={() => loadReplies(thread.threadId, thread.parentThreadId, thread.timePosted)}>shows replies</a> : <>
                         {thread.replies.map((replyThread, i) => <Thread
                             thread={replyThread}
                             offset={offset + 30}
@@ -204,7 +205,7 @@ function Thread({ thread, offset, reading, depth, index, root, prev }:
             </div>
             {
             showMoreThreads ? 
-                <Threads clubId={thread.clubId} bookId={thread.bookId} cursorThreadId={prev?.threadId} cursorTimeAgo={prev?.timePosted}/>
+                <Threads clubId={thread.clubId} bookId={thread.bookId} cursorThreadId={prev?.threadId} cursorTimeAgo={prev?.timePosted} parentThreadId={root ? "" : thread.threadId}/>
                 : <></>
             }
         </>

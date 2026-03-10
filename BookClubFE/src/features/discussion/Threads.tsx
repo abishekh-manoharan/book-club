@@ -9,8 +9,6 @@ function Threads({ bookId, clubId, cursorThreadId, cursorTimeAgo, parentThreadId
     cursorTimeAgo?: string | Date,
     parentThreadId?: number 
 }) {
-    console.log("parentThreadId ?? 1")
-    console.log(parentThreadId ?? 1)
     const defaultCursorValues = {
         CursorThreadId: 0,
         CursorTimeAgo: new Date("2000-01-01T05:00:00.000Z").toISOString()
@@ -52,7 +50,7 @@ function Threads({ bookId, clubId, cursorThreadId, cursorTimeAgo, parentThreadId
                 reading={{ bookId, clubId }}
                 depth={0}
                 index={i}
-                root={true}
+                root={parentThreadId ? false : true}
                 prev={
                     threads?.rootThreads[i - 1]
                         ? {

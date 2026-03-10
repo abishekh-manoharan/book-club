@@ -70,7 +70,7 @@ function App() {
             <Route path="meetings" element=<MeetingsList /> />
             <Route path="readers" element=<ReadingMembersList /> />
             <Route path="discussions" element=<DiscussionBoard /> />
-            <Route path="discussions/:threadid" element=<SubThreads /> />
+            <Route path="discussions/:threadid/:cursorTimeAgo/:parentThreadid" element=<SubThreads /> />
           </Route>
           <Route path="club/:clubid/:bookid/meetings/create" element=<CreateMeeting /> />
           <Route path="club/:clubid/:bookid/meetings/:meetingId/edit" element=<EditMeeting /> />
