@@ -151,7 +151,7 @@ function Thread({ thread, offset, reading, depth, index, root, prev }:
                         <DeleteModal hideDeleteModal={hideDeleteModal} setHideDeleteModal={setHideDeleteModal} thread={thread} />
                     }
                 </>
-                {index == 2 && !root || index != 20 && <>
+                {(index == 2 && !root && depth!=0) || (index != 20) && <>
                     <div className="thread" ref={threadElementRef} style={{ paddingLeft: offset, textAlign: "left" }}>
                         <div className="header">
                             <img src="https://placecats.com/100/100" className="profilePicture" alt='member profile picture' />
@@ -192,14 +192,14 @@ function Thread({ thread, offset, reading, depth, index, root, prev }:
                     </>}
                 </>}
                 {index == 20 && <a onClick={loadMoreThreads}>show more</a>} {/* if there is a 21st thread, show the "show more" button*/}
-                {index == 2 && !root &&
+                {index == 2 && !root && depth != 0 &&
                     <a style={{
                         position: "relative",
                         paddingLeft: offset,
                         textAlign: "left",
                         marginBottom: "7px"
                     }}>
-                        show more
+                        show more {depth} {index} {root ? "root" : "not root"}
                     </a>
                 } {/* for replies, if there is a 3rd thread, show the "show more" button*/}
             </div>
