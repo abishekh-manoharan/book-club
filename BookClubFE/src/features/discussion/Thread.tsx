@@ -173,7 +173,9 @@ function Thread({ thread, offset, reading, depth, index, root, prev }:
                             </div>
                         </div>
                     </div>
-                    {depth % 3 == 0 && depth !== 0 && thread.replies.length > 0 ? <a style={{ position: "relative", paddingLeft: offset + 20, textAlign: "left", marginBottom: "7px" }} onClick={() => loadReplies(thread.threadId, thread.parentThreadId, thread.timePosted)}>shows replies</a> : <>
+                    
+                    {/* Replies to thread */}
+                    {depth % 3 == 0 && depth !== 0 && thread.replies.length > 0 ? <a style={{ position: "relative", paddingLeft: offset + 20, textAlign: "left", marginBottom: "7px" }} onClick={() => loadReplies(thread.threadId, thread.parentThreadId, thread.timePosted)}>shows replies a</a> : <>
                         {thread.replies.map((replyThread, i) => <Thread
                             thread={replyThread}
                             offset={offset + 30}
@@ -184,28 +186,32 @@ function Thread({ thread, offset, reading, depth, index, root, prev }:
                             prev={thread.replies[i - 1]
                                 ? {
                                     threadId: thread.replies[i - 1].threadId,
-                                    timePosted: new Date(thread.replies[i - 1]?.timePosted).toLocaleTimeString()
+                                    timePosted: thread.replies[i - 1].timePosted
                                 }
                                 : undefined
                             } />
                         )}
                     </>}
                 </>}
-                {index == 20 && <a onClick={loadMoreThreads}>show more</a>} {/* if there is a 21st thread, show the "show more" button*/}
+                {/* if there is a 21st thread, show the "show more" button*/}
+                {index == 20 && <a onClick={loadMoreThreads}>show more</a>} 
+                {/* for replies, if there is a 3rd thread, show the "show more" button*/}
                 {index == 2 && !root && depth != 0 &&
                     <a style={{
                         position: "relative",
                         paddingLeft: offset,
                         textAlign: "left",
                         marginBottom: "7px"
-                    }}>
+                    }} onClick={loadMoreThreads}>
                         show more {depth} {index} {root ? "root" : "not root"}
                     </a>
-                } {/* for replies, if there is a 3rd thread, show the "show more" button*/}
+                } 
             </div>
+
+            {/* additional threads after the current one */}
             {
             showMoreThreads ? 
-                <Threads clubId={thread.clubId} bookId={thread.bookId} cursorThreadId={prev?.threadId} cursorTimeAgo={prev?.timePosted} parentThreadId={root ? "" : thread.threadId}/>
+                <Threads clubId={thread.clubId} bookId={thread.bookId} cursorThreadId={prev?.threadId} cursorTimeAgo={prev?.timePosted} parentThreadId={root ? "" : thread.parentThreadId} initialOffset={offset}/>
                 : <></>
             }
         </>

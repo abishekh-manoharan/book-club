@@ -2,12 +2,13 @@ import { useAppSelector } from "../../app/hooks";
 import { makeSelectNestedThreads, useGetThreadsBatchQuery } from "./discussionSlice";
 import Thread from "./Thread";
 
-function Threads({ bookId, clubId, cursorThreadId, cursorTimeAgo, parentThreadId }: {
+function Threads({ bookId, clubId, cursorThreadId, cursorTimeAgo, parentThreadId, initialOffset }: {
     bookId: number,
     clubId: number,
     cursorThreadId?: number,
     cursorTimeAgo?: string | Date,
-    parentThreadId?: number 
+    parentThreadId?: number,
+    initialOffset?: number 
 }) {
     const defaultCursorValues = {
         CursorThreadId: 0,
@@ -46,7 +47,7 @@ function Threads({ bookId, clubId, cursorThreadId, cursorTimeAgo, parentThreadId
         <div className="allThreads">
             {threads?.rootThreads.map((thread, i) => <Thread
                 thread={thread}
-                offset={0}
+                offset={initialOffset ?? 0}
                 reading={{ bookId, clubId }}
                 depth={0}
                 index={i}
