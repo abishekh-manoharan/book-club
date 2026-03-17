@@ -34,9 +34,9 @@ function Threads({ bookId, clubId, cursorThreadId, cursorTimeAgo, parentThreadId
     });
     if (isError) {
         console.log(error)
-        return "error";
+        return <div style={{ paddingLeft: initialOffset ?? 0, textAlign: "left" }}>Error</div>;
     } else if (isLoading) {
-        return "loading";
+        return <div style={{ paddingLeft: initialOffset ?? 0, textAlign: "left" }}>Loading</div>;
     }
     else {
         console.log("not error")
