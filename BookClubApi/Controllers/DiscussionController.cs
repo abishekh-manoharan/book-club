@@ -302,7 +302,7 @@ public class DiscussionController : ControllerBase
                         t.*,
                         ROW_NUMBER() OVER (
                             PARTITION BY t.parent_thread_id
-                            ORDER BY t.time_posted ASC, t.thread_id ASC
+                            ORDER BY t.time_posted DESC, t.thread_id DESC
                         ) AS rn
                     FROM Thread t
                 ) child
