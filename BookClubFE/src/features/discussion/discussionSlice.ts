@@ -99,7 +99,7 @@ export const apiSliceWithDiscussions = apiSlice.injectEndpoints({
                 return threadsAdapter.setAll(initialState, res.$values);
             },
             providesTags: [{ type: 'Threads', id: 'all' }],
-            // keepUnusedDataFor: 60
+            keepUnusedDataFor: 60
         }),
         deleteThread: builder.mutation<Thread, number>({
             query: (threadId) => ({
