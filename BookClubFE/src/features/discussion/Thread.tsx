@@ -194,7 +194,12 @@ function Thread({ thread, offset, reading, depth, index, root, prev }:
                     </>}
                 </>}
                 {/* if there is a 21st thread, show the "show more" button*/}
-                {index == 20 && <a onClick={loadMoreThreads}>show more</a>} 
+                {index == 20 && <a style={{
+                        position: "relative",
+                        paddingLeft: offset,
+                        textAlign: "left",
+                        marginBottom: "7px"
+                    }} onClick={loadMoreThreads}>show more</a>} 
                 {/* for replies, if there is a 3rd thread, show the "show more" button*/}
                 {index == 2 && !root && depth != 0 &&
                     <a style={{
