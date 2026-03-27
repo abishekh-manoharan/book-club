@@ -207,6 +207,7 @@ public class MeetingController : ControllerBase
 
     // action method that returns a specific meeting
     [HttpGet("GetAMeeting")]
+    [Authorize]
     public async Task<ActionResult<List<MeetingDTO>>> GetAMeeting([FromQuery][Required] int meetingId)
     {
         // ensure required parameters are included
