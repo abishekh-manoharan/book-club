@@ -183,6 +183,7 @@ public class DiscussionController : ControllerBase
     // action method that returns a list of threads for a reading
     // returns a list of objects that implement IThreadDTO - either ThreadDTO or ThreadDeletedDTO
     [HttpGet("getAllThreadsOfAReading")]
+    [Authorize]
     public async Task<ActionResult<List<ThreadDTO>>> GetAllThreads([FromQuery] ReadingGetOneValDTO readingDTO)
     {
         if (ModelState.IsValid)
@@ -237,6 +238,7 @@ public class DiscussionController : ControllerBase
 
     // action method that returns a batch of threads for a reading 
     [HttpGet("getThreadBatch")]
+    [Authorize]
     public async Task<ActionResult<List<ThreadDTO>>> GetThreadBatch([FromQuery] ThreadCursorValDTO c)
     {
         if (ModelState.IsValid)
