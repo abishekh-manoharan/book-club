@@ -37,6 +37,7 @@ import EditMeeting from "./features/meeting/EditMeeting"
 import SubThreads from "./features/discussion/SubThreads"
 
 function App() {
+  // retrieving user's logged in status
   const { data: status, isFetching } = useGetStatusQuery();
   const error = useAppSelector(selectError)
   //TODO: uncomment

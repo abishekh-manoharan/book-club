@@ -114,8 +114,8 @@ function ReadingsList() {
                 </>
             }
             {/* case where the user isn't a club member. readings are listed without a seperate sections for joined and not joined readings. */}
-            {isGetClubUserError &&
-                organizedReadings && organizedReadings!.notJoinedReadings?.map((r) => {
+            {
+                !clubUser && organizedReadings && organizedReadings!.notJoinedReadings?.map((r) => {
                     if (r.status != 'concluded') {
                         return <NotOptedInReading key={r.bookId + r.clubId - 1} bookId={r.bookId} clubId={r.clubId} />
                     }
