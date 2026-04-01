@@ -2,6 +2,7 @@ import { Link, useParams } from "react-router-dom";
 import { useGetAllMeetingsQuery } from "./meetingSlice";
 import { useMemo } from "react";
 import Meeting from "./Meeting";
+import CreateMeetingBtn from "./CreateMeetingBtn";
 
 function MeetingList() {
     const { clubid, bookid } = useParams();
@@ -13,8 +14,8 @@ function MeetingList() {
     // sorting meetings by start date 
     const sortedMeetings = useMemo(() => {
         const meetingsCopy = meetings?.slice();
-        const allConcludedMeetings = meetingsCopy?.filter(m => { return new Date(m.endTime!).getTime() - new Date(Date.now()).getTime() < 0 }).sort((a, b) => new Date(b.endTime!).getTime()-new Date(a.endTime!).getTime());
-        const firstThreeConcludedMeetings = allConcludedMeetings?.slice(0,3);
+        const allConcludedMeetings = meetingsCopy?.filter(m => { return new Date(m.endTime!).getTime() - new Date(Date.now()).getTime() < 0 }).sort((a, b) => new Date(b.endTime!).getTime() - new Date(a.endTime!).getTime());
+        const firstThreeConcludedMeetings = allConcludedMeetings?.slice(0, 3);
         const upcomingMeetings = meetingsCopy?.filter(m => { return new Date(m.endTime!).getTime() - new Date(Date.now()).getTime() > 0 }).sort((a, b) => new Date(a.endTime!).getTime() - new Date(b.endTime!).getTime());
 
         return {
@@ -43,11 +44,12 @@ function MeetingList() {
                 }
                 )}
             </>}
-            <Link to={`/club/${clubid}/${bookid}/meetings/create`}>
+            {/* <Link to={`/club/${clubid}/${bookid}/meetings/create`}>
                 <div className="circleBtn">
                     <img className="ListHeader-plus" src='/src/assets/images/plusNoCircle.svg' />
                 </div>
-            </Link>
+            </Link> */}
+            <CreateMeetingBtn/>
         </div>
     );
 }
