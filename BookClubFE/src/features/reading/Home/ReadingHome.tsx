@@ -88,7 +88,9 @@ function ReadingHome() {
             {!getUserIsFetching && !getReadingIsFetching && !getReadingUserIsFetching && !clubUserIsFetching && <>
                 <h1>{book?.title}</h1>
                 {book?.authorName && <p className='bookSearchResultAuthorName'>{book?.authorName}</p>}
-                <Progress bookId={bookId} clubId={clubId} progress={readingUser!.progress} progresstypeId={readingUser!.progresstypeId} progressTotal={readingUser!.progressTotal} />
+                {optedIn &&
+                    <Progress bookId={bookId} clubId={clubId} progress={readingUser!.progress} progresstypeId={readingUser!.progresstypeId} progressTotal={readingUser!.progressTotal} />
+                }
                 <NavBar />
                 <Outlet />
             </>}
