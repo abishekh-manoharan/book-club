@@ -31,7 +31,7 @@ function ReadingHome() {
         { BookId: bookId, ClubId: clubId, UserId: userId! },
         { skip: !getUserIsSuccess || !userId || !clubId || isNaN(clubId) || !bookId || isNaN(bookId) || !getReadingIsSuccess }
     );
-    const { data: clubUser, isSuccess: clubUserIsSuccess, isError: clubUserIsFetching } = useGetClubUserQuery(
+    const { data: clubUser, isSuccess: clubUserIsSuccess, isFetching: clubUserIsFetching } = useGetClubUserQuery(
         { clubId: clubId, userId: userId as number },
         { skip: !getUserIsSuccess || !userId || !clubId || isNaN(clubId) }
     );
@@ -85,9 +85,10 @@ function ReadingHome() {
                 <img className="selectedBookCover" src={`https://covers.openlibrary.org/b/ID/${book?.cover_Id}-M.jpg`} /> :
                 <img className="selectedBookCover" src='/src/assets/images/book-open.svg' />
             }
-            {!getUserIsFetching && !getReadingIsFetching && !getReadingUserIsFetching && !clubUserIsFetching && <>
-                <h1>{book?.title}</h1>
-                {book?.authorName && <p className='bookSearchResultAuthorName'>{book?.authorName}</p>}
+            <h1>{book?.title}</h1>
+            {book?.authorName && <p className='bookSearchResultAuthorName'>{book?.authorName}</p>}
+
+            {!getUserIsFetching && !getReadingIsFetching && !getReadingUserIsFetching && <>
                 {optedIn &&
                     <Progress bookId={bookId} clubId={clubId} progress={readingUser!.progress} progresstypeId={readingUser!.progresstypeId} progressTotal={readingUser!.progressTotal} />
                 }

@@ -156,16 +156,18 @@ public class MeetingController : ControllerBase
             // ensure reading exists
             if (clubService.DoesReadingExist((int)reading.ClubId!, (int)reading.BookId!))
             {
+                // retrieving clubUser object to determine club membership status
+                var clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, (int)reading.ClubId!);
+
                 // ensure that user is a club member if the club is private
                 // checking if club is private
                 bool? isPrivate = clubService.IsClubPrivate((int)reading.ClubId!);
                 if (isPrivate == true)
                 {
                     // ensure user is a club member
-                    var clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, (int)reading.ClubId!);
                     if (clubUser == null)
                     {
-                        return Unauthorized("User must be member of the club to view it's meetings.");
+                        return Unauthorized("User must be member of the private club to view it's meetings.");
                     }
                 }
                 else if (isPrivate == null)
@@ -194,6 +196,13 @@ public class MeetingController : ControllerBase
                         EndTime = meeting.EndTime,
                         Description = meeting.Description,
                     };
+
+                    // prevent descriptiion details from being passed to non-club members.
+                    if (clubUser == null)
+                    {
+                        meetingDTO.Description = "User must join club to see meeting details.";
+                    }
+
                     meetingsDTOs.Add(meetingDTO);
                 }
 
@@ -218,13 +227,15 @@ public class MeetingController : ControllerBase
             // ensure meeting exists
             if (meeting != null)
             {
+                // retrieving clubUser object to determine club membership status
+                var clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, meeting.ClubId);
+
                 // ensure that user is a club member if the club is private
                 // checking if club is private
                 bool? isPrivate = clubService.IsClubPrivate(meeting.ClubId);
                 if (isPrivate == true)
                 {
                     // ensure user is a club member
-                    var clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, meeting.ClubId);
                     // case where user isn't a member of the private club
                     if (clubUser == null)
                     {
@@ -248,6 +259,12 @@ public class MeetingController : ControllerBase
                     Description = meeting.Description,
                     Name = meeting.Name
                 };
+
+                if (clubUser == null)
+                {
+                    meetingDTO.Description = "User must join club to see meeting details.";
+                }
+
                 return Ok(meetingDTO);
             }
             return NotFound("Meeting doesn't exist.");
