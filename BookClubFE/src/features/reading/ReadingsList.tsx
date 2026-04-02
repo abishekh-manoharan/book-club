@@ -29,7 +29,7 @@ function ReadingsList() {
     const [notJoinedReadingsHidden, setNotJoinedReadingsHidden] = useState(false);
 
     const { data: userId } = useGetUserIdQuery();
-    const { data: clubUser, isSuccess: isGetClubUserSuccess, isError: isGetClubUserError }
+    const { data: clubUser, isSuccess: isGetClubUserSuccess }
         = useGetClubUserQuery(
             { clubId: Number(params.clubid), userId: userId as number },
             { skip: !userId }

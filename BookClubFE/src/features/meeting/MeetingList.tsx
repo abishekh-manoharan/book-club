@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useGetAllMeetingsQuery } from "./meetingSlice";
 import { useMemo } from "react";
 import Meeting from "./Meeting";
@@ -44,11 +44,6 @@ function MeetingList() {
                 }
                 )}
             </>}
-            {/* <Link to={`/club/${clubid}/${bookid}/meetings/create`}>
-                <div className="circleBtn">
-                    <img className="ListHeader-plus" src='/src/assets/images/plusNoCircle.svg' />
-                </div>
-            </Link> */}
             <CreateMeetingBtn/>
         </div>
     );

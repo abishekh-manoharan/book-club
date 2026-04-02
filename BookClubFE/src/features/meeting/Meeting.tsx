@@ -18,9 +18,6 @@ function Meeting({ meeting, concluded }: { meeting: MeetingType, concluded: bool
     const isClubMember = clubUserIsSuccess && clubUser;
     const isAdmin = isClubMember && clubUser.admin;
 
-    console.log("isAdmin")
-    console.log(isAdmin)
-
     const startTimeString = new Date(meeting.startTime).toLocaleTimeString("en-US", {
         hour: "numeric",
         minute: "2-digit",
