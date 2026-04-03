@@ -17,12 +17,13 @@ public class ReadingController : ControllerBase
     private UserManager<ApplicationUser> userManager;
     private BookClubContext dbContext;
     private IAuthHelpers authHelpers;
-
-    public ReadingController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, BookClubContext dbContext, IAuthHelpers authHelper)
+    private IClubService clubService;
+    public ReadingController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, BookClubContext dbContext, IAuthHelpers authHelper, IClubService clubService)
     {
         this.userManager = userManager;
         this.dbContext = dbContext;
         this.authHelpers = authHelper;
+        this.clubService = clubService;
     }
 
     // action method that attains a book (attained through OpenLibrary API) and reading data, 
@@ -252,10 +253,31 @@ public class ReadingController : ControllerBase
 
     // action method to retrieve all reading members of a reading
     [HttpGet("readingMembers")]
+    [Authorize]
     public async Task<ActionResult<List<ReadingUserExpandedDTO>>> GetReadingMembers([FromQuery] ReadingGetOneValDTO readingDTO)
     {
         if (ModelState.IsValid)
         {
+            // retrieving clubUser object to determine club membership status
+            var clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, (int)readingDTO.ClubId!);
+
+            // ensure that user is a club member if the club is private
+            // checking if club is private
+            bool? isPrivate = clubService.IsClubPrivate((int)readingDTO.ClubId!);
+            if (isPrivate == true)
+            {
+                // ensure user is a club member
+                if (clubUser == null)
+                {
+                    return Unauthorized("User must be member of the private club to view it's meetings.");
+                }
+            }
+            else if (isPrivate == null)
+            {
+                return NotFound("Ensure club exists.");
+            }
+
+            // code reaches here if club isn't private or the user is a club member if it is private
             // getting members of the reading
             var readingUsers = await dbContext.Readingusers.Where(ru =>
                 ru.BookId == readingDTO.BookId &&
