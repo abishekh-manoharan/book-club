@@ -166,7 +166,11 @@ function Thread({ thread, offset, reading, depth, index, root, prev }:
                         </div>
 
                         <div ref={replyBtnRef} className="options">
-                            <button className="replyButton" disabled={!isClubMember} onClick={replyBtnClickHandler}>
+                            <button className="replyButton"
+                                disabled={!isClubMember}
+                                onClick={replyBtnClickHandler}
+                                style={{"paddingRight":!isClubMember?"2px":"6px"}}
+                                >
                                 <div className="replyButtonInner">
                                     <div>reply</div>
                                     {
