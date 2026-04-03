@@ -131,17 +131,19 @@ function Thread({ thread, offset, reading, depth, index, root, prev }:
         }
     }
 
-    const loadReplies = (id: number, parentThreadId: number, timePosted: string 
-    | Date) => {
+    const loadReplies = (id: number, parentThreadId: number, timePosted: string
+        | Date) => {
         nav(`/club/${thread.clubId}/${thread.bookId}/discussions/${id}/${timePosted}/${parentThreadId}`)
     }
-    
+
     const loadMoreThreads = () => {
         console.log("click")
         console.log(prev?.threadId)
         console.log(prev?.timePosted)
         setShowMoreThreads(true);
     }
+
+    const isClubMember: boolean | undefined = clubUser != null || undefined;
 
     return (
         <>
@@ -151,20 +153,32 @@ function Thread({ thread, offset, reading, depth, index, root, prev }:
                         <DeleteModal hideDeleteModal={hideDeleteModal} setHideDeleteModal={setHideDeleteModal} thread={thread} />
                     }
                 </>
-                {(index == 2 && !root && depth!=0) || (index != 20) && <>
+                {(index == 2 && !root && depth != 0) || (index != 20) && <>
                     <div className="thread" ref={threadElementRef} style={{ paddingLeft: offset, textAlign: "left" }}>
                         <div className="header">
                             <img src="https://placecats.com/100/100" className="profilePicture" alt='member profile picture' />
                             <div className="name"> {root && "root"} {index} {user?.fName} {user?.lName}</div>
                             <div className="timeAgo">{timeAgoDisplay}</div>
                         </div>
+
                         <div className="threadText">
                             {thread.deleted ? "This post has been deleted." : thread.text}
                         </div>
+
                         <div ref={replyBtnRef} className="options">
-                            <button onClick={replyBtnClickHandler}>reply</button>
+                            <button className="replyButton" disabled={!isClubMember} onClick={replyBtnClickHandler}>
+                                <div className="replyButtonInner">
+                                    <div>reply</div>
+                                    {
+                                        !isClubMember && <a href="">
+                                            <img className="infoLogo" src='/src/assets/images/info.svg' />
+                                        </a>
+                                    }
+                                </div>
+                            </button>
                             {(userId === thread.userId || clubUser?.admin) && !thread.deleted && <button onClick={() => setHideDeleteModal(true)}>delete</button>}
                         </div>
+
                         <div ref={replyInput} className="reply hidden">
                             <textarea value={reply} onChange={(e) => setReply(e.target.value)} />
                             <div className="buttons">
@@ -173,7 +187,7 @@ function Thread({ thread, offset, reading, depth, index, root, prev }:
                             </div>
                         </div>
                     </div>
-                    
+
                     {/* Replies to thread */}
                     {depth % 3 == 0 && depth !== 0 && thread.replies.length > 0 ? <a style={{ position: "relative", paddingLeft: offset + 20, textAlign: "left", marginBottom: "7px" }} onClick={() => loadReplies(thread.threadId, thread.parentThreadId, thread.timePosted)}>shows replies a</a> : <>
                         {thread.replies.map((replyThread, i) => <Thread
@@ -195,11 +209,11 @@ function Thread({ thread, offset, reading, depth, index, root, prev }:
                 </>}
                 {/* if there is a 21st thread, show the "show more" button*/}
                 {!showMoreThreads && index == 20 && <a style={{
-                        position: "relative",
-                        paddingLeft: offset,
-                        textAlign: "left",
-                        marginBottom: "7px"
-                    }} onClick={loadMoreThreads}>show more</a>} 
+                    position: "relative",
+                    paddingLeft: offset,
+                    textAlign: "left",
+                    marginBottom: "7px"
+                }} onClick={loadMoreThreads}>show more</a>}
                 {/* for replies, if there is a 3rd thread, show the "show more" button*/}
                 {!showMoreThreads && index == 2 && !root && depth != 0 &&
                     <a style={{
@@ -210,14 +224,14 @@ function Thread({ thread, offset, reading, depth, index, root, prev }:
                     }} onClick={loadMoreThreads}>
                         show more {depth} {index} {root ? "root" : "not root"}
                     </a>
-                } 
+                }
             </div>
 
             {/* additional threads after the current one */}
             {
-            showMoreThreads ? 
-                <Threads clubId={thread.clubId} bookId={thread.bookId} cursorThreadId={prev?.threadId} cursorTimeAgo={prev?.timePosted} parentThreadId={root ? "" : thread.parentThreadId} initialOffset={offset}/>
-                : <></>
+                showMoreThreads ?
+                    <Threads clubId={thread.clubId} bookId={thread.bookId} cursorThreadId={prev?.threadId} cursorTimeAgo={prev?.timePosted} parentThreadId={root ? "" : thread.parentThreadId} initialOffset={offset} />
+                    : <></>
             }
         </>
     );

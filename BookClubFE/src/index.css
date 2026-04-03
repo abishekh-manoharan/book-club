@@ -790,7 +790,8 @@ body {
   height: 1.1dvh;
   /* border: .05dvh solid pink; */
   background-color: white;
-  border-radius: 10px;;
+  border-radius: 10px;
+  ;
   z-index: 1;
 }
 
@@ -964,4 +965,20 @@ body {
   flex-direction: row;
   gap: 7px;
   justify-content: end;
+}
+
+.replyButton {
+  height: 21px;
+}
+
+.replyButtonInner {
+  display: flex;
+  justify-content: start;
+  align-items: start;
+  gap: 4px;
+}
+
+.replyButtonInner .infoLogo {
+  /* position: absolute; */
+  height: 16px;
 }

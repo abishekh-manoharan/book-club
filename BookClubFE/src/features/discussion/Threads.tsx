@@ -7,7 +7,7 @@ function Threads({ bookId, clubId, cursorThreadId, cursorTimeAgo, parentThreadId
     clubId: number,
     cursorThreadId?: number,
     cursorTimeAgo?: string | Date,
-    parentThreadId?: number,
+    parentThreadId?: number | string,
     initialOffset?: number 
 }) {
     const defaultCursorValues = {
