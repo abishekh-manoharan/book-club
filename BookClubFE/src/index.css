@@ -980,5 +980,22 @@ body {
 
 .replyButtonInner .infoLogo {
   /* position: absolute; */
-  height: 16px;
+  height: 17px;
+}
+.pfpAndText {
+  position: relative;
+}
+
+.pfpAndText .infoLogo {
+  height: 18px;
+  position: absolute;
+  top: 2.7px;
+  width: 100%;
+}
+
+.fakeTextArea {
+    min-height: 60px;
+    border: 1px solid #ccc;
+    padding: 8px;
+    color: gray;
 }
