@@ -30,11 +30,12 @@ function DiscussionBoard() {
     // else {
     //     console.log("not error")
     // }
-    
+
     return (
         <div className="threadsFunctionsContainer">
-            {clubUser ? <CreateThread /> : <CreateThreadUnauthorized/>}
-            <Threads clubId={clubId} bookId={bookId} />
+            {clubUser ? <CreateThread /> : <CreateThreadUnauthorized joinClubModalOpen={joinClubModalOpen} setJoinClubModalOpen={setJoinClubModalOpen}/>}
+            <Threads clubId={clubId} bookId={bookId} joinClubModalOpen={joinClubModalOpen} setJoinClubModalOpen={setJoinClubModalOpen}/>
+            <JoinClubModal joinClubModalOpen={joinClubModalOpen} setJoinClubModalOpen={setJoinClubModalOpen}/>
         </div>
     );
 }

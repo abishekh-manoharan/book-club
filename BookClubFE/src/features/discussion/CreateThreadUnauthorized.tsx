@@ -1,6 +1,15 @@
 import React from 'react';
+interface CreateThreadUnauthorizedProps {
+    joinClubModalOpen: boolean,
+    setJoinClubModalOpen: React.Dispatch<React.SetStateAction<boolean>>
+}
 
-function CreateThreadUnauthorized() {
+function CreateThreadUnauthorized({ joinClubModalOpen, setJoinClubModalOpen }: CreateThreadUnauthorizedProps) {
+    const clickInfoLogo = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+        e.preventDefault();
+        setJoinClubModalOpen(true);
+    }
+
     return (
         <div className="createThreadUnauthorized">
             <div className="discussionPostThreadForm">
@@ -12,7 +21,7 @@ function CreateThreadUnauthorized() {
                         required
                         disabled
                     />
-                    <a href=""className="infoLogo">
+                    <a onClick={e=>clickInfoLogo(e)} href="" className="infoLogo">
                         <img
                             className="infoLogo"
                             src="/src/assets/images/info.svg"

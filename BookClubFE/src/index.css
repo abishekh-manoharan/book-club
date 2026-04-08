@@ -96,6 +96,16 @@ body {
   margin: 0px;
 }
 
+.modal {
+  position: fixed;
+  top: 0px;
+  right: 0px;
+  height: 100dvh;
+  width: 100vw;
+  z-index: 21;
+  background-color: #24242495;
+}
+
 .page {
   padding: 12px;
   height: 95%;
@@ -982,6 +992,7 @@ body {
   /* position: absolute; */
   height: 17px;
 }
+
 .pfpAndText {
   position: relative;
 }
@@ -998,4 +1009,7 @@ body {
     border: 1px solid #ccc;
     padding: 8px;
     color: gray;
+}
+.infoLogoBtn{
+  z-index: 10;
 }

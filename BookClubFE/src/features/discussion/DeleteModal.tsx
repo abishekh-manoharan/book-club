@@ -30,7 +30,7 @@ function DeleteModal({ setHideDeleteModal, thread }: DeleteModalProps) {
         }
     }
     return (
-        <div className="deleteModal">
+        <div className="modal">
             <div className="deleteModalInner">
                 <h1 className="warningMain">Are you sure you want to delete this thread?</h1>
                 <div className="warningSub mediumText">This action cannot be undone.</div>

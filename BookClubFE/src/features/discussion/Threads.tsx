@@ -2,13 +2,15 @@ import { useAppSelector } from "../../app/hooks";
 import { makeSelectNestedThreads, useGetThreadsBatchQuery } from "./discussionSlice";
 import Thread from "./Thread";
 
-function Threads({ bookId, clubId, cursorThreadId, cursorTimeAgo, parentThreadId, initialOffset }: {
+function Threads({ bookId, clubId, cursorThreadId, cursorTimeAgo, parentThreadId, initialOffset, joinClubModalOpen, setJoinClubModalOpen }: {
     bookId: number,
     clubId: number,
     cursorThreadId?: number,
     cursorTimeAgo?: string | Date,
     parentThreadId?: number | string,
-    initialOffset?: number 
+    initialOffset?: number,
+    joinClubModalOpen: boolean,
+    setJoinClubModalOpen: React.Dispatch<React.SetStateAction<boolean>>
 }) {
     const defaultCursorValues = {
         CursorThreadId: 0,
@@ -62,7 +64,10 @@ function Threads({ bookId, clubId, cursorThreadId, cursorTimeAgo, parentThreadId
                             // ).toTimeString()
                         }
                         : undefined
-                } />)
+                }
+                joinClubModalOpen={joinClubModalOpen}
+                setJoinClubModalOpen={setJoinClubModalOpen}
+            />)
 
             }
         </div>

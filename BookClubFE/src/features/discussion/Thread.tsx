@@ -42,7 +42,7 @@ const timeAgo = (input: string | Date) => {
     return `${count} ${unit}${count !== 1 ? "s" : ""} ago`
 }
 
-function Thread({ thread, offset, reading, depth, index, root, prev }:
+function Thread({ thread, offset, reading, depth, index, root, prev, joinClubModalOpen, setJoinClubModalOpen }:
     {
         thread: NestedThread,
         offset: number,
@@ -53,7 +53,10 @@ function Thread({ thread, offset, reading, depth, index, root, prev }:
         prev?: {
             threadId: number | undefined,
             timePosted: string | Date | undefined
-        }
+        },
+        joinClubModalOpen: boolean,
+        setJoinClubModalOpen: React.Dispatch<React.SetStateAction<boolean>>
+
     }) {
     const threadElementRef = useRef<HTMLTextAreaElement>();
     const replyInput = useRef<LegacyRef<HTMLDivElement> | undefined>();
@@ -143,6 +146,12 @@ function Thread({ thread, offset, reading, depth, index, root, prev }:
         setShowMoreThreads(true);
     }
 
+    const clickInfoLogo = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        e.preventDefault();
+        console.log("cliock")
+        setJoinClubModalOpen(true);
+    }
+
     const isClubMember: boolean | undefined = clubUser != null || undefined;
 
     return (
@@ -169,17 +178,13 @@ function Thread({ thread, offset, reading, depth, index, root, prev }:
                             <button className="replyButton"
                                 disabled={!isClubMember}
                                 onClick={replyBtnClickHandler}
-                                style={{"paddingRight":!isClubMember?"2px":"6px"}}
-                                >
-                                <div className="replyButtonInner">
-                                    <div>reply</div>
-                                    {
-                                        !isClubMember && <a href="">
-                                            <img className="infoLogo" src='/src/assets/images/info.svg' />
-                                        </a>
-                                    }
-                                </div>
+                                style={{ "paddingRight": !isClubMember ? "2px" : "6px" }}
+                            >
+                                Reply
                             </button>
+                            {!isClubMember && <button onClick={(e) => clickInfoLogo(e)}>
+                                <img className="infoLogo" src='/src/assets/images/info.svg' />
+                            </button>}
                             {(userId === thread.userId || clubUser?.admin) && !thread.deleted && <button onClick={() => setHideDeleteModal(true)}>delete</button>}
                         </div>
 
@@ -207,7 +212,9 @@ function Thread({ thread, offset, reading, depth, index, root, prev }:
                                     timePosted: thread.replies[i - 1].timePosted
                                 }
                                 : undefined
-                            } />
+                            }
+                            joinClubModalOpen={joinClubModalOpen}
+                            setJoinClubModalOpen={setJoinClubModalOpen} />
                         )}
                     </>}
                 </>}
@@ -234,7 +241,8 @@ function Thread({ thread, offset, reading, depth, index, root, prev }:
             {/* additional threads after the current one */}
             {
                 showMoreThreads ?
-                    <Threads clubId={thread.clubId} bookId={thread.bookId} cursorThreadId={prev?.threadId} cursorTimeAgo={prev?.timePosted} parentThreadId={root ? "" : thread.parentThreadId} initialOffset={offset} />
+                    <Threads clubId={thread.clubId} bookId={thread.bookId} cursorThreadId={prev?.threadId} cursorTimeAgo={prev?.timePosted} parentThreadId={root ? "" : thread.parentThreadId} initialOffset={offset} joinClubModalOpen={joinClubModalOpen}
+                        setJoinClubModalOpen={setJoinClubModalOpen} />
                     : <></>
             }
         </>
