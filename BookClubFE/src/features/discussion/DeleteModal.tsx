@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NestedThread, useDeleteThreadMutation } from './discussionSlice';
 import { isFetchBaseQueryError, isSerializedError } from "../../app/typeGuards";
 import { updateErrorMessageThunk } from "../error/errorSlice";
@@ -13,6 +13,22 @@ interface DeleteModalProps {
 function DeleteModal({ setHideDeleteModal, thread }: DeleteModalProps) {
     const [deleteThread] = useDeleteThreadMutation();
     const dispatch = useAppDispatch();
+    const modal = React.useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        // Close the modal if the user clicks outside of it
+        const handler = (e: MouseEvent) => {
+            if (e.target === modal.current) {
+                setHideDeleteModal(false);
+            }
+        }
+
+        modal.current?.addEventListener("click", handler);
+
+        return () => {
+            modal.current?.removeEventListener("click", handler);
+        }
+    }, [setHideDeleteModal]);
 
     const deleteBtnClickHandler = async () => {
         try {
@@ -30,7 +46,7 @@ function DeleteModal({ setHideDeleteModal, thread }: DeleteModalProps) {
         }
     }
     return (
-        <div className="modal">
+        <div ref={modal} className="modal">
             <div className="deleteModalInner">
                 <h1 className="warningMain">Are you sure you want to delete this thread?</h1>
                 <div className="warningSub mediumText">This action cannot be undone.</div>
