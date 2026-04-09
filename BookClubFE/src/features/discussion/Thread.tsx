@@ -178,11 +178,11 @@ function Thread({ thread, offset, reading, depth, index, root, prev, joinClubMod
                             <button className="replyButton"
                                 disabled={!isClubMember}
                                 onClick={replyBtnClickHandler}
-                                style={{ "paddingRight": !isClubMember ? "2px" : "6px" }}
+                                style={{ "paddingRight": !isClubMember ? "4px" : "6px" }}
                             >
                                 Reply
                             </button>
-                            {!isClubMember && <button onClick={(e) => clickInfoLogo(e)}>
+                            {!isClubMember && <button className="infoButton" onClick={(e) => clickInfoLogo(e)}>
                                 <img className="infoLogo" src='/src/assets/images/info.svg' />
                             </button>}
                             {(userId === thread.userId || clubUser?.admin) && !thread.deleted && <button onClick={() => setHideDeleteModal(true)}>delete</button>}
