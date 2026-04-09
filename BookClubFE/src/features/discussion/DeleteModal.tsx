@@ -49,7 +49,7 @@ function DeleteModal({ setHideDeleteModal, thread }: DeleteModalProps) {
     return (
         <div ref={modal} className="modal">
             <div className="deleteModalInner">
-                                <img
+                <img
                     className="infoLogo"
                     src="/src/assets/images/info.svg"
                 />
