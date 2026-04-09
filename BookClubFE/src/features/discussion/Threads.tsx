@@ -26,7 +26,6 @@ function Threads({ bookId, clubId, cursorThreadId, cursorTimeAgo, parentThreadId
         }
         ));
 
-    console.log(threads?.rootThreads)
     const { isError, error, isLoading } = useGetThreadsBatchQuery({
         BookId: bookId,
         ClubId: clubId,
@@ -35,16 +34,11 @@ function Threads({ bookId, clubId, cursorThreadId, cursorTimeAgo, parentThreadId
         ParentThreadId: parentThreadId ?? ""
     });
     if (isError) {
-        console.log(error)
         return <div style={{ paddingLeft: initialOffset ?? 0, textAlign: "left" }}>Error</div>;
     } else if (isLoading) {
         return <div style={{ paddingLeft: initialOffset ?? 0, textAlign: "left" }}>Loading</div>;
     }
-    else {
-        console.log("not error")
-    }
-    console.log(threads.rootThreads);
-
+    
     return (
         <div className="allThreads">
             {threads?.rootThreads.map((thread, i) => <Thread

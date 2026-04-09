@@ -9,30 +9,29 @@ function JoinClubModal({ joinClubModalOpen, setJoinClubModalOpen }: JoinClubModa
 
     useEffect(() => {
         // Close the modal if the user clicks outside of it
+        const currentModal = modal.current;
 
         const handler = (e: MouseEvent) => {
-            if (e.target === modal.current) {
+            if (e.target === currentModal) {
                 setJoinClubModalOpen(false);
             }
         }
 
-        modal.current?.addEventListener("click", handler);
+        currentModal?.addEventListener("click", handler);
 
         return () => {
-            modal.current?.removeEventListener("click", handler);
+            console.log("cleanup") 
+            currentModal?.removeEventListener("click", handler);
         }
-    }, [joinClubModalOpen, setJoinClubModalOpen]);
+
+    }, []);
 
     return (
-        <>
-            {joinClubModalOpen == true ?
-                <div ref={modal} className="modal">
-                    <div className="deleteModalInner">
-                        Join the club to take part in discussions.
-                    </div>
-                </div> :
-                <></>}
-        </>
+        <div ref={modal} className="modal">
+            <div className="deleteModalInner">
+                Join the club to take part in discussions.
+            </div>
+        </div>
     );
 }
 
