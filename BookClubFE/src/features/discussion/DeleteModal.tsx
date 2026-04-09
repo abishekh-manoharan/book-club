@@ -49,6 +49,10 @@ function DeleteModal({ setHideDeleteModal, thread }: DeleteModalProps) {
     return (
         <div ref={modal} className="modal">
             <div className="deleteModalInner">
+                                <img
+                    className="infoLogo"
+                    src="/src/assets/images/info.svg"
+                />
                 <h1 className="warningMain">Are you sure you want to delete this thread?</h1>
                 <div className="warningSub mediumText">This action cannot be undone.</div>
                 <div className="buttons">

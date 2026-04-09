@@ -752,10 +752,18 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 93vw;
-  max-width: 93vw;
   background-color: #1a1a1af2;
   z-index: inherit;
+  height: 350px;
+  width: 300px;
+  padding: 20px;
+  box-sizing: border-box;
+  text-align: center;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .dropdownButton {
@@ -777,9 +785,16 @@ body {
 
 .deleteModalInner .buttons {
   display: flex;
-  justify-content: end;
-  gap: 7px;
-  margin: 7px 14px 14px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  gap: 8px;
+}
+
+.deleteModalInner button {
+  width: 250px;
+  height: 32px;
 }
 
 .barContainer {
@@ -1025,4 +1040,37 @@ body {
 
 .infoButton .infoLogo {
   height: 17px;
+}
+
+.joinClubModalInner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #1a1a1af2;
+  z-index: inherit;
+  height: 350px;
+  width: 300px;
+  padding: 20px;
+  box-sizing: border-box;
+  text-align: center;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.joinClubModalInner .buttons {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  gap: 8px;
+}
+
+.joinClubModalInner button {
+  width: 250px;
+  height: 32px;
 }

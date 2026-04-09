@@ -4,7 +4,7 @@ interface CreateThreadUnauthorizedProps {
     setJoinClubModalOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-function CreateThreadUnauthorized({ joinClubModalOpen, setJoinClubModalOpen }: CreateThreadUnauthorizedProps) {
+function CreateThreadUnauthorized({ setJoinClubModalOpen }: CreateThreadUnauthorizedProps) {
     const clickInfoLogo = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
         e.preventDefault();
         setJoinClubModalOpen(true);

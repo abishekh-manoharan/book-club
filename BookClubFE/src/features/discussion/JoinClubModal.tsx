@@ -4,7 +4,7 @@ interface JoinClubModalProps {
     joinClubModalOpen: boolean,
     setJoinClubModalOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
-function JoinClubModal({ joinClubModalOpen, setJoinClubModalOpen }: JoinClubModalProps) {
+function JoinClubModal({ setJoinClubModalOpen }: JoinClubModalProps) {
     const modal = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -20,7 +20,7 @@ function JoinClubModal({ joinClubModalOpen, setJoinClubModalOpen }: JoinClubModa
         currentModal?.addEventListener("click", handler);
 
         return () => {
-            console.log("cleanup") 
+            console.log("cleanup")
             currentModal?.removeEventListener("click", handler);
         }
 
@@ -28,8 +28,17 @@ function JoinClubModal({ joinClubModalOpen, setJoinClubModalOpen }: JoinClubModa
 
     return (
         <div ref={modal} className="modal">
-            <div className="deleteModalInner">
-                Join the club to take part in discussions.
+            <div className="joinClubModalInner">
+                <img
+                    className="infoLogo"
+                    src="/src/assets/images/info.svg"
+                />
+                <h1 className="warningMain">Club Members Only</h1>
+                <div className="warningSub mediumText">Replying is a club member exclusive. Join to start engaging with posts and connect with the community.</div>
+                <div className="buttons">
+                    <button className="btn" onClick={() => { setJoinClubModalOpen(false) }}>Join Club</button>
+                    <button className="btn" onClick={() => { setJoinClubModalOpen(false) }}>Close</button>
+                </div>
             </div>
         </div>
     );
