@@ -23,10 +23,11 @@ function DeleteModal({ setHideDeleteModal, thread }: DeleteModalProps) {
             }
         }
 
-        modal.current?.addEventListener("click", handler);
+        const currentModal = modal.current;
+        currentModal?.addEventListener("click", handler);
 
         return () => {
-            modal.current?.removeEventListener("click", handler);
+            currentModal?.removeEventListener("click", handler);
         }
     }, [setHideDeleteModal]);
 
