@@ -83,7 +83,7 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            providesTags: [{type: 'Clubs', id: 'members'}]
+            providesTags: [{type: 'Clubs', id: 'members'}],
         }),
         getClubUsers: builder.query<ClubUser[], { clubId: number }>({
             query: (clubUser) => ({
@@ -110,7 +110,7 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            invalidatesTags: [{type: 'Clubs', id: 'members'}]
+            invalidatesTags: [{type: 'Clubs', id: 'members'},{type: 'Readings', id: 'all'}]
         }),
         getJoinRequest: builder.query<JoinRequest, { userId: number, clubId: number }>({
             query: (joinRequest) => ({

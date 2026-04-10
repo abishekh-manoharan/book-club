@@ -19,28 +19,30 @@ interface ReadingWithProgress extends Reading {
 }
 
 function ReadingsList() {
-    const nav = useNavigate();
 
+    
+    const nav = useNavigate();
+    
     const params = useParams();
     const optedInReadingsRef = useRef<HTMLDivElement | null>(null);
     const notOptedInReadingsRef = useRef<HTMLDivElement | null>(null);
-
+    
     const [joinedReadingsHidden, setJoinedReadingsHidden] = useState(false);
     const [notJoinedReadingsHidden, setNotJoinedReadingsHidden] = useState(false);
-
+    
     const { data: userId } = useGetUserIdQuery();
-    const { data: clubUser, isSuccess: isGetClubUserSuccess }
-        = useGetClubUserQuery(
-            { clubId: Number(params.clubid), userId: userId as number },
-            { skip: !userId }
-        );
-
+    const { data: clubUser, isSuccess: isGetClubUserSuccess, isError: isGetClubUserError }
+    = useGetClubUserQuery(
+        { clubId: Number(params.clubid), userId: userId as number },
+        { skip: !userId }
+    );
+    
     // getting all the readings of the club
     const { data: readings } = useGetReadingsOfAClubQuery(Number(params.clubid));
     // getting readings of the club that the user has joined
     const { data: readingUsersOfLoggedInUser } = useGetReadingUsersOfLoggedInUsersQuery(undefined);
     // const { data: readingsOfClubsJoinedByUser, isFetching: isFetchingReadingsOfClubsJoinedByUser } = useGetAllReadingsOfClubsJoinedByUserQuery();
-
+    
     const organizedReadings = useMemo(() => {
         const organizedReadings: ReadingsListOrganizedReadings = { joinedReadings: [], notJoinedReadings: [], concludedReadings: [] };
         const readingsUsersOfClubJoinedByUser = readingUsersOfLoggedInUser?.filter(r => r.clubId === Number(params.clubid));
@@ -56,11 +58,17 @@ function ReadingsList() {
                 organizedReadings.concludedReadings?.push(r);
             }
         })
-
+        
         return organizedReadings;
-
+        
     }, [readingUsersOfLoggedInUser, readings, params.clubid])
-
+    
+    console.log("---")
+    console.log(clubUser)
+    console.log(organizedReadings)
+    console.log(!clubUser)
+    console.log(isGetClubUserError)
+    
     const toggleJoinedReadingsList = () => {
         setJoinedReadingsHidden((state) => !state);
     }
@@ -115,7 +123,7 @@ function ReadingsList() {
             }
             {/* case where the user isn't a club member. readings are listed without a seperate sections for joined and not joined readings. */}
             {
-                !clubUser && organizedReadings && organizedReadings!.notJoinedReadings?.map((r) => {
+                isGetClubUserError && organizedReadings && organizedReadings!.notJoinedReadings?.map((r) => {
                     if (r.status != 'concluded') {
                         return <NotOptedInReading key={r.bookId + r.clubId - 1} bookId={r.bookId} clubId={r.clubId} />
                     }
