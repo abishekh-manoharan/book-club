@@ -49,10 +49,10 @@ function ReadingsList() {
         // const readingsUsersOfClubJoinedByUserInForm = readingsUsersOfClubJoinedByUser?.map(r => ({bookId: r.bookId, clubId: r.clubId}))
 
         readings?.forEach((r) => {
-            if (readingsUsersOfClubJoinedByUser?.some(ru => ru.bookId === r.bookId && ru.clubId === ru.clubId)) {
+            if (readingsUsersOfClubJoinedByUser?.some(ru => ru.bookId === r.bookId && ru.clubId === r.clubId)) {
                 const readingUser = readingUsersOfLoggedInUser?.find((readingUser => readingUser.bookId === r.bookId && readingUser.clubId === r.clubId))
                 organizedReadings.joinedReadings?.push({ ...r, progress: readingUser?.progress, progressTotal: readingUser?.progressTotal, progresstypeId: readingUser?.progresstypeId });
-            } else if (!readingsUsersOfClubJoinedByUser?.some(ru => ru.bookId === r.bookId && ru.clubId === ru.clubId)) {
+            } else if (!readingsUsersOfClubJoinedByUser?.some(ru => ru.bookId === r.bookId && ru.clubId === r.clubId)) {
                 organizedReadings.notJoinedReadings?.push(r);
             } else {
                 organizedReadings.concludedReadings?.push(r);
@@ -107,7 +107,7 @@ function ReadingsList() {
                         {
                             organizedReadings && organizedReadings!.notJoinedReadings?.map((r) => {
                                 if (r.status != 'concluded') {
-                                    return <NotOptedInReading key={r.bookId + r.clubId - 1} bookId={r.bookId} clubId={r.clubId} />
+                                    return <NotOptedInReading key={r.bookId + r.clubId - 1} bookId={r.bookId} clubId={r.clubId} clubUser={clubUser} isGetClubUserSuccess={isGetClubUserSuccess}/>
                                 }
                             }
                             )
@@ -125,7 +125,7 @@ function ReadingsList() {
             {
                 isGetClubUserError && organizedReadings && organizedReadings!.notJoinedReadings?.map((r) => {
                     if (r.status != 'concluded') {
-                        return <NotOptedInReading key={r.bookId + r.clubId - 1} bookId={r.bookId} clubId={r.clubId} />
+                        return <NotOptedInReading key={r.bookId + r.clubId - 1} bookId={r.bookId} clubId={r.clubId} clubUser={clubUser} isGetClubUserSuccess={isGetClubUserSuccess} />
                     }
                 })
             }

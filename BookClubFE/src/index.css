@@ -459,6 +459,7 @@ body {
 .clubSettings {
   grid-area: clubSettings;
   align-self: flex-end;
+  justify-self: end;
   padding: 7px 0;
 }
 

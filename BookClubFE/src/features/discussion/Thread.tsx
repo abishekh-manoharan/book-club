@@ -77,7 +77,7 @@ function Thread({ thread, offset, reading, depth, index, root, prev, joinClubMod
     const [hideDeleteModal, setHideDeleteModal] = useState(false);
 
     const { data: userId } = useGetUserIdQuery();
-    const { data: clubUser } = useGetClubUserQuery({ clubId: reading.clubId, userId: userId! }, { skip: !userId })
+    const { data: clubUser, isError: isGetClubUserError, isSuccess: isGetClubUserSuccess } = useGetClubUserQuery({ clubId: reading.clubId, userId: userId! }, { skip: !userId })
     const { data: user } = useGetUserQuery(thread.userId);
     const { data: loggedInUser } = useGetUserQuery(userId!, { skip: !userId });
     const [createReply] = useReplyToThreadMutation();
@@ -152,7 +152,8 @@ function Thread({ thread, offset, reading, depth, index, root, prev, joinClubMod
         setJoinClubModalOpen(true);
     }
 
-    const isClubMember: boolean | undefined = clubUser != null || undefined;
+    // const isClubMember: boolean | undefined = clubUser != null || undefined;
+    const isClubMember = isGetClubUserSuccess && clubUser != null;  
 
     return (
         <>

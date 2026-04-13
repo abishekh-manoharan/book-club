@@ -15,7 +15,7 @@ function DiscussionBoard() {
     const bookId = Number(bookid);
 
     const { data: userId } = useGetUserIdQuery();
-    const { data: clubUser } = useGetClubUserQuery({ clubId: clubId, userId: userId! }, { skip: !userId })
+    const { data: clubUser, isError: isGetClubUserError, isSuccess: isGetClubUserSuccess } = useGetClubUserQuery({ clubId: clubId, userId: userId! }, { skip: !userId })
     
     const [joinClubModalOpen, setJoinClubModalOpen] = useState(false);
     // console.log(clubId)
@@ -33,7 +33,8 @@ function DiscussionBoard() {
 
     return (
         <div className="threadsFunctionsContainer">
-            {clubUser ? <CreateThread /> : <CreateThreadUnauthorized joinClubModalOpen={joinClubModalOpen} setJoinClubModalOpen={setJoinClubModalOpen}/>}
+            {isGetClubUserSuccess && <CreateThread />} 
+            {isGetClubUserError && <CreateThreadUnauthorized joinClubModalOpen={joinClubModalOpen} setJoinClubModalOpen={setJoinClubModalOpen}/>}
             <Threads clubId={clubId} bookId={bookId} joinClubModalOpen={joinClubModalOpen} setJoinClubModalOpen={setJoinClubModalOpen}/>
             {joinClubModalOpen && <JoinClubModal joinClubModalOpen={joinClubModalOpen} setJoinClubModalOpen={setJoinClubModalOpen}/>}   
         </div>

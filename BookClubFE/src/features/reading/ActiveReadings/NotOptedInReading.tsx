@@ -1,28 +1,29 @@
 import { useGetBookQuery } from "../../../features/book/bookSlice";
-import { useGetClubQuery, useGetClubUserQuery } from "../../../features/club/clubSlice";
+import { ClubUser, useGetClubQuery } from "../../../features/club/clubSlice";
 import { useGetReadingMemberCountQuery, useOptIntoReadingMutation } from "../readingSlice";
 
 import { updateErrorMessageThunk } from "../../error/errorSlice";
 import { useAppDispatch } from "../../../app/hooks";
 import { isFetchBaseQueryError, isSerializedError } from "../../../app/typeGuards";
-import { useGetUserIdQuery } from "../../../features/auth/authSlice";
 import { Link } from "react-router-dom";
 
 interface NotOptedInReadingProps {
     clubId: number,
-    bookId: number
+    bookId: number,
+    clubUser: ClubUser | undefined,
+    isGetClubUserSuccess: boolean
 }
 
-function NotOptedInReading({ clubId, bookId }: NotOptedInReadingProps) {
+function NotOptedInReading({ clubId, bookId, clubUser, isGetClubUserSuccess }: NotOptedInReadingProps) {
     const dispatch = useAppDispatch();
 
-    const { data: userId } = useGetUserIdQuery();
+    // const { data: userId } = useGetUserIdQuery();
 
-    const { data: clubUser, isSuccess: isGetClubUserSuccess }
-        = useGetClubUserQuery(
-            { clubId: clubId, userId: userId as number },
-            { skip: !userId }
-        );
+    // const { data: clubUser, isSuccess: isGetClubUserSuccess }
+    //     = useGetClubUserQuery(
+    //         { clubId: clubId, userId: userId as number },
+    //         { skip: !userId }
+    //     );
 
     const { data: book } = useGetBookQuery(bookId);
     const { data: club } = useGetClubQuery(clubId);
