@@ -157,7 +157,7 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            invalidatesTags: [{type: 'Readings', id: 'all'}, {type: 'Clubs', id: 'members'}]
+            invalidatesTags: [{type: 'Readings', id: 'all'}, {type: 'Readings', id: 'user'}, {type: 'Clubs', id: 'members'}]
         }),
     })
 })
