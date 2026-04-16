@@ -35,11 +35,12 @@ public class DiscussionController : ControllerBase
         // ensure required params are included
         if (ModelState.IsValid)
         {
-            // ensure user has opted into reading
-            Readinguser? readinguser = await clubService.GetReadinguser(User, (int)thread.ClubId!, (int)thread.BookId!);
-            if (readinguser == null)
+            // ensure user is a club member of the club associated with the thread being created
+            var clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, (int)thread.ClubId!);
+
+            if (clubUser == null)
             {
-                return Unauthorized("Reading user with the associated properties not found.");
+                return Unauthorized("User isn't authorized to create a thread for this club.");
             }
 
             // create thread
@@ -98,10 +99,11 @@ public class DiscussionController : ControllerBase
         if (ModelState.IsValid)
         {
             // ensure user has opted into reading
-            Readinguser? readinguser = await clubService.GetReadinguser(User, (int)thread.ClubId!, (int)thread.BookId!);
-            if (readinguser == null)
+            var clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, (int)thread.ClubId!);
+
+            if (clubUser == null)
             {
-                return Unauthorized("User isn't authorized to create a thread for this reading. Ensure user has opted into the reading.");
+                return Unauthorized("User isn't authorized to create a thread for this club. Ensure they are a club member.");
             }
 
             // create thread
