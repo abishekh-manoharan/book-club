@@ -107,7 +107,7 @@ body {
 }
 
 .page {
-  padding: 12px;
+  padding: 7px;
   height: 95%;
 }
 
@@ -650,6 +650,7 @@ body {
 }
 
 .readingHome {
+  position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -1074,4 +1075,10 @@ body {
 .joinClubModalInner button {
   width: 250px;
   height: 32px;
+}
+
+.readingHome .optBtn {
+  position: absolute;
+  top: 7px;
+  right: 0;
 }

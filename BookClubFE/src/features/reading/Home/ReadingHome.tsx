@@ -76,6 +76,7 @@ function ReadingHome() {
 
     const optedIn: boolean = getReadingUserSuccess;
     const optedOut: boolean = getReadingUserError;
+    const isClubMember: boolean = clubUserIsSuccess;
     const isAdmin = clubUserIsSuccess && clubUser && clubUser.admin;
     const loggedIn = getUserIsSuccess;
 
@@ -87,6 +88,9 @@ function ReadingHome() {
             }
             <h1>{book?.title}</h1>
             {book?.authorName && <p className='bookSearchResultAuthorName'>{book?.authorName}</p>}
+
+            {optedIn && isClubMember && <button onClick={optOutOfReadingButtonClick} className="optBtn">Opt Out</button>}
+            {optedOut && isClubMember && <button onClick={optIntoReadingButtonClick} className="optBtn">Opt In</button>}
 
             {!getUserIsFetching && !getReadingIsFetching && !getReadingUserIsFetching && <>
                 {optedIn &&
