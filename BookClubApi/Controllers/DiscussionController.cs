@@ -245,34 +245,43 @@ public class DiscussionController : ControllerBase
     {
         if (ModelState.IsValid)
         {
-            var query = dbContext.Threads
-                .Where(t => t.ClubId == c.ClubId && t.BookId == c.BookId)
-                .Where(t => t.ParentThreadId == c.ParentThreadId);
-
-            // case for initial batch grab
-            if (c.CursorTimeAgo == new DateTime(2000, 1, 1, 5, 0, 0, DateTimeKind.Utc))
+            var clubPrivacy = clubService.IsClubPrivate((int)c.ClubId!);
+            var clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, (int)c.ClubId);
+            // case where club is public or if not, user is member of the club
+            if (clubPrivacy == false || clubUser != null)
             {
-                query = query.Where(t =>
-                    t.TimePosted > c.CursorTimeAgo ||
-                    (t.TimePosted == c.CursorTimeAgo && t.ThreadId > c.CursorThreadId));
-            }
-            else // case for remaining batch grabs
-            {
-                query = query.Where(t =>
-                    t.TimePosted < c.CursorTimeAgo ||
-                    (t.TimePosted == c.CursorTimeAgo && t.ThreadId < c.CursorThreadId));
-            }
+                // ensure reading exists
+                var reading = dbContext.Readings.Where(reading => reading.BookId == c.BookId && reading.ClubId == (int)c.ClubId).AsNoTracking().FirstOrDefault();
+                if (reading != null)
+                {
+                    var query = dbContext.Threads
+                        .Where(t => t.ClubId == c.ClubId && t.BookId == c.BookId)
+                        .Where(t => t.ParentThreadId == c.ParentThreadId);
 
-            var roots = await query
-                .OrderByDescending(t => t.TimePosted)
-                .ThenByDescending(t => t.ThreadId)
-                .Take(21)
-                .AsNoTracking()
-                .ToListAsync();
+                    // case for initial batch grab
+                    if (c.CursorTimeAgo == new DateTime(2000, 1, 1, 5, 0, 0, DateTimeKind.Utc))
+                    {
+                        query = query.Where(t =>
+                            t.TimePosted > c.CursorTimeAgo ||
+                            (t.TimePosted == c.CursorTimeAgo && t.ThreadId > c.CursorThreadId));
+                    }
+                    else // case for remaining batch grabs
+                    {
+                        query = query.Where(t =>
+                            t.TimePosted < c.CursorTimeAgo ||
+                            (t.TimePosted == c.CursorTimeAgo && t.ThreadId < c.CursorThreadId));
+                    }
+
+                    var roots = await query
+                        .OrderByDescending(t => t.TimePosted)
+                        .ThenByDescending(t => t.ThreadId)
+                        .Take(21)
+                        .AsNoTracking()
+                        .ToListAsync();
 
 
-            var rootIds = roots.Select(r => r.ThreadId).ToList();
-            var sql = """
+                    var rootIds = roots.Select(r => r.ThreadId).ToList();
+                    var sql = """
             WITH RECURSIVE thread_tree AS (
                 SELECT
                     t.*,
@@ -322,23 +331,27 @@ public class DiscussionController : ControllerBase
             ORDER BY time_posted ASC, thread_id ASC;
             """;
 
-            var children = await dbContext.Threads
-                .FromSqlRaw(sql, new MySqlParameter("@rootIds", JsonSerializer.Serialize(rootIds)))
-                .AsNoTracking()
-                .ToListAsync();
+                    var children = await dbContext.Threads
+                        .FromSqlRaw(sql, new MySqlParameter("@rootIds", JsonSerializer.Serialize(rootIds)))
+                        .AsNoTracking()
+                        .ToListAsync();
 
-            var allThreads = roots
-                .Concat(children)
-                // .OrderByDescending(t => t.TimePosted)
-                // .ThenByDescending(t => t.ThreadId)
-                .ToList();
+                    var allThreads = roots
+                        .Concat(children)
+                        // .OrderByDescending(t => t.TimePosted)
+                        // .ThenByDescending(t => t.ThreadId)
+                        .ToList();
 
-            foreach (var thread in allThreads)
-            {
-                thread.Text = thread.Deleted ? "This thread has been deleted." : thread.Text;
+                    foreach (var thread in allThreads)
+                    {
+                        thread.Text = thread.Deleted ? "This thread has been deleted." : thread.Text;
+                    }
+
+                    return Ok(allThreads);
+                    return NotFound("Reading doesn't exist.");
+                }
+                return Unauthorized("User must be member of a private club to view it's threads.");
             }
-            
-            return Ok(allThreads);
         }
         return BadRequest(ModelState);
     }
