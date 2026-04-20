@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { NewMeeting, useCreateMeetingMutation } from "./meetingSlice";
 import { isFetchBaseQueryError, isSerializedError } from "../../app/typeGuards";
 import { updateErrorMessageThunk } from "../error/errorSlice";
@@ -8,6 +8,8 @@ import { useNotifyReadingUsersMutation } from "../notification/notificationSlice
 import { useGetOneReadingQuery } from "../reading/readingSlice";
 
 function CreateMeeting() {
+    const nav = useNavigate();
+
     const dispatch = useAppDispatch();
     const [Name, setName] = useState("");
     const [Description, setDescription] = useState("");
@@ -51,17 +53,15 @@ function CreateMeeting() {
             endTime: new Date(meetingEndDate.value),
         }
 
-        console.log(newMeeting);
-
         try {
-            const result = await createMeeting(newMeeting).unwrap();
-            const result2 = await notifyReadingUsers({
+            await createMeeting(newMeeting).unwrap();
+            await notifyReadingUsers({
                 ClubId: clubId,
                 BookId: bookId,
                 Text: `New meeting created in ${reading?.name}`
             })
                 .unwrap();
-            console.log(result + " " + result2);
+            nav(-1);
         } catch (error) {
             if (isFetchBaseQueryError(error)) {
                 const errorMessage = (error.data as string) || "Unknown error";
