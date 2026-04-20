@@ -333,6 +333,11 @@ public class DiscussionController : ControllerBase
                 // .ThenByDescending(t => t.ThreadId)
                 .ToList();
 
+            foreach (var thread in allThreads)
+            {
+                thread.Text = thread.Deleted ? "This thread has been deleted." : thread.Text;
+            }
+            
             return Ok(allThreads);
         }
         return BadRequest(ModelState);
