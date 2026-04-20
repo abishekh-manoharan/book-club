@@ -282,54 +282,54 @@ public class DiscussionController : ControllerBase
 
                     var rootIds = roots.Select(r => r.ThreadId).ToList();
                     var sql = """
-            WITH RECURSIVE thread_tree AS (
-                SELECT
-                    t.*,
-                    0 AS depth
-                FROM Thread t
-                WHERE t.thread_id IN (
-                    SELECT jt.thread_id
-                    FROM JSON_TABLE(
-                        @rootIds,
-                        '$[*]' COLUMNS (
-                            thread_id BIGINT PATH '$'
+                        WITH RECURSIVE thread_tree AS (
+                            SELECT
+                                t.*,
+                                0 AS depth
+                            FROM Thread t
+                            WHERE t.thread_id IN (
+                                SELECT jt.thread_id
+                                FROM JSON_TABLE(
+                                    @rootIds,
+                                    '$[*]' COLUMNS (
+                                        thread_id BIGINT PATH '$'
+                                    )
+                                ) jt
+                            )
+
+                            UNION ALL
+
+                            -- Recursive step
+                            SELECT
+                                child.thread_id,
+                                child.parent_thread_id,
+                                child.book_id,
+                                child.club_id,
+                                child.user_id,
+                                child.time_posted,
+                                child.Text,         
+                                child.Deleted,        
+                                parent.depth + 1 AS depth
+                            FROM (
+                                SELECT
+                                    t.*,
+                                    ROW_NUMBER() OVER (
+                                        PARTITION BY t.parent_thread_id
+                                        ORDER BY t.time_posted DESC, t.thread_id DESC
+                                    ) AS rn
+                                FROM Thread t
+                            ) child
+                            JOIN thread_tree parent
+                                ON child.parent_thread_id = parent.thread_id
+                            WHERE
+                                child.rn <= 3
+                                AND parent.depth < 4
                         )
-                    ) jt
-                )
 
-                UNION ALL
-
-                -- Recursive step
-                SELECT
-                    child.thread_id,
-                    child.parent_thread_id,
-                    child.book_id,
-                    child.club_id,
-                    child.user_id,
-                    child.time_posted,
-                    child.Text,         
-                    child.Deleted,        
-                    parent.depth + 1 AS depth
-                FROM (
-                    SELECT
-                        t.*,
-                        ROW_NUMBER() OVER (
-                            PARTITION BY t.parent_thread_id
-                            ORDER BY t.time_posted DESC, t.thread_id DESC
-                        ) AS rn
-                    FROM Thread t
-                ) child
-                JOIN thread_tree parent
-                    ON child.parent_thread_id = parent.thread_id
-                WHERE
-                    child.rn <= 3
-                    AND parent.depth < 4
-            )
-
-            SELECT *
-            FROM thread_tree;
-            ORDER BY time_posted ASC, thread_id ASC;
-            """;
+                        SELECT *
+                        FROM thread_tree;
+                        ORDER BY time_posted ASC, thread_id ASC;
+                        """;
 
                     var children = await dbContext.Threads
                         .FromSqlRaw(sql, new MySqlParameter("@rootIds", JsonSerializer.Serialize(rootIds)))
@@ -348,10 +348,10 @@ public class DiscussionController : ControllerBase
                     }
 
                     return Ok(allThreads);
-                    return NotFound("Reading doesn't exist.");
                 }
-                return Unauthorized("User must be member of a private club to view it's threads.");
+                return NotFound("Reading doesn't exist.");
             }
+            return Unauthorized("User must be member of a private club to view it's threads.");
         }
         return BadRequest(ModelState);
     }
