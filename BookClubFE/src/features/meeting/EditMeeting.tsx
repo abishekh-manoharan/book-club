@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Meeting, useGetOneMeetingQuery, useUpdateMeetingMutation } from "./meetingSlice";
 import { useEffect, useState } from "react"
 import { isFetchBaseQueryError, isSerializedError } from "../../app/typeGuards";
@@ -13,7 +13,7 @@ import DeleteModal from "./DeleteModal";
 function EditMeeting() {
     const { meetingId } = useParams();
     const meetingid = Number(meetingId);
-
+    const nav = useNavigate();
     const { data: meeting } = useGetOneMeetingQuery(meetingid, { skip: !meetingid || isNaN(meetingid) });
     const [updateMeeting] = useUpdateMeetingMutation();
 
@@ -23,7 +23,7 @@ function EditMeeting() {
     const [Description, setDescription] = useState("");
     const [startDate, setStartDate] = useState<string | undefined>("");
     const [endDate, setEndDate] = useState<string | undefined>("");
-    const [hideDeleteModal, setHideDeleteModal ] = useState(true);
+    const [hideDeleteModal, setHideDeleteModal] = useState(true);
 
     const { clubid, bookid } = useParams();
     const clubId = Number(clubid);
@@ -96,7 +96,8 @@ function EditMeeting() {
                 ClubId: clubId,
                 BookId: bookId,
                 Text: `${meeting?.name} Meeting updated`
-            }).unwrap();
+            }).unwrap();            
+            nav(-1);
             console.log(result + " " + result2);
         } catch (error) {
             if (isFetchBaseQueryError(error)) {
@@ -121,8 +122,8 @@ function EditMeeting() {
     const isAdmin = clubUserIsSuccess && clubUser && clubUser.admin;
 
     return (
-        <div>
-            <DeleteModal hideDeleteModal={hideDeleteModal} setHideDeleteModal={setHideDeleteModal} meeting={meeting}/>
+        <div>{isAdmin && <>
+            <DeleteModal hideDeleteModal={hideDeleteModal} setHideDeleteModal={setHideDeleteModal} meeting={meeting} />
             <div className="createClubPage">
                 <div className="createClubHeading">
                     <h1>Edit Your Meeting</h1>
@@ -145,7 +146,8 @@ function EditMeeting() {
                     <button type="button" onClick={() => setHideDeleteModal(false)}>Delete</button>
                 </form>
             </div>
-        </div>
+        </>
+        }</div>
     );
 }
 
