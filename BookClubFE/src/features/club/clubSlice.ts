@@ -100,6 +100,17 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
             },
             providesTags: [{type: 'Clubs', id: 'members'}]
         }),
+        getClubUsersCount: builder.query<number, number>({
+            query: (clubId) => ({
+                url: `club/clubUsersCount?clubId=${clubId}`,
+                credentials: 'include',
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }),
+            providesTags: [{type: 'Clubs', id: 'members'}]
+        }),
         joinClub: builder.mutation<boolean, { UserId: number, ClubId: number }>({
             query: (clubUser) => ({
                 url: `club/join`,
@@ -170,6 +181,7 @@ export const {
     useJoinClubMutation,
     useGetClubUserQuery,
     useGetClubUsersQuery,
+    useGetClubUsersCountQuery,
     useGetJoinRequestQuery,
     useGetJoinRequestsQuery,
     useRejectJoinRequestMutation,

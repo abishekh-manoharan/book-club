@@ -554,6 +554,23 @@ public class ClubController : ControllerBase
         return BadRequest(ModelState);
     }
 
+    [HttpGet("clubUsersCount")]
+    public async Task<ActionResult<int>> GetUsersCountOfAClub([FromQuery] int ClubId)
+    {
+        if (ModelState.IsValid)
+        {
+            // getting all club users where the ClubId matches the argument
+            var clubUsersCount = dbContext.ClubUsers
+                .Where(clubUser => clubUser.ClubId == ClubId)
+                .AsNoTracking()
+                .Count();
+
+            return Ok(clubUsersCount);
+
+        }
+        return BadRequest(ModelState);
+    }
+
     // action method that sets the given clubuser's admin state to true - giving the user admin privileges for the club
     [HttpPost("giveAdminPriv")]
     public ActionResult<bool> GiveAdminPriv(int ClubId, int UserId)
