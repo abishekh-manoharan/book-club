@@ -398,7 +398,7 @@ body {
   height: 95vh;
   display: grid;
   grid-template-columns: 96px 5fr 1fr;
-  grid-template-rows: 1fr auto 1fr;
+  grid-template-rows: auto auto 1fr;
   grid-template-areas:
     'clubImg clubName clubName'
     'clubImg clubDescription clubDescription'
