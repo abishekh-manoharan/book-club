@@ -1,4 +1,4 @@
-import { Outlet, useParams } from 'react-router-dom';
+import { Outlet, useNavigate, useParams } from 'react-router-dom';
 // import { useGetClubQuery, useGetClubUserQuery, useGetJoinRequestQuery, useJoinClubMutation } from '../clubSlice';
 // import { selectLoginStatus, useGetUserIdQuery } from '../../auth/authSlice';
 // import { useAppSelector } from '../../../app/hooks';
@@ -13,6 +13,7 @@ import { useAppDispatch } from "../../../app/hooks";
 import { useRef } from 'react';
 
 function Club() {
+    const nav = useNavigate();
     const dispatch = useAppDispatch();
     const leaveBtn = useRef(null);
 
@@ -55,6 +56,10 @@ function Club() {
         }
     }
 
+    const settingsBtnClickHandler = () => {
+        nav("settings");
+    }
+
     // flag indicating that the club is private, and the user isn't a member of the club
     const privateNonMember: boolean = !isGetClubFetching && isGetClubSuccess && isClubUserError && club.private;
     //transformedAdminClubsOfUser && transformedAdminClubsOfUser.includes(clubId) 
@@ -73,13 +78,14 @@ function Club() {
                     <div className="clubDescription">
                         <p className="clubDescriptionDisc">{club?.description}</p>
                         <p className="clubCreator">Created by {creator?.fName} {creator?.lName}</p>
-                        {clubMemberCount ? <p className="clubMemberCount">{clubMemberCount} members</p>:<></>}
+                        {clubMemberCount ? <p className="clubMemberCount">{clubMemberCount} members</p> : <></>}
                     </div>
                     {!privateNonMember && !isGetClubFetching &&
                         <>
                             <div className="clubSettings">
                                 {/* leave button displayed if the user is a club member and not the creator  */}
                                 {clubId && userId && isClubUserSuccess && clubUser && getCreatorSuccess && creator && creator.userId != userId && <button ref={leaveBtn} onClick={leaveButtonClickHandler}>Leave</button>}
+                                {clubId && userId && isClubUserSuccess && clubUser && clubUser.admin && <button ref={leaveBtn} onClick={settingsBtnClickHandler}>Settings</button>}
                             </div>
                             <ClubNavBar privateClub={club?.private} />
                             <div className="clubPageOutlet">

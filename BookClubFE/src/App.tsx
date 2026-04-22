@@ -35,6 +35,7 @@ import MeetingsList from "./features/meeting/MeetingList"
 import CreateMeeting from "./features/meeting/CreateMeeting"
 import EditMeeting from "./features/meeting/EditMeeting"
 import SubThreads from "./features/discussion/SubThreads"
+import Settings from "./features/club/Settings"
 
 function App() {
   // retrieving user's logged in status
@@ -65,6 +66,7 @@ function App() {
             <Route path="members" element=<MembersList /> />
             <Route path="requests" element=<JoinRequests /> />
           </Route>
+          <Route path="club/:clubid/settings" element=<Settings /> />
           <Route path="club/:clubid/createReading" element=<CreateReading /> />
           <Route path="club/:clubid/:bookid" element=<ReadingHome /> >
             <Route index element={<Navigate to="meetings" replace />} />
