@@ -116,28 +116,36 @@ public class ClubController : ControllerBase
 
     // action method that takes in an existing club's updated details and persists them in the DB
     [HttpPut("update")]
-    public ActionResult UpdateClub(ClubUpdateValDTO club)
+    [Authorize]
+    public async Task<ActionResult> UpdateClub([FromBody] ClubUpdateValDTO club)
     {
-        if (ModelState.IsValid)
+        var adminStatus = await authHelpers.IsUserAdminOfClub(User, (int)club.ClubId!);
+
+        // ensure logged in user is either admin of the club 
+        if (adminStatus == true)
         {
-            // checking if club exists in DB
-            var matchingClub = dbContext.Clubs
-                .Where(c => c.ClubId == club.ClubId)
-                .FirstOrDefault();
-
-            if (matchingClub != null)
+            if (ModelState.IsValid)
             {
-                matchingClub.Description = club.Description;
-                matchingClub.Name = club.Name;
-                matchingClub.ProfileImg = club.ProfileImg;
-                matchingClub.Private = (bool)club.Private!;
-                dbContext.SaveChanges();
+                // checking if club exists in DB
+                var matchingClub = dbContext.Clubs
+                    .Where(c => c.ClubId == club.ClubId)
+                    .FirstOrDefault();
+
+                if (matchingClub != null)
+                {
+                    matchingClub.Name = club.Name;
+                    matchingClub.Description = club.Description;
+                    matchingClub.ProfileImg = club.ProfileImg;
+                    matchingClub.Private = (bool)club.Private!;
+                    dbContext.SaveChanges();
+                }
+
+                return Ok(club); // return updated club with status 200 if club with specified Id found
+
             }
-
-            return Ok(club); // return updated club with status 200 if club with specified Id found
-
+            return BadRequest(ModelState);
         }
-        return BadRequest(ModelState);
+        return Unauthorized("User isn't authorized to perform this operation."); // return status 401 if logged in user isn't admin of the club
     }
 
     // action method that deletes the specified club using the clubId

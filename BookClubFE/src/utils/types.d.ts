@@ -19,3 +19,11 @@ export interface Club {
     private: bool,
     userID: number
 }
+
+export interface ClubUpdate {
+    ClubId?: number,
+    Name: string,
+    Description: string,
+    ProfileImg: string,
+    Private: bool,
+}

@@ -1,4 +1,4 @@
-import { Club } from "@/utils/types";
+import { Club, ClubUpdate } from "@/utils/types";
 import { apiSlice } from "../api/apiSlice";
 import { CreateClubFormData } from "./Create";
 
@@ -34,7 +34,7 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-
+            providesTags: [{type: 'Clubs'}]
         }),
         getClub: builder.query<Club, number>({
             query: (clubId) => ({
@@ -44,7 +44,8 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                 headers: {
                     'Content-Type': 'application/json'
                 }
-            })
+            }),
+            providesTags: [{type: 'Clubs'}]
         }),
         getJoinedClubs: builder.query<Club[], void>({
             query: () => ({
@@ -170,6 +171,18 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
             }),
             invalidatesTags: [{type: 'Readings', id: 'all'}, {type: 'Readings', id: 'user'}, {type: 'Clubs', id: 'members'}]
         }),
+        updateClub: builder.mutation<Club, ClubUpdate>({
+            query: (clubUser) => ({
+                url: `club/update`,
+                credentials: 'include',
+                method: 'PUT',
+                body: JSON.stringify(clubUser),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }),
+            invalidatesTags: [{type: 'Clubs'}]
+        }),
     })
 })
 
@@ -185,7 +198,8 @@ export const {
     useGetJoinRequestQuery,
     useGetJoinRequestsQuery,
     useRejectJoinRequestMutation,
-    useLeaveClubMutation
+    useLeaveClubMutation,
+    useUpdateClubMutation
 } = apiSliceWithClub
 
 // export const apiSliceWithCl= apiSlice.injectEndpoints({
