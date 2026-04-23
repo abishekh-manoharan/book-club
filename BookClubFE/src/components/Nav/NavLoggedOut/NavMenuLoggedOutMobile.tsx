@@ -1,9 +1,9 @@
-import { useGetUserIdQuery, useGetUserQuery } from "../../features/auth/authSlice";
-import SearchClubBar from "../../features/club/SearchClubBar";
+import { useGetUserIdQuery, useGetUserQuery } from "../../../features/auth/authSlice";
+import SearchClubBar from "../../../features/club/SearchClubBar";
 import { Link } from "react-router-dom";
 
 
-function NavMenuMobile({mobileMenuOpen, setMobileMenuOpen}:{mobileMenuOpen: boolean, setMobileMenuOpen: React.Dispatch<React.SetStateAction<boolean>>}) { 
+function NavMenuLoggedOutMobile({mobileMenuOpen, setMobileMenuOpen}:{mobileMenuOpen: boolean, setMobileMenuOpen: React.Dispatch<React.SetStateAction<boolean>>}) { 
     const {data: userId} = useGetUserIdQuery();
     const {data: user} = useGetUserQuery(Number(userId), {skip: !userId});
     
@@ -28,4 +28,4 @@ function NavMenuMobile({mobileMenuOpen, setMobileMenuOpen}:{mobileMenuOpen: bool
     );
 }
 
-export default NavMenuMobile;
+export default NavMenuLoggedOutMobile;

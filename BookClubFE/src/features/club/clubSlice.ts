@@ -34,7 +34,7 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            providesTags: [{type: 'Clubs'}]
+            invalidatesTags: [{type: 'Clubs'}]
         }),
         getClub: builder.query<Club, number>({
             query: (clubId) => ({

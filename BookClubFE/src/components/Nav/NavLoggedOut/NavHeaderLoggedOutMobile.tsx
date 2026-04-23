@@ -1,6 +1,6 @@
-import NotificationHeader from "../../features/notification/NotificationHeader";
+import NotificationHeader from "../../../features/notification/NotificationHeader";
 
-function NavHeaderMobile({setMobileMenuOpen}: { setMobileMenuOpen: React.Dispatch<React.SetStateAction<boolean>>}) {
+function NavHeaderLoggedOutMobile({setMobileMenuOpen}: { setMobileMenuOpen: React.Dispatch<React.SetStateAction<boolean>>}) {
 
     const menuButtonClickHandler = () => {
         console.log("click")
@@ -22,4 +22,4 @@ function NavHeaderMobile({setMobileMenuOpen}: { setMobileMenuOpen: React.Dispatc
     );
 }
 
-export default NavHeaderMobile;
+export default NavHeaderLoggedOutMobile;

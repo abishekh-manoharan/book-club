@@ -240,7 +240,6 @@ public class DiscussionController : ControllerBase
 
     // action method that returns a batch of threads for a reading 
     [HttpGet("getThreadBatch")]
-    [Authorize]
     public async Task<ActionResult<List<ThreadDTO>>> GetThreadBatch([FromQuery] ThreadCursorValDTO c)
     {
         if (ModelState.IsValid)
