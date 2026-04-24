@@ -155,7 +155,7 @@ body {
 .nav-header-mobile {
   position: relative;
   display: flex;
-  justify-content: end;
+  justify-content: start;
   gap: 4vw;
   z-index: 20;
 }
@@ -170,7 +170,7 @@ body {
   height: 100dvh;
   z-index: 3;
 
-  transition: left 1s;
+  transition: right 1s;
 }
 
 .nav-menu-mobile-links {
@@ -184,15 +184,16 @@ body {
 }
 
 .nav-menu-mobile-open {
-  left: 0vw;
+  right: 0vw;
 }
 
 .nav-menu-mobile-close {
-  left: 100vw;
+  right: 100vw;
 }
 
 .nav-header-mobile-notification {
   position: relative;
+  margin-left: auto;
 }
 
 .nav-header-mobile-notification-list {
