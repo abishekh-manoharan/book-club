@@ -1,5 +1,3 @@
-import NotificationHeader from "../../../features/notification/NotificationHeader";
-
 function NavHeaderLoggedOutMobile({setMobileMenuOpen}: { setMobileMenuOpen: React.Dispatch<React.SetStateAction<boolean>>}) {
 
     const menuButtonClickHandler = () => {
@@ -16,7 +14,6 @@ function NavHeaderLoggedOutMobile({setMobileMenuOpen}: { setMobileMenuOpen: Reac
 
     return (
         <div className="nav-header-mobile">
-            <NotificationHeader/>
             <div className="nav-header-mobile-menu-button" onClick={menuButtonClickHandler}>menu</div>
         </div>
     );

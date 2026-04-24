@@ -66,6 +66,12 @@ a {
   font-weight: 550;
 }
 
+.disabledLink {
+  font-weight: 400;
+  color: #c6c6c6;
+  cursor: default;
+}
+
 h1 {
   font-weight: 600;
   display: inline;
@@ -1022,13 +1028,13 @@ body {
 }
 
 .fakeTextArea {
-    min-height: 60px;
-    border: 1px solid #ccc;
-    padding: 8px;
-    color: gray;
+  min-height: 60px;
+  border: 1px solid #ccc;
+  padding: 8px;
+  color: gray;
 }
 
-.infoLogoBtn{
+.infoLogoBtn {
   z-index: 10;
 }
 

@@ -19,9 +19,9 @@ function NavMenuLoggedInMobile({mobileMenuOpen, setMobileMenuOpen}:{mobileMenuOp
         <div className={`nav-menu-mobile ${mobileMenuOpen ? "nav-menu-mobile-open" : "nav-menu-mobile-close"}`}>
             <nav className="nav-menu-mobile-links">
                 <SearchClubBar/>
-                <Link onClick={menuOptionClickHandler} to="/home">home</Link>
-                <Link onClick={menuOptionClickHandler} to="/clubs">clubs</Link>
-                <Link onClick={menuOptionClickHandler} to="/activeReadings">active readings</Link>
+                <Link onClick={menuOptionClickHandler} to="/home">Home</Link>
+                <Link onClick={menuOptionClickHandler} to="/clubs">Your Clubs</Link>
+                <Link onClick={menuOptionClickHandler} to="/activeReadings">Active Readings</Link>
                 {user && <>{user.fName} {user.lName}</>}
             </nav>
         </div>

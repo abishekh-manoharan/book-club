@@ -1,12 +1,8 @@
-import { useGetUserIdQuery, useGetUserQuery } from "../../../features/auth/authSlice";
 import SearchClubBar from "../../../features/club/SearchClubBar";
 import { Link } from "react-router-dom";
 
 
-function NavMenuLoggedOutMobile({mobileMenuOpen, setMobileMenuOpen}:{mobileMenuOpen: boolean, setMobileMenuOpen: React.Dispatch<React.SetStateAction<boolean>>}) { 
-    const {data: userId} = useGetUserIdQuery();
-    const {data: user} = useGetUserQuery(Number(userId), {skip: !userId});
-    
+function NavMenuLoggedOutMobile({mobileMenuOpen, setMobileMenuOpen}:{mobileMenuOpen: boolean, setMobileMenuOpen: React.Dispatch<React.SetStateAction<boolean>>}) {   
     const menuOptionClickHandler = () => {
         const root = document.getElementById("root");
         root?.style.setProperty('overflow-y', mobileMenuOpen ? "auto" : "hidden");
@@ -19,10 +15,9 @@ function NavMenuLoggedOutMobile({mobileMenuOpen, setMobileMenuOpen}:{mobileMenuO
         <div className={`nav-menu-mobile ${mobileMenuOpen ? "nav-menu-mobile-open" : "nav-menu-mobile-close"}`}>
             <nav className="nav-menu-mobile-links">
                 <SearchClubBar/>
-                <Link onClick={menuOptionClickHandler} to="/home">home</Link>
-                <Link onClick={menuOptionClickHandler} to="/clubs">clubs</Link>
-                <Link onClick={menuOptionClickHandler} to="/activeReadings">active readings</Link>
-                {user && <>{user.fName} {user.lName}</>}
+                <Link onClick={menuOptionClickHandler} to="/home" aria-disabled>Home</Link>
+                <div className="disabledLink">Your Clubs</div>
+                <div className="disabledLink">Active Readings</div>
             </nav>
         </div>
     );

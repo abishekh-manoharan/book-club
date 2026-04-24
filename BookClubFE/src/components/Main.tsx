@@ -3,7 +3,7 @@
 import React from 'react';
 // import LandingPage from './LandingPage';
 import Layout from './Layout';
-import Login from './../features/auth/Login';
+// import Login from './../features/auth/Login';
 
 function Main({status}: {status: boolean}) {
     // if(!status){
