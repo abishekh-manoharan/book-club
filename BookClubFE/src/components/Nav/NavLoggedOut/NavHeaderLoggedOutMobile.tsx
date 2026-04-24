@@ -1,10 +1,9 @@
+import { Link } from "react-router-dom";
+
 function NavHeaderLoggedOutMobile({setMobileMenuOpen}: { setMobileMenuOpen: React.Dispatch<React.SetStateAction<boolean>>}) {
 
     const menuButtonClickHandler = () => {
-        console.log("click")
-        // root!.style.setProperty = mobileMenuOpen ? "auto" : "hidden";
         const root = document.getElementById("root");
-        // root!.setAttribute('style', 'overflow-y: hidden;')
 
         setMobileMenuOpen(state => {
             root?.style.setProperty('overflow-y', state ? "auto" : "hidden");
@@ -15,6 +14,9 @@ function NavHeaderLoggedOutMobile({setMobileMenuOpen}: { setMobileMenuOpen: Reac
     return (
         <div className="nav-header-mobile">
             <div className="nav-header-mobile-menu-button" onClick={menuButtonClickHandler}>menu</div>
+            <Link to="/login" className="signIn">
+                Sign In
+            </Link>
         </div>
     );
 }

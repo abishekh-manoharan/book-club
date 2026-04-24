@@ -16,8 +16,8 @@ function NavHeaderLoggedInMobile({setMobileMenuOpen}: { setMobileMenuOpen: React
 
     return (
         <div className="nav-header-mobile">
-            <NotificationHeader/>
             <div className="nav-header-mobile-menu-button" onClick={menuButtonClickHandler}>menu</div>
+            <NotificationHeader/>
         </div>
     );
 }

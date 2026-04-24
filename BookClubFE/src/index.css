@@ -160,6 +160,16 @@ body {
   z-index: 20;
 }
 
+.nav-header-mobile .signIn {
+  margin-left: auto;
+  width: 45.5px;
+  height: 22px;
+  padding: 4px 12px;
+  font-size: 14px;
+  border: 1px solid rgb(209, 217, 224);
+  border-radius: 6px;
+}
+
 .nav-menu-mobile {
   background-color: rgba(197, 197, 197, 0.45);
 
