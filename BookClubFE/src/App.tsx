@@ -25,6 +25,7 @@ import Main from "./components/Main"
 import JoinedClubs from "./features/club/list/JoinedClubs"
 import ActiveReadings from "./features/reading/ActiveReadings/ActiveReadings"
 import Login from "./features/auth/Login"
+import Register from "./features/auth/Register"
 import Create from "./features/club/Create"
 import ReadingsList from "./features/reading/ReadingsList"
 import MembersList from "./features/club/members/MembersList"
@@ -79,6 +80,7 @@ function App() {
           <Route path="club/:clubid/:bookid/meetings/:meetingId/edit" element=<EditMeeting /> />
           <Route path="activeReadings" element=<ActiveReadings /> />
           <Route path="login" element=<Login /> />
+          <Route path="register" element=<Register /> />
         </Route>
       </Routes >
     </div>

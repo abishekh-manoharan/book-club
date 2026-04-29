@@ -7,12 +7,12 @@ import { isRegistrationAllowanceError } from "../../app/typeGuards";
 import { useNavigate } from "react-router-dom";
 
 function Register() {
-    const [username, setUsername] = useState('');
     const [fName, setFName] = useState('');
-    const [lName, setLName] = useState('');
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState("Abcde123!");
-    const [confirmPassword, setConfirmPassword] = useState("Abcde123!");
+    // const [password, setPassword] = useState("Abcde123!");
+    const [password, setPassword] = useState("");
+    // const [confirmPassword, setConfirmPassword] = useState("Abcde123!");
+    const [confirmPassword, setConfirmPassword] = useState("");
     const [passwordsMatch, setPasswordsMatch] = useState(true);
     const nav = useNavigate();
 
@@ -46,9 +46,7 @@ function Register() {
         }
 
         const registrationData: RegistrationFormData = {
-            Username: username,
             Fname: fName,
-            LName: lName,
             Email: email,
             password: password
         }
@@ -74,13 +72,9 @@ function Register() {
         if (!errorElement5?.classList.contains("hidden")) { // display only if 
             errorElement5!.classList.toggle('hidden');
         }
-        const errorElement6 = document.querySelector(".DuplicateUserName");
+        const errorElement6 = document.querySelector(".DuplicateEmail");
         if (!errorElement6?.classList.contains("hidden")) { // display only if 
             errorElement6!.classList.toggle('hidden');
-        }
-        const errorElement7 = document.querySelector(".DuplicateEmail");
-        if (!errorElement7?.classList.contains("hidden")) { // display only if 
-            errorElement7!.classList.toggle('hidden');
         }
 
 
@@ -139,13 +133,6 @@ function Register() {
                             errorElement.classList.toggle('hidden');
                         }
                     }
-                    if (code === "DuplicateUserName") {
-                        // display error messages
-                        const errorElement = document.querySelector(".DuplicateUserName");
-                        if (errorElement?.classList.contains("hidden")) { // display only if 
-                            errorElement.classList.toggle('hidden');
-                        }
-                    }
                     if (code === "DuplicateEmail") {
                         // display error messages
                         const errorElement = document.querySelector(".DuplicateEmail");
@@ -167,13 +154,8 @@ function Register() {
     return (
         <div>
             <form className="form registrationForm">
-                <label htmlFor="Username">Username</label>
-                <input name="Username" id="Username" value={username} onChange={(e) => { setUsername(e.target.value) }} required /><br />
-                <p className="DuplicateUserName hidden" style={{ "color": "red" }}>Username is already taken.</p>
-                <label htmlFor="FName">First Name</label>
+                <label htmlFor="FName">Full Name</label>
                 <input name="Fname" id="Fname" value={fName} onChange={(e) => { setFName(e.target.value) }} required />
-                <label htmlFor="LName">Last Name</label>
-                <input name="LName" id="LName" value={lName} onChange={(e) => { setLName(e.target.value) }} required /><br />
                 <label htmlFor="Email">Email</label>
                 <input name="Email" id="Email" value={email} onChange={(e) => { setEmail(e.target.value) }} type="email" required /><br />
                 <p className="DuplicateEmail hidden" style={{ "color": "red" }}>Email is already taken.</p>

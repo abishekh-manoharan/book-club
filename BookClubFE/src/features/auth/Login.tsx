@@ -48,7 +48,8 @@ function Login() {
 
                 <p className="loginError hidden" style={{ "color": "red" }}>Email or password incorrect</p>
                 <p className="loginSuccess hidden" style={{ "color": "green" }}>Login successful</p>
-                <button onClick={loginSubmitClick} disabled={isLoading}>Submit</button>
+                <button onClick={loginSubmitClick} disabled={isLoading}>Submit</button><br/>
+                <button onClick={()=>nav("../register")} disabled={isLoading}>Register</button>
             </form>
         </div>
     );
