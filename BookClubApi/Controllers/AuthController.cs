@@ -40,6 +40,7 @@ public class AuthController : ControllerBase
             {
                 // attempting password sign in
                 var result = await signInManager.PasswordSignInAsync(user!, loginDTO.Password, true, false);
+                
                 // return success message + user id if sign in was successful
                 if (result.Succeeded)
                 {
@@ -60,7 +61,7 @@ public class AuthController : ControllerBase
     {
         ApplicationUser appUser = new()
         {
-            UserName = user.Username,
+            UserName = user.Email,
             Email = user.Email,
         };
         System.Console.WriteLine("appUser");
@@ -82,7 +83,7 @@ public class AuthController : ControllerBase
                 dbContext.Users.Add(newUser);
                 dbContext.SaveChanges();
                 Console.WriteLine(JsonSerializer.Serialize(newUser, new JsonSerializerOptions { WriteIndented = true }));
-                // return success message + user id if registration was successful
+                // return success message + aspnetuser id if registration was successful
                 return Ok(new List<string> { "success", appUser.Id });
             }
 
