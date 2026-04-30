@@ -74,8 +74,7 @@ function Create({ backLocation }: { backLocation: string }) { // the backLocatio
                     <input className="privateCheckbox" name="Private" id="Private" type="checkbox" checked={privateClub} value="private" disabled={isLoading} onChange={(e) => setPrivateClub(e.target.checked)} />
                     <p className="subtext">Make your club private if you want greater control over who can join and view your club's activities.</p>
                 </div>
-                <br />
-                <button onClick={createButtonClickHandler}>Create</button>
+                <button className="button fullWidth" onClick={createButtonClickHandler}>Create</button>
             </form>
         </div>
     );

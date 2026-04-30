@@ -48,6 +48,10 @@
 
 .textAlignCenter {
   text-align: center;
+} 
+
+.fullWidth {
+  width: 100%;
 }
 
 .button {
@@ -1032,7 +1036,7 @@ body {
 }
 
 .replyButton {
-  height: 21.5px;
+  /* height: 21.5px; */
 }
 
 .replyButtonInner {

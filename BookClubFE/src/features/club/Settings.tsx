@@ -89,7 +89,7 @@ function Settings() {
                     <p className="privateCheckboxInfo">Make your club private if you want greater control over who can join and view your club's activities.</p>
                 </div>
 
-                <button onClick={updateClubBtnClickHandler}>Update</button>
+                <button className="button fullWidth" onClick={updateClubBtnClickHandler}>Update Club</button>
             </form>
         </div>
     );

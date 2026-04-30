@@ -92,7 +92,7 @@ function CreateMeeting() {
                 <label htmlFor="meetingEndDate">Meeting End Time</label>
                 <input className="textInput" id="meetingEndDate" type="datetime-local" min={startDate ?? minDate} required />
                 {/* <input className="textInput" id="meetingEndDate" type="datetime-local" required /> */}
-                <button onClick={createMeetingClickHandler}>Create</button>
+                <button className="button fullWidth" onClick={createMeetingClickHandler}>Create</button>
             </form>
         </div>
     );

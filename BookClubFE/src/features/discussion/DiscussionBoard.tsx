@@ -15,7 +15,7 @@ function DiscussionBoard() {
     const bookId = Number(bookid);
 
     const { data: userId } = useGetUserIdQuery();
-    const { data: clubUser, isError: isGetClubUserError, isSuccess: isGetClubUserSuccess } = useGetClubUserQuery({ clubId: clubId, userId: userId! }, { skip: !userId })
+    const { isError: isGetClubUserError, isSuccess: isGetClubUserSuccess } = useGetClubUserQuery({ clubId: clubId, userId: userId! }, { skip: !userId })
     
     const [joinClubModalOpen, setJoinClubModalOpen] = useState(false);
     // console.log(clubId)

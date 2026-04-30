@@ -176,24 +176,28 @@ function Thread({ thread, offset, reading, depth, index, root, prev, joinClubMod
                         </div>
 
                         <div ref={replyBtnRef} className="options">
-                            <button className="replyButton"
+                            <button className="replyButton button"
                                 disabled={!isClubMember}
                                 onClick={replyBtnClickHandler}
-                                style={{ "paddingRight": !isClubMember ? "4px" : "6px" }}
+                                style={{ 
+                                    "paddingRight": !isClubMember ? "4px" : "",
+                                    "height": !isClubMember ? "21.5px" : ""  
+                                }
+                                }
                             >
                                 Reply
                             </button>
                             {!isClubMember && <button className="infoButton" onClick={(e) => clickInfoLogo(e)}>
                                 <img className="infoLogo" src='/src/assets/images/info.svg' />
                             </button>}
-                            {(userId === thread.userId || clubUser?.admin) && !thread.deleted && <button onClick={() => setHideDeleteModal(true)}>delete</button>}
+                            {(userId === thread.userId || clubUser?.admin) && !thread.deleted && <button className="button" onClick={() => setHideDeleteModal(true)}>Delete</button>}
                         </div>
 
                         <div ref={replyInput} className="reply hidden">
                             <textarea value={reply} onChange={(e) => setReply(e.target.value)} />
                             <div className="buttons">
-                                <button onClick={commentBtnClickHandler}>comment</button>
-                                <button onClick={closeBtnClickHandler}>close</button>
+                                <button className="button" onClick={commentBtnClickHandler}>Reply</button>
+                                <button className="button" onClick={closeBtnClickHandler}>Close</button>
                             </div>
                         </div>
                     </div>
@@ -225,7 +229,7 @@ function Thread({ thread, offset, reading, depth, index, root, prev, joinClubMod
                     paddingLeft: offset,
                     textAlign: "left",
                     marginBottom: "7px"
-                }} onClick={loadMoreThreads}>show more</a>}
+                }} onClick={loadMoreThreads}>Show More</a>}
                 {/* for replies, if there is a 3rd thread, show the "show more" button*/}
                 {!showMoreThreads && index == 2 && !root && depth != 0 &&
                     <a style={{
@@ -234,7 +238,7 @@ function Thread({ thread, offset, reading, depth, index, root, prev, joinClubMod
                         textAlign: "left",
                         marginBottom: "7px"
                     }} onClick={loadMoreThreads}>
-                        show more {depth} {index} {root ? "root" : "not root"}
+                        Show More {depth} {index} {root ? "root" : "not root"}
                     </a>
                 }
             </div>
