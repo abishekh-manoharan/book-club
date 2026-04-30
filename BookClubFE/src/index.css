@@ -50,6 +50,13 @@
   text-align: center;
 }
 
+.button {
+  border: 1px solid rgb(209, 217, 224);
+  border-radius: 6px;
+  padding: 4px 12px;
+  background-color: #1a1a1a00;
+}
+
 Link {
   text-decoration: none;
 }
@@ -84,6 +91,10 @@ h2 {
   font-size: 16px;
   line-height: normal;
   display: inline;
+}
+
+.subtext {
+  font-size: 12px;
 }
 
 p {
@@ -362,8 +373,17 @@ body {
 .createClubPage {
   position: absolute;
   top: 50%;
-  transform: translateY(-50%);
-  width: 95%;
+  right: 50%;
+  transform: translate(50%, -80%);
+  width: 90%;
+  max-width: 352px;
+}
+
+.createClubPage .button {
+  width: 100%;
+  font-size: 14px;
+  margin: 14px 0 21px;
+  padding: 7px 14px;
 }
 
 /* .createClubBtn {

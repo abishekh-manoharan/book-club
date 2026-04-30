@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLoginMutation } from "./authSlice";
 
@@ -9,10 +9,17 @@ function Login() {
     const [password, setPassword] = useState('');
     // const auth = GetAuthContext();
     const [login, { isLoading }] = useLoginMutation();
+    const formRef = useRef<HTMLFormElement>();
 
     const loginSubmitClick = async (e: React.SyntheticEvent) => {
         e.preventDefault();
-        e.stopPropagation();
+
+        // checking for validity - particularly requirement
+        const loginForm = formRef.current as HTMLFormElement;
+        if (!loginForm.checkValidity()) {
+            loginForm.reportValidity();
+            return;
+        }
 
         try {
             const res = await login({ email, password }).unwrap();
@@ -35,21 +42,28 @@ function Login() {
         }
     }
 
-
+    const registerPageNavBtnClickHandler = (e: React.SyntheticEvent) => {
+        e.preventDefault();
+        
+        nav("../register") 
+    } 
 
     return (
-        <div>
-            <form className="form loginForm">
+        <div className="createClubPage">
+            <div className="loginHeader createClubHeading">
+                <h1>Sign in to BookClub</h1>
+            </div>
+            <form ref={formRef} className="form loginForm createMeetingForm">
                 <label htmlFor="Email">Email</label>
-                <input name="Email" id="Email" value={email} onChange={(e) => { setEmail(e.target.value) }} required /><br />
+                <input className="textInput" name="Email" id="Email" value={email} onChange={(e) => { setEmail(e.target.value) }} required /><br />
 
                 <label htmlFor="password">Password</label>
-                <input type="password" name="password" id="password" value={password} onChange={(e) => { setPassword(e.target.value) }} required /><br />
+                <input className="textInput" type="password" name="password" id="password" value={password} onChange={(e) => { setPassword(e.target.value) }} required /><br />
 
                 <p className="loginError hidden" style={{ "color": "red" }}>Email or password incorrect</p>
                 <p className="loginSuccess hidden" style={{ "color": "green" }}>Login successful</p>
-                <button onClick={loginSubmitClick} disabled={isLoading}>Submit</button><br/>
-                <button onClick={()=>nav("../register")} disabled={isLoading}>Register</button>
+                <button className="button" onClick={loginSubmitClick} disabled={isLoading}>Sign In</button><br />
+                <div className="mediumText textAlignCenter">New here? <a href="" onClick={registerPageNavBtnClickHandler}> Create an account.</a></div>
             </form>
         </div>
     );
