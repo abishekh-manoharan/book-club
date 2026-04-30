@@ -10,20 +10,12 @@ import { Link } from "react-router-dom";
 interface NotOptedInReadingProps {
     clubId: number,
     bookId: number,
-    clubUser: ClubUser | undefined,
-    isGetClubUserSuccess: boolean
+    clubUser?: ClubUser | undefined,
+    isGetClubUserSuccess?: boolean
 }
 
-function NotOptedInReading({ clubId, bookId, clubUser, isGetClubUserSuccess }: NotOptedInReadingProps) {
+function NotOptedInReading({ clubId, bookId }: NotOptedInReadingProps) {
     const dispatch = useAppDispatch();
-
-    // const { data: userId } = useGetUserIdQuery();
-
-    // const { data: clubUser, isSuccess: isGetClubUserSuccess }
-    //     = useGetClubUserQuery(
-    //         { clubId: clubId, userId: userId as number },
-    //         { skip: !userId }
-    //     );
 
     const { data: book } = useGetBookQuery(bookId);
     const { data: club } = useGetClubQuery(clubId);
@@ -64,7 +56,7 @@ function NotOptedInReading({ clubId, bookId, clubUser, isGetClubUserSuccess }: N
                 {readingMemberCount}
             </div></Link>
             {
-                isGetClubUserSuccess && clubUser && <div className="activeReadings-reading-OptInBtn">
+                <div className="activeReadings-reading-OptInBtn">
                     <button onClick={optIntoReadingBtnClickHandler} disabled={optIntoReadingLoading}>Opt in</button>
                 </div>
             }

@@ -8,11 +8,14 @@ function ActiveReadings() {
     const { data: readingUsersOfLoggedInUser, isFetching: isFetchingReadingUsersOfLoggedInUser, isSuccess } = useGetReadingUsersOfLoggedInUsersQuery(undefined, { skip: !readingsOfClubsJoinedByUser });
     const [joinedReadingsHidden, setJoinedReadingsHidden] = useState(false);
     const [notJoinedReadingsHidden, setNotJoinedReadingsHidden] = useState(false);
+
     interface ReadingWithProgress extends Reading {
         progress?: number,
         progressTotal?: number,
         progresstypeId?: number
     }
+
+
 
     interface OrganizedReadings {
         joinedReadings: ReadingWithProgress[],
@@ -67,7 +70,7 @@ function ActiveReadings() {
                     <br />
 
                     <div className="readingsListHeader" onClick={toggleNotJoinedReadingsList}>
-                    {notJoinedReadingsHidden ? <img className="readingsListHeader-plus" src='src/assets/images/plus.svg' /> :
+                        {notJoinedReadingsHidden ? <img className="readingsListHeader-plus" src='src/assets/images/plus.svg' /> :
                             <img className="ListHeader-minus" src='src/assets/images/minus.svg' />}
                         <h2>Not Joined Readings</h2>
                     </div>
