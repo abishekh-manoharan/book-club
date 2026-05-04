@@ -79,8 +79,8 @@ function App() {
           <Route path="club/:clubid/:bookid/meetings/create" element=<CreateMeeting /> />
           <Route path="club/:clubid/:bookid/meetings/:meetingId/edit" element=<EditMeeting /> />
           <Route path="activeReadings" element=<ActiveReadings /> />
-          <Route path="login" element=<Login /> />
-          <Route path="register" element=<Register /> />
+          <Route path="login" element=<Login status={status}/> />
+          <Route path="register" element=<Register status={status}/> />
         </Route>
       </Routes >
     </div>

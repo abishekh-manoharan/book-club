@@ -6,7 +6,7 @@ import { useRegisterMutation, RegistrationSuccess } from "./authSlice";
 import { isRegistrationAllowanceError } from "../../app/typeGuards";
 import { useNavigate } from "react-router-dom";
 
-function Register() {
+function Register({ status }: { status: boolean }) {
     const [fName, setFName] = useState('');
     const [email, setEmail] = useState('');
     // const [password, setPassword] = useState("Abcde123!");
@@ -17,7 +17,7 @@ function Register() {
     const nav = useNavigate();
 
     const [register, { isLoading }] = useRegisterMutation();
-
+    
     // check if passwords match on password and confirmPassword state changes
     useEffect(() => {
         if (confirmPassword !== password) {
@@ -28,6 +28,11 @@ function Register() {
         setPasswordsMatch(true);
     }, [password, confirmPassword])
 
+    if (status) {
+        nav('/');
+        return;
+    }
+    
     const submitButtonHandler = async (e: React.SyntheticEvent) => {
         e.preventDefault();
         e.stopPropagation();

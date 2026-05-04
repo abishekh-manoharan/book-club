@@ -3,13 +3,18 @@ import { useNavigate } from "react-router-dom";
 import { useLoginMutation } from "./authSlice";
 
 
-function Login() {
+function Login({ status }: { status: boolean }) {
     const nav = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     // const auth = GetAuthContext();
     const [login, { isLoading }] = useLoginMutation();
     const formRef = useRef<HTMLFormElement>();
+
+    if (status) {
+        nav('/');
+        return;
+    }
 
     const loginSubmitClick = async (e: React.SyntheticEvent) => {
         e.preventDefault();
@@ -44,9 +49,9 @@ function Login() {
 
     const registerPageNavBtnClickHandler = (e: React.SyntheticEvent) => {
         e.preventDefault();
-        
-        nav("../register") 
-    } 
+
+        nav("../register")
+    }
 
     return (
         <div className="createClubPage">
