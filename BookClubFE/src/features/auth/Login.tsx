@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useLoginMutation } from "./authSlice";
 
 
-function Login({ status }: { status: boolean }) {
+function Login({ status }: { status: boolean | undefined }) {
     const nav = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');

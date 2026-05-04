@@ -6,7 +6,7 @@ import { useRegisterMutation, RegistrationSuccess } from "./authSlice";
 import { isRegistrationAllowanceError } from "../../app/typeGuards";
 import { useNavigate } from "react-router-dom";
 
-function Register({ status }: { status: boolean }) {
+function Register({ status }: { status: boolean| undefined }) {
     const [fName, setFName] = useState('');
     const [email, setEmail] = useState('');
     // const [password, setPassword] = useState("Abcde123!");
@@ -32,7 +32,7 @@ function Register({ status }: { status: boolean }) {
         nav('/');
         return;
     }
-    
+
     const submitButtonHandler = async (e: React.SyntheticEvent) => {
         e.preventDefault();
         e.stopPropagation();

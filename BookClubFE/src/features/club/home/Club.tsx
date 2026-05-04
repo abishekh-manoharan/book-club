@@ -23,12 +23,17 @@ function Club() {
 
     const { data: club, isError: isGetClubError, isSuccess: isGetClubSuccess, isFetching: isGetClubFetching }
         = useGetClubQuery(clubId);
+
+    // get the user clubUser object of the logged in user if applicable
     const { data: clubUser, isSuccess: isClubUserSuccess, error: getClubUserError, isError: isClubUserError, refetch: refetchGetClubUser, isFetching: isClubUserFetching }
         = useGetClubUserQuery(
             { clubId: clubId, userId: userId as number },
             { skip: !userId }
         );
+
+    // getting user object of the creator of the club
     const { data: creator, isSuccess: getCreatorSuccess } = useGetUserQuery(Number(club?.userID), { skip: !club });
+
     const [leave] = useLeaveClubMutation();
 
     const { data: clubMemberCount }

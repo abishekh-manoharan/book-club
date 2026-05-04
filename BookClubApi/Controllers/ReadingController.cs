@@ -101,7 +101,6 @@ public class ReadingController : ControllerBase
 
     // action method that returns all reading records associated with a club
     [HttpGet("GetAllReadings")]
-    [Authorize]
     public async Task<ActionResult<List<Reading>>> GetAllReadingsOfAClub([Required] int clubId)
     {
         if (ModelState.IsValid)

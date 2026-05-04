@@ -40,7 +40,7 @@ public class AuthController : ControllerBase
             {
                 // attempting password sign in
                 var result = await signInManager.PasswordSignInAsync(user!, loginDTO.Password, true, false);
-                
+
                 // return success message + user id if sign in was successful
                 if (result.Succeeded)
                 {
@@ -224,14 +224,24 @@ public class AuthController : ControllerBase
 
     // Action method that returns the authenticated user's UserId
     [HttpGet("UserID")]
-    [Authorize]
-    public int GetUserID()
+    public ActionResult<int?> GetUserID()
     {
-        var user = dbContext.Users
-            .Where(u => u.AspnetusersId == userManager.GetUserId(User))
-            .FirstOrDefault();
+        var aspNetUserId = userManager.GetUserId(User);
 
-        return user!.UserId;
+        if (aspNetUserId == null)
+        {
+            return Ok(null);
+        }
+
+        var user = dbContext.Users
+            .FirstOrDefault(u => u.AspnetusersId == aspNetUserId);
+
+        if (user == null)
+        {
+            return Ok(null);
+        }
+
+        return Ok(user.UserId);
     }
 
 }

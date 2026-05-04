@@ -18,57 +18,75 @@ interface ReadingWithProgress extends Reading {
     progresstypeId?: number
 }
 
-function ReadingsList() {
-
-    
+function ReadingsList({ status }: { status: boolean | undefined }) {
     const nav = useNavigate();
-    
+
+
+
+    console.log("status")
+    console.log(status)
     const params = useParams();
     const optedInReadingsRef = useRef<HTMLDivElement | null>(null);
     const notOptedInReadingsRef = useRef<HTMLDivElement | null>(null);
-    
+
     const [joinedReadingsHidden, setJoinedReadingsHidden] = useState(false);
     const [notJoinedReadingsHidden, setNotJoinedReadingsHidden] = useState(false);
-    
+
     const { data: userId } = useGetUserIdQuery();
     const { data: clubUser, isSuccess: isGetClubUserSuccess, isError: isGetClubUserError }
-    = useGetClubUserQuery(
-        { clubId: Number(params.clubid), userId: userId as number },
-        { skip: !userId }
-    );
-    
+        = useGetClubUserQuery(
+            { clubId: Number(params.clubid), userId: userId as number },
+            { skip: !userId }
+        );
+
     // getting all the readings of the club
     const { data: readings } = useGetReadingsOfAClubQuery(Number(params.clubid));
     // getting readings of the club that the user has joined
-    const { data: readingUsersOfLoggedInUser } = useGetReadingUsersOfLoggedInUsersQuery(undefined);
+    const { data: readingUsersOfLoggedInUser } = useGetReadingUsersOfLoggedInUsersQuery(undefined, { skip: !status });
+
     // const { data: readingsOfClubsJoinedByUser, isFetching: isFetchingReadingsOfClubsJoinedByUser } = useGetAllReadingsOfClubsJoinedByUserQuery();
-    
+
     const organizedReadings = useMemo(() => {
         const organizedReadings: ReadingsListOrganizedReadings = { joinedReadings: [], notJoinedReadings: [], concludedReadings: [] };
+
         const readingsUsersOfClubJoinedByUser = readingUsersOfLoggedInUser?.filter(r => r.clubId === Number(params.clubid));
         // const readingsUsersOfClubJoinedByUserInForm = readingsUsersOfClubJoinedByUser?.map(r => ({bookId: r.bookId, clubId: r.clubId}))
 
-        readings?.forEach((r) => {
-            if (readingsUsersOfClubJoinedByUser?.some(ru => ru.bookId === r.bookId && ru.clubId === r.clubId)) {
-                const readingUser = readingUsersOfLoggedInUser?.find((readingUser => readingUser.bookId === r.bookId && readingUser.clubId === r.clubId))
-                organizedReadings.joinedReadings?.push({ ...r, progress: readingUser?.progress, progressTotal: readingUser?.progressTotal, progresstypeId: readingUser?.progresstypeId });
-            } else if (!readingsUsersOfClubJoinedByUser?.some(ru => ru.bookId === r.bookId && ru.clubId === r.clubId)) {
-                organizedReadings.notJoinedReadings?.push(r);
-            } else {
-                organizedReadings.concludedReadings?.push(r);
+        if (status) {
+            readings?.forEach((r) => {
+                if (readingsUsersOfClubJoinedByUser?.some(ru => ru.bookId === r.bookId && ru.clubId === r.clubId)) {
+                    const readingUser = readingUsersOfLoggedInUser?.find((readingUser => readingUser.bookId === r.bookId && readingUser.clubId === r.clubId))
+
+                    organizedReadings.joinedReadings?.push({ ...r, progress: readingUser?.progress, progressTotal: readingUser?.progressTotal, progresstypeId: readingUser?.progresstypeId });
+                } else if (!readingsUsersOfClubJoinedByUser?.some(ru => ru.bookId === r.bookId && ru.clubId === r.clubId)) {
+                    organizedReadings.notJoinedReadings?.push(r);
+                } else {
+                    organizedReadings.concludedReadings?.push(r);
+                }
+            })
+        }
+        else {
+            readings?.forEach((r) => {
+                if (r.status !== "concluded") {
+                    organizedReadings.notJoinedReadings?.push(r);
+                } else {
+                    organizedReadings.concludedReadings?.push(r);
+                }
             }
-        })
-        
+            )
+        }
+        console.log("orgreadings")
+        console.log(organizedReadings)
         return organizedReadings;
-        
+
     }, [readingUsersOfLoggedInUser, readings, params.clubid])
-    
+
     console.log("---")
     console.log(clubUser)
     console.log(organizedReadings)
     console.log(!clubUser)
     console.log(isGetClubUserError)
-    
+
     const toggleJoinedReadingsList = () => {
         setJoinedReadingsHidden((state) => !state);
     }
@@ -107,7 +125,7 @@ function ReadingsList() {
                         {
                             organizedReadings && organizedReadings!.notJoinedReadings?.map((r) => {
                                 if (r.status != 'concluded') {
-                                    return <NotOptedInReading key={r.bookId + r.clubId - 1} bookId={r.bookId} clubId={r.clubId} clubUser={clubUser} isGetClubUserSuccess={isGetClubUserSuccess}/>
+                                    return <NotOptedInReading key={r.bookId + r.clubId - 1} bookId={r.bookId} clubId={r.clubId} clubUser={clubUser} isGetClubUserSuccess={isGetClubUserSuccess} status={status} />
                                 }
                             }
                             )
@@ -123,9 +141,9 @@ function ReadingsList() {
             }
             {/* case where the user isn't a club member. readings are listed without a seperate sections for joined and not joined readings. */}
             {
-                isGetClubUserError && organizedReadings && organizedReadings!.notJoinedReadings?.map((r) => {
+                !status && organizedReadings && organizedReadings!.notJoinedReadings?.map((r) => {
                     if (r.status != 'concluded') {
-                        return <NotOptedInReading key={r.bookId + r.clubId - 1} bookId={r.bookId} clubId={r.clubId} clubUser={clubUser} isGetClubUserSuccess={isGetClubUserSuccess} />
+                        return <NotOptedInReading key={r.bookId + r.clubId - 1} bookId={r.bookId} clubId={r.clubId} clubUser={clubUser} isGetClubUserSuccess={isGetClubUserSuccess} status={status} />
                     }
                 })
             }

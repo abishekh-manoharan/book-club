@@ -11,10 +11,11 @@ interface NotOptedInReadingProps {
     clubId: number,
     bookId: number,
     clubUser?: ClubUser | undefined,
-    isGetClubUserSuccess?: boolean
+    isGetClubUserSuccess?: boolean,
+    status?: boolean | undefined
 }
 
-function NotOptedInReading({ clubId, bookId }: NotOptedInReadingProps) {
+function NotOptedInReading({ clubId, bookId, status }: NotOptedInReadingProps) {
     const dispatch = useAppDispatch();
 
     const { data: book } = useGetBookQuery(bookId);
@@ -39,6 +40,9 @@ function NotOptedInReading({ clubId, bookId }: NotOptedInReadingProps) {
         }
     }
 
+    console.log("status")
+    console.log(status)
+
     return (
         <div className="optedInReading activeReadings-reading">
             {book?.cover_Id ?
@@ -55,11 +59,13 @@ function NotOptedInReading({ clubId, bookId }: NotOptedInReadingProps) {
                 <img className="userLogo user" src='/src/assets/images/user.svg' />
                 {readingMemberCount}
             </div></Link>
-            {
+
+            {status ?
                 <div className="activeReadings-reading-OptInBtn">
                     <button onClick={optIntoReadingBtnClickHandler} disabled={optIntoReadingLoading}>Opt in</button>
-                </div>
+                </div> : <></>
             }
+
         </div>
     );
 }
