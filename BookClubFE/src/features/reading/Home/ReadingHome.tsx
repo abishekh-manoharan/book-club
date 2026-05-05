@@ -12,9 +12,10 @@ import DiscussionBoard from "../../discussion/DiscussionBoard";
 import { useGetBookQuery } from "../../book/bookSlice";
 import Progress from "../ActiveReadings/Progress";
 import NavBar from "../NavBar";
+import { useLayoutEffect } from "react";
 
 
-function ReadingHome({ status }: { status: boolean | undefined }) {
+function ReadingHome() {
     const dispatch = useAppDispatch();
     const nav = useNavigate();
 
@@ -24,11 +25,6 @@ function ReadingHome({ status }: { status: boolean | undefined }) {
 
     const { data: club, isSuccess: isGetClubSuccess }
         = useGetClubQuery(clubId);
-    // if the user isn't logged in, re
-    
-    if (!status && club && isGetClubSuccess && club.private) {
-        nav(`/club/${clubId}`)
-    }
 
     const { data: book } = useGetBookQuery(bookId);
     const { data: userId, isSuccess: getUserIsSuccess, isFetching: getUserIsFetching } = useGetUserIdQuery();
@@ -48,7 +44,15 @@ function ReadingHome({ status }: { status: boolean | undefined }) {
     const [optIntoReading] = useOptIntoReadingMutation();
     const [optOutOfReading] = useOptOutOfReadingMutation();
 
+    // if the user isn't a club member of a private club, redir to club home page
 
+    useLayoutEffect(() => {
+        if (club && isGetClubSuccess && club.private && !clubUser) {
+            nav(`/club/${clubId}`)
+        }
+    })
+
+    // indicate that the reading wasn't found if a reading object isn't returned
     if (isNaN(clubId) || isNaN(bookId) || !reading) {
         return <div>reading not found.</div>;
     }

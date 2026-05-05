@@ -69,7 +69,7 @@ function App() {
           </Route>
           <Route path="club/:clubid/settings" element=<Settings /> />
           <Route path="club/:clubid/createReading" element=<CreateReading /> />
-          <Route path="club/:clubid/:bookid" element=<ReadingHome status={status}/> >
+          <Route path="club/:clubid/:bookid" element=<ReadingHome /> >
             <Route index element={<Navigate to="meetings" replace />} />
             <Route path="meetings" element=<MeetingsList /> />
             <Route path="readers" element=<ReadingMembersList /> />
