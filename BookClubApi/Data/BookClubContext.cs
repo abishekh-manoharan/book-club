@@ -56,6 +56,7 @@ public partial class BookClubContext : IdentityDbContext<ApplicationUser>
     public virtual DbSet<Readinguser> Readingusers { get; set; }
 
     public virtual DbSet<Models.Thread> Threads { get; set; }
+    public virtual DbSet<AnnouncementThread> AnnouncementThreads { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
@@ -542,6 +543,63 @@ public partial class BookClubContext : IdentityDbContext<ApplicationUser>
 
             entity.HasIndex(t => new { t.ParentThreadId, t.TimePosted, t.ThreadId })
                 .HasDatabaseName("idx_thread_tree")
+                .IsDescending(false, true, true);
+
+        });
+        
+        modelBuilder.Entity<Models.AnnouncementThread>(entity =>
+        {
+            entity.HasKey(e => e.AnnouncementThreadId).HasName("PRIMARY");
+
+            entity.ToTable("announcement_thread", "BookClub");
+
+            entity.HasIndex(e => new { e.ClubId }, "book_id4");
+
+            entity.HasIndex(e => e.ParentAnnouncementThreadId, "parent_thread_id");
+
+            entity.HasIndex(e => e.UserId, "user_id3");
+
+            entity.Property(e => e.AnnouncementThreadId).HasColumnName("announcement_thread_id");
+            entity.Property(e => e.ClubId).HasColumnName("club_id");
+            entity.Property(e => e.ParentAnnouncementThreadId).HasColumnName("parent_announcement_thread_id");
+            entity.Property(e => e.TimePosted)
+                .HasColumnType("datetime")
+                .HasColumnName("time_posted");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+
+            entity.HasOne(d => d.ParentThread).WithMany(p => p.InverseParentThread)
+                .HasForeignKey(d => d.ParentAnnouncementThreadId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("announcement_thread_ibfk_3");
+
+            entity.HasOne(d => d.User).WithMany(p => p.AnnouncementThreads)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("announcement_thread_ibfk_1");
+
+            entity.HasIndex(t => new
+            {
+                t.ClubId,
+                t.ParentAnnouncementThreadId,
+                t.TimePosted,
+                t.AnnouncementThreadId
+            })
+                .HasDatabaseName("idx_root_announcement_threads")
+                .IsDescending(false, false, true, true);
+
+
+            entity.HasIndex(t => t.ParentAnnouncementThreadId)
+                .HasDatabaseName("idx_parent_announcement_thread");
+
+            entity.HasIndex(t => new
+            {
+                t.ParentAnnouncementThreadId,
+                t.TimePosted
+            })
+                .HasDatabaseName("idx_parentBatch_announcement_thread");
+
+            entity.HasIndex(t => new { t.ParentAnnouncementThreadId, t.TimePosted, t.AnnouncementThreadId })
+                .HasDatabaseName("idx_announcement_thread_tree")
                 .IsDescending(false, true, true);
 
         });
