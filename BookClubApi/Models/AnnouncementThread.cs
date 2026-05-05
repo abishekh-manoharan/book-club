@@ -11,8 +11,12 @@ public partial class AnnouncementThread
     public int UserId { get; set; }
 
     public string Text { get; set; } = null!;
+    
+    public string Heading { get; set; } = null!;
 
     public bool Pinned { get; set; }
+    
+    public bool Deleted { get; set; }
 
     public DateTime? TimePosted { get; set; }
 

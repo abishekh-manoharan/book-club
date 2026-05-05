@@ -574,7 +574,6 @@ public partial class BookClubContext : IdentityDbContext<ApplicationUser>
 
             entity.HasOne(d => d.User).WithMany(p => p.AnnouncementThreads)
                 .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("announcement_thread_ibfk_1");
 
             entity.HasIndex(t => new
