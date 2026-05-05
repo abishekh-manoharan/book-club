@@ -252,7 +252,6 @@ public class ReadingController : ControllerBase
 
     // action method to retrieve all reading members of a reading
     [HttpGet("readingMembers")]
-    [Authorize]
     public async Task<ActionResult<List<ReadingUserExpandedDTO>>> GetReadingMembers([FromQuery] ReadingGetOneValDTO readingDTO)
     {
         if (ModelState.IsValid)
