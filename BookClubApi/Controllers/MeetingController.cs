@@ -147,7 +147,6 @@ public class MeetingController : ControllerBase
 
     // action method that returns all meetings of a reading instance    
     [HttpGet("GetAllMeetings")]
-    [Authorize]
     public async Task<ActionResult<List<MeetingDTO>>> GetAllMeetings([FromQuery] ReadingGetOneValDTO reading)
     {
         // ensure required parameters are included
