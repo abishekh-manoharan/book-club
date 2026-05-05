@@ -1,11 +1,11 @@
-import { Outlet, useParams } from "react-router-dom";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
 import { useGetOneReadingQuery, useGetReadingUserQuery, useOptIntoReadingMutation, useOptOutOfReadingMutation } from "../readingSlice";
 import { useGetUserIdQuery } from "../../auth/authSlice";
 import { useAppDispatch } from "../../../app/hooks";
 import { updateErrorMessageThunk } from "../../error/errorSlice";
 import { isFetchBaseQueryError, isSerializedError } from "../../../app/typeGuards";
 // import UpdateReadingProgress from "./UpdateReadingProgress";
-import { useGetClubUserQuery } from "../../club/clubSlice";
+import { useGetClubQuery, useGetClubUserQuery } from "../../club/clubSlice";
 import CreateMeeting from "../../meeting/CreateMeeting";
 import MeetingList from "../../meeting/MeetingList";
 import DiscussionBoard from "../../discussion/DiscussionBoard";
@@ -14,12 +14,21 @@ import Progress from "../ActiveReadings/Progress";
 import NavBar from "../NavBar";
 
 
-function ReadingHome() {
+function ReadingHome({ status }: { status: boolean | undefined }) {
     const dispatch = useAppDispatch();
+    const nav = useNavigate();
 
     const { clubid, bookid } = useParams()
     const clubId = Number(clubid);
     const bookId = Number(bookid);
+
+    const { data: club, isSuccess: isGetClubSuccess }
+        = useGetClubQuery(clubId);
+    // if the user isn't logged in, re
+    
+    if (!status && club && isGetClubSuccess && club.private) {
+        nav(`/club/${clubId}`)
+    }
 
     const { data: book } = useGetBookQuery(bookId);
     const { data: userId, isSuccess: getUserIsSuccess, isFetching: getUserIsFetching } = useGetUserIdQuery();

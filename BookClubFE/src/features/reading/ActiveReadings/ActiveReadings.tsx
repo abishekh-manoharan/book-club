@@ -3,7 +3,7 @@ import { Reading, useGetAllReadingsOfClubsJoinedByUserQuery, useGetReadingUsersO
 import OptedInReading from "./OptedInReading";
 import NotOptedInReading from "./NotOptedInReading";
 
-function ActiveReadings() {
+function ActiveReadings({status}: {status: boolean | undefined}) {
     const { data: readingsOfClubsJoinedByUser, isFetching: isFetchingReadingsOfClubsJoinedByUser } = useGetAllReadingsOfClubsJoinedByUserQuery();
     const { data: readingUsersOfLoggedInUser, isFetching: isFetchingReadingUsersOfLoggedInUser, isSuccess } = useGetReadingUsersOfLoggedInUsersQuery(undefined, { skip: !readingsOfClubsJoinedByUser });
     const [joinedReadingsHidden, setJoinedReadingsHidden] = useState(false);
@@ -77,7 +77,7 @@ function ActiveReadings() {
                     <div className="readingsListNotJoinedReadings" hidden={notJoinedReadingsHidden}>
                         {
                             organizedReadings.notJoinedReadings.map((reading) => {
-                                return <NotOptedInReading key={reading.bookId + reading.clubId - 2} bookId={reading.bookId} clubId={reading.clubId} />;
+                                return <NotOptedInReading key={reading.bookId + reading.clubId - 2} bookId={reading.bookId} clubId={reading.clubId} status={status}/>;
                             })
                         }
                     </div>
@@ -88,3 +88,4 @@ function ActiveReadings() {
 }
 
 export default ActiveReadings;
+
