@@ -28,7 +28,7 @@ public partial class User
 
     public virtual ICollection<Thread> Threads { get; set; } = new List<Thread>();
 
-    public virtual ICollection<AnnouncementThread> AnnouncementThreads { get; set; } = new List<AnnouncementThread>();
+    public virtual ICollection<ClubThread> ClubThreads { get; set; } = new List<ClubThread>();
 
     public virtual ICollection<Readinguser> Readingusers { get; set; } = new List<Readinguser>();
 

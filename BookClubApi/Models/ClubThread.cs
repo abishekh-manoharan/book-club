@@ -1,10 +1,10 @@
 namespace BookClubApi.Models;
 
-public partial class AnnouncementThread
+public partial class ClubThread
 {
-    public int AnnouncementThreadId { get; set; }
+    public int ThreadId { get; set; }
 
-    public int? ParentAnnouncementThreadId { get; set; }
+    public int? ParentThreadId { get; set; }
 
     public int ClubId { get; set; }
 
@@ -20,9 +20,9 @@ public partial class AnnouncementThread
 
     public DateTime? TimePosted { get; set; }
 
-    public virtual ICollection<AnnouncementThread> InverseParentThread { get; set; } = new List<AnnouncementThread>();
+    public virtual ICollection<ClubThread> InverseParentThread { get; set; } = new List<ClubThread>();
 
-    public virtual AnnouncementThread? ParentThread { get; set; }
+    public virtual ClubThread? ParentThread { get; set; }
 
     public virtual User User { get; set; } = null!;
     

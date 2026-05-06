@@ -56,7 +56,7 @@ public partial class BookClubContext : IdentityDbContext<ApplicationUser>
     public virtual DbSet<Readinguser> Readingusers { get; set; }
 
     public virtual DbSet<Models.Thread> Threads { get; set; }
-    public virtual DbSet<AnnouncementThread> AnnouncementThreads { get; set; }
+    public virtual DbSet<ClubThread> ClubThreads { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
@@ -547,58 +547,57 @@ public partial class BookClubContext : IdentityDbContext<ApplicationUser>
 
         });
         
-        modelBuilder.Entity<Models.AnnouncementThread>(entity =>
+        modelBuilder.Entity<Models.ClubThread>(entity =>
         {
-            entity.HasKey(e => e.AnnouncementThreadId).HasName("PRIMARY");
+            entity.HasKey(e => e.ThreadId).HasName("PRIMARY");
 
-            entity.ToTable("announcement_thread", "BookClub");
+            entity.ToTable("club_thread", "BookClub");
 
             entity.HasIndex(e => new { e.ClubId }, "book_id4");
 
-            entity.HasIndex(e => e.ParentAnnouncementThreadId, "parent_thread_id");
+            entity.HasIndex(e => e.ParentThreadId, "parent_thread_id");
 
             entity.HasIndex(e => e.UserId, "user_id3");
 
-            entity.Property(e => e.AnnouncementThreadId).HasColumnName("announcement_thread_id");
+            entity.Property(e => e.ThreadId).HasColumnName("thread_id");
             entity.Property(e => e.ClubId).HasColumnName("club_id");
-            entity.Property(e => e.ParentAnnouncementThreadId).HasColumnName("parent_announcement_thread_id");
+            entity.Property(e => e.ParentThreadId).HasColumnName("parent_thread_id");
             entity.Property(e => e.TimePosted)
                 .HasColumnType("datetime")
                 .HasColumnName("time_posted");
             entity.Property(e => e.UserId).HasColumnName("user_id");
 
             entity.HasOne(d => d.ParentThread).WithMany(p => p.InverseParentThread)
-                .HasForeignKey(d => d.ParentAnnouncementThreadId)
-                .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("announcement_thread_ibfk_3");
+                .HasForeignKey(d => d.ParentThreadId)
+                .HasConstraintName("club_thread_ibfk_3");
 
-            entity.HasOne(d => d.User).WithMany(p => p.AnnouncementThreads)
+            entity.HasOne(d => d.User).WithMany(p => p.ClubThreads)
                 .HasForeignKey(d => d.UserId)
-                .HasConstraintName("announcement_thread_ibfk_1");
+                .HasConstraintName("club_thread_ibfk_1");
 
             entity.HasIndex(t => new
             {
                 t.ClubId,
-                t.ParentAnnouncementThreadId,
+                t.ParentThreadId,
                 t.TimePosted,
-                t.AnnouncementThreadId
+                t.ThreadId
             })
-                .HasDatabaseName("idx_root_announcement_threads")
+                .HasDatabaseName("idx_root_club_threads")
                 .IsDescending(false, false, true, true);
 
 
-            entity.HasIndex(t => t.ParentAnnouncementThreadId)
-                .HasDatabaseName("idx_parent_announcement_thread");
+            entity.HasIndex(t => t.ParentThreadId)
+                .HasDatabaseName("idx_parent_club_thread");
 
             entity.HasIndex(t => new
             {
-                t.ParentAnnouncementThreadId,
+                t.ParentThreadId,
                 t.TimePosted
             })
-                .HasDatabaseName("idx_parentBatch_announcement_thread");
+                .HasDatabaseName("idx_parentBatch_club_thread");
 
-            entity.HasIndex(t => new { t.ParentAnnouncementThreadId, t.TimePosted, t.AnnouncementThreadId })
-                .HasDatabaseName("idx_announcement_thread_tree")
+            entity.HasIndex(t => new { t.ParentThreadId, t.TimePosted, t.ThreadId })
+                .HasDatabaseName("idx_club_thread_tree")
                 .IsDescending(false, true, true);
 
         });

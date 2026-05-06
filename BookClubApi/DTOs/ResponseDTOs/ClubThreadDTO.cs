@@ -1,10 +1,10 @@
 namespace BookClubApi.DTOs;
 
-public class AnnouncementThreadDTO
+public class ClubThreadDTO
 {
-    public AnnouncementThreadDTO(
-        int announcementThreadId,
-        int? parentAnnouncementThreadId,
+    public ClubThreadDTO(
+        int threadId,
+        int? parentThreadId,
         int clubId,
         int userId,
         string text,
@@ -14,8 +14,8 @@ public class AnnouncementThreadDTO
         DateTime? timePosted
         )
     {
-        AnnouncementThreadId = announcementThreadId;
-        ParentAnnouncementThreadId = parentAnnouncementThreadId;
+        ThreadId = threadId;
+        ParentThreadId = parentThreadId;
         ClubId = clubId;
         UserId = userId;
         Text = text;
@@ -25,9 +25,9 @@ public class AnnouncementThreadDTO
         TimePosted = timePosted;
     }
 
-    public int AnnouncementThreadId { get; set; }
+    public int ThreadId { get; set; }
 
-    public int? ParentAnnouncementThreadId { get; set; }
+    public int? ParentThreadId { get; set; }
 
     public int ClubId { get; set; }
 

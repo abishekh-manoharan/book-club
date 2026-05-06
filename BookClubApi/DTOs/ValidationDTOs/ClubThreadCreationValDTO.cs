@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BookClubApi.DTOs;
 
-public partial class AnnouncementCreationValDTO
+public partial class ClubThreadCreationValDTO
 {
     [Required]
     public int? ClubId { get; set; }
