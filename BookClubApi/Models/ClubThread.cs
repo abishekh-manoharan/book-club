@@ -12,12 +12,12 @@ public partial class ClubThread
 
     public string Text { get; set; } = null!;
     
-    public string Heading { get; set; } = null!;
+    public string? Heading { get; set; }
 
     public bool Pinned { get; set; }
     
     public bool Deleted { get; set; }
-    
+
     public bool Announcement { get; set; }
 
     public DateTime? TimePosted { get; set; }
