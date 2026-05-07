@@ -11,6 +11,7 @@ public class ClubThreadDTO
         string heading,
         bool pinned,
         bool deleted,
+        bool announcement,
         DateTime? timePosted
         )
     {
@@ -23,6 +24,7 @@ public class ClubThreadDTO
         Pinned = pinned;
         Deleted = deleted;
         TimePosted = timePosted;
+        Announcement = announcement;
     }
 
     public int ThreadId { get; set; }
@@ -40,6 +42,8 @@ public class ClubThreadDTO
     public bool Pinned { get; set; }
 
     public bool Deleted { get; set; }
+    
+    public bool Announcement { get; set; }
 
     public DateTime? TimePosted { get; set; }
 }

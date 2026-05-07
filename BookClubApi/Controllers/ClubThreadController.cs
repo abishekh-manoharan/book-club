@@ -72,6 +72,7 @@ public class ClubThreadController : ControllerBase
                     newClubThread.Heading,
                     newClubThread.Pinned, 
                     newClubThread.Deleted,
+                    newClubThread.Announcement,
                     newClubThread.TimePosted);
 
                 return Ok(newThreadDTO);
@@ -103,7 +104,7 @@ public class ClubThreadController : ControllerBase
     // action method that created a thread in reply to an existing thread
     [HttpPost("reply")]
     [Authorize]
-    public async Task<ActionResult<Reading>> CreateReplyThread([FromBody] ThreadReplyCreationValidationDTO thread)
+    public async Task<ActionResult<Reading>> CreateReplyClubThread([FromBody] ClubThreadReplyValDTO thread)
     {
         // ensure required params are included
         if (ModelState.IsValid)
@@ -121,21 +122,33 @@ public class ClubThreadController : ControllerBase
             {
                 var user = await authHelpers.GetUserClassOfLoggedInUser(User);
 
-                Models.Thread newThread = new()
+                ClubThread newThread = new()
                 {
                     ParentThreadId = thread.ParentThreadId,
-                    BookId = (int)thread.BookId!,
                     ClubId = (int)thread.ClubId!,
                     UserId = user!.UserId,
                     Text = thread.Text,
+                    Heading = null, // replies are never going to contain headings
+                    Pinned = false,
+                    Deleted = false,
+                    Announcement = false, // replies are never going to be announcements
                     TimePosted = DateTime.UtcNow,
-                    Deleted = false
                 };
 
-                dbContext.Threads.Add(newThread);
+                dbContext.ClubThreads.Add(newThread);
                 dbContext.SaveChanges();
 
-                NonDeletedThreadDTO newThreadDTO = new(newThread.ThreadId, newThread.ParentThreadId, newThread.BookId, newThread.ClubId, newThread.UserId, newThread.Text, newThread.TimePosted, newThread.Deleted);
+                ClubThreadDTO newThreadDTO = new (
+                    newThread.ThreadId, 
+                    newThread.ParentThreadId, 
+                    newThread.ClubId, 
+                    newThread.UserId, 
+                    newThread.Text, 
+                    newThread.Heading, 
+                    newThread.Pinned, 
+                    newThread.Deleted,
+                    newThread.Announcement,
+                    newThread.TimePosted);
 
                 return Ok(newThreadDTO);
             }
@@ -151,12 +164,12 @@ public class ClubThreadController : ControllerBase
                     return BadRequest("FK constraint violated. Ensure thread being replied to exists.");
                 }
 
-                return StatusCode(500, "Error saving the reading to the database. \n" + dbe.Message);
+                return StatusCode(500, "Error saving the thread to the database. \n" + dbe.Message);
             }
             catch (Exception e)
             {
                 // handling all other errors when trying to save to db
-                return StatusCode(500, "Error saving the reading to the database. \n" + e.Message);
+                return StatusCode(500, "Error saving the thread to the database. \n" + e.Message);
             }
         }
         // if a required parameter is not included

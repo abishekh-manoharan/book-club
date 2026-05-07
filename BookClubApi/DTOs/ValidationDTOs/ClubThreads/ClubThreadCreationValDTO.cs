@@ -10,8 +10,7 @@ public partial class ClubThreadCreationValDTO
     [Required]
     public string Text { get; set; } = null!;
     
-    [Required]
-    public string Heading { get; set; } = null!;
+    public string? Heading { get; set; }
 
     public bool Pinned { get; set; }
     
