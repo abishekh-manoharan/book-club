@@ -17,6 +17,8 @@ public partial class ClubThread
     public bool Pinned { get; set; }
     
     public bool Deleted { get; set; }
+    
+    public bool Announcement { get; set; }
 
     public DateTime? TimePosted { get; set; }
 
