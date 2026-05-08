@@ -8,7 +8,7 @@ public class ClubThreadDTO
         int clubId,
         int userId,
         string text,
-        string heading,
+        string? heading,
         bool pinned,
         bool deleted,
         bool announcement,
@@ -37,7 +37,7 @@ public class ClubThreadDTO
 
     public string Text { get; set; } = null!;
 
-    public string Heading { get; set; } = null!;
+    public string? Heading { get; set; } = null!;
 
     public bool Pinned { get; set; }
 

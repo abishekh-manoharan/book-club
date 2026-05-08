@@ -57,7 +57,8 @@ public class ClubThreadController : ControllerBase
                     Heading = thread.Heading,
                     TimePosted = DateTime.UtcNow,
                     Deleted = false,
-                    Pinned = thread.Pinned
+                    Pinned = thread.Pinned,
+                    Announcement = thread.Announcement,
                 };
 
                 dbContext.ClubThreads.Add(newClubThread);
@@ -70,7 +71,7 @@ public class ClubThreadController : ControllerBase
                     newClubThread.UserId,
                     newClubThread.Text,
                     newClubThread.Heading,
-                    newClubThread.Pinned, 
+                    newClubThread.Pinned,
                     newClubThread.Deleted,
                     newClubThread.Announcement,
                     newClubThread.TimePosted);
@@ -129,8 +130,8 @@ public class ClubThreadController : ControllerBase
                     UserId = user!.UserId,
                     Text = thread.Text,
                     Heading = null, // replies are never going to contain headings
-                    Pinned = false,
-                    Deleted = false,
+                    Pinned = false, // replies can never be pinned
+                    Deleted = false, // replies will never be deleted on post
                     Announcement = false, // replies are never going to be announcements
                     TimePosted = DateTime.UtcNow,
                 };
@@ -138,14 +139,14 @@ public class ClubThreadController : ControllerBase
                 dbContext.ClubThreads.Add(newThread);
                 dbContext.SaveChanges();
 
-                ClubThreadDTO newThreadDTO = new (
-                    newThread.ThreadId, 
-                    newThread.ParentThreadId, 
-                    newThread.ClubId, 
-                    newThread.UserId, 
-                    newThread.Text, 
-                    newThread.Heading, 
-                    newThread.Pinned, 
+                ClubThreadDTO newThreadDTO = new(
+                    newThread.ThreadId,
+                    newThread.ParentThreadId,
+                    newThread.ClubId,
+                    newThread.UserId,
+                    newThread.Text,
+                    newThread.Heading,
+                    newThread.Pinned,
                     newThread.Deleted,
                     newThread.Announcement,
                     newThread.TimePosted);

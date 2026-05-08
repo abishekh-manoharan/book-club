@@ -13,6 +13,7 @@ public partial class ClubThreadCreationValDTO
     public string? Heading { get; set; }
 
     public bool Pinned { get; set; }
+
+    public bool Announcement { get; set; }
     
-    public bool Deleted { get; set; }
 }
