@@ -177,4 +177,122 @@ public class ClubThreadController : ControllerBase
         return BadRequest(ModelState);
     }
 
+
+    // action method that returns a batch of threads for a reading 
+    [HttpGet("getThreadBatch")]
+    public async Task<ActionResult<List<ThreadDTO>>> GetThreadBatch([FromQuery] ClubThreadCursorValDTO c)
+    {
+        if (ModelState.IsValid)
+        {
+            var clubPrivacy = clubService.IsClubPrivate((int)c.ClubId!);
+            var clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, (int)c.ClubId);
+            if (clubPrivacy != null)
+            {
+                // case where club is public or if not, user is member of the club
+                if (clubPrivacy == false || clubUser != null)
+                {
+
+                    var query = dbContext.ClubThreads
+                        .Where(t => t.ClubId == c.ClubId)
+                        .Where(t => t.ParentThreadId == c.ParentThreadId);
+
+                    // case for initial batch grab
+                    if (c.CursorTimeAgo == new DateTime(2000, 1, 1, 5, 0, 0, DateTimeKind.Utc))
+                    {
+                        query = query.Where(t =>
+                            t.TimePosted > c.CursorTimeAgo ||
+                            (t.TimePosted == c.CursorTimeAgo && t.ThreadId > c.CursorThreadId));
+                    }
+                    else // case for remaining batch grabs
+                    {
+                        query = query.Where(t =>
+                            t.TimePosted < c.CursorTimeAgo ||
+                            (t.TimePosted == c.CursorTimeAgo && t.ThreadId < c.CursorThreadId));
+                    }
+
+                    var roots = await query
+                        .OrderByDescending(t => t.TimePosted)
+                        .ThenByDescending(t => t.ThreadId)
+                        .Take(21)
+                        .AsNoTracking()
+                        .ToListAsync();
+
+
+                    var rootIds = roots.Select(r => r.ThreadId).ToList();
+                    var sql = """
+                        WITH RECURSIVE thread_tree AS (
+                            SELECT
+                                t.*,
+                                0 AS depth
+                            FROM Club_Thread t
+                            WHERE t.thread_id IN (
+                                SELECT jt.thread_id
+                                FROM JSON_TABLE(
+                                    @rootIds,
+                                    '$[*]' COLUMNS (
+                                        thread_id BIGINT PATH '$'
+                                    )
+                                ) jt
+                            )
+
+                            UNION ALL
+
+                            -- Recursive step
+                            SELECT
+                                child.thread_id,
+                                child.parent_thread_id,
+                                child.club_id,
+                                child.user_id,
+                                child.Text,
+                                child.Heading,
+                                child.Pinned,         
+                                child.Deleted,        
+                                child.time_posted,
+                                parent.depth + 1 AS depth
+                            FROM (
+                                SELECT
+                                    t.*,
+                                    ROW_NUMBER() OVER (
+                                        PARTITION BY t.parent_thread_id
+                                        ORDER BY t.time_posted DESC, t.thread_id DESC
+                                    ) AS rn
+                                FROM club_thread t
+                            ) child
+                            JOIN thread_tree parent
+                                ON child.parent_thread_id = parent.thread_id
+                            WHERE
+                                child.rn <= 3
+                                AND parent.depth < 4
+                        )
+
+                        SELECT *
+                        FROM thread_tree;
+                        ORDER BY time_posted ASC, thread_id ASC;
+                        """;
+
+                    var children = await dbContext.ClubThreads
+                        .FromSqlRaw(sql, new MySqlParameter("@rootIds", JsonSerializer.Serialize(rootIds)))
+                        .AsNoTracking()
+                        .ToListAsync();
+
+                    var allThreads = roots
+                        .Concat(children)
+                        // .OrderByDescending(t => t.TimePosted)
+                        // .ThenByDescending(t => t.ThreadId)
+                        .ToList();
+
+                    foreach (var thread in allThreads)
+                    {
+                        thread.Text = thread.Deleted ? "This thread has been deleted." : thread.Text;
+                    }
+
+                    return Ok(allThreads);
+                }
+                return Unauthorized("User must be member of a private club to view it's threads.");
+            }
+            return NotFound("Club not found.");
+        }
+        return BadRequest(ModelState);
+    }
 }
+
