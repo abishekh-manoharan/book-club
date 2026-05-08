@@ -34,7 +34,7 @@ function DiscussionBoard() {
     return (
         <div className="threadsFunctionsContainer">
             {isGetClubUserSuccess && <CreateThread />} 
-            {isGetClubUserError && <CreateThreadUnauthorized joinClubModalOpen={joinClubModalOpen} setJoinClubModalOpen={setJoinClubModalOpen}/>}
+            {isGetClubUserError  || !userId && <CreateThreadUnauthorized joinClubModalOpen={joinClubModalOpen} setJoinClubModalOpen={setJoinClubModalOpen}/>}
             <Threads clubId={clubId} bookId={bookId} joinClubModalOpen={joinClubModalOpen} setJoinClubModalOpen={setJoinClubModalOpen}/>
             {joinClubModalOpen && <JoinClubModal joinClubModalOpen={joinClubModalOpen} setJoinClubModalOpen={setJoinClubModalOpen}/>}   
         </div>
