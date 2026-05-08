@@ -43,6 +43,18 @@ public class ClubThreadController : ControllerBase
                 return Unauthorized("User isn't authorized to create a thread for this club.");
             }
 
+            bool pinned;
+            bool announcement;
+
+            // ensuring that if the user isn't admin, that pinned and announcement properties are always false
+            if(clubUser.Admin == true) {
+                pinned = (bool) thread.Pinned!;
+                announcement = (bool) thread.Announcement!;
+            } else
+            {
+                pinned = false;
+                announcement = false;
+            }
             // create thread
             try
             {
@@ -57,8 +69,8 @@ public class ClubThreadController : ControllerBase
                     Heading = thread.Heading,
                     TimePosted = DateTime.UtcNow,
                     Deleted = false,
-                    Pinned = thread.Pinned,
-                    Announcement = thread.Announcement,
+                    Pinned = pinned,
+                    Announcement = announcement
                 };
 
                 dbContext.ClubThreads.Add(newClubThread);
