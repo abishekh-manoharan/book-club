@@ -27,6 +27,7 @@ function ClubNavBar({ privateClub }: ClubNavBarPropsInterface) {
 
     return (
         <div className="clubNavBar">
+            <NavLink style={({ isActive }) => isActive ? navLinkActiveStyle : {}} to="messageBoard" className="item">Message Board</NavLink>
             <NavLink style={({ isActive }) => isActive ? navLinkActiveStyle : {}} to="readings" className="item">Readings</NavLink>
             <NavLink style={({ isActive }) => isActive ? navLinkActiveStyle : {}} to="members" className="item">Members</NavLink>
             {privateClub && transformedAdminClubsOfUser?.includes(clubId) && <NavLink to="requests" style={({ isActive }) => isActive ? navLinkActiveStyle : {}}>Requests</NavLink>}

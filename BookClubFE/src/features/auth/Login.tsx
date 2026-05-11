@@ -32,7 +32,7 @@ function Login({ status }: { status: boolean | undefined }) {
             console.log(res)
             document.querySelector('.loginSuccess')?.classList.remove('hidden');
             document.querySelector('.loginError')?.classList.add('hidden');
-            nav(-1)
+            nav(-1);
         } catch (e) {
             if (e && typeof e === 'object') {
                 if ('status' in e) console.log('e.status')

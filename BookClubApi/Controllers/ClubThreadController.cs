@@ -38,7 +38,7 @@ public class ClubThreadController : ControllerBase
             // ensure user is a club member of the club associated with the thread being created
             var clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, (int)thread.ClubId!);
 
-            if (clubUser == null || clubUser.Admin == false)
+            if (clubUser == null)
             {
                 return Unauthorized("User isn't authorized to create a thread for this club.");
             }
@@ -232,11 +232,20 @@ public class ClubThreadController : ControllerBase
 
                     var rootIds = roots.Select(r => r.ThreadId).ToList();
                     var sql = """
-                        WITH RECURSIVE thread_tree AS (
+                            WITH RECURSIVE thread_tree AS (
                             SELECT
-                                t.*,
+                                t.thread_id,
+                                t.parent_thread_id,
+                                t.club_id,
+                                t.user_id,
+                                t.Text,
+                                t.Heading,
+                                t.Pinned,
+                                t.Deleted,
+                                t.Announcement,
+                                t.time_posted,
                                 0 AS depth
-                            FROM Club_Thread t
+                            FROM club_thread t
                             WHERE t.thread_id IN (
                                 SELECT jt.thread_id
                                 FROM JSON_TABLE(
@@ -249,7 +258,6 @@ public class ClubThreadController : ControllerBase
 
                             UNION ALL
 
-                            -- Recursive step
                             SELECT
                                 child.thread_id,
                                 child.parent_thread_id,
@@ -257,8 +265,9 @@ public class ClubThreadController : ControllerBase
                                 child.user_id,
                                 child.Text,
                                 child.Heading,
-                                child.Pinned,         
-                                child.Deleted,        
+                                child.Pinned,
+                                child.Deleted,
+                                child.Announcement,
                                 child.time_posted,
                                 parent.depth + 1 AS depth
                             FROM (
@@ -277,9 +286,19 @@ public class ClubThreadController : ControllerBase
                                 AND parent.depth < 4
                         )
 
-                        SELECT *
-                        FROM thread_tree;
-                        ORDER BY time_posted ASC, thread_id ASC;
+                        SELECT
+                            thread_id,
+                            parent_thread_id,
+                            club_id,
+                            user_id,
+                            Text,
+                            Heading,
+                            Pinned,
+                            Deleted,
+                            Announcement,
+                            time_posted
+                        FROM thread_tree
+                        ORDER BY time_posted ASC, thread_id ASC;    
                         """;
 
                     var children = await dbContext.ClubThreads

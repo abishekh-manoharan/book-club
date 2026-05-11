@@ -1,13 +1,13 @@
 import { useParams } from "react-router-dom";
 import { useAppSelector } from "../../app/hooks";
-import { makeSelectNestedThreads, useGetThreadsBatchQuery } from "./discussionSlice";
-import Threads from "./Threads";
+import { makeSelectNestedThreads, useGetThreadsBatchQuery } from "./clubDiscussionSlice";
+import Threads from "./ClubThreads";
+import ClubThreads from "./ClubThreads";
 
-function SubThreads() {
-    const { clubid, bookid, threadid, cursorTimeAgo, parentThreadid } = useParams()
+function ClubSubThreads() {
+    const { clubid, threadid, cursorTimeAgo, parentThreadid } = useParams()
 
     const clubId = Number(clubid);
-    const bookId = Number(bookid);
     const threadId = Number(threadid);
 
     
@@ -25,8 +25,8 @@ function SubThreads() {
         // <div className="allThreads">
         //     <Thread thread={threads.threadMap[threadid!]} offset={0} reading={{ bookId, clubId }} depth={0} root={true}/>
         // </div>
-        <Threads clubId={clubId} bookId={bookId} parentThreadId={threadId} />
+        <ClubThreads clubId={clubId} parentThreadId={threadId} />
     );
 }
 
-export default SubThreads;
+export default ClubSubThreads;
