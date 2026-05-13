@@ -91,9 +91,13 @@ function ClubThread({ thread, offset, clubId, depth, index, root, prev, joinClub
 
 
     const replyBtnClickHandler = () => {
-        replyInput.current?.classList.remove("hidden");
-        replyBtnRef.current!.style.display = "none";
-        threadElementRef.current!.style.marginBottom = "12dvh";
+        if(!isClubMember) {
+            setJoinClubModalOpen(true);
+        } else {
+            replyInput.current?.classList.remove("hidden");
+            replyBtnRef.current!.style.display = "none";
+            threadElementRef.current!.style.marginBottom = "12dvh";
+        }
     }
     const closeBtnClickHandler = () => {
         replyInput.current?.classList.add("hidden");
@@ -146,12 +150,6 @@ function ClubThread({ thread, offset, clubId, depth, index, root, prev, joinClub
         setShowMoreThreads(true);
     }
 
-    const clickInfoLogo = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        e.preventDefault();
-        console.log("cliock")
-        setJoinClubModalOpen(true);
-    }
-
     // const isClubMember: boolean | undefined = clubUser != null || undefined;
     const isClubMember = isGetClubUserSuccess && clubUser != null;  
 
@@ -177,7 +175,6 @@ function ClubThread({ thread, offset, clubId, depth, index, root, prev, joinClub
 
                         <div ref={replyBtnRef} className="options">
                             <button className="replyButton button"
-                                disabled={!isClubMember}
                                 onClick={replyBtnClickHandler}
                                 style={{ 
                                     "paddingRight": !isClubMember ? "4px" : "",
@@ -187,9 +184,6 @@ function ClubThread({ thread, offset, clubId, depth, index, root, prev, joinClub
                             >
                                 Reply
                             </button>
-                            {!isClubMember && <button className="infoButton" onClick={(e) => clickInfoLogo(e)}>
-                                <img className="infoLogo" src='/src/assets/images/info.svg' />
-                            </button>}
                             {(userId === thread.userId || clubUser?.admin) && !thread.deleted && <button className="button" onClick={() => setHideDeleteModal(true)}>Delete</button>}
                         </div>
 
