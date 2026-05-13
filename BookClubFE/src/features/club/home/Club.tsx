@@ -66,7 +66,9 @@ function Club() {
     }
 
     // flag indicating that the club is private, and the user isn't a member of the club
-    const privateNonMember: boolean = !isGetClubFetching && isGetClubSuccess && isClubUserError || !clubUser && !isClubUserSuccess && club?.private;
+    const privateNonMember =
+        !!club?.private &&
+        (isClubUserError || !userId);
 
     //transformedAdminClubsOfUser && transformedAdminClubsOfUser.includes(clubId) 
     return (
