@@ -4,7 +4,7 @@ import { isFetchBaseQueryError, isSerializedError } from "../../app/typeGuards";
 import { updateErrorMessageThunk } from "../error/errorSlice";
 import { useAppDispatch } from "../../app/hooks";
 import { useGetUserIdQuery } from "../auth/authSlice";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 interface JoinClubModalProps {
     joinClubModalOpen: boolean,
@@ -12,12 +12,12 @@ interface JoinClubModalProps {
 }
 
 function JoinClubModal({ setJoinClubModalOpen }: JoinClubModalProps) {
+    const nav = useNavigate();
     const [joinClub] = useJoinClubMutation();
     const { data: userId } = useGetUserIdQuery();
 
-    const { clubid, bookid } = useParams()
+    const { clubid } = useParams()
     const clubId = Number(clubid);
-    const bookId = Number(bookid);
 
     const dispatch = useAppDispatch();
     const modal = useRef<HTMLDivElement>(null);
@@ -51,8 +51,9 @@ function JoinClubModal({ setJoinClubModalOpen }: JoinClubModalProps) {
                 console.log("Success:", result);
             }
             else {
-                const errorMessage = "User must be logged in to join a club.";
-                dispatch(updateErrorMessageThunk(errorMessage));
+                // const errorMessage = "User must be logged in to join a club.";
+                // dispatch(updateErrorMessageThunk(errorMessage));
+                nav("/login")
             }
             setJoinClubModalOpen(false);
         } catch (error) {
