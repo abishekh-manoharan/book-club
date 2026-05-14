@@ -100,7 +100,7 @@ function ReadingsList({ status }: { status: boolean | undefined }) {
 
     return (
         <div className="readingsList">
-            {isGetClubUserSuccess &&
+            {
                 <>
                     <div className="readingsListHeader" onClick={toggleJoinedReadingsList}>
                         {joinedReadingsHidden ? <img className="readingsListHeader-plus" src='/src/assets/images/plus.svg' /> :
@@ -131,7 +131,7 @@ function ReadingsList({ status }: { status: boolean | undefined }) {
                             )
                         }
                     </div>
-                    {clubUser.admin &&
+                    {isGetClubUserSuccess && clubUser.admin &&
                         <div className="createClubBtn circleBtn" onClick={createReadingBtn}>
                             <img className="ListHeader-plus" src='/src/assets/images/plusNoCircle.svg' />
                         </div>
