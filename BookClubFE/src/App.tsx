@@ -37,6 +37,8 @@ import CreateMeeting from "./features/meeting/CreateMeeting"
 import EditMeeting from "./features/meeting/EditMeeting"
 import SubThreads from "./features/discussion/SubThreads"
 import Settings from "./features/club/Settings"
+import ClubMessageBoard from "./features/clubDiscussions/ClubMessageBoard"
+import ClubSubThreads from "./features/clubDiscussions/ClubSubThreads"
 
 function App() {
   // retrieving user's logged in status
@@ -65,6 +67,8 @@ function App() {
             <Route index element={<Navigate to="readings" replace />} />
             <Route path="readings" element=<ReadingsList status={status}/> />
             <Route path="members" element=<MembersList /> />
+            <Route path="messageBoard" element=<ClubMessageBoard /> />
+            <Route path="messageBoard/:threadid/:cursorTimeAgo/:parentThreadid" element=<ClubSubThreads /> />
             <Route path="requests" element=<JoinRequests /> />
           </Route>
           <Route path="club/:clubid/settings" element=<Settings /> />
