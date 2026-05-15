@@ -136,9 +136,10 @@ export const makeThreadSelectors = (reading: ThreadCursor) => {
 
 export const makeSelectNestedThreads = (reading: ThreadCursor) => createSelector(
     makeThreadSelectors(reading).selectAll,
-    (threads): { rootThreads: NestedClubThread[], threadMap: Record<string, NestedClubThread> } => {
+    (threads): { rootThreads: NestedClubThread[], threadMap: Record<string, NestedClubThread>, pinnedRootThreads: NestedClubThread[] } => {
         const threadMap: Record<string, NestedClubThread> = {}
         const rootThreads: NestedClubThread[] = []
+        const pinnedRootThreads: NestedClubThread[] = []
 
         for (const thread of threads) {
             threadMap[thread.threadId] = { ...thread, replies: [] }
@@ -149,11 +150,16 @@ export const makeSelectNestedThreads = (reading: ThreadCursor) => createSelector
             if (parentId && threadMap[parentId]) {
                 threadMap[parentId].replies.push(threadMap[thread.threadId])
             } else {
-                rootThreads.push(threadMap[thread.threadId])
+                // if the thread is pinned, push into 
+                if (threadMap[thread.threadId].pinned){
+                    pinnedRootThreads.push(threadMap[thread.threadId])
+                } else {
+                    rootThreads.push(threadMap[thread.threadId])
+                }
             }
         }
 
-        return { rootThreads, threadMap }
+        return { rootThreads, threadMap, pinnedRootThreads }
     }
 )
 

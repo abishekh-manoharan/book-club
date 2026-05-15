@@ -36,9 +36,32 @@ function ClubThreads({ clubId, cursorThreadId, cursorTimeAgo, parentThreadId, in
         return <div style={{ paddingLeft: initialOffset ?? 0, textAlign: "left" }}>Loading</div>;
     }
     
+    console.log("threads");
+    console.log(threads);
+
     return (
         <div className="allThreads">
-            
+            {threads?.pinnedRootThreads.map((thread, i) => <ClubThread
+                thread={thread}
+                offset={initialOffset ?? 0}
+                clubId={ clubId }
+                depth={0}
+                index={i}
+                root={parentThreadId ? false : true}
+                prev={
+                    threads?.rootThreads[i - 1]
+                        ? {
+                            threadId: threads.rootThreads[i - 1].threadId,
+                            timePosted: threads.rootThreads[i - 1].timePosted
+                            // timePosted: new Date(
+                            //     threads.rootThreads[i - 1].timePosted
+                            // ).toTimeString()
+                        }
+                        : undefined
+                }
+                joinClubModalOpen={joinClubModalOpen}
+                setJoinClubModalOpen={setJoinClubModalOpen}
+            />)}
             {threads?.rootThreads.map((thread, i) => <ClubThread
                 thread={thread}
                 offset={initialOffset ?? 0}
