@@ -4,7 +4,6 @@ import { createSelector } from '@reduxjs/toolkit'
 import { RootState } from "../../app/store";
 
 interface NewClubThread {
-    bookId: number,
     clubId: number,
     text: string,
     heading?: string,

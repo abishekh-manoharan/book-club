@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import CreateThread from "./CreateThread";
+import CreateThread from "./CreateClubThread";
 // import { useGetThreadsQuery } from "./discussionSlice";
 import ClubThreads from "./ClubThreads";
 import { useGetUserIdQuery } from "../auth/authSlice";

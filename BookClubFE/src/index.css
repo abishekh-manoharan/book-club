@@ -48,7 +48,7 @@
 
 .textAlignCenter {
   text-align: center;
-} 
+}
 
 .fullWidth {
   width: 100%;
@@ -133,7 +133,7 @@ body {
 }
 
 .textInput {
-  height: 28px;
+  height: 24px;
   margin-top: 4px;
   padding: 6px 3%;
 
@@ -931,18 +931,26 @@ body {
 }
 
 .discussionCreateThreadTextArea {
-  width: 100%;
+  width: 94%;
   resize: none;
   overflow: hidden;
   border-radius: 10px;
+  border: none;
   font-size: .9rem;
   line-height: 1.2rem;
   min-height: unset;
-  padding-top: 9px;
+  /* padding-top: 9px;
   padding-bottom: 0px;
   padding-left: 9px;
-  padding-right: 9px;
-  height: 18px;
+  padding-right: 9px; */
+  padding: 6px 3%;
+  height: 28px;
+}
+
+textarea {
+  min-height: 40px;
+  padding-top: 12px !important;
+  resize: none;
 }
 
 .discussionPostThreadForm {
@@ -966,6 +974,7 @@ body {
 .discussionPostThreadForm .buttons {
   display: flex;
   justify-content: end;
+  align-items: center;
   gap: 7px;
   margin-top: 7px;
 }
