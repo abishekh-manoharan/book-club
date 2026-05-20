@@ -2,6 +2,7 @@ import { useAppSelector } from "../../app/hooks";
 import { ClubUser } from "../club/clubSlice";
 import { makeSelectNestedThreads, useGetClubThreadsBatchQuery } from "./clubDiscussionSlice";
 import ClubThread from "./ClubThread";
+import PinnedClubThreadsHeader from "./PinnedClubThreadHeader";
 
 function ClubThreads({ clubId, cursorThreadId, cursorTimeAgo, parentThreadId, initialOffset, joinClubModalOpen, setJoinClubModalOpen }: {
     clubId: number,
@@ -63,6 +64,7 @@ function ClubThreads({ clubId, cursorThreadId, cursorTimeAgo, parentThreadId, in
                 }
                 joinClubModalOpen={joinClubModalOpen}
                 setJoinClubModalOpen={setJoinClubModalOpen}
+                pinned={true}
             />)}
 
             {/* non-pinned threads */}
@@ -86,6 +88,7 @@ function ClubThreads({ clubId, cursorThreadId, cursorTimeAgo, parentThreadId, in
                 }
                 joinClubModalOpen={joinClubModalOpen}
                 setJoinClubModalOpen={setJoinClubModalOpen}
+                pinned={false}
             />)
 
             }

@@ -1132,3 +1132,15 @@ textarea {
   top: 7px;
   right: 0;
 }
+
+
+.pinnedClubThreadsHeader {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 7px;
+}
+
+.thumbtack-icon {
+  height: 24px;
+}

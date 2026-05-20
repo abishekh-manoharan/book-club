@@ -21,7 +21,7 @@ function ClubMessageBoard() {
     return (
         <div className="threadsFunctionsContainer">
             {isGetClubUserSuccess && <CreateThread clubUser={clubUser}/>} 
-            {isGetClubUserError || !userId && <CreateThreadUnauthorized joinClubModalOpen={joinClubModalOpen} setJoinClubModalOpen={setJoinClubModalOpen}/>}
+            {(isGetClubUserError || !userId) && <CreateThreadUnauthorized joinClubModalOpen={joinClubModalOpen} setJoinClubModalOpen={setJoinClubModalOpen}/>}
             <ClubThreads clubId={clubId} joinClubModalOpen={joinClubModalOpen} setJoinClubModalOpen={setJoinClubModalOpen} />
             {joinClubModalOpen && <JoinClubModal joinClubModalOpen={joinClubModalOpen} setJoinClubModalOpen={setJoinClubModalOpen}/>}   
         </div>

@@ -9,6 +9,7 @@ import { useNotifySingleUserMutation } from '../notification/notificationSlice';
 import DeleteModal from './DeleteModal';
 import { useNavigate } from 'react-router-dom';
 import ClubThreads from './ClubThreads';
+import PinnedClubThreadHeader from './PinnedClubThreadHeader';
 
 const timeAgo = (input: string | Date) => {
     const date = typeof input === "string" ? new Date(input) : input
@@ -42,7 +43,7 @@ const timeAgo = (input: string | Date) => {
     return `${count} ${unit}${count !== 1 ? "s" : ""} ago`
 }
 
-function ClubThread({ thread, offset, clubId, depth, index, root, prev, joinClubModalOpen, setJoinClubModalOpen }:
+function ClubThread({ thread, offset, clubId, depth, index, root, prev, joinClubModalOpen, setJoinClubModalOpen, pinned}:
     {
         thread: NestedClubThread,
         offset: number,
@@ -55,8 +56,8 @@ function ClubThread({ thread, offset, clubId, depth, index, root, prev, joinClub
             timePosted: string | Date | undefined
         },
         joinClubModalOpen: boolean,
-        setJoinClubModalOpen: React.Dispatch<React.SetStateAction<boolean>>
-
+        setJoinClubModalOpen: React.Dispatch<React.SetStateAction<boolean>>,
+        pinned: boolean
     }) {
     const threadElementRef = useRef<HTMLTextAreaElement>();
     const replyInput = useRef<LegacyRef<HTMLDivElement> | undefined>();
@@ -161,6 +162,7 @@ function ClubThread({ thread, offset, clubId, depth, index, root, prev, joinClub
                         <DeleteModal hideDeleteModal={hideDeleteModal} setHideDeleteModal={setHideDeleteModal} thread={thread} />
                     }
                 </>
+                {pinned && <PinnedClubThreadHeader />}
                 {(index == 2 && !root && depth != 0) || (index != 20) && <>
                     <div className="thread" ref={threadElementRef} style={{ paddingLeft: offset, textAlign: "left" }}>
                         <div className="header">
