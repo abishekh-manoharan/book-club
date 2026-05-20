@@ -5,8 +5,9 @@ import { useAppDispatch } from "../../app/hooks";
 import { isFetchBaseQueryError, isSerializedError } from "../../app/typeGuards";
 import { updateErrorMessageThunk } from "../error/errorSlice";
 import { useGetUserIdQuery, useGetUserQuery } from "../auth/authSlice";
+import { ClubUser } from "../club/clubSlice";
 
-function CreateClubThread() {
+function CreateClubThread({ clubUser }: { clubUser: ClubUser | undefined }) {
     const { clubid } = useParams()
     const clubId = Number(clubid);
     const ref = useRef<HTMLTextAreaElement | null>(null);
@@ -81,18 +82,21 @@ function CreateClubThread() {
                     <textarea className="textInput" id="message" placeholder={active == false ? "Join the conversation" : ""} ref={ref} value={text} onChange={(e) => setText(e.target.value)} onFocus={() => { resize(); setActive(true); }} onInput={resize} required />
                 </div>
                 {active && <div className="buttons">
-                    <label style={{ marginTop: "-1px" }} htmlFor="announcement">Announcement</label>
-                    <input className="announcementFlag" name="announcement" id="announcement" type="checkbox" checked={announcementFlag} value="announcement" onChange={(e) => setAnnouncementFlag(e.target.checked)} />
+                    {clubUser?.admin &&
+                    <>
+                        <label style={{ marginTop: "-1px" }} htmlFor="announcement">Announcement</label>
+                        <input className="announcementFlag" name="announcement" id="announcement" type="checkbox" checked={announcementFlag} value="announcement" onChange={(e) => setAnnouncementFlag(e.target.checked)} />
 
-                    <label style={{ marginTop: "-1px" }} htmlFor="pinned">Pinned</label>
-                    <input className="pinnedFlag" style={{ marginRight: "auto" }} name="pinned" id="pinned" type="checkbox" checked={pinnedFlag} value="pinned" onChange={(e) => setPinnedFlag(e.target.checked)} />
-
-                    <button className="button" onClick=
-                        {postThreadClickHandler} >Post</button>
-                    <input className="button" type="button" value="Cancel" onClick={cancelPostClickHandler} />
-                </div>}
-            </form>
-        </div>
+                        <label style={{ marginTop: "-1px" }} htmlFor="pinned">Pinned</label>
+                        <input className="pinnedFlag" style={{ marginRight: "auto" }} name="pinned" id="pinned" type="checkbox" checked={pinnedFlag} value="pinned" onChange={(e) => setPinnedFlag(e.target.checked)} />
+                    </>
+                }
+                <button className="button" onClick=
+                    {postThreadClickHandler} >Post</button>
+                <input className="button" type="button" value="Cancel" onClick={cancelPostClickHandler} />
+        </div>}
+            </form >
+        </div >
     );
 }
 

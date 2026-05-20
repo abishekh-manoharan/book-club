@@ -47,10 +47,12 @@ public class ClubThreadController : ControllerBase
             bool announcement;
 
             // ensuring that if the user isn't admin, that pinned and announcement properties are always false
-            if(clubUser.Admin == true) {
-                pinned = (bool) thread.Pinned!;
-                announcement = (bool) thread.Announcement!;
-            } else
+            if (clubUser.Admin == true)
+            {
+                pinned = (bool)thread.Pinned!;
+                announcement = (bool)thread.Announcement!;
+            }
+            else
             {
                 pinned = false;
                 announcement = false;
@@ -322,6 +324,36 @@ public class ClubThreadController : ControllerBase
                 return Unauthorized("User must be member of a private club to view it's threads.");
             }
             return NotFound("Club not found.");
+        }
+        return BadRequest(ModelState);
+    }
+
+    // action method to delete thread: deleting thread updates the deleted flag of a thread record to true
+    [HttpDelete("delete")]
+    [Authorize]
+    public async Task<ActionResult<Reading>> DeleteThread([FromBody][Required] int threadId)
+    {
+        if (ModelState.IsValid)
+        {
+            ClubThread? thread = dbContext.ClubThreads.Where(thread => thread.ThreadId == threadId).FirstOrDefault();
+            
+            if (thread != null)
+            {
+                var adminStatus = await authHelpers.IsUserAdminOfClub(User, thread.ClubId);
+                var loggedInUser = await authHelpers.GetUserClassOfLoggedInUser(User);
+                int userId = loggedInUser!.UserId;
+
+                // ensure logged in user is either admin of the club or the poster of the thread
+                if (adminStatus == true || thread.UserId == userId)
+                {
+                    thread.Deleted = true;
+                    dbContext.SaveChanges();
+                    return Ok();
+                }
+
+                return Unauthorized("User is unauthorized to delete the thread. Ensure user is admin of the club or the poster of the thread.");
+            }
+            return NotFound("Thread wasn't found.");
         }
         return BadRequest(ModelState);
     }

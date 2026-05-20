@@ -1,4 +1,5 @@
 import { useAppSelector } from "../../app/hooks";
+import { ClubUser } from "../club/clubSlice";
 import { makeSelectNestedThreads, useGetClubThreadsBatchQuery } from "./clubDiscussionSlice";
 import ClubThread from "./ClubThread";
 
@@ -9,7 +10,7 @@ function ClubThreads({ clubId, cursorThreadId, cursorTimeAgo, parentThreadId, in
     parentThreadId?: number | string | "" | undefined | null,
     initialOffset?: number,
     joinClubModalOpen: boolean,
-    setJoinClubModalOpen: React.Dispatch<React.SetStateAction<boolean>>
+    setJoinClubModalOpen: React.Dispatch<React.SetStateAction<boolean>>,    
 }) {
     const defaultCursorValues = {
         CursorThreadId: 0,
@@ -41,6 +42,7 @@ function ClubThreads({ clubId, cursorThreadId, cursorTimeAgo, parentThreadId, in
 
     return (
         <div className="allThreads">
+            {/* pinned threads */}
             {threads?.pinnedRootThreads.map((thread, i) => <ClubThread
                 thread={thread}
                 offset={initialOffset ?? 0}
@@ -62,6 +64,8 @@ function ClubThreads({ clubId, cursorThreadId, cursorTimeAgo, parentThreadId, in
                 joinClubModalOpen={joinClubModalOpen}
                 setJoinClubModalOpen={setJoinClubModalOpen}
             />)}
+
+            {/* non-pinned threads */}
             {threads?.rootThreads.map((thread, i) => <ClubThread
                 thread={thread}
                 offset={initialOffset ?? 0}

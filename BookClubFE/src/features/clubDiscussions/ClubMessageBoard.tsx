@@ -14,15 +14,15 @@ function ClubMessageBoard() {
     const clubId = Number(clubid);
 
     const { data: userId } = useGetUserIdQuery();
-    const { isError: isGetClubUserError, isSuccess: isGetClubUserSuccess } = useGetClubUserQuery({ clubId: clubId, userId: userId! }, { skip: !userId })
+    const { data: clubUser, isError: isGetClubUserError, isSuccess: isGetClubUserSuccess } = useGetClubUserQuery({ clubId: clubId, userId: userId! }, { skip: !userId })
     
     const [joinClubModalOpen, setJoinClubModalOpen] = useState(false);
 
     return (
         <div className="threadsFunctionsContainer">
-            {isGetClubUserSuccess && <CreateThread />} 
+            {isGetClubUserSuccess && <CreateThread clubUser={clubUser}/>} 
             {isGetClubUserError || !userId && <CreateThreadUnauthorized joinClubModalOpen={joinClubModalOpen} setJoinClubModalOpen={setJoinClubModalOpen}/>}
-            <ClubThreads clubId={clubId} joinClubModalOpen={joinClubModalOpen} setJoinClubModalOpen={setJoinClubModalOpen}/>
+            <ClubThreads clubId={clubId} joinClubModalOpen={joinClubModalOpen} setJoinClubModalOpen={setJoinClubModalOpen} />
             {joinClubModalOpen && <JoinClubModal joinClubModalOpen={joinClubModalOpen} setJoinClubModalOpen={setJoinClubModalOpen}/>}   
         </div>
     );
