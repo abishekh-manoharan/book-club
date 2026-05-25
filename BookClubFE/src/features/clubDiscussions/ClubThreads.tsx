@@ -4,7 +4,7 @@ import { makeSelectNestedThreads, makeSelectPinnedNestedThreads, useGetClubThrea
 import ClubThread from "./ClubThread";
 import PinnedClubThreadsHeader from "./PinnedClubThreadHeader";
 
-function ClubThreads({ clubId, cursorThreadId, cursorTimeAgo, parentThreadId, initialOffset, joinClubModalOpen, setJoinClubModalOpen, subThreads }: {
+function ClubThreads({ clubId, cursorThreadId, cursorTimeAgo, parentThreadId, initialOffset, joinClubModalOpen, setJoinClubModalOpen, subThreads, depth }: {
     clubId: number,
     cursorThreadId?: number,
     cursorTimeAgo?: string | Date,
@@ -12,7 +12,8 @@ function ClubThreads({ clubId, cursorThreadId, cursorTimeAgo, parentThreadId, in
     initialOffset?: number,
     joinClubModalOpen: boolean,
     setJoinClubModalOpen: React.Dispatch<React.SetStateAction<boolean>>,
-    subThreads: boolean
+    subThreads: boolean,
+    depth?: number
 }) {
     const defaultCursorValues = {
         CursorThreadId: 0,
@@ -50,7 +51,7 @@ function ClubThreads({ clubId, cursorThreadId, cursorTimeAgo, parentThreadId, in
                     thread={thread}
                     offset={initialOffset ?? 0}
                     clubId={ clubId }
-                    depth={0}
+                    depth={depth ?? 0}
                     index={i}
                     root={parentThreadId ? false : true}
                     prev={
@@ -75,7 +76,7 @@ function ClubThreads({ clubId, cursorThreadId, cursorTimeAgo, parentThreadId, in
                 thread={thread}
                 offset={initialOffset ?? 0}
                 clubId={clubId}
-                depth={0}
+                    depth={depth ?? 0}
                 index={i}
                 root={parentThreadId ? false : true}
                 prev={

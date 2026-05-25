@@ -172,7 +172,7 @@ function ClubThread({ thread, offset, clubId, depth, index, root, prev, joinClub
                         </div>
 
                         <div className="threadText">
-                            {thread.threadId} {thread.deleted ? "This post has been deleted." : thread.text}
+                            {depth} {thread.threadId} {thread.deleted ? "This post has been deleted." : thread.text}
                         </div>
 
                         <div ref={replyBtnRef} className="options">
@@ -245,7 +245,7 @@ function ClubThread({ thread, offset, clubId, depth, index, root, prev, joinClub
             {
                 showMoreThreads ?
                     <ClubThreads clubId={thread.clubId} cursorThreadId={prev?.threadId} cursorTimeAgo={prev?.timePosted} parentThreadId={root ? "" : thread.parentThreadId} initialOffset={offset} joinClubModalOpen={joinClubModalOpen}
-                        setJoinClubModalOpen={setJoinClubModalOpen} subThreads={false} />
+                        setJoinClubModalOpen={setJoinClubModalOpen} subThreads={false} depth={depth}/>
                     : <></>
             }
         </>
