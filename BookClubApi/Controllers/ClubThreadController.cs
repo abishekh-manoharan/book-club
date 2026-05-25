@@ -200,6 +200,7 @@ public class ClubThreadController : ControllerBase
         {
             var clubPrivacy = clubService.IsClubPrivate((int)c.ClubId!);
             var clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, (int)c.ClubId);
+
             if (clubPrivacy != null)
             {
                 // case where club is public or if not, user is member of the club
@@ -215,19 +216,160 @@ public class ClubThreadController : ControllerBase
                     {
                         query = query.Where(t =>
                             t.TimePosted > c.CursorTimeAgo ||
-                            (t.TimePosted == c.CursorTimeAgo && t.ThreadId > c.CursorThreadId));
+                            (t.TimePosted == c.CursorTimeAgo && t.ThreadId > c.CursorThreadId))
+                            .Where(t => t.Pinned == false); // exclude pinned threads
+
+                            System.Console.WriteLine("INITIAL");
+                            System.Console.WriteLine("INITIAL");
+                            System.Console.WriteLine("INITIAL");
+                            System.Console.WriteLine("INITIAL");
+
                     }
                     else // case for remaining batch grabs
                     {
+
                         query = query.Where(t =>
                             t.TimePosted < c.CursorTimeAgo ||
-                            (t.TimePosted == c.CursorTimeAgo && t.ThreadId < c.CursorThreadId));
+                            (t.TimePosted == c.CursorTimeAgo && t.ThreadId < c.CursorThreadId))
+                            .Where(t => t.Pinned == false); // exclude pinned threads
                     }
 
                     var roots = await query
                         .OrderByDescending(t => t.TimePosted)
                         .ThenByDescending(t => t.ThreadId)
                         .Take(21)
+                        .AsNoTracking()
+                        .ToListAsync();
+
+                    // attach pinned threads in inital grab
+                    if (c.CursorTimeAgo == new DateTime(2000, 1, 1, 5, 0, 0, DateTimeKind.Utc) && c.ParentThreadId == null)
+                    {
+                        var pinned = await dbContext.ClubThreads
+                            .Where(t => t.ClubId == c.ClubId)
+                            .Where(t => t.Pinned == true)
+                            .OrderByDescending(t => t.TimePosted)
+                            .ThenByDescending(t => t.ThreadId)
+                            .ToListAsync();
+                        
+                        roots = roots.Concat(pinned).ToList();
+                    }
+
+                    var rootIds = roots.Select(r => r.ThreadId).ToList();
+                    var sql = """
+                            WITH RECURSIVE thread_tree AS (
+                            SELECT
+                                t.thread_id,
+                                t.parent_thread_id,
+                                t.club_id,
+                                t.user_id,
+                                t.Text,
+                                t.Heading,
+                                t.Pinned,
+                                t.Deleted,
+                                t.Announcement,
+                                t.time_posted,
+                                0 AS depth
+                            FROM club_thread t
+                            WHERE t.thread_id IN (
+                                SELECT jt.thread_id
+                                FROM JSON_TABLE(
+                                    @rootIds,
+                                    '$[*]' COLUMNS (
+                                        thread_id BIGINT PATH '$'
+                                    )
+                                ) jt
+                            )
+
+                            UNION ALL
+
+                            SELECT
+                                child.thread_id,
+                                child.parent_thread_id,
+                                child.club_id,
+                                child.user_id,
+                                child.Text,
+                                child.Heading,
+                                child.Pinned,
+                                child.Deleted,
+                                child.Announcement,
+                                child.time_posted,
+                                parent.depth + 1 AS depth
+                            FROM (
+                                SELECT
+                                    t.*,
+                                    ROW_NUMBER() OVER (
+                                        PARTITION BY t.parent_thread_id
+                                        ORDER BY t.time_posted DESC, t.thread_id DESC
+                                    ) AS rn
+                                FROM club_thread t
+                            ) child
+                            JOIN thread_tree parent
+                                ON child.parent_thread_id = parent.thread_id
+                            WHERE
+                                child.rn <= 3
+                                AND parent.depth < 4
+                        )
+
+                        SELECT
+                            thread_id,
+                            parent_thread_id,
+                            club_id,
+                            user_id,
+                            Text,
+                            Heading,
+                            Pinned,
+                            Deleted,
+                            Announcement,
+                            time_posted
+                        FROM thread_tree
+                        ORDER BY time_posted DESC, thread_id DESC;    
+                        """;
+
+                    var children = await dbContext.ClubThreads
+                        .FromSqlRaw(sql, new MySqlParameter("@rootIds", JsonSerializer.Serialize(rootIds)))
+                        .AsNoTracking()
+                        .ToListAsync();
+
+                    var allThreads = roots
+                        .Concat(children)
+                        // .OrderByDescending(t => t.TimePosted)
+                        // .ThenByDescending(t => t.ThreadId)
+                        .ToList();
+
+                    foreach (var thread in allThreads)
+                    {
+                        thread.Text = thread.Deleted ? "This thread has been deleted." : thread.Text;
+                    }
+
+                    return Ok(allThreads);
+                }
+                return Unauthorized("User must be member of a private club to view it's threads.");
+            }
+            return NotFound("Club not found.");
+        }
+        return BadRequest(ModelState);
+    }
+
+    // action method that returns a batch of threads for a reading 
+    [HttpGet("getPinnedThreads")]
+    public async Task<ActionResult<List<ThreadDTO>>> GetPinnedThreads([FromQuery] int ClubId)
+    {
+        if (ModelState.IsValid)
+        {
+            var clubPrivacy = clubService.IsClubPrivate(ClubId!);
+            var clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, ClubId);
+            if (clubPrivacy != null)
+            {
+                // case where club is public or if not, user is member of the club
+                if (clubPrivacy == false || clubUser != null)
+                {
+                    var query = dbContext.ClubThreads
+                        .Where(t => t.ClubId == ClubId)
+                        .Where(t => t.Pinned == true);
+
+                    var roots = await query
+                        .OrderByDescending(t => t.TimePosted)
+                        .ThenByDescending(t => t.ThreadId)
                         .AsNoTracking()
                         .ToListAsync();
 
@@ -336,7 +478,7 @@ public class ClubThreadController : ControllerBase
         if (ModelState.IsValid)
         {
             ClubThread? thread = dbContext.ClubThreads.Where(thread => thread.ThreadId == threadId).FirstOrDefault();
-            
+
             if (thread != null)
             {
                 var adminStatus = await authHelpers.IsUserAdminOfClub(User, thread.ClubId);

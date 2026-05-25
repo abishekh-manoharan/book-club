@@ -39,6 +39,7 @@ import SubThreads from "./features/discussion/SubThreads"
 import Settings from "./features/club/Settings"
 import ClubMessageBoard from "./features/clubDiscussions/ClubMessageBoard"
 import ClubSubThreads from "./features/clubDiscussions/ClubSubThreads"
+import { useState } from "react"
 
 function App() {
   // retrieving user's logged in status
@@ -49,6 +50,7 @@ function App() {
   //   pollingInterval: 30000,
   //   refetchOnMountOrArgChange: true
   // });
+  const [joinClubModalOpen, setJoinClubModalOpen] = useState(false);
 
   const pageHiddenClassWrapper = classNames('page', {
     'hidden': isFetching
@@ -65,10 +67,10 @@ function App() {
           <Route path="createClub" element=<Create backLocation="clubs" /> />
           <Route path="club/:clubid" element=<Club /> >
             <Route index element={<Navigate to="readings" replace />} />
-            <Route path="readings" element=<ReadingsList status={status}/> />
+            <Route path="readings" element=<ReadingsList status={status} /> />
             <Route path="members" element=<MembersList /> />
-            <Route path="messageBoard" element=<ClubMessageBoard /> />
-            <Route path="messageBoard/:threadid/:cursorTimeAgo/:parentThreadid" element=<ClubSubThreads /> />
+            <Route path="messageBoard" element=<ClubMessageBoard joinClubModalOpen={joinClubModalOpen} setJoinClubModalOpen={setJoinClubModalOpen}/> />
+            <Route path="messageBoard/:threadid/:cursorTimeAgo/:parentThreadid" element=<ClubSubThreads joinClubModalOpen={joinClubModalOpen} setJoinClubModalOpen={setJoinClubModalOpen}/> />
             <Route path="requests" element=<JoinRequests /> />
           </Route>
           <Route path="club/:clubid/settings" element=<Settings /> />
@@ -82,9 +84,9 @@ function App() {
           </Route>
           <Route path="club/:clubid/:bookid/meetings/create" element=<CreateMeeting /> />
           <Route path="club/:clubid/:bookid/meetings/:meetingId/edit" element=<EditMeeting /> />
-          <Route path="activeReadings" element=<ActiveReadings status={status}/> />
-          <Route path="login" element=<Login status={status}/> />
-          <Route path="register" element=<Register status={status}/> />
+          <Route path="activeReadings" element=<ActiveReadings status={status} /> />
+          <Route path="login" element=<Login status={status} /> />
+          <Route path="register" element=<Register status={status} /> />
         </Route>
       </Routes >
     </div>

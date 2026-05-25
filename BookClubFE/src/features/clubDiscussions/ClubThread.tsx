@@ -43,7 +43,7 @@ const timeAgo = (input: string | Date) => {
     return `${count} ${unit}${count !== 1 ? "s" : ""} ago`
 }
 
-function ClubThread({ thread, offset, clubId, depth, index, root, prev, joinClubModalOpen, setJoinClubModalOpen, pinned}:
+function ClubThread({ thread, offset, clubId, depth, index, root, prev, joinClubModalOpen, setJoinClubModalOpen, pinned }:
     {
         thread: NestedClubThread,
         offset: number,
@@ -92,7 +92,7 @@ function ClubThread({ thread, offset, clubId, depth, index, root, prev, joinClub
 
 
     const replyBtnClickHandler = () => {
-        if(!isClubMember) {
+        if (!isClubMember) {
             setJoinClubModalOpen(true);
         } else {
             replyInput.current?.classList.remove("hidden");
@@ -152,7 +152,7 @@ function ClubThread({ thread, offset, clubId, depth, index, root, prev, joinClub
     }
 
     // const isClubMember: boolean | undefined = clubUser != null || undefined;
-    const isClubMember = isGetClubUserSuccess && clubUser != null;  
+    const isClubMember = isGetClubUserSuccess && clubUser != null;
 
     return (
         <>
@@ -172,15 +172,15 @@ function ClubThread({ thread, offset, clubId, depth, index, root, prev, joinClub
                         </div>
 
                         <div className="threadText">
-                            {thread.deleted ? "This post has been deleted." : thread.text}
+                            {thread.threadId} {thread.deleted ? "This post has been deleted." : thread.text}
                         </div>
 
                         <div ref={replyBtnRef} className="options">
                             <button className="replyButton button"
                                 onClick={replyBtnClickHandler}
-                                style={{ 
+                                style={{
                                     "paddingRight": !isClubMember ? "4px" : "",
-                                    "height": !isClubMember ? "21.5px" : ""  
+                                    "height": !isClubMember ? "21.5px" : ""
                                 }
                                 }
                             >
@@ -215,7 +215,9 @@ function ClubThread({ thread, offset, clubId, depth, index, root, prev, joinClub
                                 : undefined
                             }
                             joinClubModalOpen={joinClubModalOpen}
-                            setJoinClubModalOpen={setJoinClubModalOpen} />
+                            setJoinClubModalOpen={setJoinClubModalOpen} 
+                            pinned={replyThread.pinned}
+                            />
                         )}
                     </>}
                 </>}
@@ -243,7 +245,7 @@ function ClubThread({ thread, offset, clubId, depth, index, root, prev, joinClub
             {
                 showMoreThreads ?
                     <ClubThreads clubId={thread.clubId} cursorThreadId={prev?.threadId} cursorTimeAgo={prev?.timePosted} parentThreadId={root ? "" : thread.parentThreadId} initialOffset={offset} joinClubModalOpen={joinClubModalOpen}
-                        setJoinClubModalOpen={setJoinClubModalOpen} />
+                        setJoinClubModalOpen={setJoinClubModalOpen} subThreads={false} />
                     : <></>
             }
         </>

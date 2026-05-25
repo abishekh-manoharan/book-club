@@ -1,17 +1,18 @@
 import { useAppSelector } from "../../app/hooks";
 import { ClubUser } from "../club/clubSlice";
-import { makeSelectNestedThreads, useGetClubThreadsBatchQuery } from "./clubDiscussionSlice";
+import { makeSelectNestedThreads, makeSelectPinnedNestedThreads, useGetClubThreadsBatchQuery, useGetPinnedThreadsQuery } from "./clubDiscussionSlice";
 import ClubThread from "./ClubThread";
 import PinnedClubThreadsHeader from "./PinnedClubThreadHeader";
 
-function ClubThreads({ clubId, cursorThreadId, cursorTimeAgo, parentThreadId, initialOffset, joinClubModalOpen, setJoinClubModalOpen }: {
+function ClubThreads({ clubId, cursorThreadId, cursorTimeAgo, parentThreadId, initialOffset, joinClubModalOpen, setJoinClubModalOpen, subThreads }: {
     clubId: number,
     cursorThreadId?: number,
     cursorTimeAgo?: string | Date,
     parentThreadId?: number | string | "" | undefined | null,
     initialOffset?: number,
     joinClubModalOpen: boolean,
-    setJoinClubModalOpen: React.Dispatch<React.SetStateAction<boolean>>,    
+    setJoinClubModalOpen: React.Dispatch<React.SetStateAction<boolean>>,
+    subThreads: boolean
 }) {
     const defaultCursorValues = {
         CursorThreadId: 0,
@@ -44,34 +45,36 @@ function ClubThreads({ clubId, cursorThreadId, cursorTimeAgo, parentThreadId, in
     return (
         <div className="allThreads">
             {/* pinned threads */}
-            {threads?.pinnedRootThreads.map((thread, i) => <ClubThread
-                thread={thread}
-                offset={initialOffset ?? 0}
-                clubId={ clubId }
-                depth={0}
-                index={i}
-                root={parentThreadId ? false : true}
-                prev={
-                    threads?.rootThreads[i - 1]
-                        ? {
-                            threadId: threads.rootThreads[i - 1].threadId,
-                            timePosted: threads.rootThreads[i - 1].timePosted
-                            // timePosted: new Date(
-                            //     threads.rootThreads[i - 1].timePosted
-                            // ).toTimeString()
-                        }
-                        : undefined
-                }
-                joinClubModalOpen={joinClubModalOpen}
-                setJoinClubModalOpen={setJoinClubModalOpen}
-                pinned={true}
-            />)}
+            {!subThreads &&
+                threads?.pinnedRootThreads.map((thread, i) => <ClubThread
+                    thread={thread}
+                    offset={initialOffset ?? 0}
+                    clubId={ clubId }
+                    depth={0}
+                    index={i}
+                    root={parentThreadId ? false : true}
+                    prev={
+                        threads?.rootThreads[i - 1]
+                            ? {
+                                threadId: threads.rootThreads[i - 1].threadId,
+                                timePosted: threads.rootThreads[i - 1].timePosted
+                                // timePosted: new Date(
+                                //     threads.rootThreads[i - 1].timePosted
+                                // ).toTimeString()
+                            }
+                            : undefined
+                    }
+                    joinClubModalOpen={joinClubModalOpen}
+                    setJoinClubModalOpen={setJoinClubModalOpen}
+                    pinned={true}
+                />)
+            }
 
             {/* non-pinned threads */}
             {threads?.rootThreads.map((thread, i) => <ClubThread
                 thread={thread}
                 offset={initialOffset ?? 0}
-                clubId={ clubId }
+                clubId={clubId}
                 depth={0}
                 index={i}
                 root={parentThreadId ? false : true}
