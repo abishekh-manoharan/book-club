@@ -162,7 +162,6 @@ function ClubThread({ thread, offset, clubId, depth, index, root, prev, joinClub
                         <DeleteModal hideDeleteModal={hideDeleteModal} setHideDeleteModal={setHideDeleteModal} thread={thread} />
                     }
                 </>
-                {pinned && <PinnedClubThreadHeader />}
                 {(index == 2 && !root && depth != 0) || (index != 20) && <>
                     <div className="thread" ref={threadElementRef} style={{ paddingLeft: offset, textAlign: "left" }}>
 
@@ -170,6 +169,7 @@ function ClubThread({ thread, offset, clubId, depth, index, root, prev, joinClub
                             <img src="https://placecats.com/70/70" className="profilePicture" alt='member profile picture' />
                             <div className="name"> {root && "root"} {index} {user?.fName} {user?.lName}</div>
                             <div className="timeAgo">{timeAgoDisplay}</div>
+                            {pinned && <PinnedClubThreadHeader />}
                         </div>
                         <div className="threadTextContainer">
                             {!thread.deleted && <div className="announcementHeader">{thread.heading}</div>}

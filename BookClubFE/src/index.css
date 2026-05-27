@@ -1168,7 +1168,8 @@ textarea {
   display: flex;
   align-items: center;
   gap: 7px;
-  margin-bottom: 7px;
+  margin-bottom: -2px;
+  margin-left: auto;
 }
 
 .thumbtack-icon {
