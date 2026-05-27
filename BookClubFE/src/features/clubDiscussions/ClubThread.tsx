@@ -176,7 +176,7 @@ function ClubThread({ thread, offset, clubId, depth, index, root, prev, joinClub
                         </div>
 
                         <div ref={replyBtnRef} className="options">
-                            <button className="replyButton button"
+                            {!thread.deleted && <button className="replyButton button"
                                 onClick={replyBtnClickHandler}
                                 style={{
                                     "paddingRight": !isClubMember ? "4px" : "",
@@ -185,7 +185,7 @@ function ClubThread({ thread, offset, clubId, depth, index, root, prev, joinClub
                                 }
                             >
                                 Reply
-                            </button>
+                            </button>}
                             {(userId === thread.userId || clubUser?.admin) && !thread.deleted && <button className="button" onClick={() => setHideDeleteModal(true)}>Delete</button>}
                         </div>
 
