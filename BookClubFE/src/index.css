@@ -1040,7 +1040,7 @@ textarea {
 
 .allThreads {
   position: relative;
-  width: 96.7vw;
+  width:100%;
 }
 
 .thread .replyContainer {
@@ -1172,6 +1172,10 @@ textarea {
   margin-left: auto;
 }
 
-.thumbtack-icon {
+.thread-header-icons-container {
+  margin-left: auto;
+}
+
+.thread-header-icon {
   height: 24px;
 }

@@ -169,7 +169,10 @@ function ClubThread({ thread, offset, clubId, depth, index, root, prev, joinClub
                             <img src="https://placecats.com/70/70" className="profilePicture" alt='member profile picture' />
                             <div className="name"> {root && "root"} {index} {user?.fName} {user?.lName}</div>
                             <div className="timeAgo">{timeAgoDisplay}</div>
-                            {pinned && <PinnedClubThreadHeader />}
+                            <div className="thread-header-icons-container">
+                                {thread.announcement && <img className="thread-header-icon" src="/src/assets/images/megaphone.svg" />}
+                                {pinned && <img className="thread-header-icon" src="/src/assets/images/thumbtack-svgrepo-com.svg" alt="logo indicating pinned message" />}
+                            </div>
                         </div>
                         <div className="threadTextContainer">
                             {!thread.deleted && <div className="announcementHeader">{thread.heading}</div>}
@@ -195,7 +198,7 @@ function ClubThread({ thread, offset, clubId, depth, index, root, prev, joinClub
 
                         <div className="replyContainer">
                             <div ref={replyInput} className="reply hidden">
-                                <textarea value={reply} onChange={(e) => setReply(e.target.value)} required/>
+                                <textarea value={reply} onChange={(e) => setReply(e.target.value)} required />
                                 <div className="buttons">
                                     <button className="button" onClick={commentBtnClickHandler}>Reply</button>
                                     <button className="button" onClick={closeBtnClickHandler}>Close</button>
