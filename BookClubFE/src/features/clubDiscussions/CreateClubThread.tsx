@@ -73,7 +73,7 @@ function CreateClubThread({ clubUser }: { clubUser: ClubUser | undefined }) {
                 <div className="pfpAndText" >
                     {announcementFlag && active && <>
                         <label htmlFor="Header" style={{ alignSelf: "start", marginLeft: "2px" }}>Header <i>(optional)</i></label>
-                        <input className="textInput" id="Header" value={header} onChange={(e) => { setHeader(e.target.value) }} required />
+                        <input className="textInput" id="Header" value={header} onChange={(e) => { setHeader(e.target.value) }} />
                         <label htmlFor="message" style={{ alignSelf: "start", marginLeft: "2px" }}>Message*</label>
                     </>
                     }

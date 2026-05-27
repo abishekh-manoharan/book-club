@@ -97,7 +97,7 @@ function ClubThread({ thread, offset, clubId, depth, index, root, prev, joinClub
         } else {
             replyInput.current?.classList.remove("hidden");
             replyBtnRef.current!.style.display = "none";
-            threadElementRef.current!.style.marginBottom = "12dvh";
+            threadElementRef.current!.style.marginBottom = "123px";
         }
     }
     const closeBtnClickHandler = () => {
@@ -165,14 +165,17 @@ function ClubThread({ thread, offset, clubId, depth, index, root, prev, joinClub
                 {pinned && <PinnedClubThreadHeader />}
                 {(index == 2 && !root && depth != 0) || (index != 20) && <>
                     <div className="thread" ref={threadElementRef} style={{ paddingLeft: offset, textAlign: "left" }}>
+
                         <div className="header">
-                            <img src="https://placecats.com/100/100" className="profilePicture" alt='member profile picture' />
+                            <img src="https://placecats.com/70/70" className="profilePicture" alt='member profile picture' />
                             <div className="name"> {root && "root"} {index} {user?.fName} {user?.lName}</div>
                             <div className="timeAgo">{timeAgoDisplay}</div>
                         </div>
-
-                        <div className="threadText">
-                            {depth} {thread.threadId} {thread.deleted ? "This post has been deleted." : thread.text}
+                        <div className="threadTextContainer">
+                            {!thread.deleted && <div className="announcementHeader">{thread.heading}</div>}
+                            <div className="threadText">
+                                {thread.deleted ? "This post has been deleted." : thread.text}
+                            </div>
                         </div>
 
                         <div ref={replyBtnRef} className="options">
@@ -189,11 +192,14 @@ function ClubThread({ thread, offset, clubId, depth, index, root, prev, joinClub
                             {(userId === thread.userId || clubUser?.admin) && !thread.deleted && <button className="button" onClick={() => setHideDeleteModal(true)}>Delete</button>}
                         </div>
 
-                        <div ref={replyInput} className="reply hidden">
-                            <textarea value={reply} onChange={(e) => setReply(e.target.value)} />
-                            <div className="buttons">
-                                <button className="button" onClick={commentBtnClickHandler}>Reply</button>
-                                <button className="button" onClick={closeBtnClickHandler}>Close</button>
+
+                        <div className="replyContainer">
+                            <div ref={replyInput} className="reply hidden">
+                                <textarea value={reply} onChange={(e) => setReply(e.target.value)} required/>
+                                <div className="buttons">
+                                    <button className="button" onClick={commentBtnClickHandler}>Reply</button>
+                                    <button className="button" onClick={closeBtnClickHandler}>Close</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -215,9 +221,9 @@ function ClubThread({ thread, offset, clubId, depth, index, root, prev, joinClub
                                 : undefined
                             }
                             joinClubModalOpen={joinClubModalOpen}
-                            setJoinClubModalOpen={setJoinClubModalOpen} 
+                            setJoinClubModalOpen={setJoinClubModalOpen}
                             pinned={replyThread.pinned}
-                            />
+                        />
                         )}
                     </>}
                 </>}
@@ -245,7 +251,7 @@ function ClubThread({ thread, offset, clubId, depth, index, root, prev, joinClub
             {
                 showMoreThreads ?
                     <ClubThreads clubId={thread.clubId} cursorThreadId={prev?.threadId} cursorTimeAgo={prev?.timePosted} parentThreadId={root ? "" : thread.parentThreadId} initialOffset={offset} joinClubModalOpen={joinClubModalOpen}
-                        setJoinClubModalOpen={setJoinClubModalOpen} subThreads={false} depth={depth}/>
+                        setJoinClubModalOpen={setJoinClubModalOpen} subThreads={false} depth={depth} />
                     : <></>
             }
         </>
