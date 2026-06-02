@@ -502,10 +502,12 @@ public class ClubThreadController : ControllerBase
 
     [HttpPost("pin")]
     [Authorize]
-    public async Task<ActionResult<ThreadDTO>> PinThread([FromQuery] int threadId)
+    public async Task<ActionResult<ThreadDTO>> PinThread([FromBody] [Required] int threadId)
     {
         if (ModelState.IsValid)
         {
+            System.Console.WriteLine("------");
+            System.Console.WriteLine(threadId);
             ClubThread? thread = dbContext.ClubThreads.Where(thread => thread.ThreadId == threadId).FirstOrDefault();
 
             if (thread != null)
@@ -529,7 +531,7 @@ public class ClubThreadController : ControllerBase
 
     [HttpPost("unpin")]
     [Authorize]
-    public async Task<ActionResult<ThreadDTO>> UnPinThread([FromQuery] int threadId)
+    public async Task<ActionResult<ThreadDTO>> UnPinThread([FromBody] [Required] int threadId)
     {
         if (ModelState.IsValid)
         {

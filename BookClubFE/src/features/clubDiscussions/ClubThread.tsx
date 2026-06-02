@@ -178,7 +178,7 @@ function ClubThread({ thread, offset, clubId, depth, index, root, prev, joinClub
                         <div className="threadTextContainer">
                             {!thread.deleted && <div className="announcementHeader">{thread.heading}</div>}
                             <div className="threadText">
-                                {thread.deleted ? "This post has been deleted." : thread.text}
+                                {thread.threadId} {thread.deleted ? "This post has been deleted." : thread.text}
                             </div>
                         </div>
 

@@ -42,7 +42,8 @@ function ThreadDropdown({
     return (
         <div ref={ref} className="thread dropdown">
             {(userId === thread.userId || clubUser?.admin) && !thread.deleted && <DeleteItem setHideDeleteModal={setHideDeleteModal}/>}
-            <PinOrUnpinItem />
+            {clubUser?.admin && <PinOrUnpinItem thread={thread} setOpen={setOpen}/>}
+            nothing
         </div>
     );
 }
