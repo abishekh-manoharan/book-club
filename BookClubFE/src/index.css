@@ -1193,6 +1193,8 @@ textarea {
   justify-content: center;
   align-items: center;
   gap: 4px;
+  
+  z-index: 1;
 }
 
 .thread .dropdownIcon {

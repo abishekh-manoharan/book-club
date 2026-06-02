@@ -10,7 +10,7 @@ import DeleteModal from './DeleteModal';
 import { useNavigate } from 'react-router-dom';
 import ClubThreads from './ClubThreads';
 import PinnedClubThreadHeader from './PinnedClubThreadHeader';
-import ThreadDropdown from './ThreadDropdownIcon';
+import ThreadDropdown from './ThreadDropdown/ThreadDropdownIcon';
 
 const timeAgo = (input: string | Date) => {
     const date = typeof input === "string" ? new Date(input) : input
@@ -193,8 +193,7 @@ function ClubThread({ thread, offset, clubId, depth, index, root, prev, joinClub
                             >
                                 Reply
                             </button>}
-                            {(userId === thread.userId || clubUser?.admin) && !thread.deleted && <button className="button" onClick={() => setHideDeleteModal(true)}>Delete</button>}
-                            <ThreadDropdown />
+                            <ThreadDropdown userId={userId} thread={thread} clubUser={clubUser} setHideDeleteModal={setHideDeleteModal}/>
                         </div>
 
 
