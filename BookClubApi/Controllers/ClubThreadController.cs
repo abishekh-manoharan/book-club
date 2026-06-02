@@ -502,7 +502,7 @@ public class ClubThreadController : ControllerBase
 
     [HttpPost("pin")]
     [Authorize]
-    public async Task<ActionResult<ThreadDTO>> PinThread([FromBody] [Required] int threadId)
+    public async Task<ActionResult<ThreadDTO>> PinThread([FromBody][Required] int threadId)
     {
         if (ModelState.IsValid)
         {
@@ -512,17 +512,21 @@ public class ClubThreadController : ControllerBase
 
             if (thread != null)
             {
-                var adminStatus = await authHelpers.IsUserAdminOfClub(User, thread.ClubId);
-                
-                // ensure logged in user is admin of the club 
-                if (adminStatus == true)
+                if (thread.ParentThreadId == null && !thread.Deleted)
                 {
-                    thread.Pinned = true;
-                    dbContext.SaveChanges();
-                    return Ok();
-                }
+                    var adminStatus = await authHelpers.IsUserAdminOfClub(User, thread.ClubId);
 
-                return Unauthorized("User is unauthorized to delete the thread. Ensure user is admin of the club.");
+                    // ensure logged in user is admin of the club 
+                    if (adminStatus == true)
+                    {
+                        thread.Pinned = true;
+                        dbContext.SaveChanges();
+                        return Ok();
+                    }
+
+                    return Unauthorized("User is unauthorized to delete the thread. Ensure user is admin of the club.");
+                }
+                return Conflict("Cannot pin a non-root or deleted thread.");
             }
             return NotFound("Thread wasn't found.");
         }
@@ -531,7 +535,7 @@ public class ClubThreadController : ControllerBase
 
     [HttpPost("unpin")]
     [Authorize]
-    public async Task<ActionResult<ThreadDTO>> UnPinThread([FromBody] [Required] int threadId)
+    public async Task<ActionResult<ThreadDTO>> UnPinThread([FromBody][Required] int threadId)
     {
         if (ModelState.IsValid)
         {
@@ -540,7 +544,7 @@ public class ClubThreadController : ControllerBase
             if (thread != null)
             {
                 var adminStatus = await authHelpers.IsUserAdminOfClub(User, thread.ClubId);
-                
+
                 // ensure logged in user is admin of the club 
                 if (adminStatus == true)
                 {
