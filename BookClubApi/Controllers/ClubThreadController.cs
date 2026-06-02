@@ -489,6 +489,7 @@ public class ClubThreadController : ControllerBase
                 if (adminStatus == true || thread.UserId == userId)
                 {
                     thread.Deleted = true;
+                    thread.Pinned = false;
                     dbContext.SaveChanges();
                     return Ok();
                 }
