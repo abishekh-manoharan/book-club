@@ -219,10 +219,10 @@ public class ClubThreadController : ControllerBase
                             (t.TimePosted == c.CursorTimeAgo && t.ThreadId > c.CursorThreadId))
                             .Where(t => t.Pinned == false); // exclude pinned threads
 
-                            System.Console.WriteLine("INITIAL");
-                            System.Console.WriteLine("INITIAL");
-                            System.Console.WriteLine("INITIAL");
-                            System.Console.WriteLine("INITIAL");
+                        System.Console.WriteLine("INITIAL");
+                        System.Console.WriteLine("INITIAL");
+                        System.Console.WriteLine("INITIAL");
+                        System.Console.WriteLine("INITIAL");
 
                     }
                     else // case for remaining batch grabs
@@ -250,7 +250,7 @@ public class ClubThreadController : ControllerBase
                             .OrderByDescending(t => t.TimePosted)
                             .ThenByDescending(t => t.ThreadId)
                             .ToListAsync();
-                        
+
                         roots = roots.Concat(pinned).ToList();
                     }
 
@@ -494,6 +494,60 @@ public class ClubThreadController : ControllerBase
                 }
 
                 return Unauthorized("User is unauthorized to delete the thread. Ensure user is admin of the club or the poster of the thread.");
+            }
+            return NotFound("Thread wasn't found.");
+        }
+        return BadRequest(ModelState);
+    }
+
+    [HttpPost("pin")]
+    [Authorize]
+    public async Task<ActionResult<ThreadDTO>> PinThread([FromQuery] int threadId)
+    {
+        if (ModelState.IsValid)
+        {
+            ClubThread? thread = dbContext.ClubThreads.Where(thread => thread.ThreadId == threadId).FirstOrDefault();
+
+            if (thread != null)
+            {
+                var adminStatus = await authHelpers.IsUserAdminOfClub(User, thread.ClubId);
+                
+                // ensure logged in user is admin of the club 
+                if (adminStatus == true)
+                {
+                    thread.Pinned = true;
+                    dbContext.SaveChanges();
+                    return Ok();
+                }
+
+                return Unauthorized("User is unauthorized to delete the thread. Ensure user is admin of the club.");
+            }
+            return NotFound("Thread wasn't found.");
+        }
+        return BadRequest(ModelState);
+    }
+
+    [HttpPost("unpin")]
+    [Authorize]
+    public async Task<ActionResult<ThreadDTO>> UnPinThread([FromQuery] int threadId)
+    {
+        if (ModelState.IsValid)
+        {
+            ClubThread? thread = dbContext.ClubThreads.Where(thread => thread.ThreadId == threadId).FirstOrDefault();
+
+            if (thread != null)
+            {
+                var adminStatus = await authHelpers.IsUserAdminOfClub(User, thread.ClubId);
+                
+                // ensure logged in user is admin of the club 
+                if (adminStatus == true)
+                {
+                    thread.Pinned = false;
+                    dbContext.SaveChanges();
+                    return Ok();
+                }
+
+                return Unauthorized("User is unauthorized to delete the thread. Ensure user is admin of the club.");
             }
             return NotFound("Thread wasn't found.");
         }

@@ -115,6 +115,30 @@ export const apiSliceWithClubDiscussions = apiSlice.injectEndpoints({
             }),
             invalidatesTags: [{ type: 'ClubThreads', id: 'all' }]
         }),
+        pinClubThread: builder.mutation<ClubThread, number>({
+            query: (threadId) => ({
+                url: 'clubThread/pin',
+                credentials: 'include',
+                method: 'POST',
+                body: JSON.stringify(threadId),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }),
+            invalidatesTags: [{ type: 'ClubThreads', id: 'all' }]
+        }),
+        unpinClubThread: builder.mutation<ClubThread, number>({
+            query: (threadId) => ({
+                url: 'clubThread/unpin',
+                credentials: 'include',
+                method: 'POST',
+                body: JSON.stringify(threadId),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }),
+            invalidatesTags: [{ type: 'ClubThreads', id: 'all' }]
+        }),
     })
 })
 
@@ -169,5 +193,7 @@ export const {
     useReplyToClubThreadMutation,
     useGetClubThreadsBatchQuery,
     // useGetThreadsQuery,
+    usePinClubThreadMutation,
+    useUnpinClubThreadMutation,
     useDeleteClubThreadMutation
 } = apiSliceWithClubDiscussions
