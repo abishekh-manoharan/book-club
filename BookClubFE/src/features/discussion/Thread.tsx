@@ -9,6 +9,7 @@ import { useNotifySingleUserMutation } from '../notification/notificationSlice';
 import DeleteModal from './DeleteModal';
 import { useNavigate } from 'react-router-dom';
 import Threads from './Threads';
+import ThreadDropdownIcon from './ThreadDropdown/ThreadDropdownIcon';
 
 const timeAgo = (input: string | Date) => {
     const date = typeof input === "string" ? new Date(input) : input
@@ -174,17 +175,20 @@ function Thread({ thread, offset, reading, depth, index, root, prev, joinClubMod
                         </div>
 
                         <div ref={replyBtnRef} className="options">
-                            <button className="replyButton button"
-                                onClick={replyBtnClickHandler}
-                                style={{
-                                    "paddingRight": !isClubMember ? "4px" : "",
-                                    "height": !isClubMember ? "21.5px" : ""
-                                }
-                                }
-                            >
-                                Reply
-                            </button>
-                            {(userId === thread.userId || clubUser?.admin) && !thread.deleted && <button className="button" onClick={() => setHideDeleteModal(true)}>Delete</button>}
+                            {!thread.deleted && <>
+                                <button className="replyButton button"
+                                    onClick={replyBtnClickHandler}
+                                    style={{
+                                        "paddingRight": !isClubMember ? "4px" : "",
+                                        "height": !isClubMember ? "21.5px" : ""
+                                    }
+                                    }
+                                >
+                                    Reply
+                                </button>
+                                <ThreadDropdownIcon userId={userId} thread={thread} clubUser={clubUser} setHideDeleteModal={setHideDeleteModal} />
+                            </>
+                            }
                         </div>
 
                         <div ref={replyInput} className="reply hidden">

@@ -166,7 +166,7 @@ function ClubThread({ thread, offset, clubId, depth, index, root, prev, joinClub
                 {(index == 2 && !root && depth != 0) || (index != 20) && <>
                     <div className="thread" ref={threadElementRef} style={{ paddingLeft: offset, textAlign: "left" }}>
 
-                        <div className="header">
+                        <div className={`header ${thread.announcement && "announcement"}`}>
                             <img src="https://placecats.com/70/70" className="profilePicture" alt='member profile picture' />
                             <div className="name"> {root && "root"} {index} {user?.fName} {user?.lName}</div>
                             <div className="timeAgo">{timeAgoDisplay}</div>
@@ -183,17 +183,20 @@ function ClubThread({ thread, offset, clubId, depth, index, root, prev, joinClub
                         </div>
 
                         <div ref={replyBtnRef} className="options">
-                            {!thread.deleted && <button className="replyButton button"
-                                onClick={replyBtnClickHandler}
-                                style={{
-                                    "paddingRight": !isClubMember ? "4px" : "",
-                                    "height": !isClubMember ? "21.5px" : ""
-                                }
-                                }
-                            >
-                                Reply
-                            </button>}
-                            <ThreadDropdown userId={userId} thread={thread} clubUser={clubUser} setHideDeleteModal={setHideDeleteModal}/>
+                            {!thread.deleted && <>
+                                <button className="replyButton button"
+                                    onClick={replyBtnClickHandler}
+                                    style={{
+                                        "paddingRight": !isClubMember ? "4px" : "",
+                                        "height": !isClubMember ? "21.5px" : ""
+                                    }
+                                    }
+                                >
+                                    Reply
+                                </button>
+                                <ThreadDropdown userId={userId} thread={thread} clubUser={clubUser} setHideDeleteModal={setHideDeleteModal} />
+                            </>
+                            }
                         </div>
 
 
