@@ -38,7 +38,8 @@ export interface ThreadCursor {
     CursorTimeAgo: string | Date,
     CursorThreadId: number,
     ClubId: number,
-    ParentThreadId?: number | null | ""
+    ParentThreadId?: number | null | "",
+    AnnouncementOnly: boolean
 }
 
 const threadsAdapter = createEntityAdapter<ClubThread, number>({
@@ -90,7 +91,7 @@ export const apiSliceWithClubDiscussions = apiSlice.injectEndpoints({
         // }),
         getClubThreadsBatch: builder.query<EntityState<ClubThread, number>, ThreadCursor>({
             query: (cursor) => ({
-                url: `clubThread/getThreadBatch?ClubId=${cursor.ClubId}&CursorThreadId=${cursor.CursorThreadId}&CursorTimeAgo=${cursor.CursorTimeAgo}&ParentThreadId=${cursor.ParentThreadId}`,
+                url: `clubThread/getThreadBatch?ClubId=${cursor.ClubId}&CursorThreadId=${cursor.CursorThreadId}&CursorTimeAgo=${cursor.CursorTimeAgo}&ParentThreadId=${cursor.ParentThreadId}&AnnouncementsOnly=${cursor.AnnouncementOnly}`,
                 credentials: 'include',
                 method: 'GET',
                 headers: {

@@ -211,6 +211,24 @@ public class ClubThreadController : ControllerBase
                         .Where(t => t.ClubId == c.ClubId)
                         .Where(t => t.ParentThreadId == c.ParentThreadId);
 
+                    System.Console.WriteLine("");
+                    System.Console.WriteLine(c.AnnouncementsOnly == true);
+                    System.Console.WriteLine("c.AnnouncementsOnly == true");
+                    System.Console.WriteLine(c.AnnouncementsOnly);
+                    System.Console.WriteLine("c.AnnouncementsOnly");
+                    System.Console.WriteLine("");
+
+                    if (c.AnnouncementsOnly == true)
+                    {
+                        System.Console.WriteLine("INITIAL");
+                        System.Console.WriteLine("INITIAL");
+                        System.Console.WriteLine("INITIAL");
+                        System.Console.WriteLine("INITIAL");
+                        System.Console.WriteLine("TRUE");
+
+                        query = query.Where(t => t.Announcement == true);
+                    }
+
                     // case for initial batch grab
                     if (c.CursorTimeAgo == new DateTime(2000, 1, 1, 5, 0, 0, DateTimeKind.Utc))
                     {
@@ -218,12 +236,6 @@ public class ClubThreadController : ControllerBase
                             t.TimePosted > c.CursorTimeAgo ||
                             (t.TimePosted == c.CursorTimeAgo && t.ThreadId > c.CursorThreadId))
                             .Where(t => t.Pinned == false); // exclude pinned threads
-
-                        System.Console.WriteLine("INITIAL");
-                        System.Console.WriteLine("INITIAL");
-                        System.Console.WriteLine("INITIAL");
-                        System.Console.WriteLine("INITIAL");
-
                     }
                     else // case for remaining batch grabs
                     {
@@ -244,13 +256,27 @@ public class ClubThreadController : ControllerBase
                     // attach pinned threads in inital grab
                     if (c.CursorTimeAgo == new DateTime(2000, 1, 1, 5, 0, 0, DateTimeKind.Utc) && c.ParentThreadId == null)
                     {
-                        var pinned = await dbContext.ClubThreads
-                            .Where(t => t.ClubId == c.ClubId)
-                            .Where(t => t.Pinned == true)
-                            .OrderByDescending(t => t.TimePosted)
-                            .ThenByDescending(t => t.ThreadId)
-                            .ToListAsync();
-
+                        List<ClubThread> pinned = new();
+                        if (c.AnnouncementsOnly)
+                        {
+                            pinned = await dbContext.ClubThreads
+                                .Where(t => t.ClubId == c.ClubId)
+                                .Where(t => t.Announcement == true)
+                                .Where(t => t.Pinned == true)
+                                .OrderByDescending(t => t.TimePosted)
+                                .ThenByDescending(t => t.ThreadId)
+                                .ToListAsync();
+                        }
+                        else
+                        {
+                            pinned = await dbContext.ClubThreads
+                                .Where(t => t.ClubId == c.ClubId)
+                                .Where(t => t.Pinned == true)
+                                .OrderByDescending(t => t.TimePosted)
+                                .ThenByDescending(t => t.ThreadId)
+                                .ToListAsync();
+                        }
+                        
                         roots = roots.Concat(pinned).ToList();
                     }
 
@@ -351,7 +377,7 @@ public class ClubThreadController : ControllerBase
     }
 
     // action method that returns a batch of threads for a reading 
-    [HttpGet("getPinnedThreads")]
+    [HttpGet("getAnnouncementThreads")]
     public async Task<ActionResult<List<ThreadDTO>>> GetPinnedThreads([FromQuery] int ClubId)
     {
         if (ModelState.IsValid)
@@ -365,7 +391,7 @@ public class ClubThreadController : ControllerBase
                 {
                     var query = dbContext.ClubThreads
                         .Where(t => t.ClubId == ClubId)
-                        .Where(t => t.Pinned == true);
+                        .Where(t => t.Announcement == true);
 
                     var roots = await query
                         .OrderByDescending(t => t.TimePosted)

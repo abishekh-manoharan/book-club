@@ -6,7 +6,7 @@ import ClubThread from "./ClubThread";
 import PinnedClubThreadsHeader from "./PinnedClubThreadHeader";
 import { preprocessCSS } from "vite";
 
-function ClubThreads({ clubId, cursorThreadId, cursorTimeAgo, parentThreadId, initialOffset, joinClubModalOpen, setJoinClubModalOpen, subThreads, depth }: {
+function ClubThreads({ clubId, cursorThreadId, cursorTimeAgo, parentThreadId, initialOffset, joinClubModalOpen, setJoinClubModalOpen, subThreads, depth, announcementsOnly }: {
     clubId: number,
     cursorThreadId?: number,
     cursorTimeAgo?: string | Date,
@@ -15,9 +15,14 @@ function ClubThreads({ clubId, cursorThreadId, cursorTimeAgo, parentThreadId, in
     joinClubModalOpen: boolean,
     setJoinClubModalOpen: React.Dispatch<React.SetStateAction<boolean>>,
     subThreads: boolean,
-    depth?: number
+    depth?: number,
+    announcementsOnly?: boolean
 }) {
+    console.log("clubThreads")
+    console.log("announcementonly")
+    console.log(announcementsOnly)
     const [hidePinned, setHidePinned] = useState(false);
+    const [viewOnlyAnnouncement, setViewOnlyAnnouncement] = useState(false);
 
     const defaultCursorValues = {
         CursorThreadId: 0,
@@ -28,7 +33,8 @@ function ClubThreads({ clubId, cursorThreadId, cursorTimeAgo, parentThreadId, in
             ClubId: clubId,
             CursorThreadId: cursorThreadId ?? defaultCursorValues.CursorThreadId,
             CursorTimeAgo: cursorTimeAgo ?? defaultCursorValues.CursorTimeAgo,
-            ParentThreadId: parentThreadId ?? ""
+            ParentThreadId: parentThreadId ?? "",
+            AnnouncementOnly: announcementsOnly || viewOnlyAnnouncement
         }
         ));
 
@@ -36,7 +42,8 @@ function ClubThreads({ clubId, cursorThreadId, cursorTimeAgo, parentThreadId, in
         ClubId: clubId,
         CursorThreadId: cursorThreadId ?? defaultCursorValues.CursorThreadId,
         CursorTimeAgo: cursorTimeAgo ?? defaultCursorValues.CursorTimeAgo,
-        ParentThreadId: parentThreadId ?? ""
+        ParentThreadId: parentThreadId ?? "",
+        AnnouncementOnly: announcementsOnly || viewOnlyAnnouncement
     });
     if (isError) {
         return <div style={{ paddingLeft: initialOffset ?? 0, textAlign: "left" }}>Error</div>;
@@ -49,6 +56,10 @@ function ClubThreads({ clubId, cursorThreadId, cursorTimeAgo, parentThreadId, in
             {cursorThreadId == null && <button onClick={() => { // ensure this button is only loaded on the initial thread batch
                 setHidePinned((prev) => !prev)
             }}>{hidePinned ? "Show Pinned" : "Hide Pinned"}</button>}
+
+            {cursorThreadId == null && <button onClick={() => { // ensure this button is only loaded on the initial thread batch
+                setViewOnlyAnnouncement((prev) => !prev)
+            }}>{viewOnlyAnnouncement ? "Hide only announcement" : "Show only announcement"}</button>}
             {/* pinned threads */}
 
             {!subThreads && !hidePinned &&
@@ -73,6 +84,7 @@ function ClubThreads({ clubId, cursorThreadId, cursorTimeAgo, parentThreadId, in
                     joinClubModalOpen={joinClubModalOpen}
                     setJoinClubModalOpen={setJoinClubModalOpen}
                     pinned={true}
+                    announcementsOnly={viewOnlyAnnouncement}
                 />)
             }
 
@@ -98,6 +110,7 @@ function ClubThreads({ clubId, cursorThreadId, cursorTimeAgo, parentThreadId, in
                 joinClubModalOpen={joinClubModalOpen}
                 setJoinClubModalOpen={setJoinClubModalOpen}
                 pinned={false}
+                announcementsOnly={viewOnlyAnnouncement}
             />)
 
             }

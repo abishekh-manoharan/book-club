@@ -14,5 +14,7 @@ public partial class ClubThreadCursorValDTO
     public int? ClubId { get; set; }
     
     public int? ParentThreadId { get; set; }   // nullable
+
+    public bool AnnouncementsOnly { get; set; }
 }
 

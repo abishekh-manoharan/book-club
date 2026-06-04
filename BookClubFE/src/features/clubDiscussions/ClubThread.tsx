@@ -44,7 +44,7 @@ const timeAgo = (input: string | Date) => {
     return `${count} ${unit}${count !== 1 ? "s" : ""} ago`
 }
 
-function ClubThread({ thread, offset, clubId, depth, index, root, prev, joinClubModalOpen, setJoinClubModalOpen, pinned }:
+function ClubThread({ thread, offset, clubId, depth, index, root, prev, joinClubModalOpen, setJoinClubModalOpen, pinned, announcementsOnly }:
     {
         thread: NestedClubThread,
         offset: number,
@@ -58,7 +58,8 @@ function ClubThread({ thread, offset, clubId, depth, index, root, prev, joinClub
         },
         joinClubModalOpen: boolean,
         setJoinClubModalOpen: React.Dispatch<React.SetStateAction<boolean>>,
-        pinned: boolean
+        pinned: boolean,
+        announcementsOnly?: boolean
     }) {
     const threadElementRef = useRef<HTMLTextAreaElement>();
     const replyInput = useRef<LegacyRef<HTMLDivElement> | undefined>();
@@ -258,7 +259,7 @@ function ClubThread({ thread, offset, clubId, depth, index, root, prev, joinClub
             {
                 showMoreThreads ?
                     <ClubThreads clubId={thread.clubId} cursorThreadId={prev?.threadId} cursorTimeAgo={prev?.timePosted} parentThreadId={root ? "" : thread.parentThreadId} initialOffset={offset} joinClubModalOpen={joinClubModalOpen}
-                        setJoinClubModalOpen={setJoinClubModalOpen} subThreads={false} depth={depth} />
+                        setJoinClubModalOpen={setJoinClubModalOpen} subThreads={false} depth={depth} announcementsOnly={announcementsOnly}/>
                     : <></>
             }
         </>
