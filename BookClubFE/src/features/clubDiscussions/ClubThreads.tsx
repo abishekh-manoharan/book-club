@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { useAppSelector } from "../../app/hooks";
 import { ClubUser } from "../club/clubSlice";
 import { makeSelectNestedThreads, makeSelectPinnedNestedThreads, useGetClubThreadsBatchQuery, useGetPinnedThreadsQuery } from "./clubDiscussionSlice";
 import ClubThread from "./ClubThread";
 import PinnedClubThreadsHeader from "./PinnedClubThreadHeader";
+import { preprocessCSS } from "vite";
 
 function ClubThreads({ clubId, cursorThreadId, cursorTimeAgo, parentThreadId, initialOffset, joinClubModalOpen, setJoinClubModalOpen, subThreads, depth }: {
     clubId: number,
@@ -15,6 +17,8 @@ function ClubThreads({ clubId, cursorThreadId, cursorTimeAgo, parentThreadId, in
     subThreads: boolean,
     depth?: number
 }) {
+    const [hidePinned, setHidePinned] = useState(false);
+
     const defaultCursorValues = {
         CursorThreadId: 0,
         CursorTimeAgo: new Date("2000-01-01T05:00:00.000Z").toISOString()
@@ -39,18 +43,19 @@ function ClubThreads({ clubId, cursorThreadId, cursorTimeAgo, parentThreadId, in
     } else if (isLoading) {
         return <div style={{ paddingLeft: initialOffset ?? 0, textAlign: "left" }}>Loading</div>;
     }
-    
-    console.log("threads");
-    console.log(threads);
 
     return (
         <div className="allThreads">
+            {cursorThreadId == null && <button onClick={() => { // ensure this button is only loaded on the initial thread batch
+                setHidePinned((prev) => !prev)
+            }}>{hidePinned ? "Show Pinned" : "Hide Pinned"}</button>}
             {/* pinned threads */}
-            {!subThreads &&
+
+            {!subThreads && !hidePinned &&
                 threads?.pinnedRootThreads.map((thread, i) => <ClubThread
                     thread={thread}
                     offset={initialOffset ?? 0}
-                    clubId={ clubId }
+                    clubId={clubId}
                     depth={depth ?? 0}
                     index={i}
                     root={parentThreadId ? false : true}
@@ -76,7 +81,7 @@ function ClubThreads({ clubId, cursorThreadId, cursorTimeAgo, parentThreadId, in
                 thread={thread}
                 offset={initialOffset ?? 0}
                 clubId={clubId}
-                    depth={depth ?? 0}
+                depth={depth ?? 0}
                 index={i}
                 root={parentThreadId ? false : true}
                 prev={
