@@ -607,6 +607,9 @@ public partial class BookClubContext : IdentityDbContext<ApplicationUser>
             entity.HasIndex(t => new { t.ParentThreadId, t.TimePosted, t.ThreadId })
                 .HasDatabaseName("idx_club_thread_tree")
                 .IsDescending(false, true, true);
+            
+            entity.HasIndex(t => new { t.ClubId, t.Pinned })
+                .HasDatabaseName("idx_club_thread_pinned");
 
         });
 
