@@ -276,7 +276,7 @@ public class ClubThreadController : ControllerBase
                                 .ThenByDescending(t => t.ThreadId)
                                 .ToListAsync();
                         }
-                        
+
                         roots = roots.Concat(pinned).ToList();
                     }
 
@@ -546,9 +546,19 @@ public class ClubThreadController : ControllerBase
                     // ensure logged in user is admin of the club 
                     if (adminStatus == true)
                     {
-                        thread.Pinned = true;
-                        dbContext.SaveChanges();
-                        return Ok();
+                        // ensure that the amount of pinned threads doesn't exceed 5
+                        int pinCount = dbContext.ClubThreads
+                            .Where(t => t.ClubId == thread.ClubId)
+                            .Where(t => t.Pinned)
+                            .Count();
+
+                        if (pinCount < 5)
+                        {
+                            thread.Pinned = true;
+                            dbContext.SaveChanges();
+                            return Ok();
+                        }
+                        return Conflict("Pin limit of 5 threads reached.");
                     }
 
                     return Unauthorized("User is unauthorized to delete the thread. Ensure user is admin of the club.");
