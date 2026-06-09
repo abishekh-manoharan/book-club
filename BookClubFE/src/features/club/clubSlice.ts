@@ -34,7 +34,7 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            invalidatesTags: [{type: 'Clubs'}]
+            invalidatesTags: [{ type: 'Clubs' }]
         }),
         getClub: builder.query<Club, number>({
             query: (clubId) => ({
@@ -45,7 +45,7 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            providesTags: [{type: 'Clubs'}]
+            providesTags: [{ type: 'Clubs' }]
         }),
         getJoinedClubs: builder.query<Club[], void>({
             query: () => ({
@@ -84,7 +84,7 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            providesTags: [{type: 'Clubs', id: 'members'}],
+            providesTags: [{ type: 'Clubs', id: 'members' }],
         }),
         getClubUsers: builder.query<ClubUser[], { clubId: number }>({
             query: (clubUser) => ({
@@ -99,7 +99,7 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                 console.log(res.$values);
                 return res.$values;
             },
-            providesTags: [{type: 'Clubs', id: 'members'}]
+            providesTags: [{ type: 'Clubs', id: 'members' }]
         }),
         getClubUsersCount: builder.query<number, number>({
             query: (clubId) => ({
@@ -110,7 +110,7 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            providesTags: [{type: 'Clubs', id: 'members'}]
+            providesTags: [{ type: 'Clubs', id: 'members' }]
         }),
         joinClub: builder.mutation<boolean, { UserId: number, ClubId: number }>({
             query: (clubUser) => ({
@@ -122,7 +122,7 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            invalidatesTags: [{type: 'Clubs', id: 'members'},{type: 'Readings', id: 'all'}]
+            invalidatesTags: [{ type: 'Clubs', id: 'members' }, { type: 'Readings' }]
         }),
         getJoinRequest: builder.query<JoinRequest, { userId: number, clubId: number }>({
             query: (joinRequest) => ({
@@ -169,7 +169,7 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            invalidatesTags: [{type: 'Readings', id: 'all'}, {type: 'Readings', id: 'user'}, {type: 'Clubs', id: 'members'}]
+            invalidatesTags: [{ type: 'Readings' }, { type: 'Readings', id: 'user' }, { type: 'Clubs', id: 'members' }]
         }),
         updateClub: builder.mutation<Club, ClubUpdate>({
             query: (clubUser) => ({
@@ -181,7 +181,7 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            invalidatesTags: [{type: 'Clubs'}]
+            invalidatesTags: [{ type: 'Clubs' }]
         }),
     })
 })

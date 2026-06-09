@@ -78,10 +78,8 @@ function ReadingsList({ status }: { status: boolean | undefined }) {
     }, [readingUsersOfLoggedInUser, readings, params.clubid])
 
     console.log("---")
-    console.log(clubUser)
-    console.log(organizedReadings)
-    console.log(!clubUser)
-    console.log(isGetClubUserError)
+    console.log(!status || !clubUser)
+    console.log(clubUser?.userId)
 
     const toggleJoinedReadingsList = () => {
         setJoinedReadingsHidden((state) => !state);
@@ -97,6 +95,7 @@ function ReadingsList({ status }: { status: boolean | undefined }) {
     return (
         <div className="readingsList">
             {
+                (status && isGetClubUserSuccess) && organizedReadings ?
                 <>
                     <div className="readingsListHeader" onClick={toggleJoinedReadingsList}>
                         {joinedReadingsHidden ? <img className="readingsListHeader-plus" src='/src/assets/images/plus.svg' /> :
@@ -110,6 +109,9 @@ function ReadingsList({ status }: { status: boolean | undefined }) {
                             )
                         }
                     </div>
+
+
+
                     <div className="readingsListHeader" onClick={toggleNotJoinedReadingsList}>
                         {notJoinedReadingsHidden ? <img className="readingsListHeader-plus" src='/src/assets/images/plus.svg' /> :
                             <img className="ListHeader-plus" src='/src/assets/images/minus.svg' />}
@@ -132,12 +134,11 @@ function ReadingsList({ status }: { status: boolean | undefined }) {
                             <img className="ListHeader-plus" src='/src/assets/images/plusNoCircle.svg' />
                         </div>
                     }
-
-                </>
+                </> : <></>
             }
             {/* case where the user isn't a club member. readings are listed without a seperate sections for joined and not joined readings. */}
             {
-                !status && organizedReadings && organizedReadings!.notJoinedReadings?.map((r) => {
+                (!status || isGetClubUserError) && organizedReadings && organizedReadings!.notJoinedReadings?.map((r) => {
                     if (r.status != 'concluded') {
                         return <NotOptedInReading key={r.bookId + r.clubId - 1} bookId={r.bookId} clubId={r.clubId} clubUser={clubUser} isGetClubUserSuccess={isGetClubUserSuccess} status={status} />
                     }
