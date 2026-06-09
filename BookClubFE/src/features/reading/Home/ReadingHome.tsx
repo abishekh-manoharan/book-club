@@ -1,4 +1,4 @@
-import { Outlet, useNavigate, useParams } from "react-router-dom";
+import { Link, Outlet, useNavigate, useParams } from "react-router-dom";
 import { useGetOneReadingQuery, useGetReadingUserQuery, useOptIntoReadingMutation, useOptOutOfReadingMutation } from "../readingSlice";
 import { useGetUserIdQuery } from "../../auth/authSlice";
 import { useAppDispatch } from "../../../app/hooks";
@@ -13,6 +13,7 @@ import { useGetBookQuery } from "../../book/bookSlice";
 import Progress from "../ActiveReadings/Progress";
 import NavBar from "../NavBar";
 import { useLayoutEffect } from "react";
+import JoinButton from "../../../features/club/home/JoinButton";
 
 
 function ReadingHome() {
@@ -36,7 +37,7 @@ function ReadingHome() {
         { BookId: bookId, ClubId: clubId, UserId: userId! },
         { skip: !getUserIsSuccess || !userId || !clubId || isNaN(clubId) || !bookId || isNaN(bookId) || !getReadingIsSuccess }
     );
-    const { data: clubUser, isSuccess: clubUserIsSuccess, isFetching: clubUserIsFetching } = useGetClubUserQuery(
+    const { data: clubUser, isSuccess: clubUserIsSuccess, isFetching: clubUserIsFetching, isError: getClubUserError, error: clubUserError, refetch: refetchGetClubUser } = useGetClubUserQuery(
         { clubId: clubId, userId: userId as number },
         { skip: !getUserIsSuccess || !userId || !clubId || isNaN(clubId) }
     );
@@ -94,25 +95,31 @@ function ReadingHome() {
     const loggedIn = getUserIsSuccess;
 
     return (
-        <div className="readingHome">
-            {book?.cover_Id ?
-                <img className="selectedBookCover" src={`https://covers.openlibrary.org/b/ID/${book?.cover_Id}-M.jpg`} /> :
-                <img className="selectedBookCover" src='/src/assets/images/book-open.svg' />
-            }
-            <h1>{book?.title}</h1>
-            {book?.authorName && <p className='bookSearchResultAuthorName'>{book?.authorName}</p>}
-
-            {optedIn && isClubMember && <button onClick={optOutOfReadingButtonClick} className="optBtn">Opt Out</button>}
-            {optedOut && isClubMember && <button onClick={optIntoReadingButtonClick} className="optBtn">Opt In</button>}
-
-            {!getUserIsFetching && !getReadingIsFetching && !getReadingUserIsFetching && <>
-                {optedIn &&
-                    <Progress bookId={bookId} clubId={clubId} progress={readingUser!.progress} progresstypeId={readingUser!.progresstypeId} progressTotal={readingUser!.progressTotal} />
+        <>
+            <div className="returnToClub">
+                <Link to="./../">{club?.name}</Link>
+                <JoinButton clubId={clubId} privateClub={club?.private || false} clubUser={clubUser} getClubUserError={clubUserError} isClubUserError={getClubUserError} refetchGetClubUser={refetchGetClubUser} club={club} userId={userId} />
+            </div>
+            <div className="readingHome">
+                {book?.cover_Id ?
+                    <img className="selectedBookCover" src={`https://covers.openlibrary.org/b/ID/${book?.cover_Id}-M.jpg`} /> :
+                    <img className="selectedBookCover" src='/src/assets/images/book-open.svg' />
                 }
-                <NavBar />
-                <Outlet />
-            </>}
-        </div>
+                <h1>{book?.title}</h1>
+                {book?.authorName && <p className='bookSearchResultAuthorName'>{book?.authorName}</p>}
+
+                {optedIn && isClubMember && <button onClick={optOutOfReadingButtonClick} className="optBtn">Opt Out</button>}
+                {optedOut && isClubMember && <button onClick={optIntoReadingButtonClick} className="optBtn">Opt In</button>}
+
+                {!getUserIsFetching && !getReadingIsFetching && !getReadingUserIsFetching && <>
+                    {optedIn &&
+                        <Progress bookId={bookId} clubId={clubId} progress={readingUser!.progress} progresstypeId={readingUser!.progresstypeId} progressTotal={readingUser!.progressTotal} />
+                    }
+                    <NavBar />
+                    <Outlet />
+                </>}
+            </div>
+        </>
     );
 }
 

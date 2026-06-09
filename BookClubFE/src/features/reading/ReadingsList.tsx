@@ -21,10 +21,6 @@ interface ReadingWithProgress extends Reading {
 function ReadingsList({ status }: { status: boolean | undefined }) {
     const nav = useNavigate();
 
-
-
-    console.log("status")
-    console.log(status)
     const params = useParams();
     const optedInReadingsRef = useRef<HTMLDivElement | null>(null);
     const notOptedInReadingsRef = useRef<HTMLDivElement | null>(null);

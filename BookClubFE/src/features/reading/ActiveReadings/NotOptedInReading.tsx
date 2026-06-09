@@ -15,7 +15,7 @@ interface NotOptedInReadingProps {
     status?: boolean | undefined
 }
 
-function NotOptedInReading({ clubId, bookId, status }: NotOptedInReadingProps) {
+function NotOptedInReading({ clubId, bookId, status, clubUser }: NotOptedInReadingProps) {
     const dispatch = useAppDispatch();
 
     const { data: book } = useGetBookQuery(bookId);
@@ -60,7 +60,7 @@ function NotOptedInReading({ clubId, bookId, status }: NotOptedInReadingProps) {
                 {readingMemberCount}
             </div></Link>
 
-            {status ?
+            {status && clubUser ?
                 <div className="activeReadings-reading-OptInBtn">
                     <button onClick={optIntoReadingBtnClickHandler} disabled={optIntoReadingLoading}>Opt in</button>
                 </div> : <></>
