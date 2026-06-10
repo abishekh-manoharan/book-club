@@ -41,6 +41,8 @@ public partial class BookClubContext : IdentityDbContext<ApplicationUser>
 
     public virtual DbSet<Meeting> Meetings { get; set; }
 
+    public virtual DbSet<MeetingRSVP> MeetingRSVPs { get; set; }
+
     public virtual DbSet<Notification> Notification { get; set; }
 
     public virtual DbSet<Poll> Polls { get; set; }
@@ -305,6 +307,32 @@ public partial class BookClubContext : IdentityDbContext<ApplicationUser>
                 .HasConstraintName("meetings_ibfk_1");
         });
 
+        modelBuilder.Entity<MeetingRSVP>(entity =>
+        {
+            entity.HasKey(e => new { e.MeetingId, e.UserId }).HasName("PRIMARY");
+
+            entity.ToTable("meeting_rsvp", "BookClub");
+
+            entity.Property(e => e.MeetingId).HasColumnName("meeting_id");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.RSVP)
+                .HasColumnType("varchar(20)")
+                .HasColumnName("rsvp");
+
+            entity.HasOne(d => d.Meeting).WithMany(p => p.MeetingRSVPs)
+                .HasForeignKey(d => d.MeetingId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("meetingrsvp_ibfk_1");
+
+            entity.HasOne(d => d.User).WithMany(p => p.MeetingRSVPs)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("meetingrsvp_ibfk_2");
+
+            entity.HasIndex(e => e.UserId)
+                .HasDatabaseName("idx_meetingrsvp_user");
+        });
+
         modelBuilder.Entity<Notification>(entity =>
         {
             entity.HasKey(e => e.NotificationId).HasName("PRIMARY");
@@ -546,7 +574,7 @@ public partial class BookClubContext : IdentityDbContext<ApplicationUser>
                 .IsDescending(false, true, true);
 
         });
-        
+
         modelBuilder.Entity<Models.ClubThread>(entity =>
         {
             entity.HasKey(e => e.ThreadId).HasName("PRIMARY");
@@ -607,7 +635,7 @@ public partial class BookClubContext : IdentityDbContext<ApplicationUser>
             entity.HasIndex(t => new { t.ParentThreadId, t.TimePosted, t.ThreadId })
                 .HasDatabaseName("idx_club_thread_tree")
                 .IsDescending(false, true, true);
-            
+
             entity.HasIndex(t => new { t.ClubId, t.Pinned })
                 .HasDatabaseName("idx_club_thread_pinned");
 

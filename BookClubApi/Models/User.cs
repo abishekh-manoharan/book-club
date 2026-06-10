@@ -37,4 +37,6 @@ public partial class User
     public virtual ICollection<PollVote> PollVotes { get; set; } = new List<PollVote>();
     
     public virtual ICollection<UserBook> UserBooks { get; set; } = new List<UserBook>();
+
+    public virtual ICollection<MeetingRSVP> MeetingRSVPs { get; set; } = new List<MeetingRSVP>();
 }
