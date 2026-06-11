@@ -348,6 +348,136 @@ public class MeetingController : ControllerBase
         return BadRequest(ModelState);
     }
 
+    /**
+    
+        RSVP-related action methods begin here
+
+    */
+
+    // action method that returns all meetings of a reading instance    
+    [HttpGet("/rsvp/GetAllOfMeeting")]
+    public async Task<ActionResult<List<MeetingDTO>>> GetAllMeetingRSVP([FromQuery] int meeting_id)
+    {
+        // ensure required parameters are included
+        if (ModelState.IsValid)
+        {
+            // ensure meeting exists
+            var meeting = dbContext.Meetings
+                .Where(m => m.MeetingId == meeting_id)
+                .FirstOrDefault();
+
+            if (meeting != null)
+            {
+                // retrieving clubUser object to determine club membership status
+                var clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, (int)meeting.ClubId!);
+
+                // ensure that user is a club member if the club is private
+                // checking if club is private
+                bool? isPrivate = clubService.IsClubPrivate((int)meeting.ClubId!);
+                if (isPrivate == true)
+                {
+                    // ensure user is a club member
+                    if (clubUser == null)
+                    {
+                        return Unauthorized("User must be member of the private club to view it's meetings.");
+                    }
+                }
+                else if (isPrivate == null)
+                {
+                    return NotFound("Ensure club exists.");
+                }
+
+                // code reaches here if club isn't private or the user is a club member if it is private
+                // return a list of meetingRSVPs associated with the meeting
+                var rsvps = dbContext.MeetingRSVPs
+                    .Where(rsvp =>
+                        rsvp.MeetingId == meeting_id
+                    ).ToList();
+
+                return Ok(rsvps);
+            }
+            return NotFound("Meeting doesn't exist.");
+        }
+
+        // if a required parameter is not included
+        return BadRequest(ModelState);
+    }
+
+
+    // action method that allows a user to update their rsvp status
+    [HttpPut("/rsvp/upsert")]
+    [Authorize]
+    public async Task<ActionResult<MeetingRSVP>> UpdateMeetingRSVP([FromBody] MeetingRSVPCreationValDTO rsvp)
+    {
+        // ensure required params are included
+        if (ModelState.IsValid)
+        {
+            // ensure meeting exists
+            var meeting = await dbContext.Meetings
+                .Where(m => m.MeetingId == rsvp.MeetingId)
+                .FirstOrDefaultAsync();
+
+            var user = await authHelpers.GetUserClassOfLoggedInUser(User);
+
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            if (meeting != null)
+            {
+                // ensure logged in user is opted into the reading by checking if reading user exists 
+                var readingUser = await dbContext.Readingusers
+                    .Where(ru => ru.ClubId == meeting.ClubId)
+                    .Where(ru => ru.BookId == meeting.BookId)
+                    .Where(ru => ru.UserId == user!.UserId)
+                    .FirstOrDefaultAsync();
+
+                if (readingUser != null)
+                {
+                    var meetingRSVP = await dbContext.MeetingRSVPs
+                        .Where(m => m.MeetingId == rsvp.MeetingId)
+                        .Where(m => m.UserId == user!.UserId)
+                        .FirstOrDefaultAsync();
+
+                    // create the meetingRSVP if it doesn't exist
+                    if (meetingRSVP == null)
+                    {
+                        MeetingRSVP newMeetingRSVP = new()
+                        {
+                            MeetingId = meeting.MeetingId,
+                            UserId = user!.UserId,
+                            RSVP = rsvp.RSVP
+                        };
+
+                        dbContext.MeetingRSVPs.Add(newMeetingRSVP);
+                        await dbContext.SaveChangesAsync();
+
+                        return Ok(newMeetingRSVP);
+                    }
+                    else // update the neetubg RSVP if it already exists
+                    {
+                        // try updating the RSVP valye
+                        try
+                        {
+                            meetingRSVP.RSVP = rsvp.RSVP;
+                            await dbContext.SaveChangesAsync();
+
+                            return Ok(meetingRSVP);
+                        }
+                        catch (Exception e)
+                        {
+                            return StatusCode(500, "Error updating the meetingRSVP. \n" + e.Message);
+                        }
+                    }
+                }
+                return StatusCode(403, "User must be opted into the reading to update their RSVP.");
+            }
+            return NotFound("Meeting doesn't exist");
+        }
+        // if a required parameter is not included
+        return BadRequest(ModelState);
+    }
 }
 
 
