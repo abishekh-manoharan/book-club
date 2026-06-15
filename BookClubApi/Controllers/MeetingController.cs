@@ -354,8 +354,8 @@ public class MeetingController : ControllerBase
 
     */
 
-    // action method that returns all meetings of a reading instance    
-    [HttpGet("/rsvp/GetAllOfMeeting")]
+    // action method that returns all meetingsRSVPs of a meeting instance    
+    [HttpGet("rsvp/GetAllOfMeeting")]
     public async Task<ActionResult<List<MeetingDTO>>> GetAllMeetingRSVP([FromQuery] int meeting_id)
     {
         // ensure required parameters are included
@@ -403,15 +403,121 @@ public class MeetingController : ControllerBase
         return BadRequest(ModelState);
     }
 
-
-    // action method that allows a user to update their rsvp status
-    [HttpPut("/rsvp/upsert")]
+    // action method that returns a meetingsRSVP instance associated with the provided meetingId and the logged in user's uid    
+    [HttpGet("rsvp/GetOne")]
     [Authorize]
-    public async Task<ActionResult<MeetingRSVP>> UpdateMeetingRSVP([FromBody] MeetingRSVPCreationValDTO rsvp)
+    public async Task<ActionResult<MeetingRSVP>> GetOneMeetingRSVP([FromQuery][Required] int meetingId)
+    {
+        // ensure required parameters are included
+        if (ModelState.IsValid)
+        {
+            var user = await authHelpers.GetUserClassOfLoggedInUser(User);
+
+            // retrieving rsvp
+            var rsvp = await dbContext.MeetingRSVPs
+                .Where(m => m.MeetingId == meetingId)
+                .Where(m => m.UserId == user!.UserId)
+                .FirstOrDefaultAsync();
+
+            if (rsvp != null)
+            {
+                MeetingRSVPDTO newMeetingRSVP = new()
+                {
+                    MeetingId = rsvp.MeetingId,
+                    UserId = user!.UserId,
+                    RSVP = rsvp.RSVP
+                };
+                return Ok(rsvp);
+            }
+            return NotFound("RSVP doesn't exist.");
+        }
+
+        // if a required parameter is not included
+        return BadRequest(ModelState);
+    }
+
+
+    // action method that creates a meetingRSVP instance for a meeting
+    [HttpPost("rsvp/create")]
+    [Authorize]
+    public async Task<ActionResult<MeetingRSVP>> CreateMeetingRSVP([FromBody] MeetingRSVPCreationValDTO rsvp)
     {
         // ensure required params are included
         if (ModelState.IsValid)
         {
+            // ensure meeting exists
+            var meeting = dbContext.Meetings
+                .Where(m => m.MeetingId == rsvp.MeetingId)
+                .FirstOrDefault();
+
+            if (meeting != null)
+            {
+                // ensure logged in user is opted into the reading by checking if reading user exists 
+                var user = await authHelpers.GetUserClassOfLoggedInUser(User);
+
+                var readingUser = dbContext.Readingusers
+                    .Where(ru => ru.ClubId == meeting.ClubId)
+                    .Where(ru => ru.BookId == meeting.BookId)
+                    .Where(ru => ru.UserId == user!.UserId);
+
+                if (readingUser != null)
+                {
+                    // create rsvp instance
+                    try
+                    {
+                        MeetingRSVP newMeetingRSVP = new()
+                        {
+                            MeetingId = meeting.MeetingId,
+                            UserId = user!.UserId,
+                            RSVP = rsvp.RSVP
+                        };
+
+                        dbContext.MeetingRSVPs.Add(newMeetingRSVP);
+                        await dbContext.SaveChangesAsync();
+
+                        return Ok(newMeetingRSVP);
+                    }
+                    catch (DbUpdateException dbe)
+                    {
+                        // if reading exists already, return 409 conflict status
+                        if (dbe.InnerException!.Message.Contains("Duplicate"))
+                        {
+                            return Conflict("MeetingRSVP already exists.");
+                        }
+                        else if (dbe.InnerException!.Message.Contains("foreign key constraint fails"))
+                        {
+                            return BadRequest("FK constraint violated. Ensure reading is valid.");
+                        }
+
+                        return StatusCode(500, "Error saving the meetingRSVP to the database. \n" + dbe.Message);
+                    }
+                    catch (Exception e)
+                    {
+                        // handling all other errors when trying to save to db
+                        return StatusCode(500, "Error saving the meetingRSVP to the database. \n" + e.Message);
+                    }
+
+                }
+                return Unauthorized("User must be opted into the reading to RSVP for a reading.");
+            }
+            return NotFound("Meeting not found.");
+
+        }
+        // if a required parameter is not included
+        return BadRequest(ModelState);
+    }
+
+    // action method that allows a user to update their rsvp status
+    [HttpPut("rsvp/upsert")]
+    [Authorize]
+    public async Task<ActionResult<MeetingRSVP>> UpdateMeetingRSVP([FromBody] MeetingRSVPCreationValDTO rsvp)
+    {
+        System.Console.WriteLine(" ===== A");
+        // ensure required params are included
+        if (ModelState.IsValid)
+        {
+            System.Console.WriteLine();
+            System.Console.WriteLine(" ===== B");
             // ensure meeting exists
             var meeting = await dbContext.Meetings
                 .Where(m => m.MeetingId == rsvp.MeetingId)
@@ -423,7 +529,8 @@ public class MeetingController : ControllerBase
             {
                 return Unauthorized();
             }
-
+System.Console.WriteLine();
+            System.Console.WriteLine(" ===== C");
             if (meeting != null)
             {
                 // ensure logged in user is opted into the reading by checking if reading user exists 
@@ -432,7 +539,8 @@ public class MeetingController : ControllerBase
                     .Where(ru => ru.BookId == meeting.BookId)
                     .Where(ru => ru.UserId == user!.UserId)
                     .FirstOrDefaultAsync();
-
+                System.Console.WriteLine();
+            System.Console.WriteLine(" ===== D");
                 if (readingUser != null)
                 {
                     var meetingRSVP = await dbContext.MeetingRSVPs
@@ -443,6 +551,8 @@ public class MeetingController : ControllerBase
                     // create the meetingRSVP if it doesn't exist
                     if (meetingRSVP == null)
                     {
+                        System.Console.WriteLine();
+            System.Console.WriteLine(" ===== E");
                         MeetingRSVP newMeetingRSVP = new()
                         {
                             MeetingId = meeting.MeetingId,
@@ -460,6 +570,8 @@ public class MeetingController : ControllerBase
                         // try updating the RSVP valye
                         try
                         {
+                            System.Console.WriteLine();
+            System.Console.WriteLine(" ===== F");
                             meetingRSVP.RSVP = rsvp.RSVP;
                             await dbContext.SaveChangesAsync();
 

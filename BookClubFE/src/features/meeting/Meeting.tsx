@@ -3,6 +3,7 @@ import { useGetUserIdQuery } from "../auth/authSlice";
 import { useGetClubUserQuery } from "../club/clubSlice";
 import { Meeting as MeetingType } from "./meetingSlice";
 import React from "react";
+import MeetingRSVPPrompt from "./MeetingRSVPPrompt";
 
 function Meeting({ meeting, concluded }: { meeting: MeetingType, concluded: boolean }) {
     const { clubid } = useParams();
@@ -67,45 +68,54 @@ function Meeting({ meeting, concluded }: { meeting: MeetingType, concluded: bool
     }
 
     return (
-        <div className="meeting">
-            {isAdmin && !concluded &&
-                <div className="dropdownButton">
-                    <Link to={`${meeting.meetingId}/edit`}>
-                        <img src="/src/assets/images/edit.svg" />
-                    </Link>
-                </div>
-            }
-            <div className="meetingDate">
-                <div className="date" style={concluded ? { backgroundColor: "rgb(170 69 74)" } : {}}>
-                    <div className="dateContainer">
-                        <div className="day">
-                            {dayString}
-                        </div>
-                        <div className="month">
-                            {monthString}
-                        </div>
+        <>
+            <div className="meeting">
+                {/* edit button */}
+                {isAdmin && !concluded &&
+                    <div className="dropdownButton">
+                        <Link to={`${meeting.meetingId}/edit`}>
+                            <img src="/src/assets/images/edit.svg" />
+                        </Link>
                     </div>
-                </div>
-            </div>
-            <div className="meetingInfo">
-                <div className="meetingName">
-                    {meeting.name}
-                </div>
-                {meeting.description && <div className="meetingDescription mediumText">
-                    {meeting.description}
-                </div>
                 }
-                <div className="meetingTime">
-                    <div className="timeLogo">
-                        <img src="/src/assets/images/clock.svg" />
-                    </div>
-                    <div className="time">
-                        {startTimeString} - {endTimeDisplay}
+                {/* meeting date display */}
+                <div className="meetingDate">
+                    <div className="date" style={concluded ? { backgroundColor: "rgb(170 69 74)" } : {}}>
+                        <div className="dateContainer">
+                            <div className="day">
+                                {dayString}
+                            </div>
+                            <div className="month">
+                                {monthString}
+                            </div>
+                        </div>
                     </div>
                 </div>
-                {/* {!concluded && isAdmin && <button onClick={deleteMeetingBtnClick}>delete</button>} */}
+
+                {/* meeting info section*/}
+                <div className="meetingInfo">
+                    <div className="meetingName">
+                        {meeting.name}
+                    </div>
+                    <div className="meetingTime">
+                        <div className="timeLogo">
+                            <img src="/src/assets/images/clock.svg" />
+                        </div>
+                        <div className="time">
+                            {startTimeString} - {endTimeDisplay}
+                        </div>
+                    </div>
+                    {meeting.description && <div className="meetingDescription mediumText">
+                        {meeting.description} meeting in the year 3000 meeting in the year 3000 meeting in the year 300 0meeting in the year 3000me eting in the year 3000 meeting in the year 3000 meeting in the year 3000meeting in the year 3000 meeting in the year 3000meeting in the year 3000meeting in the year 3000
+                    </div>
+                    }
+
+                </div>
             </div>
-        </div>
+            {!concluded &&
+                <MeetingRSVPPrompt meetingId={meeting.meetingId}/>
+            }
+        </>
     );
 }
 

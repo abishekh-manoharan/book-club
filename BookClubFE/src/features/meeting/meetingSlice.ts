@@ -19,6 +19,11 @@ export interface NewMeeting {
     endTime?: Date,
 }
 
+export interface MeetingRSVP {
+    meetingId: number,
+    userId: number,
+    rsvp: "yes" | "no" | "maybe" 
+}
 
 export const apiSliceWithClub = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
@@ -32,7 +37,7 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            invalidatesTags: [{type: "Meetings", id: "all"}]
+            invalidatesTags: [{ type: "Meetings", id: "all" }]
         }),
         updateMeeting: builder.mutation<Meeting, Meeting>({
             query: (meeting) => ({
@@ -44,7 +49,7 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            invalidatesTags: [{type: "Meetings", id: "all"}]
+            invalidatesTags: [{ type: "Meetings", id: "all" }]
         }),
         deleteMeeting: builder.mutation<Meeting, number>({
             query: (meetingId) => ({
@@ -56,23 +61,23 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            invalidatesTags: [{type: "Meetings", id: "all"}]
+            invalidatesTags: [{ type: "Meetings", id: "all" }]
         }),
         getAllMeetings: builder.query<Meeting[], { clubId: number, bookId: number }>({
-            query: ({clubId, bookId}) => ({
+            query: ({ clubId, bookId }) => ({
                 url: `meeting/GetAllMeetings?clubId=${clubId}&bookId=${bookId}`,
                 credentials: 'include',
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
                 }
-            }),            
-            transformResponse(res: {$id: string, $values: Meeting[]}){
+            }),
+            transformResponse(res: { $id: string, $values: Meeting[] }) {
                 const meetings = res.$values;
                 const meetingsWithUpdatedDates = meetings.map((m) => {
-                    const updatedStartDate = new Date(m.startTime+"Z").toLocaleString()
-                    const updatedEndDate = new Date(m.endTime!+"Z").toLocaleString();
-                    
+                    const updatedStartDate = new Date(m.startTime + "Z").toLocaleString()
+                    const updatedEndDate = new Date(m.endTime! + "Z").toLocaleString();
+
                     const updatedMeeting: Meeting = {
                         ...m,
                         startTime: updatedStartDate,
@@ -83,7 +88,7 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                 })
                 return meetingsWithUpdatedDates;
             },
-            providesTags: [{type: "Meetings", id: "all"}]
+            providesTags: [{ type: "Meetings", id: "all" }]
         }),
         getOneMeeting: builder.query<Meeting, number>({
             query: (meetingId) => ({
@@ -93,11 +98,11 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                 headers: {
                     'Content-Type': 'application/json'
                 }
-            }),            
-            transformResponse(res: Meeting){
-                const updatedStartDate = new Date(res.startTime+"Z").toLocaleString()
-                const updatedEndDate = new Date(res.endTime!+"Z").toLocaleString();
-                
+            }),
+            transformResponse(res: Meeting) {
+                const updatedStartDate = new Date(res.startTime + "Z").toLocaleString()
+                const updatedEndDate = new Date(res.endTime! + "Z").toLocaleString();
+
                 const updatedMeeting: Meeting = {
                     ...res,
                     startTime: updatedStartDate,
@@ -106,19 +111,42 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
 
                 return updatedMeeting;
             },
-            providesTags: [{type: "Meetings", id: "all"}]
+            providesTags: [{ type: "Meetings", id: "all" }]
+        }),
+        getAllRSVPsOfMeeting: builder.query<MeetingRSVP, number>({
+            query: (meetingId) => ({
+                url: `meeting/rsvp/GetAllOfMeeting?meetingId=${meetingId}`,
+                credentials: 'include',
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }),
+            providesTags: [{ type: "Meetings", id: "all" }]
+        }),
+        getOneRSVPOfMeeting: builder.query<MeetingRSVP, number>({
+            query: (meetingId) => ({
+                url: `meeting/rsvp/GetOne?meetingId=${meetingId}`,
+                credentials: 'include',
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }),
+            providesTags: [{ type: "Meetings", id: "all" }]
+        }),
+        upsertMeetingRSVP: builder.mutation<MeetingRSVP, Omit<MeetingRSVP, 'userId'>>({
+            query: (meeting) => ({
+                url: 'meeting/rsvp/upsert',
+                credentials: 'include',
+                method: 'PUT',
+                body: JSON.stringify(meeting),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }),
+            invalidatesTags: [{ type: "Meetings", id: "all" }]
         })
-        // getClub: builder.query<Club, number>({
-        //     query: (clubId) => ({
-        //         url: `club/getOneClub?clubId=${clubId}`,
-        //         credentials: 'include',
-        //         method: 'GET',
-        //         headers: {
-        //             'Content-Type': 'application/json'
-        //         }
-        //     })
-        // }),
-
     })
 })
 
@@ -127,5 +155,8 @@ export const {
     useUpdateMeetingMutation,
     useDeleteMeetingMutation,
     useGetAllMeetingsQuery,
-    useGetOneMeetingQuery
+    useGetOneMeetingQuery,
+    useUpsertMeetingRSVPMutation,
+    useGetAllRSVPsOfMeetingQuery,
+    useGetOneRSVPOfMeetingQuery
 } = apiSliceWithClub
