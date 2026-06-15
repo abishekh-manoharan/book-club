@@ -135,6 +135,17 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
             }),
             providesTags: [{ type: "Meetings", id: "all" }]
         }),
+        getConfirmedAttendeesCount: builder.query<number, number>({
+            query: (meetingId) => ({
+                url: `meeting/rsvp/confirmedAttendees?meetingId=${meetingId}`,
+                credentials: 'include',
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }),
+            providesTags: [{ type: "Meetings", id: "all" }]
+        }),
         upsertMeetingRSVP: builder.mutation<MeetingRSVP, Omit<MeetingRSVP, 'userId'>>({
             query: (meeting) => ({
                 url: 'meeting/rsvp/upsert',
@@ -158,5 +169,6 @@ export const {
     useGetOneMeetingQuery,
     useUpsertMeetingRSVPMutation,
     useGetAllRSVPsOfMeetingQuery,
-    useGetOneRSVPOfMeetingQuery
+    useGetOneRSVPOfMeetingQuery,
+    useGetConfirmedAttendeesCountQuery
 } = apiSliceWithClub

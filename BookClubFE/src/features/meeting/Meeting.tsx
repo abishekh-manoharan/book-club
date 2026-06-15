@@ -1,7 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { useGetUserIdQuery } from "../auth/authSlice";
 import { useGetClubUserQuery } from "../club/clubSlice";
-import { Meeting as MeetingType } from "./meetingSlice";
+import { Meeting as MeetingType, useGetConfirmedAttendeesCountQuery } from "./meetingSlice";
 import React from "react";
 import MeetingRSVPPrompt from "./MeetingRSVPPrompt";
 
@@ -15,6 +15,7 @@ function Meeting({ meeting, concluded }: { meeting: MeetingType, concluded: bool
         { clubId: clubId, userId: userId as number },
         { skip: !userId }
     );
+    const { data: confirmedAttendeeCount } = useGetConfirmedAttendeesCountQuery(meeting.meetingId);
 
     const isClubMember = clubUserIsSuccess && clubUser;
     const isAdmin = isClubMember && clubUser.admin;
@@ -105,15 +106,22 @@ function Meeting({ meeting, concluded }: { meeting: MeetingType, concluded: bool
                             {startTimeString} - {endTimeDisplay}
                         </div>
                     </div>
-                    {meeting.description && <div className="meetingDescription mediumText">
-                        {meeting.description} meeting in the year 3000 meeting in the year 3000 meeting in the year 300 0meeting in the year 3000me eting in the year 3000 meeting in the year 3000 meeting in the year 3000meeting in the year 3000 meeting in the year 3000meeting in the year 3000meeting in the year 3000
+                    <div className="attendeesCount">
+                        <img src="/src/assets/images/user.svg" />
+                        {confirmedAttendeeCount} confirmed attendees
                     </div>
-                    }
-
                 </div>
             </div>
-            {!concluded &&
-                <MeetingRSVPPrompt meetingId={meeting.meetingId}/>
+            {
+                <>
+                    {
+                        meeting.description && <div className="meetingDescription mediumText">
+                            {meeting.description} meeting in the year 3000 meeting in the year 3000 meeting in the year 300 0meeting in the year 3000me eting in the year 3
+                        </div>
+                    }
+                    {!concluded &&
+                    < MeetingRSVPPrompt meetingId={meeting.meetingId} />}
+                </>
             }
         </>
     );

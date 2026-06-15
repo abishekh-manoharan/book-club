@@ -529,7 +529,7 @@ public class MeetingController : ControllerBase
             {
                 return Unauthorized();
             }
-System.Console.WriteLine();
+            System.Console.WriteLine();
             System.Console.WriteLine(" ===== C");
             if (meeting != null)
             {
@@ -540,7 +540,7 @@ System.Console.WriteLine();
                     .Where(ru => ru.UserId == user!.UserId)
                     .FirstOrDefaultAsync();
                 System.Console.WriteLine();
-            System.Console.WriteLine(" ===== D");
+                System.Console.WriteLine(" ===== D");
                 if (readingUser != null)
                 {
                     var meetingRSVP = await dbContext.MeetingRSVPs
@@ -552,7 +552,7 @@ System.Console.WriteLine();
                     if (meetingRSVP == null)
                     {
                         System.Console.WriteLine();
-            System.Console.WriteLine(" ===== E");
+                        System.Console.WriteLine(" ===== E");
                         MeetingRSVP newMeetingRSVP = new()
                         {
                             MeetingId = meeting.MeetingId,
@@ -571,7 +571,7 @@ System.Console.WriteLine();
                         try
                         {
                             System.Console.WriteLine();
-            System.Console.WriteLine(" ===== F");
+                            System.Console.WriteLine(" ===== F");
                             meetingRSVP.RSVP = rsvp.RSVP;
                             await dbContext.SaveChangesAsync();
 
@@ -590,6 +590,27 @@ System.Console.WriteLine();
         // if a required parameter is not included
         return BadRequest(ModelState);
     }
+
+    // action method that returns a count of users who have said "yes" to a meeting's RSVP 
+    [HttpGet("rsvp/confirmedAttendees")]
+    [Authorize]
+    public async Task<ActionResult<int>> GetConfirmedAttendeesCount([FromQuery][Required] int meetingId)
+    {
+        // ensure required parameters are included
+        if (ModelState.IsValid)
+        {
+            // retrieving rsvp count
+            var count = dbContext.MeetingRSVPs
+                .Where(rsvp => rsvp.MeetingId == meetingId)
+                .Where(rsvp => rsvp.RSVP == "yes")
+                .Count();
+
+            return Ok(count);
+        }
+        // if a required parameter is not included
+        return BadRequest(ModelState);
+    }
+
 }
 
 
