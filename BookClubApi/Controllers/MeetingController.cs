@@ -356,15 +356,15 @@ public class MeetingController : ControllerBase
 
     // action method that returns all meetingsRSVPs of a meeting instance    
     [HttpGet("rsvp/GetAllOfMeeting")]
-    public async Task<ActionResult<List<MeetingDTO>>> GetAllMeetingRSVP([FromQuery] int meeting_id)
+    public async Task<ActionResult<List<MeetingRSVPDTO>>> GetAllMeetingRSVP([FromQuery] int meetingId)
     {
         // ensure required parameters are included
         if (ModelState.IsValid)
         {
             // ensure meeting exists
-            var meeting = dbContext.Meetings
-                .Where(m => m.MeetingId == meeting_id)
-                .FirstOrDefault();
+            var meeting = await dbContext.Meetings
+                .Where(m => m.MeetingId == meetingId)
+                .FirstOrDefaultAsync();
 
             if (meeting != null)
             {
@@ -389,10 +389,18 @@ public class MeetingController : ControllerBase
 
                 // code reaches here if club isn't private or the user is a club member if it is private
                 // return a list of meetingRSVPs associated with the meeting
-                var rsvps = dbContext.MeetingRSVPs
-                    .Where(rsvp =>
-                        rsvp.MeetingId == meeting_id
-                    ).ToList();
+                var rsvps = await dbContext.MeetingRSVPs
+                    .Where(rsvp => rsvp.MeetingId == meetingId)
+                    .Select(rsvp => new MeetingRSVPDTO
+                    {
+                        MeetingId = rsvp.MeetingId,
+                        RSVP = rsvp.RSVP,
+                        UserId = rsvp.UserId,
+                        FName = rsvp.User.FName,
+                        LName = rsvp.User.LName,
+                        ProfileImg = rsvp.User.ProfileImg
+                    })
+                    .ToListAsync();
 
                 return Ok(rsvps);
             }

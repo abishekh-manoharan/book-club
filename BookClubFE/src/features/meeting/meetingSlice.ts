@@ -25,6 +25,12 @@ export interface MeetingRSVP {
     rsvp: "yes" | "no" | "maybe" 
 }
 
+export interface MeetingRSVPExtended extends MeetingRSVP {
+    fName: string,
+    lName: string,
+    profileImg?: string
+}
+
 export const apiSliceWithClub = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         createMeeting: builder.mutation<Meeting, NewMeeting>({
@@ -113,7 +119,7 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
             },
             providesTags: [{ type: "Meetings", id: "all" }]
         }),
-        getAllRSVPsOfMeeting: builder.query<MeetingRSVP, number>({
+        getAllRSVPsOfMeeting: builder.query<MeetingRSVPExtended[], number>({
             query: (meetingId) => ({
                 url: `meeting/rsvp/GetAllOfMeeting?meetingId=${meetingId}`,
                 credentials: 'include',
@@ -122,7 +128,10 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            providesTags: [{ type: "Meetings", id: "all" }]
+            providesTags: [{ type: "Meetings", id: "all" }],
+            transformResponse(res: { $id: string, $values: MeetingRSVPExtended[] }){
+                return res.$values;
+            }
         }),
         getOneRSVPOfMeeting: builder.query<MeetingRSVP, number>({
             query: (meetingId) => ({
