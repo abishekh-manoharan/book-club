@@ -712,10 +712,17 @@ body {
   margin-top: 7px;
 }
 
+.meetingContainer {
+  margin-bottom: 10px;
+}
+
 .meeting {
   display: flex;
-  margin-bottom: 7px;
   position: relative;
+}
+
+.meetingDescription {
+  margin-top: 7px;
 }
 
 .meetingDate {
@@ -744,7 +751,7 @@ body {
   flex-direction: column;
   gap: 7px;
   padding: 7px;
-  max-width: 71vw;
+  width: 100%;
 }
 
 .meetingTime {
@@ -780,6 +787,27 @@ body {
   font-weight: 600;
 }
 
+.meetingNameAndEditBtn {
+  display: flex;
+}
+
+.meeting .dropdownButton {
+  position: relative;
+  bottom: 0px;
+  height: 24px;
+  margin-left: auto;
+}
+
+.attendeesCount {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.attendeesCount img {
+  height: 24px;
+}
+
 .rsvpPrompt {
   display: flex;
   flex-direction: row;
@@ -788,7 +816,8 @@ body {
   padding: 2px;
   box-sizing: border-box;
 
-    align-items: flex-start;
+  align-items: flex-start;
+  margin-top: 7px;
 }
 
 .rsvpPromptOptions {
@@ -816,6 +845,41 @@ body {
 .rsvpPromptQuestion {
   font-weight: 500;
   padding: 5px;
+}
+
+.rsvpedMembers {
+  max-height: 200px;
+  overflow: auto;
+  width: 102%;
+
+}
+
+.rsvpedMembersGroup {
+  height: 52px;
+  margin: 7px;
+}
+
+.rsvpedMembersGroupHeader {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 7px;
+}
+
+.rsvpedMembersGroupHeader img {
+  height: 24px;
+}
+
+.rsvpedMember {
+  border-radius: 11px;
+  background-color: rgba(250, 250, 250, 0.162);
+  padding: 2px 8px;
+  box-sizing: border-box;
+}
+
+.rsvpMembersGroupNames {
+  display: flex;
+  flex-direction: row;
 }
 
 .deleteModal {

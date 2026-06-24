@@ -619,6 +619,24 @@ public class MeetingController : ControllerBase
         return BadRequest(ModelState);
     }
 
+    // action method that returns a count of users who have RSVPed 
+    [HttpGet("rsvp/count")]
+    [Authorize]
+    public async Task<ActionResult<int>> GetRSVPCount([FromQuery][Required] int meetingId)
+    {
+        // ensure required parameters are included
+        if (ModelState.IsValid)
+        {
+            // retrieving rsvp count
+            var count = dbContext.MeetingRSVPs
+                .Where(rsvp => rsvp.MeetingId == meetingId)
+                .Count();
+
+            return Ok(count);
+        }
+        // if a required parameter is not included
+        return BadRequest(ModelState);
+    }
 }
 
 
