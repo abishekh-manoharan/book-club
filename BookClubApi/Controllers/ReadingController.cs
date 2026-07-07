@@ -478,8 +478,21 @@ public class ReadingController : ControllerBase
 
                         if (readingUser != null)
                         {
+                            // delete RSVPs associated with the reading user before deleting the user 
+                            var meetingIds = await dbContext.Meetings
+                                .Where(m => m.BookId == readingDTO.BookId
+                                    & m.ClubId == readingDTO.ClubId)
+                                .Select(m => m.MeetingId)
+                                .ToListAsync();
+
+                            await dbContext.MeetingRSVPs
+                                .Where(r =>
+                                    r.UserId == clubUser.UserId &&
+                                    meetingIds.Contains(r.MeetingId))
+                                .ExecuteDeleteAsync();
+                                                        
                             dbContext.Readingusers.Remove(readingUser);
-                            dbContext.SaveChanges();
+                            await dbContext.SaveChangesAsync();
 
                             return Ok();
                         }
