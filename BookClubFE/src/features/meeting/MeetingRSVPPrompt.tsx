@@ -2,18 +2,24 @@ import { useGetOneRSVPOfMeetingQuery, useUpsertMeetingRSVPMutation } from "./mee
 import { isFetchBaseQueryError, isSerializedError } from "../../app/typeGuards";
 import { updateErrorMessageThunk } from "../error/errorSlice";
 import { useAppDispatch } from "../../app/hooks";
+import { useNavigate } from "react-router-dom";
 
 
 function MeetingRSVPPrompt({ meetingId }: { meetingId: number }) {
     const { data: rsvp } = useGetOneRSVPOfMeetingQuery(meetingId);
     const [upsert] = useUpsertMeetingRSVPMutation();
     const dispatch = useAppDispatch();
+    const nav = useNavigate();
 
     const setRSVP = async (status: "yes" | "no" | "maybe") => {
         try {
-            await upsert({meetingId: meetingId, rsvp: status}).unwrap();
+            await upsert({ meetingId: meetingId, rsvp: status }).unwrap();
         } catch (error) {
             if (isFetchBaseQueryError(error)) {
+                if (error.status === 401) {
+                    nav('/login');
+                    return;
+                }
                 const errorMessage = (error.data as string) || "Unknown error";
                 dispatch(updateErrorMessageThunk(errorMessage));
             } else if (isSerializedError(error)) {

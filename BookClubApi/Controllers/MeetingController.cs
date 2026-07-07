@@ -356,6 +356,7 @@ public class MeetingController : ControllerBase
 
     // action method that returns all meetingsRSVPs of a meeting instance    
     [HttpGet("rsvp/GetAllOfMeeting")]
+    [Authorize]
     public async Task<ActionResult<List<MeetingRSVPDTO>>> GetAllMeetingRSVP([FromQuery] int meetingId)
     {
         // ensure required parameters are included
@@ -371,23 +372,12 @@ public class MeetingController : ControllerBase
                 // retrieving clubUser object to determine club membership status
                 var clubUser = await authHelpers.GetClubUserOfLoggedInUser(User, (int)meeting.ClubId!);
 
-                // ensure that user is a club member if the club is private
-                // checking if club is private
-                bool? isPrivate = clubService.IsClubPrivate((int)meeting.ClubId!);
-                if (isPrivate == true)
+                // ensure that user is a club member 
+                if (clubUser == null)
                 {
-                    // ensure user is a club member
-                    if (clubUser == null)
-                    {
-                        return Unauthorized("User must be member of the private club to view it's meetings.");
-                    }
-                }
-                else if (isPrivate == null)
-                {
-                    return NotFound("Ensure club exists.");
+                    return Unauthorized("User must be member of the club to view it's meetings rsvps.");
                 }
 
-                // code reaches here if club isn't private or the user is a club member if it is private
                 // return a list of meetingRSVPs associated with the meeting
                 var rsvps = await dbContext.MeetingRSVPs
                     .Where(rsvp => rsvp.MeetingId == meetingId)
@@ -601,7 +591,6 @@ public class MeetingController : ControllerBase
 
     // action method that returns a count of users who have said "yes" to a meeting's RSVP 
     [HttpGet("rsvp/confirmedAttendees")]
-    [Authorize]
     public async Task<ActionResult<int>> GetConfirmedAttendeesCount([FromQuery][Required] int meetingId)
     {
         // ensure required parameters are included
@@ -621,7 +610,6 @@ public class MeetingController : ControllerBase
 
     // action method that returns a count of users who have RSVPed 
     [HttpGet("rsvp/count")]
-    [Authorize]
     public async Task<ActionResult<int>> GetRSVPCount([FromQuery][Required] int meetingId)
     {
         // ensure required parameters are included

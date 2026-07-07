@@ -851,7 +851,13 @@ body {
   max-height: 200px;
   overflow: auto;
   width: 102%;
+  margin: 14px 0;
+}
 
+.rsvpMembersUnauthMessage {
+  text-align: center;
+  font-size: .85rem;
+  margin: 12px 0;
 }
 
 .rsvpedMembersGroup {

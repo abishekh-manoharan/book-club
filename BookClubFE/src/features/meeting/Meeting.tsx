@@ -130,7 +130,8 @@ function Meeting({ meeting, concluded }: { meeting: MeetingType, concluded: bool
                 </div>
                 {
                     <>
-                        {showRSVPedMembers && <RSVPedMembers meetingId={meeting.meetingId} />}
+                        {!isClubMember && showRSVPedMembers && <div className="rsvpMembersUnauthMessage">User must be a club member to view RSVPed members.</div>}
+                        {isClubMember && showRSVPedMembers && <RSVPedMembers meetingId={meeting.meetingId} />}
                         {
                             meeting.description && <div className="meetingDescription mediumText">
                                 {meeting.description} meeting in the year 3000 meeting in the year 3000 meeting in the year 300 0meeting in the year 3000me eting in the year 3
