@@ -170,7 +170,7 @@ export const apiSliceWithReading = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            invalidatesTags: [{type: 'Readings'}]
+            invalidatesTags: [{type: 'Readings'}, { type: "Meetings", id: "all" }]
         }),
         optOutOfReading: builder.mutation<Reading, ReadingWithoutUserAndProgress>({
             query: (reading) => ({
@@ -182,7 +182,7 @@ export const apiSliceWithReading = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            invalidatesTags: [{type: 'Readings'}]
+            invalidatesTags: [{type: 'Readings'}, { type: "Meetings", id: "all" }]
         }),
         updateReadingProgress: builder.mutation<Reading, Omit<ReadingUser, "userId">>({
             query: (reading) => ({
