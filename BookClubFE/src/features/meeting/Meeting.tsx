@@ -5,17 +5,30 @@ import { Meeting as MeetingType, useGetConfirmedAttendeesCountQuery, useGetRSVPC
 import React, { useState } from "react";
 import MeetingRSVPPrompt from "./MeetingRSVPPrompt";
 import RSVPedMembers from "./RSVPedMembers";
+import { useGetReadingUserQuery } from "../reading/readingSlice";
 
 function Meeting({ meeting, concluded }: { meeting: MeetingType, concluded: boolean }) {
     const { clubid } = useParams();
+    const { bookid } = useParams();
     const clubId = Number(clubid);
-
+    const bookId = Number(bookid);
+    console.log("==")
+    console.log(bookId)
+    console.log(clubId)
+    
     const { data: userId } = useGetUserIdQuery();
+    console.log(userId)
 
     const { data: clubUser, isSuccess: clubUserIsSuccess } = useGetClubUserQuery(
         { clubId: clubId, userId: userId as number },
         { skip: !userId }
     );
+    
+    const { isSuccess: readingUserIsSuccess } = useGetReadingUserQuery(
+        { ClubId: clubId, UserId: userId as number, BookId: bookId as number},
+        { skip: !userId }
+    );
+
     const { data: confirmedAttendeeCount } = useGetConfirmedAttendeesCountQuery(meeting.meetingId);
 
     const { data: rsvpCount } = useGetRSVPCountQuery(meeting.meetingId);
@@ -137,7 +150,7 @@ function Meeting({ meeting, concluded }: { meeting: MeetingType, concluded: bool
                                 {meeting.description} meeting in the year 3000 meeting in the year 3000 meeting in the year 300 0meeting in the year 3000me eting in the year 3
                             </div>
                         }
-                        {!concluded &&
+                        {readingUserIsSuccess && !concluded &&
                             <MeetingRSVPPrompt meetingId={meeting.meetingId} />}
                     </>
                 }

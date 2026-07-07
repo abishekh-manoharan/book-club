@@ -33,11 +33,11 @@ function ReadingHome() {
         { ClubId: clubId, BookId: bookId },
         { skip: !bookId || !clubId || isNaN(clubId) || isNaN(bookId) }
     );
-    const { data: readingUser, isSuccess: getReadingUserSuccess, isError: getReadingUserError, isFetching: getReadingUserIsFetching } = useGetReadingUserQuery(
+    const { data: readingUser, isSuccess: getReadingUserSuccess, isError: getReadingUserError} = useGetReadingUserQuery(
         { BookId: bookId, ClubId: clubId, UserId: userId! },
         { skip: !getUserIsSuccess || !userId || !clubId || isNaN(clubId) || !bookId || isNaN(bookId) || !getReadingIsSuccess }
     );
-    const { data: clubUser, isSuccess: clubUserIsSuccess, isFetching: clubUserIsFetching, isError: getClubUserError, error: clubUserError, refetch: refetchGetClubUser } = useGetClubUserQuery(
+    const { data: clubUser, isSuccess: clubUserIsSuccess, isError: getClubUserError, error: clubUserError, refetch: refetchGetClubUser } = useGetClubUserQuery(
         { clubId: clubId, userId: userId as number },
         { skip: !getUserIsSuccess || !userId || !clubId || isNaN(clubId) }
     );
@@ -51,7 +51,7 @@ function ReadingHome() {
         if (club && isGetClubSuccess && club.private && !clubUser) {
             nav(`/club/${clubId}`)
         }
-    })
+    }, [club, clubUser, isGetClubSuccess, clubId, nav]);
 
     // indicate that the reading wasn't found if a reading object isn't returned
     if (isNaN(clubId) || isNaN(bookId) || !reading) {
@@ -111,7 +111,7 @@ function ReadingHome() {
                 {optedIn && isClubMember && <button onClick={optOutOfReadingButtonClick} className="optBtn">Opt Out</button>}
                 {optedOut && isClubMember && <button onClick={optIntoReadingButtonClick} className="optBtn">Opt In</button>}
 
-                {!getUserIsFetching && !getReadingIsFetching && !getReadingUserIsFetching && <>
+                {!getUserIsFetching && !getReadingIsFetching && <>
                     {optedIn &&
                         <Progress bookId={bookId} clubId={clubId} progress={readingUser!.progress} progresstypeId={readingUser!.progresstypeId} progressTotal={readingUser!.progressTotal} />
                     }
