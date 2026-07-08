@@ -213,6 +213,40 @@ public class MeetingController : ControllerBase
         return BadRequest(ModelState);
     }
 
+    // action method that returns all upcoming meetings of the logged in user
+    [HttpGet("GetUpcomingMeetings")]
+    [Authorize]
+    public async Task<ActionResult<List<MeetingDTO>>> GetAllUpcomingMeetings()
+    {
+        User? user = await authHelpers.GetUserClassOfLoggedInUser(User);
+        DateTime now = DateTime.UtcNow;
+
+        // retrieve all meetings associated with readings the user is opted into, isn't concluded, sorted by the start time
+        var meetings = await dbContext.Meetings
+            .Where(meeting =>
+                dbContext.Readingusers.Any(ru =>
+                    ru.UserId == user!.UserId &&
+                    ru.ClubId == meeting.ClubId &&
+                    ru.BookId == meeting.BookId))
+                .Where(meeting => meeting.EndTime > now)
+            .Select(meeting => new MeetingDTO
+            {
+                MeetingId = meeting.MeetingId,
+                Name = meeting.Name,
+                BookId = meeting.BookId,
+                ClubId = meeting.ClubId,
+                StartTime = meeting.StartTime,
+                EndTime = meeting.EndTime,
+                Description = meeting.Description,
+            })
+            .AsNoTracking()
+            .OrderBy(meeting => meeting.StartTime)
+            .ToListAsync();
+
+        return Ok(meetings);
+    }
+
+
     // action method that returns a specific meeting
     [HttpGet("GetAMeeting")]
     [Authorize]
