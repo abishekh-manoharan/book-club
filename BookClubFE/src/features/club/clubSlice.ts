@@ -169,7 +169,7 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            invalidatesTags: [{ type: 'Readings' }, { type: 'Readings', id: 'user' }, { type: 'Clubs', id: 'members' }]
+            invalidatesTags: [{ type: 'Readings' }, { type: 'Readings', id: 'user' }, { type: 'Clubs', id: 'members' }, {type: 'Meetings'}]
         }),
         updateClub: builder.mutation<Club, ClubUpdate>({
             query: (clubUser) => ({

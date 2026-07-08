@@ -501,6 +501,15 @@ public class ClubController : ControllerBase
                     .AsNoTracking()
                     .FirstOrDefault();
 
+                // delete any existing RSVPs associated with the club user
+                await dbContext.MeetingRSVPs
+                    .Where(rsvp =>
+                        rsvp.UserId == clubUserIn.UserId &&
+                        dbContext.Meetings.Any(meeting =>
+                            meeting.MeetingId == rsvp.MeetingId &&
+                            meeting.ClubId == clubUserIn.ClubId))
+                    .ExecuteDeleteAsync();
+
                 // delete any existing readinguser instances associated with the clubuser
                 await dbContext.Readingusers
                     .Where(ru => ru.ClubId == clubUserIn.ClubId && ru.UserId == clubUserIn.UserId)
