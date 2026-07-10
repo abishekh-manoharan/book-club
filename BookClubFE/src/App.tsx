@@ -40,6 +40,7 @@ import Settings from "./features/club/Settings"
 import ClubMessageBoard from "./features/clubDiscussions/ClubMessageBoard"
 import ClubSubThreads from "./features/clubDiscussions/ClubSubThreads"
 import { useState } from "react"
+import UpcomingMeetings from "./features/meeting/UpcomingMeetings"
 
 function App() {
   // retrieving user's logged in status
@@ -87,6 +88,7 @@ function App() {
           <Route path="activeReadings" element=<ActiveReadings status={status} /> />
           <Route path="login" element=<Login status={status} /> />
           <Route path="register" element=<Register status={status} /> />
+          <Route path="upcomingMeetings" element=<UpcomingMeetings /> />
         </Route>
       </Routes >
     </div>

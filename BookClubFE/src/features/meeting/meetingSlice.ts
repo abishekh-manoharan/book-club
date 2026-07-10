@@ -22,7 +22,7 @@ export interface NewMeeting {
 export interface MeetingRSVP {
     meetingId: number,
     userId: number,
-    rsvp: "yes" | "no" | "maybe" 
+    rsvp: "yes" | "no" | "maybe"
 }
 
 export interface MeetingRSVPExtended extends MeetingRSVP {
@@ -119,6 +119,33 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
             },
             providesTags: [{ type: "Meetings", id: "all" }]
         }),
+        getUpcomingMeetings: builder.query<Meeting[], void>({
+            query: () => ({
+                url: `meeting/GetUpcomingMeetings`,
+                credentials: 'include',
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }),
+            transformResponse(res: { $id: string, $values: Meeting[] }) {
+                const meetings = res.$values;
+                const meetingsWithUpdatedDates = meetings.map((m) => {
+                    const updatedStartDate = new Date(m.startTime + "Z").toLocaleString()
+                    const updatedEndDate = new Date(m.endTime! + "Z").toLocaleString();
+
+                    const updatedMeeting: Meeting = {
+                        ...m,
+                        startTime: updatedStartDate,
+                        endTime: updatedEndDate
+                    }
+
+                    return updatedMeeting;
+                })
+                return meetingsWithUpdatedDates;
+            },
+            providesTags: [{ type: "Meetings", id: "all" }]
+        }),
         getAllRSVPsOfMeeting: builder.query<MeetingRSVPExtended[], number>({
             query: (meetingId) => ({
                 url: `meeting/rsvp/GetAllOfMeeting?meetingId=${meetingId}`,
@@ -129,7 +156,7 @@ export const apiSliceWithClub = apiSlice.injectEndpoints({
                 }
             }),
             providesTags: [{ type: "Meetings", id: "all" }],
-            transformResponse(res: { $id: string, $values: MeetingRSVPExtended[] }){
+            transformResponse(res: { $id: string, $values: MeetingRSVPExtended[] }) {
                 return res.$values;
             }
         }),
@@ -187,6 +214,7 @@ export const {
     useDeleteMeetingMutation,
     useGetAllMeetingsQuery,
     useGetOneMeetingQuery,
+    useGetUpcomingMeetingsQuery,
     useUpsertMeetingRSVPMutation,
     useGetAllRSVPsOfMeetingQuery,
     useGetOneRSVPOfMeetingQuery,
