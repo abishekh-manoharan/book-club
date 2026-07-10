@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useGetUserIdQuery } from "../auth/authSlice";
 import { useGetClubUserQuery } from "../club/clubSlice";
 import { Meeting as MeetingType, useGetConfirmedAttendeesCountQuery, useGetRSVPCountQuery } from "./meetingSlice";
@@ -8,10 +8,8 @@ import RSVPedMembers from "./RSVPedMembers";
 import { useGetReadingUserQuery } from "../reading/readingSlice";
 
 function Meeting({ meeting, concluded }: { meeting: MeetingType, concluded: boolean }) {
-    const { clubid } = useParams();
-    const { bookid } = useParams();
-    const clubId = Number(clubid);
-    const bookId = Number(bookid);
+    const clubId = Number(meeting.clubId);
+    const bookId = Number(meeting.bookId);
     console.log("==")
     console.log(bookId)
     console.log(clubId)
