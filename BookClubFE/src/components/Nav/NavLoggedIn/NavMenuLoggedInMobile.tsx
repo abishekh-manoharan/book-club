@@ -22,6 +22,7 @@ function NavMenuLoggedInMobile({mobileMenuOpen, setMobileMenuOpen}:{mobileMenuOp
                 <Link onClick={menuOptionClickHandler} to="/home">Home</Link>
                 <Link onClick={menuOptionClickHandler} to="/clubs">Your Clubs</Link>
                 <Link onClick={menuOptionClickHandler} to="/activeReadings">Active Readings</Link>
+                <Link onClick={menuOptionClickHandler} to="/upcomingMeetings">Upcoming Meetings</Link>
                 {user && <>{user.fName} {user.lName}</>}
             </nav>
         </div>

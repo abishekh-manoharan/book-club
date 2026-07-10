@@ -18,6 +18,7 @@ function NavMenuLoggedOutMobile({mobileMenuOpen, setMobileMenuOpen}:{mobileMenuO
                 <Link onClick={menuOptionClickHandler} to="/home" aria-disabled>Home</Link>
                 <div className="disabledLink">Your Clubs</div>
                 <div className="disabledLink">Active Readings</div>
+                <div className="disabledLink">Upcoming Meetings</div>
             </nav>
         </div>
     );
