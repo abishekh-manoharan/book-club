@@ -14,6 +14,7 @@ export interface NewReading {
     ClubId: number,
     Name: string,
     Description?: string,
+    ProgresstypeId: number,
     Cover_Id?: number,
     Title: string,
     AuthorName?: string,

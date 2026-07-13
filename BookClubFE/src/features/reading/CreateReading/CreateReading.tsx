@@ -15,7 +15,7 @@ function CreateReading() {
 
     const [name] = useState('');
     const [description, setDescription] = useState('');
-    const [progressType, setProgressType] = useState<number>(1);
+    const [progressType, setProgressType] = useState<number>(2);
 
     const { clubid } = useParams();
     const clubId = Number(clubid);
@@ -69,7 +69,8 @@ function CreateReading() {
             BookId: simpleStringToInt(selectedBook.Ol_key), // generating bookId by transforming the olkey string to an numerical version
             Name: name,
             Description: description,
-            ClubId: clubId
+            ClubId: clubId,
+            ProgresstypeId: progressType
         }
 
         try {
@@ -123,7 +124,7 @@ function CreateReading() {
 
                 <br /><button className="createReadingButton" onClick={createReadingClickHandler}>Create</button>
 
-                <select onChange={selectProgressTypeChangeHandler} id="progressTypes" value={progressType} required>
+                <select className="textInput" onChange={selectProgressTypeChangeHandler} id="progressTypes" value={progressType} required>
                     <option value={2}>Chapters (recommended)</option>
                     <option value={3}>Section</option>
                     <option value={1}>Pages (not recommended)</option>
