@@ -11,6 +11,8 @@ public partial class Reading
     public string? Description { get; set; }
     
     public string Status { get; set; } = null!;
+    
+    public string Metric { get; set; } = null!;
 
     public DateTime StartDate { get; set; }
 
