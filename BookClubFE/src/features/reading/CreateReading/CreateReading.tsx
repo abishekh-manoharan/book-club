@@ -15,6 +15,8 @@ function CreateReading() {
 
     const [name] = useState('');
     const [description, setDescription] = useState('');
+    const [progressType, setProgressType] = useState<number>(1);
+
     const { clubid } = useParams();
     const clubId = Number(clubid);
     const [createReading] = useCreateReadingMutation();
@@ -87,34 +89,45 @@ function CreateReading() {
         }
     }
 
+    const selectProgressTypeChangeHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setProgressType(Number(e.target.value));
+    }
+
+
     return (
         <div className='createReadingPage'>
             <div className="createReadingHeading">
-                <h1>Create A Reading</h1>
+                <h1>Create A Reading</h1> {progressType}
             </div>
             <div className="selectedBook">
                 {selectedBook === undefined ? <>
                     <img className="selectedBookCover" src="/src/assets/images/book-open.svg" alt="image indicating no books has been selected" />
                     <div className="noBookSelectedLabel"><i>No book selected</i></div>
                 </> : <>{
-                    selectedBook.Cover_Id ? 
-                    <img className="selectedBookCover" src={`https://covers.openlibrary.org/b/ID/${selectedBook?.Cover_Id}-M.jpg`} alt="image indicating no books has been selected" />
-                    : <img className="selectedBookCover" src='/src/assets/images/book-open.svg' alt="image indicating no books has been selected" />
+                    selectedBook.Cover_Id ?
+                        <img className="selectedBookCover" src={`https://covers.openlibrary.org/b/ID/${selectedBook?.Cover_Id}-M.jpg`} alt="image indicating no books has been selected" />
+                        : <img className="selectedBookCover" src='/src/assets/images/book-open.svg' alt="image indicating no books has been selected" />
                 }
                     <div className="BookSelectedLabel">
-                            <div className="bookSearchResultTitle">{selectedBook?.Title}</div>
-                            <div className="bookSearchResultAuthorName">{selectedBook.AuthorName}</div>
+                        <div className="bookSearchResultTitle">{selectedBook?.Title}</div>
+                        <div className="bookSearchResultAuthorName">{selectedBook.AuthorName}</div>
                     </div>
                 </>
                 }
             </div>
             <form className='createReadingForm'>
-                <BookSearch selectedBook={selectedBook} setSelectedBook={setSelectedBook} /> 
+                <BookSearch selectedBook={selectedBook} setSelectedBook={setSelectedBook} />
 
                 <label htmlFor="description">Description</label>
                 <input className="textInput" name="description" type="text" value={description} onChange={(e) => { setDescription(e.target.value) }} />
 
                 <br /><button className="createReadingButton" onClick={createReadingClickHandler}>Create</button>
+
+                <select onChange={selectProgressTypeChangeHandler} id="progressTypes" value={progressType} required>
+                    <option value={2}>Chapters (recommended)</option>
+                    <option value={3}>Section</option>
+                    <option value={1}>Pages (not recommended)</option>
+                </select><br />
             </form>
         </div>
     );

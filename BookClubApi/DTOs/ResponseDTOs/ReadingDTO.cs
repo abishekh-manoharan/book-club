@@ -14,13 +14,16 @@ public class ReadingDTO
 
     public string? Description { get; set; }
 
-    [Required]    
+    [Required]
     public string Status { get; set; } = null!;
 
     [Required]
     public DateTime StartDate { get; set; }
 
-    public ReadingDTO(int bookId, int clubId, string name, string description, string status, DateTime startDate)
+    public int ProgresstypeId { get; set; }
+
+
+    public ReadingDTO(int bookId, int clubId, string name, string description, string status, DateTime startDate, int progresstypeId)
     {
         BookId = bookId;
         ClubId = clubId;
@@ -28,6 +31,7 @@ public class ReadingDTO
         Description = description;
         Status = status;
         StartDate = startDate;
+        ProgresstypeId = progresstypeId;
     }
 
 }

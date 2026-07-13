@@ -9,12 +9,14 @@ public partial class Reading
     public string Name { get; set; } = null!;
 
     public string? Description { get; set; }
-    
+
     public string Status { get; set; } = null!;
-    
-    public string Metric { get; set; } = null!;
+
+    public int ProgresstypeId { get; set; }
 
     public DateTime StartDate { get; set; }
+
+    public virtual ProgressType? Progresstype { get; set; }
 
     public virtual Book Book { get; set; } = null!;
 

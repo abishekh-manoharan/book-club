@@ -71,6 +71,7 @@ public class ReadingController : ControllerBase
                     BookId = (int)readingCreationValDTO.BookId!,
                     ClubId = (int)readingCreationValDTO.ClubId!,
                     Name = readingCreationValDTO.Name,
+                    ProgresstypeId = readingCreationValDTO.ProgresstypeId,
                     Description = readingCreationValDTO.Description,
                     Status = "started",
                     StartDate = DateTime.Now,
@@ -161,7 +162,7 @@ public class ReadingController : ControllerBase
                 // add the retrieved readings to the master list
                 foreach (Reading reading in readingsOfClub)
                 {
-                    ReadingDTO readingDTO = new(reading.BookId, reading.ClubId, reading.Name, reading.Description, reading.Status, reading.StartDate);
+                    ReadingDTO readingDTO = new(reading.BookId, reading.ClubId, reading.Name, reading.Description, reading.Status, reading.StartDate, reading.ProgresstypeId);
                     readings.Add(readingDTO);
                 }
             }
@@ -308,7 +309,7 @@ public class ReadingController : ControllerBase
     // action method that updates the name, description, and status of an existing reading
     [HttpPut("update")]
     [Authorize]
-    public async Task<ActionResult<Reading>> UpdateReading([Required] int clubId, [Required] int bookId, string name, string description, string status)
+    public async Task<ActionResult<Reading>> UpdateReading([Required] int clubId, [Required] int bookId, string name, string description, string status, int progresstypeId)
     {
         // ensure required params are included
         if (ModelState.IsValid)
@@ -335,10 +336,11 @@ public class ReadingController : ControllerBase
                 reading.Name = name;
                 reading.Description = description;
                 reading.Status = status;
+                reading.ProgresstypeId = progresstypeId;
 
                 dbContext.SaveChanges();
 
-                ReadingDTO readingDTO = new(bookId, clubId, name, description, status, reading.StartDate);
+                ReadingDTO readingDTO = new(bookId, clubId, name, description, status, reading.StartDate, reading.ProgresstypeId);
                 return Ok(readingDTO);
             }
             catch (Exception e)

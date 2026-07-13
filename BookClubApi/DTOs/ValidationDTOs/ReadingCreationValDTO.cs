@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 namespace BookClubApi.DTOs;
 public class ReadingCreationValDTO
 {
-    public ReadingCreationValDTO(int? clubId, string name, string description, int? bookId, int? cover_Id, string title, string authorName, string ol_key, int? firstPublishYear, int? numberOfPagesMedian, float? ratingsAverage)
+    public ReadingCreationValDTO(int? clubId, string name, string description, int? bookId, int? cover_Id, string title, string authorName, int progresstypeId, string ol_key, int? firstPublishYear, int? numberOfPagesMedian, float? ratingsAverage)
     {
         ClubId = clubId;
         Name = name;
@@ -12,6 +12,7 @@ public class ReadingCreationValDTO
         Cover_Id = cover_Id;
         Title = title;
         AuthorName = authorName;
+        ProgresstypeId = progresstypeId;
         Ol_key = ol_key;
         FirstPublishYear = firstPublishYear;
         NumberOfPagesMedian = numberOfPagesMedian;
@@ -24,6 +25,8 @@ public class ReadingCreationValDTO
     public string Name { get; set; } = null!;
 
     public string? Description { get; set; } 
+    
+    public int ProgresstypeId { get; set; }
     
     [Required]
     public int? BookId { get; set; }
@@ -41,4 +44,5 @@ public class ReadingCreationValDTO
     public int? NumberOfPagesMedian { get; set; }
 
     public float? RatingsAverage { get; set; }
+
 }

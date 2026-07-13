@@ -469,6 +469,12 @@ public partial class BookClubContext : IdentityDbContext<ApplicationUser>
                 .HasMaxLength(50)
                 .HasColumnName("name");
 
+            entity.Property(e => e.ProgresstypeId).HasColumnName("progresstype_id");
+
+            entity.HasOne(d => d.Progresstype).WithMany(p => p.Readings)
+                .HasForeignKey(d => d.ProgresstypeId)
+                .HasConstraintName("reading_ibfk_3");
+
             entity.HasOne(d => d.Book).WithMany(p => p.Readings)
                 .HasForeignKey(d => d.BookId)
                 .OnDelete(DeleteBehavior.Cascade)

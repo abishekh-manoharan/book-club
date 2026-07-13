@@ -7,4 +7,6 @@ public partial class ProgressType
     public string? ProgressType1 { get; set; }
 
     public virtual ICollection<Readinguser> Readingusers { get; set; } = new List<Readinguser>();
+
+    public virtual ICollection<Reading> Readings { get; set; } = new List<Reading>();
 }
