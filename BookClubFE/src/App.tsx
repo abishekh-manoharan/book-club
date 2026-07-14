@@ -37,6 +37,7 @@ import CreateMeeting from "./features/meeting/CreateMeeting"
 import EditMeeting from "./features/meeting/EditMeeting"
 import SubThreads from "./features/discussion/SubThreads"
 import Settings from "./features/club/Settings"
+import ReadingSettings from "./features/reading/Settings"
 import ClubMessageBoard from "./features/clubDiscussions/ClubMessageBoard"
 import ClubSubThreads from "./features/clubDiscussions/ClubSubThreads"
 import { useState } from "react"
@@ -83,6 +84,8 @@ function App() {
             <Route path="discussions" element=<DiscussionBoard /> />
             <Route path="discussions/:threadid/:cursorTimeAgo/:parentThreadid" element=<SubThreads /> />
           </Route>
+          
+          <Route path="club/:clubid/:bookid/settings" element=<ReadingSettings /> />
           <Route path="club/:clubid/:bookid/meetings/create" element=<CreateMeeting /> />
           <Route path="club/:clubid/:bookid/meetings/:meetingId/edit" element=<EditMeeting /> />
           <Route path="activeReadings" element=<ActiveReadings status={status} /> />

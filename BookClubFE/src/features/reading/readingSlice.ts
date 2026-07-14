@@ -6,7 +6,8 @@ export interface Reading {
     name: string,
     description?: string,
     status: string,
-    startDate: Date
+    startDate: Date,
+    progresstypeId: number,
 }
 
 export interface NewReading {
@@ -67,9 +68,21 @@ export const apiSliceWithReading = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            invalidatesTags: [{type: 'Readings', id: 'all'}]
+            invalidatesTags: [{ type: 'Readings', id: 'all' }]
         }),
-        getOneReading: builder.query<Reading, {ClubId: number, BookId: number}>({
+        updateReading: builder.mutation<Reading, NewReading>({
+            query: (newReading) => ({
+                url: 'reading/update',
+                credentials: 'include',
+                method: 'PUT',
+                body: JSON.stringify(newReading),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }),
+            invalidatesTags: [{ type: 'Readings', id: 'all' }]
+        }),
+        getOneReading: builder.query<Reading, { ClubId: number, BookId: number }>({
             query: (reading) => ({
                 url: `reading/GetAReading?ClubId=${reading.ClubId}&BookId=${reading.BookId}`,
                 credentials: 'include',
@@ -78,9 +91,9 @@ export const apiSliceWithReading = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            providesTags: [{type: 'Readings', id: 'all'}]
+            providesTags: [{ type: 'Readings', id: 'all' }]
         }),
-        getReadingMemberCount: builder.query<number, {ClubId: number, BookId: number}>({
+        getReadingMemberCount: builder.query<number, { ClubId: number, BookId: number }>({
             query: (reading) => ({
                 url: `reading/ReadingMemberCount?ClubId=${reading.ClubId}&BookId=${reading.BookId}`,
                 credentials: 'include',
@@ -92,9 +105,9 @@ export const apiSliceWithReading = apiSlice.injectEndpoints({
             // transformResponse(res: {$id: string, $values: Reading}){
             //     return res.$values;
             // },
-            providesTags: [{type: 'Readings', id: 'all'}]
+            providesTags: [{ type: 'Readings', id: 'all' }]
         }),
-        getReadingMembers: builder.query<ReadingUserExpanded[], {ClubId: number, BookId: number}>({
+        getReadingMembers: builder.query<ReadingUserExpanded[], { ClubId: number, BookId: number }>({
             query: (reading) => ({
                 url: `reading/readingMembers?ClubId=${reading.ClubId}&BookId=${reading.BookId}`,
                 credentials: 'include',
@@ -103,10 +116,10 @@ export const apiSliceWithReading = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            transformResponse(res: {$id: string, $values: ReadingUserExpanded[]}){
+            transformResponse(res: { $id: string, $values: ReadingUserExpanded[] }) {
                 return res.$values;
             },
-            providesTags: [{type: 'Readings', id: 'all'}]
+            providesTags: [{ type: 'Readings', id: 'all' }]
         }),
         getReadingsOfAClub: builder.query<Reading[], number>({
             query: (clubId) => ({
@@ -117,10 +130,10 @@ export const apiSliceWithReading = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            transformResponse(res: {$id: string, $values: Reading[]}){
+            transformResponse(res: { $id: string, $values: Reading[] }) {
                 return res.$values;
             },
-            providesTags: [{type: 'Readings', id: 'all'}]
+            providesTags: [{ type: 'Readings', id: 'all' }]
         }),
         getReadingUsersOfLoggedInUsers: builder.query<ReadingUser[], void>({
             query: () => ({
@@ -131,10 +144,10 @@ export const apiSliceWithReading = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            transformResponse(res: {$id: string, $values: ReadingUser[]}){
+            transformResponse(res: { $id: string, $values: ReadingUser[] }) {
                 return res.$values;
             },
-            providesTags: [{type: 'Readings', id: 'all'}]
+            providesTags: [{ type: 'Readings', id: 'all' }]
         }),
         getAllReadingsOfClubsJoinedByUser: builder.query<Reading[], void>({
             query: () => ({
@@ -145,12 +158,12 @@ export const apiSliceWithReading = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            transformResponse(res: {$id: string, $values: Reading[]}){
+            transformResponse(res: { $id: string, $values: Reading[] }) {
                 return res.$values;
             },
-            providesTags: [{type: 'Readings', id: 'all'}]
+            providesTags: [{ type: 'Readings', id: 'all' }]
         }),
-        getReadingUser: builder.query<ReadingUser, {UserId: number, BookId: number, ClubId: number}>({
+        getReadingUser: builder.query<ReadingUser, { UserId: number, BookId: number, ClubId: number }>({
             query: (readingUser) => ({
                 url: `reading/readingUser?clubId=${readingUser.ClubId}&bookId=${readingUser.BookId}&userId=${readingUser.UserId}`,
                 credentials: 'include',
@@ -159,7 +172,7 @@ export const apiSliceWithReading = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            providesTags: [{type: 'Readings', id: 'user'}]
+            providesTags: [{ type: 'Readings', id: 'user' }]
         }),
         optIntoReading: builder.mutation<Reading, ReadingWithoutUserAndProgress>({
             query: (reading) => ({
@@ -171,7 +184,7 @@ export const apiSliceWithReading = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            invalidatesTags: [{type: 'Readings'}, { type: "Meetings", id: "all" }]
+            invalidatesTags: [{ type: 'Readings' }, { type: "Meetings", id: "all" }]
         }),
         optOutOfReading: builder.mutation<Reading, ReadingWithoutUserAndProgress>({
             query: (reading) => ({
@@ -183,7 +196,7 @@ export const apiSliceWithReading = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            invalidatesTags: [{type: 'Readings'}, { type: "Meetings", id: "all" }]
+            invalidatesTags: [{ type: 'Readings' }, { type: "Meetings", id: "all" }]
         }),
         updateReadingProgress: builder.mutation<Reading, Omit<ReadingUser, "userId">>({
             query: (reading) => ({
@@ -195,7 +208,7 @@ export const apiSliceWithReading = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            invalidatesTags: [{type: 'Readings', id: 'all'}, {type: 'Readings', id: 'user'}]
+            invalidatesTags: [{ type: 'Readings', id: 'all' }, { type: 'Readings', id: 'user' }]
         }),
         // getClub: builder.query<Club, number>({
         //     query: (clubId) => ({
@@ -212,6 +225,7 @@ export const apiSliceWithReading = apiSlice.injectEndpoints({
 
 export const {
     useCreateReadingMutation,
+    useUpdateReadingMutation,
     useGetReadingsOfAClubQuery,
     useGetReadingUserQuery,
     useGetReadingUsersOfLoggedInUsersQuery,

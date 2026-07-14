@@ -4,19 +4,22 @@ import BookSearchResult from './BookSearchResult';
 
 interface BookSearchProps {
     selectedBook: Book | undefined,
-    setSelectedBook: React.Dispatch<React.SetStateAction<Book | undefined>>
+    setSelectedBook: React.Dispatch<React.SetStateAction<Book | undefined>>,
+    defaultSearchValue?: string
 }
 
 function BookSearch(props: BookSearchProps) {
-    const [searchValue, setSearchValue] = useState('');
+    const [searchValue, setSearchValue] = useState(props.defaultSearchValue);
     const [searchValuePrepared, setSearchValuePrepared] = useState('');
     const { data, isFetching } = useSearchQuery({ query: searchValuePrepared })
     const [searchResults, setSearchResults] = useState([<></>]);
     const [hideSearchResults, setHideSearchResults] = useState(false);
 
+    useEffect(() => {
+        setSearchValue(props.defaultSearchValue);
+    },[props.defaultSearchValue])
 
     useEffect(() => {
-
         if (isFetching && searchValuePrepared!=""){
             setSearchResults([<>Loading...</>])
             setHideSearchResults(false);

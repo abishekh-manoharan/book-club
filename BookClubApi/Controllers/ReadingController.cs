@@ -309,13 +309,15 @@ public class ReadingController : ControllerBase
     // action method that updates the name, description, and status of an existing reading
     [HttpPut("update")]
     [Authorize]
-    public async Task<ActionResult<Reading>> UpdateReading([Required] int clubId, [Required] int bookId, string name, string description, string status, int progresstypeId)
+    public async Task<ActionResult<Reading>> UpdateReading([FromBody]ReadingCreationValDTO readingCreationValDTO)
+    // public async Task<ActionResult<Reading>> UpdateReading([Required] int clubId, [FromBody] [Required] int bookId, string name, string description, string status, int progresstypeId, int cover_Id, string title, string authorName,
+    // string ol_key, int? firstPublishYear, int? numberOfPagesMedian, float? ratingsAverage)
     {
         // ensure required params are included
         if (ModelState.IsValid)
         {
             // ensure logged in user is the club's admin
-            bool? admin = await authHelpers.IsUserAdminOfClub(User, clubId);
+            bool? admin = await authHelpers.IsUserAdminOfClub(User, (int) readingCreationValDTO.ClubId!);
             if (admin == null || admin == false)
             {
                 return Unauthorized("User isn't authorized to create a reading for this club.");
@@ -323,24 +325,44 @@ public class ReadingController : ControllerBase
 
             // ensure reading exists already. Return 400 if not. 
             var reading = dbContext.Readings
-                .Where(reading => reading.BookId == bookId && reading.ClubId == clubId)
+                .Where(reading => reading.BookId == readingCreationValDTO.BookId && reading.ClubId == readingCreationValDTO.ClubId)
                 .FirstOrDefault();
             if (reading == null)
             {
                 return BadRequest("Reading wasn't found.");
             }
 
+            // save book to db if it doesn't exist already
+            var searchedBook = dbContext.Books
+                .Where(dbBook => dbBook.BookId == readingCreationValDTO.BookId)
+                .AsNoTracking()
+                .FirstOrDefault();
+            if (searchedBook == null)
+            {
+                dbContext.Books
+                    .Add(new Book(
+                        readingCreationValDTO.BookId,
+                        readingCreationValDTO.Cover_Id,
+                        readingCreationValDTO.Title,
+                        readingCreationValDTO.AuthorName,
+                        readingCreationValDTO.Ol_key,
+                        readingCreationValDTO.FirstPublishYear,
+                        readingCreationValDTO.NumberOfPagesMedian,
+                        readingCreationValDTO.RatingsAverage
+                    ));
+                await dbContext.SaveChangesAsync();
+            }
             // update the name and description of the reading
             try
             {
-                reading.Name = name;
-                reading.Description = description;
-                reading.Status = status;
-                reading.ProgresstypeId = progresstypeId;
+                reading.Name = readingCreationValDTO.Name;
+                reading.Description = readingCreationValDTO.Description;
+                reading.BookId = (int) readingCreationValDTO.BookId!;
+                reading.ProgresstypeId = readingCreationValDTO.ProgresstypeId;
 
                 dbContext.SaveChanges();
 
-                ReadingDTO readingDTO = new(bookId, clubId, name, description, status, reading.StartDate, reading.ProgresstypeId);
+                ReadingDTO readingDTO = new(reading.BookId, reading.ClubId, reading.Name, reading.Description, reading.Status, reading.StartDate, reading.ProgresstypeId);
                 return Ok(readingDTO);
             }
             catch (Exception e)
@@ -492,7 +514,7 @@ public class ReadingController : ControllerBase
                                     r.UserId == clubUser.UserId &&
                                     meetingIds.Contains(r.MeetingId))
                                 .ExecuteDeleteAsync();
-                                                        
+
                             dbContext.Readingusers.Remove(readingUser);
                             await dbContext.SaveChangesAsync();
 
