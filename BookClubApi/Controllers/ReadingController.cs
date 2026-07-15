@@ -332,37 +332,16 @@ public class ReadingController : ControllerBase
                 return BadRequest("Reading wasn't found.");
             }
 
-            // save book to db if it doesn't exist already
-            var searchedBook = dbContext.Books
-                .Where(dbBook => dbBook.BookId == readingCreationValDTO.BookId)
-                .AsNoTracking()
-                .FirstOrDefault();
-            if (searchedBook == null)
-            {
-                dbContext.Books
-                    .Add(new Book(
-                        readingCreationValDTO.BookId,
-                        readingCreationValDTO.Cover_Id,
-                        readingCreationValDTO.Title,
-                        readingCreationValDTO.AuthorName,
-                        readingCreationValDTO.Ol_key,
-                        readingCreationValDTO.FirstPublishYear,
-                        readingCreationValDTO.NumberOfPagesMedian,
-                        readingCreationValDTO.RatingsAverage
-                    ));
-                await dbContext.SaveChangesAsync();
-            }
-            // update the name and description of the reading
+            // update the reading
             try
             {
-                reading.Name = readingCreationValDTO.Name;
                 reading.Description = readingCreationValDTO.Description;
-                reading.BookId = (int) readingCreationValDTO.BookId!;
                 reading.ProgresstypeId = readingCreationValDTO.ProgresstypeId;
 
                 dbContext.SaveChanges();
 
                 ReadingDTO readingDTO = new(reading.BookId, reading.ClubId, reading.Name, reading.Description, reading.Status, reading.StartDate, reading.ProgresstypeId);
+
                 return Ok(readingDTO);
             }
             catch (Exception e)

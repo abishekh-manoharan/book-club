@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import BookSearch from './CreateReading/BookSearch';
 import { Book } from './readingSliceOpenLibrary';
-import { NewReading, useCreateReadingMutation, useGetOneReadingQuery, useUpdateReadingMutation } from './readingSlice';
+import { NewReading, useGetOneReadingQuery, useUpdateReadingMutation } from './readingSlice';
 import { updateErrorMessageThunk } from '../error/errorSlice';
 import { useAppDispatch } from '../../app/hooks';
 import { useParams } from 'react-router-dom';
 import { isFetchBaseQueryError, isSerializedError } from '../../app/typeGuards';
-import { useNotifyClubMembersMutation } from '../../features/notification/notificationSlice';
-import { useGetClubQuery } from '../../features/club/clubSlice';
 import { useGetBookQuery } from '../book/bookSlice';
 
 function Settings() {
@@ -48,19 +45,6 @@ function Settings() {
     }, [reading, defaultBook]);
 
     const [updateReading] = useUpdateReadingMutation();
-    const { data: club } = useGetClubQuery(clubId, { skip: isNaN(clubId) });
-
-    // function used to generate an int value from a string
-    const simpleStringToInt = (str: string) => {
-        let hash = 0;
-        if (str.length === 0) return hash;
-        for (let i = 0; i < str.length; i++) {
-            const charCode = str.charCodeAt(i);
-            hash = ((hash << 5) - hash) + charCode;  // hash * 31 + charCode
-            hash |= 0;  // Convert to 32-bit integer
-        }
-        return hash;
-    }
 
     const updateReadingClickHandler = async (e: React.SyntheticEvent) => {
         e.preventDefault();
@@ -78,22 +62,10 @@ function Settings() {
             return;
         }
 
-        // specify the name of the book club, depending on if a name was provided or not.
-        // let nameToSend = "";
-        // // case where the name wasn't provided
-        // if (name === "") {
-        //     const now = new Date();
-        //     const monthName = now.toLocaleString('default', { month: 'long' });
-        //     const year = now.getFullYear();
-        //     nameToSend = `${selectedBook.Title}, ${selectedBook.AuthorName}`
-        // } else {
-        //     nameToSend = name;
-        // }
-
         const updatedReading: NewReading = {
             ...selectedBook,
             AuthorName: selectedBook.AuthorName ? selectedBook.AuthorName[0] : undefined, // ensuring author name isn't array when sent to api
-            BookId: simpleStringToInt(selectedBook.Ol_key), // generating bookId by transforming the olkey string to an numerical version
+            BookId: Number(defaultBook?.bookId), // generating bookId by transforming the olkey string to an numerical version
             Name: name,
             Description: description,
             ClubId: clubId,
@@ -140,8 +112,6 @@ function Settings() {
                 }
             </div>
             <form className='createReadingForm'>
-                <BookSearch selectedBook={selectedBook} setSelectedBook={setSelectedBook} defaultSearchValue={defaultBook?.title}/>
-
                 <label htmlFor="description">Description</label>
                 <input className="textInput" name="description" type="text" value={description} onChange={(e) => { setDescription(e.target.value) }} />
 
