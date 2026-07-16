@@ -419,7 +419,7 @@ public class ReadingController : ControllerBase
                         // create readinguser record for user
                         try
                         {
-                            Readinguser newReadingUser = new(clubUser.UserId, (int)readingDTO.BookId!, (int)readingDTO.ClubId!, 0, 1);
+                            Readinguser newReadingUser = new(clubUser.UserId, (int)readingDTO.BookId!, (int)readingDTO.ClubId!, 0, reading.ProgresstypeId);
                             dbContext.Readingusers.Add(newReadingUser);
                             dbContext.SaveChanges();
 

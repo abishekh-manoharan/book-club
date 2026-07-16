@@ -113,7 +113,7 @@ function ReadingHome() {
 
                 {!getUserIsFetching && !getReadingIsFetching && <>
                     {optedIn &&
-                        <Progress bookId={bookId} clubId={clubId} progress={readingUser!.progress} progresstypeId={readingUser!.progresstypeId} progressTotal={readingUser!.progressTotal} />
+                        <Progress bookId={bookId} clubId={clubId} progress={readingUser!.progress} progresstypeId={reading!.progresstypeId} progressTotal={readingUser!.progressTotal} />
                     }
                     <NavBar />
                     <Outlet />

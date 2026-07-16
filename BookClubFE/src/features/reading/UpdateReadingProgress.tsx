@@ -10,7 +10,7 @@ interface UpdateReadingProgressProps {
     bookid: number,
     progress: number,
     progressTotalProp: number | undefined,
-    progresstypeId: number | undefined,
+    progresstypeId: number,
     setModalShow: React.Dispatch<React.SetStateAction<boolean>>
 }
 
@@ -25,50 +25,46 @@ function UpdateReadingProgress({ clubid, bookid, setModalShow, progress, progres
 
     const [progressValue, setProgressValue] = useState<number>(progress);
     const [progressTotal, setProgressTotal] = useState<number | undefined>(progressTotalProp);
-    const [progressType, setProgressType] = useState(() => {
+
+    const progressType = () => {
         switch (progresstypeId) {
             case 1:
                 return "pages";
             case 2:
                 return "chapters";
             case 3:
-                return "percent";
+                return "sections";
             default:
-                return "percent";
+                return "chapters";
         }
-    });
-    const [maxProgressValue, setMaxProgressValue] = useState("");
+    };
 
-    const selectProgressTypeChangeHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setProgressType(e.target.value);
-        setProgressValue(0);
-        if (e.target.value === "percent") {
-            setMaxProgressValue("100")
-            setProgressTotal(100);
-            if (progressValue! > 100) setProgressValue(100);
-            return;
-        }
-        setMaxProgressValue(progressTotal!.toString())
-    }
+    // const selectProgressTypeChangeHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    //     setProgressType(e.target.value);
+    //     setProgressValue(0);
+    //     if (e.target.value === "percent") {
+    //         setMaxProgressValue("100")
+    //         setProgressTotal(100);
+    //         if (progressValue! > 100) setProgressValue(100);
+    //         return;
+    //     }
+    //     setMaxProgressValue(progressTotal!.toString())
+    // }
 
     const progressValueChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         const progress = Number(e.target.value);
 
-        // if progress value exceeds 100%, update it to 100%
-        if (progressType === "percent" && progress > 100) {
-            setProgressValue(100);
-            return;
-        } else {
-            // never allow the progress value to exceed progress total
-            if (progress > progressTotal!) {
-                if (progressTotal != undefined) {
-                    setProgressValue(progressTotal);
-                    return;
-                }
+
+        // never allow the progress value to exceed progress total
+        if (progress > progressTotal!) {
+            if (progressTotal != undefined) {
+                setProgressValue(progressTotal);
+                return;
             }
         }
         setProgressValue(progress);
     }
+
 
     const submitClickHandler = async (e: React.SyntheticEvent) => {
         e.preventDefault();
@@ -77,21 +73,12 @@ function UpdateReadingProgress({ clubid, bookid, setModalShow, progress, progres
             form.current?.reportValidity();
         }
 
-        let typeId;
-        if (progressType === "pages") {
-            typeId = 1;
-        } else if (progressType === "chapters") {
-            typeId = 2;
-        } else {
-            typeId = 3;
-        }
-
         const progress = {
             bookId: bookId,
             clubId: clubId,
             progress: progressValue,
             progressTotal: progressTotal,
-            progresstypeId: typeId,
+            progresstypeId: progresstypeId,
         }
 
 
@@ -114,10 +101,11 @@ function UpdateReadingProgress({ clubid, bookid, setModalShow, progress, progres
         <div className="updateReadingModal">
             <form ref={form}>
                 <div className="inputs">
+                    {progresstypeId}
                     <label htmlFor="progressValue" className="inline">Currently on:&nbsp;</label>
-                    <input onChange={progressValueChangeHandler} value={progressValue} id="progressValue" type="number" min="0" max={maxProgressValue} className="progressInputValue inline" required></input>
+                    <input onChange={progressValueChangeHandler} value={progressValue} id="progressValue" type="number" min="0" className="progressInputValue inline" required></input>
                     {
-                        progressType != "percent" && <>
+                        <>
                             <label htmlFor="progressTotal" className="inline">&nbsp;of total:&nbsp;</label>
                             <input onChange={(e) => {
                                 setProgressTotal(Number(e.target.value))
@@ -128,14 +116,15 @@ function UpdateReadingProgress({ clubid, bookid, setModalShow, progress, progres
                                     setProgressTotal(progressValue);
                                 }
                             }} value={progressTotal} id="progressTotal" type="number" min={progressValue} className="progressTotal inline" required></input>
+                            {progressType()}
                         </>
                     }
 
-                    <select onChange={selectProgressTypeChangeHandler} id="progressTypes" value={progressType} required>
+                    {/* <select onChange={selectProgressTypeChangeHandler} id="progressTypes" value={progressType} required>
                         <option value="pages">Pages</option>
                         <option value="chapters">Chapters</option>
                         <option value="percent">Percent</option>
-                    </select><br />
+                    </select><br /> */}
                 </div>
                 <div className="buttons">
                     <button onClick={() => { setModalShow(false) }} >close</button>

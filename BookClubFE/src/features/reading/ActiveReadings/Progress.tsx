@@ -14,7 +14,7 @@ function Progress({ progress, progresstypeId, progressTotal, clubId, bookId, upd
             progressType = "Chapters";
             break;
         case 3: 
-            progressType = "%";
+            progressType = "Section";
             break;
 
     }
