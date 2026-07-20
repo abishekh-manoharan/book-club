@@ -836,6 +836,9 @@ namespace BookClubApi.Migrations
                         .HasColumnType("int")
                         .HasColumnName("parent_thread_id");
 
+                    b.Property<int?>("SpoilersUntil")
+                        .HasColumnType("int");
+
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasColumnType("longtext");

@@ -101,6 +101,7 @@ function ReadingHome() {
                 <JoinButton clubId={clubId} privateClub={club?.private || false} clubUser={clubUser} getClubUserError={clubUserError} isClubUserError={getClubUserError} refetchGetClubUser={refetchGetClubUser} club={club} userId={userId} />
             </div>
             <div className="readingHome">
+                <Link to="./settings">Settings</Link>
                 {book?.cover_Id ?
                     <img className="selectedBookCover" src={`https://covers.openlibrary.org/b/ID/${book?.cover_Id}-M.jpg`} /> :
                     <img className="selectedBookCover" src='/src/assets/images/book-open.svg' />

@@ -15,7 +15,6 @@ interface ReadingsListOrganizedReadings {
 interface ReadingWithProgress extends Reading {
     progress?: number,
     progressTotal?: number,
-    progresstypeId?: number
 }
 
 function ReadingsList({ status }: { status: boolean | undefined }) {
@@ -53,7 +52,7 @@ function ReadingsList({ status }: { status: boolean | undefined }) {
                 if (readingsUsersOfClubJoinedByUser?.some(ru => ru.bookId === r.bookId && ru.clubId === r.clubId)) {
                     const readingUser = readingUsersOfLoggedInUser?.find((readingUser => readingUser.bookId === r.bookId && readingUser.clubId === r.clubId))
 
-                    organizedReadings.joinedReadings?.push({ ...r, progress: readingUser?.progress, progressTotal: readingUser?.progressTotal, progresstypeId: readingUser?.progresstypeId });
+                    organizedReadings.joinedReadings?.push({ ...r, progress: readingUser?.progress, progressTotal: readingUser?.progressTotal, progresstypeId: Number(readingUser?.progresstypeId) });
                 } else if (!readingsUsersOfClubJoinedByUser?.some(ru => ru.bookId === r.bookId && ru.clubId === r.clubId)) {
                     organizedReadings.notJoinedReadings?.push(r);
                 } else {

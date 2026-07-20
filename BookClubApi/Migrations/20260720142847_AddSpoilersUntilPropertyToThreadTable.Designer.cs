@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookClubApi.Migrations
 {
     [DbContext(typeof(BookClubContext))]
-    [Migration("20260713135813_addProgressTypePropertyToReadingTable")]
-    partial class addProgressTypePropertyToReadingTable
+    [Migration("20260720142847_AddSpoilersUntilPropertyToThreadTable")]
+    partial class AddSpoilersUntilPropertyToThreadTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -839,6 +839,9 @@ namespace BookClubApi.Migrations
                         .HasColumnType("int")
                         .HasColumnName("parent_thread_id");
 
+                    b.Property<int?>("SpoilersUntil")
+                        .HasColumnType("int");
+
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -1384,7 +1387,7 @@ namespace BookClubApi.Migrations
                     b.HasOne("BookClubApi.Models.ProgressType", "Progresstype")
                         .WithMany("Readings")
                         .HasForeignKey("ProgresstypeId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("reading_ibfk_3");
 
@@ -1400,7 +1403,7 @@ namespace BookClubApi.Migrations
                     b.HasOne("BookClubApi.Models.ProgressType", "Progresstype")
                         .WithMany("Readingusers")
                         .HasForeignKey("ProgresstypeId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("readinguser_ibfk_2");
 

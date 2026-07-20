@@ -37,7 +37,7 @@ namespace BookClubApi.Migrations
                 principalSchema: "BookClub",
                 principalTable: "progressType",
                 principalColumn: "progresstype_id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.NoAction);
         }
 
         /// <inheritdoc />

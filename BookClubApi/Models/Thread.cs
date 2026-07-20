@@ -16,6 +16,8 @@ public partial class Thread
 
     public bool Deleted { get; set; }
 
+    public int? SpoilersUntil { get; set; }
+
     public DateTime? TimePosted { get; set; }
 
     public virtual ICollection<Thread> InverseParentThread { get; set; } = new List<Thread>();
