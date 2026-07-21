@@ -11,4 +11,6 @@ public partial class ThreadCreationValidationDTO
     public int? ClubId { get; set; }
 
     public string Text { get; set; } = null!;
+
+    public int? SpoilersUntil { get; set; }
 }

@@ -6,14 +6,16 @@ import { RootState } from "../../app/store";
 interface NewThread {
     bookId: number,
     clubId: number,
-    text: string
+    text: string,
+    spoilersUntil?: number
 }
 
 export interface NewThreadReply {
     parentthreadid: number,
     bookId: number,
     clubId: number,
-    text: string
+    text: string,
+    spoilersUntil?: number
 }
 
 interface Thread {
@@ -25,6 +27,7 @@ interface Thread {
     text: string,
     timePosted: Date | string,
     deleted: boolean,
+    spoilersUntil?: number
 }
 
 export interface NestedThread extends Thread {

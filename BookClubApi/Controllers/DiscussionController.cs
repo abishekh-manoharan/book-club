@@ -56,13 +56,14 @@ public class DiscussionController : ControllerBase
                     UserId = user!.UserId,
                     Text = thread.Text,
                     TimePosted = DateTime.UtcNow,
-                    Deleted = false
+                    Deleted = false,
+                    SpoilersUntil = thread.SpoilersUntil
                 };
 
                 dbContext.Threads.Add(newThread);
                 dbContext.SaveChanges();
 
-                NonDeletedThreadDTO newThreadDTO = new(newThread.ThreadId, newThread.ParentThreadId, newThread.BookId, newThread.ClubId, newThread.UserId, newThread.Text, newThread.TimePosted, newThread.Deleted);
+                NonDeletedThreadDTO newThreadDTO = new(newThread.ThreadId, newThread.ParentThreadId, newThread.BookId, newThread.ClubId, newThread.UserId, newThread.Text, newThread.TimePosted, newThread.Deleted, newThread.SpoilersUntil);
 
                 return Ok(newThreadDTO);
             }
@@ -119,13 +120,14 @@ public class DiscussionController : ControllerBase
                     UserId = user!.UserId,
                     Text = thread.Text,
                     TimePosted = DateTime.UtcNow,
-                    Deleted = false
+                    Deleted = false,
+                    SpoilersUntil = thread.SpoilersUntil
                 };
 
                 dbContext.Threads.Add(newThread);
                 dbContext.SaveChanges();
 
-                NonDeletedThreadDTO newThreadDTO = new(newThread.ThreadId, newThread.ParentThreadId, newThread.BookId, newThread.ClubId, newThread.UserId, newThread.Text, newThread.TimePosted, newThread.Deleted);
+                NonDeletedThreadDTO newThreadDTO = new(newThread.ThreadId, newThread.ParentThreadId, newThread.BookId, newThread.ClubId, newThread.UserId, newThread.Text, newThread.TimePosted, newThread.Deleted, newThread.SpoilersUntil);
 
                 return Ok(newThreadDTO);
             }
@@ -207,7 +209,7 @@ public class DiscussionController : ControllerBase
                     foreach (Models.Thread thread in threads)
                     {
                         // create ThreadDeletedDTO for return list if the thread is deleted
-                        ThreadDTO singleThreadDTO = new(thread.ThreadId, thread.ParentThreadId, thread.BookId, thread.ClubId, thread.UserId, thread.Text, thread.TimePosted, thread.Deleted);
+                        ThreadDTO singleThreadDTO = new(thread.ThreadId, thread.ParentThreadId, thread.BookId, thread.ClubId, thread.UserId, thread.Text, thread.TimePosted, thread.Deleted, thread.SpoilersUntil);
                         listOfThreadDTOs.Add(singleThreadDTO);
                     }
                     // List<NonDeletedThreadDTO> listOfNonDeletedThreadsAsDTOs = new() { };
@@ -307,7 +309,8 @@ public class DiscussionController : ControllerBase
                                 child.user_id,
                                 child.time_posted,
                                 child.Text,         
-                                child.Deleted,        
+                                child.Deleted,
+                                child.SpoilersUntil,        
                                 parent.depth + 1 AS depth
                             FROM (
                                 SELECT

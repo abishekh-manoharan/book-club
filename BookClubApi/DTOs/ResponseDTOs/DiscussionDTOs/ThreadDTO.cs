@@ -1,7 +1,8 @@
 namespace BookClubApi.DTOs;
+
 public class ThreadDTO
 {
-    public ThreadDTO(int threadId, int? parentThreadId, int bookId, int clubId, int userId, string text, DateTime? timePosted, bool deleted)
+    public ThreadDTO(int threadId, int? parentThreadId, int bookId, int clubId, int userId, string text, DateTime? timePosted, bool deleted, int? spoilersUntil)
     {
         ThreadId = threadId;
         ParentThreadId = parentThreadId;
@@ -11,6 +12,7 @@ public class ThreadDTO
         Text = text;
         TimePosted = timePosted;
         Deleted = deleted;
+        SpoilersUntil = spoilersUntil;
     }
 
     public int ThreadId { get; set; }
@@ -28,4 +30,6 @@ public class ThreadDTO
     public DateTime? TimePosted { get; set; }
 
     public bool Deleted { get; set; }
+
+    public int? SpoilersUntil { get; set; }
 }
