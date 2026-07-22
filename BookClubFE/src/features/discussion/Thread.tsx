@@ -10,6 +10,7 @@ import DeleteModal from './DeleteModal';
 import { useNavigate } from 'react-router-dom';
 import Threads from './Threads';
 import ThreadDropdownIcon from './ThreadDropdown/ThreadDropdownIcon';
+import { useGetOneReadingQuery, useGetReadingUserQuery } from '../reading/readingSlice';
 
 const timeAgo = (input: string | Date) => {
     const date = typeof input === "string" ? new Date(input) : input
@@ -59,14 +60,36 @@ function Thread({ thread, offset, reading, depth, index, root, prev, joinClubMod
         setJoinClubModalOpen: React.Dispatch<React.SetStateAction<boolean>>
 
     }) {
+
+    const dispatch = useAppDispatch();
+    const nav = useNavigate();
     const threadElementRef = useRef<HTMLTextAreaElement>();
     const replyInput = useRef<LegacyRef<HTMLDivElement> | undefined>();
     const replyBtnRef = useRef<LegacyRef<HTMLDivElement> | undefined | null>();
 
     const [timeAgoDisplay, setTimeAgoDisplay] = useState("");
     const [showMoreThreads, setShowMoreThreads] = useState(false);
+    const [metric, setMetric] = useState("chapter");
+    const [spoilerAlert, setSpoilerAlert] = useState(true);
+    const [spoilersUntilInput, setSpoilersUntilInput] = useState(0);
+    const [reply, setReply] = useState("");
 
     const localDate = new Date(thread.timePosted + "Z").toLocaleString();
+
+    const [hideDeleteModal, setHideDeleteModal] = useState(false);
+
+    const { data: userId } = useGetUserIdQuery();
+    const { data: clubUser, isSuccess: isGetClubUserSuccess } = useGetClubUserQuery({ clubId: reading.clubId, userId: userId! }, { skip: !userId })
+    const { data: user } = useGetUserQuery(thread.userId);
+    const { data: loggedInUser } = useGetUserQuery(userId!, { skip: !userId });
+    const [createReply] = useReplyToThreadMutation();
+    const [notifySingleUser] = useNotifySingleUserMutation();
+
+    const { data: readingUser } = useGetReadingUserQuery(
+        { BookId: thread.bookId, ClubId: thread.clubId, UserId: userId! },
+        { skip: !userId || !thread.clubId || isNaN(thread.clubId) || !thread.bookId || isNaN(thread.bookId) }
+    );
+    const { data: readingFull } = useGetOneReadingQuery({ BookId: thread.bookId, ClubId: thread.clubId });
 
     useEffect(() => {
         setTimeAgoDisplay(timeAgo(localDate));
@@ -75,21 +98,27 @@ function Thread({ thread, offset, reading, depth, index, root, prev, joinClubMod
         }, 60000)
     }, [localDate, setTimeAgoDisplay]);
 
-    const [hideDeleteModal, setHideDeleteModal] = useState(false);
-
-    const { data: userId } = useGetUserIdQuery();
-    const { data: clubUser, isError: isGetClubUserError, isSuccess: isGetClubUserSuccess } = useGetClubUserQuery({ clubId: reading.clubId, userId: userId! }, { skip: !userId })
-    const { data: user } = useGetUserQuery(thread.userId);
-    const { data: loggedInUser } = useGetUserQuery(userId!, { skip: !userId });
-    const [createReply] = useReplyToThreadMutation();
-    const [notifySingleUser] = useNotifySingleUserMutation();
-
-
-    const dispatch = useAppDispatch();
-    const nav = useNavigate();
-
-    const [reply, setReply] = useState("");
-
+    // setting the reading's metric value
+    useEffect(() => {
+        if (readingFull) {
+            switch (readingFull.progresstypeId) {
+                case 1:
+                    setMetric("page")
+                    break;
+                case 2:
+                    setMetric("chapter")
+                    break;
+                case 3:
+                    setMetric("section")
+                    break;
+            }
+        }
+    }, [readingFull]);
+    
+    // setting the default spoilersUntil value for replies
+    useEffect(() => {
+        readingUser && setSpoilersUntilInput(readingUser?.progress)
+    }, [readingUser]);
 
     const replyBtnClickHandler = () => {
         if (!isClubMember) {
@@ -110,7 +139,8 @@ function Thread({ thread, offset, reading, depth, index, root, prev, joinClubMod
         const newReply: NewThreadReply = {
             parentthreadid: thread.threadId,
             ...reading,
-            text: reply
+            text: reply,
+            spoilersUntil: spoilersUntilInput
         }
 
         try {
@@ -151,6 +181,20 @@ function Thread({ thread, offset, reading, depth, index, root, prev, joinClubMod
         setShowMoreThreads(true);
     }
 
+    const spoilersUntilChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const progress = Number(e.target.value);
+
+        if (readingUser) {
+            // never allow the progress value to exceed progress total
+            if (progress > readingUser.progressTotal!) {
+                if (readingUser.progressTotal != undefined) {
+                    setSpoilersUntilInput(readingUser.progressTotal);
+                    return;
+                }
+            }
+        }
+        setSpoilersUntilInput(progress);
+    }
     // const isClubMember: boolean | undefined = clubUser != null || undefined;
     const isClubMember = isGetClubUserSuccess && clubUser != null;
 
@@ -187,12 +231,19 @@ function Thread({ thread, offset, reading, depth, index, root, prev, joinClubMod
                                     Reply
                                 </button>
                                 <ThreadDropdownIcon userId={userId} thread={thread} clubUser={clubUser} setHideDeleteModal={setHideDeleteModal} />
+                                {thread.spoilersUntil && <div className="spoilersUntilDisplay" style={{ "marginLeft": "auto" }}>
+                                    spoilers until {metric} {thread.spoilersUntil} / {readingUser?.progressTotal}
+                                </div>
+                                }
                             </>
                             }
                         </div>
-
+                        {/* reply */}
                         <div ref={replyInput} className="reply hidden">
                             <textarea value={reply} onChange={(e) => setReply(e.target.value)} />
+                            <div className="spoilersUntilInput">
+                                Spoilers until {metric} <input value={spoilersUntilInput} type="number" min={0} max={readingUser?.progressTotal} onChange={spoilersUntilChangeHandler} /> of {readingUser?.progressTotal}.
+                            </div>
                             <div className="buttons">
                                 <button className="button" onClick={commentBtnClickHandler}>Reply</button>
                                 <button className="button" onClick={closeBtnClickHandler}>Close</button>
