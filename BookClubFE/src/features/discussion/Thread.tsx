@@ -1,4 +1,4 @@
-import React, { LegacyRef, useEffect, useRef, useState } from 'react';
+import React, { LegacyRef, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { NestedThread, NewThreadReply, useReplyToThreadMutation } from './discussionSlice';
 import { isFetchBaseQueryError, isSerializedError } from "../../app/typeGuards";
 import { updateErrorMessageThunk } from "../error/errorSlice";
@@ -70,8 +70,9 @@ function Thread({ thread, offset, reading, depth, index, root, prev, joinClubMod
     const [timeAgoDisplay, setTimeAgoDisplay] = useState("");
     const [showMoreThreads, setShowMoreThreads] = useState(false);
     const [metric, setMetric] = useState("chapter");
-    const [spoilerAlert, setSpoilerAlert] = useState(true);
+    const [spoilerAlert, setSpoilerAlert] = useState(false);
     const [spoilersUntilInput, setSpoilersUntilInput] = useState(0);
+    const [spoilerChecked, setSpoilerChecked] = useState(false);
     const [reply, setReply] = useState("");
 
     const localDate = new Date(thread.timePosted + "Z").toLocaleString();
@@ -114,11 +115,21 @@ function Thread({ thread, offset, reading, depth, index, root, prev, joinClubMod
             }
         }
     }, [readingFull]);
-    
+
     // setting the default spoilersUntil value for replies
     useEffect(() => {
-        readingUser && setSpoilersUntilInput(readingUser?.progress)
+        if (readingUser) {
+            if (thread.spoilersUntil) setSpoilersUntilInput(thread.spoilersUntil)
+            else setSpoilersUntilInput(readingUser.progress);
+        }
     }, [readingUser]);
+
+    // determining if the thread contains possible spoilers for the user
+    useLayoutEffect(() => {
+        if (thread.spoilersUntil && readingUser && thread.spoilersUntil > readingUser?.progress) {
+            setSpoilerAlert(true);
+        }
+    }, [readingUser, thread.spoilersUntil]);
 
     const replyBtnClickHandler = () => {
         if (!isClubMember) {
@@ -140,7 +151,7 @@ function Thread({ thread, offset, reading, depth, index, root, prev, joinClubMod
             parentthreadid: thread.threadId,
             ...reading,
             text: reply,
-            spoilersUntil: spoilersUntilInput
+            spoilersUntil: spoilerChecked ? spoilersUntilInput : undefined
         }
 
         try {
@@ -214,9 +225,14 @@ function Thread({ thread, offset, reading, depth, index, root, prev, joinClubMod
                             <div className="timeAgo">{timeAgoDisplay}</div>
                         </div>
 
-                        <div className="threadText">
-                            {thread.deleted ? "This post has been deleted." : thread.text}
-                        </div>
+                        {spoilerAlert ?
+                            <>
+                                spoiler
+                            </> :
+                            <div className="threadText">
+                                {thread.deleted ? "This post has been deleted." : thread.text}
+                            </div>
+                        }
 
                         <div ref={replyBtnRef} className="options">
                             {!thread.deleted && <>
@@ -241,9 +257,26 @@ function Thread({ thread, offset, reading, depth, index, root, prev, joinClubMod
                         {/* reply */}
                         <div ref={replyInput} className="reply hidden">
                             <textarea value={reply} onChange={(e) => setReply(e.target.value)} />
-                            <div className="spoilersUntilInput">
+                            {/* <div className="spoilersUntilInput">
                                 Spoilers until {metric} <input value={spoilersUntilInput} type="number" min={0} max={readingUser?.progressTotal} onChange={spoilersUntilChangeHandler} /> of {readingUser?.progressTotal}.
+                            </div> */}
+
+                            <div className="spoilerCheckAndInput">
+                                {
+                                    spoilerChecked && <div className="spoilersUntilInput">
+                                        Spoilers up through {metric} <input value={spoilersUntilInput} type="number" min={0} max={readingUser?.progressTotal} onChange={spoilersUntilChangeHandler} /> of {readingUser?.progressTotal}.
+                                    </div>
+                                }
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        checked={spoilerChecked}
+                                        onChange={(event) => setSpoilerChecked(event.target.checked)}
+                                    /> &nbsp;
+                                    Mark this post as containing spoilers
+                                </label>
                             </div>
+                            
                             <div className="buttons">
                                 <button className="button" onClick={commentBtnClickHandler}>Reply</button>
                                 <button className="button" onClick={closeBtnClickHandler}>Close</button>

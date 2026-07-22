@@ -24,6 +24,7 @@ function CreateThread() {
     const [text, setText] = useState("");
     const [metric, setMetric] = useState("");
     const [spoilersUntilInput, setSpoilersUntilInput] = useState(0);
+    const [spoilerChecked, setSpoilerChecked] = useState(false);
     const [active, setActive] = useState<boolean>(false);
 
     const [createThread] = useCreateThreadMutation();
@@ -83,7 +84,9 @@ function CreateThread() {
         }
 
         try {
-            await createThread({ bookId, clubId, text, spoilersUntil: spoilersUntilInput }).unwrap();
+            await createThread({ bookId, clubId, text, 
+                spoilersUntil: spoilerChecked ? spoilersUntilInput : undefined
+            }).unwrap();
 
             // clearing and deactivating post creation form
             setText("");
@@ -118,8 +121,20 @@ function CreateThread() {
                     <textarea className="discussionCreateThreadTextArea" placeholder={active == false ? "Join the conversation" : ""} ref={ref} value={text} onChange={(e) => setText(e.target.value)} onFocus={() => { resize(); setActive(true); }} onInput={resize} style={{ lineHeight: active ? "1.2em" : ".6em" }} required />
                 </div>
                 {active && <>
-                    <div className="spoilersUntilInput">
-                        Spoilers until {metric} <input value={spoilersUntilInput} type="number" min={0} max={readingUser?.progressTotal} onChange={spoilersUntilChangeHandler} /> of {readingUser?.progressTotal}.
+                    <div className="spoilerCheckAndInput">
+                            {
+                                spoilerChecked && <div className="spoilersUntilInput">
+                                    Spoilers up through {metric} <input value={spoilersUntilInput} type="number" min={0} max={readingUser?.progressTotal} onChange={spoilersUntilChangeHandler} /> of {readingUser?.progressTotal}.
+                                </div>
+                            }
+                        <label>
+                            <input
+                                type="checkbox"
+                                checked={spoilerChecked}
+                                onChange={(event) => setSpoilerChecked(event.target.checked)}
+                            /> &nbsp;
+                            Mark this post as containing spoilers
+                        </label>
                     </div>
                     <div className="buttons">
                         <button className="button" onClick={postThreadClickHandler} >Post</button>
