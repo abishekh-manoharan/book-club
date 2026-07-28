@@ -227,7 +227,7 @@ function Thread({ thread, offset, reading, depth, index, root, prev, joinClubMod
 
                         {spoilerAlert ?
                             <>
-                                spoiler
+                                spoiler <button onClick={()=>setSpoilerAlert(false)}>view anyway</button>
                             </> :
                             <div className="threadText">
                                 {thread.deleted ? "This post has been deleted." : thread.text}
