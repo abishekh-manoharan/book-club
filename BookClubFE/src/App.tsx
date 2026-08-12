@@ -42,6 +42,7 @@ import ClubMessageBoard from "./features/clubDiscussions/ClubMessageBoard"
 import ClubSubThreads from "./features/clubDiscussions/ClubSubThreads"
 import { useState } from "react"
 import UpcomingMeetings from "./features/meeting/UpcomingMeetings"
+import LandingPage from "./components/LandingPage"
 
 function App() {
   // retrieving user's logged in status
@@ -64,6 +65,7 @@ function App() {
       {/* <NotificationHeader/> */}
       <Routes>
         <Route path="/" element=<Main status={status ?? false} /> >
+          <Route index element={status ? <Navigate to="/clubs" replace /> : <LandingPage/>} />
           <Route path="home" element=<div>Home</div> />
           <Route path="clubs" element=<JoinedClubs /> />
           <Route path="createClub" element=<Create backLocation="clubs" /> />
