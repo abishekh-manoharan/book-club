@@ -1320,3 +1320,33 @@ textarea {
 .thread .dropdownIcon {
   position: relative;
 }
+
+.landingPage {
+  position: absolute;
+  left: 0px;
+  width: 100vw;
+  height: 500vh;
+}
+
+.landingPage .header {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.middleSection {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  justify-content: center;
+}
+
+.middleSection .headline {
+  font-size: 80px;
+  line-height: normal;
+}
+
+.middleSection .subText {
+  font-size: 20px;
+  line-height: normal;
+}
