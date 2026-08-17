@@ -1339,14 +1339,34 @@ textarea {
   flex-direction: column;
   text-align: center;
   justify-content: center;
+  align-items: center;
+  
 }
 
 .middleSection .headline {
-  font-size: 80px;
+  font-size: 70px;
   line-height: normal;
 }
 
 .middleSection .subText {
-  font-size: 20px;
+  font-size: 19px;
   line-height: normal;
+  max-width: 520px;
+  margin-top: 30px;
+}
+
+.middleSection .startClubBtn {
+  font-size: 19px;
+  line-height: normal;
+  max-width: 520px;
+  margin-top: 20px;
+  padding: 5px 20px;
+  border-radius: 30px;
+  border: none;
+  background-color: #6991ff;
+}
+
+.middleSection img {
+  margin-top: 40px;
+  width: 150px;
 }

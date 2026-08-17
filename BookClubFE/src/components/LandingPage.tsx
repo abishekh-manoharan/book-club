@@ -9,10 +9,14 @@ function LandingPage() {
                     left
                 </div>
                 <div className="middleSection">
-                    <div className="headline">Reading is better <i><br/>together</i></div>
+                    <div className="headline">Reading is better<br/>together</div>
                     <div className="subText">
                         features featuresfeatures featuresfeatures featuresfeatures featuresfeatures features
                     </div>
+                    <button className="startClubBtn">
+                        Start a Club
+                    </button>
+                    <img src="/src/assets/images/header-images/book.svg"/>
                 </div>
                 <div className="rightSection">
                     right
