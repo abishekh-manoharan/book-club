@@ -1372,3 +1372,32 @@ textarea {
   margin-top: 40px;
   width: 120px;
 }
+
+.createAvatar {
+  width: 100vw;
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.createAvatar .properties {
+  display: flex;
+  flex-direction: column;
+  width: 65%;
+}
+
+.createAvatar .outcome {
+  display: flex;
+  flex-direction: column;
+  width: 40%;
+}
+
+.createAvatar .options {
+  display: flex;
+  flex-direction: column;
+}
+
+.createAvatar .option img {
+  display: flex;
+  height: 150px;
+}

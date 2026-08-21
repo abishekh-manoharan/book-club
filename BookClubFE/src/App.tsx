@@ -43,6 +43,7 @@ import ClubSubThreads from "./features/clubDiscussions/ClubSubThreads"
 import { useState } from "react"
 import UpcomingMeetings from "./features/meeting/UpcomingMeetings"
 import LandingPage from "./components/LandingPage"
+import CreateAvatar from "./features/user/Avatar/Create"
 
 function App() {
   // retrieving user's logged in status
@@ -65,6 +66,7 @@ function App() {
       {/* <NotificationHeader/> */}
       <Routes>
         <Route path="/" element=<Main status={status ?? false} /> >
+          <Route index element={ <LandingPage/>} />
           <Route index element={status ? <Navigate to="/clubs" replace /> : <LandingPage/>} />
           <Route path="home" element=<div>Home</div> />
           <Route path="clubs" element=<JoinedClubs /> />
@@ -74,7 +76,7 @@ function App() {
             <Route path="readings" element=<ReadingsList status={status} /> />
             <Route path="members" element=<MembersList /> />
             <Route path="messageBoard" element=<ClubMessageBoard joinClubModalOpen={joinClubModalOpen} setJoinClubModalOpen={setJoinClubModalOpen}/> />
-            <Route path="messageBoard/:threadid/:cursorTimeAgo/:parentThreadid" element=<ClubSubThreads joinClubModalOpen={joinClubModalOpen} setJoinClubModalOpen={setJoinClubModalOpen}/> />
+            <Route path="messageBoard/:threadid/:cursorTimeAgo/:pxarentThreadid" element=<ClubSubThreads joinClubModalOpen={joinClubModalOpen} setJoinClubModalOpen={setJoinClubModalOpen}/> />
             <Route path="requests" element=<JoinRequests /> />
           </Route>
           <Route path="club/:clubid/settings" element=<Settings /> />
@@ -93,6 +95,7 @@ function App() {
           <Route path="activeReadings" element=<ActiveReadings status={status} /> />
           <Route path="login" element=<Login status={status} /> />
           <Route path="register" element=<Register status={status} /> />
+          <Route path="create" element=<CreateAvatar /> />
           <Route path="upcomingMeetings" element=<UpcomingMeetings /> />
         </Route>
       </Routes >
