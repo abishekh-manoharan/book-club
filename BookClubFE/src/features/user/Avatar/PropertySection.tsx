@@ -5,15 +5,16 @@ import AnOption from './AnOption';
 interface PropertySectionInterface {
     properties: Properties,
     setProperties: React.Dispatch<React.SetStateAction<Properties>>,
-    propertyType: "bodyVariant" | "eyesVariant" | "mouthVariant" | "topVariant" | "bodyColor" | "background",
-    data: { url: string, header: string }[] | string[]
+    propertyType: "bodyVariant" | "eyesVariant" | "mouthVariant" | "topVariant" | "bodyColor" | "backgroundColor",
+    data: { url: string, header: string }[] | string[],
+    header: string
 }
 
 function PropertySection(props: PropertySectionInterface) {
     return (
         <>
             <div className="optionHeader">
-                Body
+                {props.header}
             </div>
             <div className="options">
                 {

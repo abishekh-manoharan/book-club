@@ -1385,7 +1385,7 @@ textarea {
   flex-direction: column;
   width: 58vw;
   height: 96vh;
-  overflow: scroll;
+  overflow: auto;
   overflow-x: auto;
 }
 
@@ -1409,6 +1409,11 @@ textarea {
 
 .createAvatar .option img {
   display: flex;
+  height: 150px;
+  width: 150px;
+}
+
+.colourOption {
   height: 150px;
   width: 150px;
 }

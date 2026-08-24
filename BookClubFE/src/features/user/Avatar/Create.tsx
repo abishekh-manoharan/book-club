@@ -8,7 +8,7 @@ export interface Properties {
     mouthVariant: string,
     topVariant: string,
     bodyColor: string,
-    background: string
+    backgroundColor: string
 }
 
 export interface PropertiesCollection {
@@ -17,7 +17,7 @@ export interface PropertiesCollection {
     mouthVariant: { url: string, header: string }[],
     topVariant: { url: string, header: string }[],
     bodyColor: string[],
-    background: string[]
+    backgroundColor: string[]
 }
 
 function CreateAvatar() {
@@ -27,13 +27,13 @@ function CreateAvatar() {
         mouthVariant: "laugh",
         topVariant: "antennae",
         bodyColor: "d99277",
-        background: "f9ecc9"
+        backgroundColor: "f9ecc9"
     });
 
     const [url, setURL] = useState("");
 
     useEffect(() => {
-        const url = `https://api.dicebear.com/10.x/clay/svg?size=20&animationVariant=&bodyVariant=${properties.bodyVariant}&eyesVariant=${properties.eyesVariant}&mouthVariant=${properties.mouthVariant}&patternVariant=&topVariant=${properties.topVariant}&topProbability=100&backgroundColor=${properties.background}&bodyColor=${properties.bodyColor}&seed=Felix`;
+        const url = `https://api.dicebear.com/10.x/clay/svg?size=20&animationVariant=&bodyVariant=${properties.bodyVariant}&eyesVariant=${properties.eyesVariant}&mouthVariant=${properties.mouthVariant}&patternVariant=&topVariant=${properties.topVariant}&topProbability=100&backgroundColor=${properties.backgroundColor}&bodyColor=${properties.bodyColor}&seed=Felix`;
 
         setURL(url)
     }, [properties]);
@@ -43,29 +43,28 @@ function CreateAvatar() {
 
     return (
         <div className="createAvatar">
-                        <div className="outcome">
+            <div className="outcome">
                 <img src={url} />
             </div>
             <div className="properties">
                 <div className="section">
-                    <PropertySection data={data.bodyVariant} properties={properties} setProperties={setProperties} propertyType="bodyVariant" />
+                    <PropertySection data={data.bodyVariant} properties={properties} setProperties={setProperties} propertyType="bodyVariant" header="Body" />
                 </div>
 
                 <div className="section">
-                    <PropertySection data={data.eyesVariant} properties={properties} setProperties={setProperties} propertyType="eyesVariant" />
+                    <PropertySection data={data.eyesVariant} properties={properties} setProperties={setProperties} propertyType="eyesVariant" header="Eyes" />
                 </div>
                 <div className="section">
-                    <PropertySection data={data.mouthVariant} properties={properties} setProperties={setProperties} propertyType="mouthVariant" />
+                    <PropertySection data={data.mouthVariant} properties={properties} setProperties={setProperties} propertyType="mouthVariant" header="Mouth" />
                 </div>
                 <div className="section">
-                    <PropertySection data={data.topVariant} properties={properties} setProperties={setProperties} propertyType="topVariant" />
+                    <PropertySection data={data.topVariant} properties={properties} setProperties={setProperties} propertyType="topVariant" header="Top" />
                 </div>
                 <div className="section">
-                    Background Colour
+                    <PropertySection data={data.backgroundColor} properties={properties} setProperties={setProperties} propertyType="backgroundColor" header="Background Colour" />
                 </div>
                 <div className="section">
-                    Body Colour
-
+                    <PropertySection data={data.bodyColor} properties={properties} setProperties={setProperties} propertyType="bodyColor" header="Body Colour" />
                 </div>
             </div>
 

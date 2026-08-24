@@ -7,7 +7,7 @@ interface AnOptionInterface {
         header: string;
     },
     setProperties: React.Dispatch<React.SetStateAction<Properties>>,
-    propertyType: "bodyVariant" | "eyesVariant" | "mouthVariant" | "topVariant" | "bodyColor" | "background"
+    propertyType: "bodyVariant" | "eyesVariant" | "mouthVariant" | "topVariant" | "bodyColor" | "backgroundColor"
 }
 
 function AnOption({ opt, setProperties, propertyType }: AnOptionInterface) {
@@ -15,12 +15,23 @@ function AnOption({ opt, setProperties, propertyType }: AnOptionInterface) {
 
     const clickOptionHandler = () => {
         const value = isObject ? opt.header : opt;
-        setProperties(prev => ({...prev, [propertyType]: value.toLowerCase()}))
+        setProperties(prev => ({ ...prev, [propertyType]: value.toLowerCase() }))
     }
 
-    return <div onClick={clickOptionHandler} className="option">
-        {isObject && <img src={opt.url} />}
-        {isObject ? opt.header : opt}
+    const clickColourOptionHandler = () => {
+        const value = isObject ? opt.header : opt;
+        setProperties(prev => ({ ...prev, [propertyType]: value.toLowerCase() }))
+    }
+
+    if (propertyType !== "bodyColor" && propertyType !== "backgroundColor") {
+        return <div onClick={clickOptionHandler} className="option">
+            {isObject && <img src={opt.url} />}
+            {isObject ? opt.header : opt}
+        </div>;
+    }
+
+    return <div onClick={clickColourOptionHandler} className="option">
+        {<div className='colourOption' style={{ backgroundColor: "#"+opt }} />}
     </div>;
 
 }
