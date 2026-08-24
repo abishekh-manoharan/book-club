@@ -1340,7 +1340,7 @@ textarea {
   text-align: center;
   justify-content: center;
   align-items: center;
-  
+
 }
 
 .middleSection .headline {
@@ -1383,21 +1383,32 @@ textarea {
 .createAvatar .properties {
   display: flex;
   flex-direction: column;
-  width: 65%;
+  width: 58vw;
+  height: 96vh;
+  overflow: scroll;
+  overflow-x: auto;
 }
 
 .createAvatar .outcome {
   display: flex;
   flex-direction: column;
-  width: 40%;
+  width: 40vw;
 }
 
 .createAvatar .options {
   display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.createAvatar .option {
+  display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
 .createAvatar .option img {
   display: flex;
   height: 150px;
+  width: 150px;
 }
