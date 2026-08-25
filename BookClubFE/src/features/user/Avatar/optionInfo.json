@@ -93,13 +93,15 @@
         "8ba06b",
         "86a5c3",
         "ab8bbd",
-        "cd8ea6"
+        "cd8ea6",
+        "custom"
     ],
     "backgroundColor": [
         "f9ecc9",
         "f7e3d9",
         "e2ecf4",
         "e3efe9",
-        "e8edf0"
+        "e8edf0",
+        "custom"
     ]
 }

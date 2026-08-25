@@ -18,7 +18,7 @@ function PropertySection(props: PropertySectionInterface) {
             </div>
             <div className="options">
                 {
-                    props.data.map((opt) => <AnOption opt={opt} setProperties={props.setProperties} propertyType={props.propertyType} />)
+                    props.data.map((opt) => <AnOption opt={opt} properties={props.properties} setProperties={props.setProperties} propertyType={props.propertyType} />)
                 }
             </div>
 

@@ -39,8 +39,6 @@ function CreateAvatar() {
     }, [properties]);
 
 
-
-
     return (
         <div className="createAvatar">
             <div className="outcome">
@@ -65,6 +63,23 @@ function CreateAvatar() {
                 </div>
                 <div className="section">
                     <PropertySection data={data.bodyColor} properties={properties} setProperties={setProperties} propertyType="bodyColor" header="Body Colour" />
+                    {/* <input
+                        type="color"
+                        value={"#" + properties.bodyColor}
+                        onChange={(event) => {
+                            console.log(event.target.value);
+                            setProperties(prev => ({
+                                ...prev,
+                                bodyColor: event.target.value.slice(1)
+                            }));
+                        }}
+                    /> */}
+                    {/* <input type="text" value={"#" + properties.bodyColor} onChange={(event) => {
+                        setProperties(prev => ({
+                            ...prev,
+                            bodyColor: event.target.value
+                        }))
+                    }}/> */}
                 </div>
             </div>
 
