@@ -4,6 +4,7 @@ using System.Text.Json;
 using BookClubApi.Data;
 using BookClubApi.DTOs;
 using BookClubApi.Models;
+using BookClubApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,13 +18,14 @@ public class AuthController : ControllerBase
     private UserManager<ApplicationUser> userManager;
     private SignInManager<ApplicationUser> signInManager;
     private BookClubContext dbContext;
+    private IAuthHelpers authHelpers;
 
-
-    public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, BookClubContext dbContext)
+    public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, BookClubContext dbContext, IAuthHelpers authHelpers)
     {
         this.userManager = userManager;
         this.signInManager = signInManager;
         this.dbContext = dbContext;
+        this.authHelpers = authHelpers;
     }
 
     // Action method that attempts to log in a user through email + password combination
@@ -242,6 +244,58 @@ public class AuthController : ControllerBase
         }
 
         return Ok(user.UserId);
+    }
+
+    // Action method that sets the user's profile img url
+    // action method used to update a user's password
+    [HttpPut("setProfileImg")]
+    [Authorize]
+    public async Task<ActionResult> SetProfileImg([Required] UserSetProfileValDTO valDTO)
+    {
+        if (ModelState.IsValid)
+        {
+            if (!Uri.TryCreate(valDTO.Url, UriKind.Absolute, out var uri))
+            {
+                return BadRequest("Invalid URL.");
+            }
+
+            if (uri.Scheme != Uri.UriSchemeHttps)
+            {
+                return BadRequest("Profile image URL must use HTTPS.");
+            }
+
+            if (!string.Equals(uri.Host, "api.dicebear.com", StringComparison.OrdinalIgnoreCase))
+            {
+                return BadRequest("Invalid profile image URL.");
+            }
+
+            if (!uri.AbsolutePath.StartsWith("/10.x/clay/svg", StringComparison.OrdinalIgnoreCase))
+            {
+                return BadRequest("Invalid profile image URL.");
+            }
+
+            var aspNetUserId = userManager.GetUserId(User);
+
+            if (aspNetUserId == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            var user = await dbContext.Users
+                .FirstOrDefaultAsync(u => u.AspnetusersId == aspNetUserId);
+
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            user.ProfileImg = valDTO.Url;
+
+            await dbContext.SaveChangesAsync();
+
+            return Ok();
+        }
+        return BadRequest(ModelState);
     }
 
 }
