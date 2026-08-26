@@ -49,7 +49,9 @@ function AnOption({ opt, properties, setProperties, propertyType }: AnOptionInte
             className="colourOption"
             style={{ backgroundColor: "#" + properties[propertyType] }}
         >
-            <span className="pencilIcon">✎</span>
+            {/* <span className="pencilIcon"> */}
+            <img src="/src/assets/images/edit.svg" alt="edit-logo" />
+            {/* </span> */}
 
             <input
                 type="color"

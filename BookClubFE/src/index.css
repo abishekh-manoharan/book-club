@@ -1420,8 +1420,8 @@ textarea {
 
 .colourOption {
     position: relative;
-    width: 50px;
-    height: 50px;
+    width: 150px;
+    height: 150px;
     border-radius: 8px;
     cursor: pointer;
 
@@ -1447,4 +1447,7 @@ textarea {
     color: white;
     pointer-events: none;
     z-index: 1;
+}
+.colourOption img {
+  height: 50px;
 }
