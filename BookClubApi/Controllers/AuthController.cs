@@ -79,12 +79,11 @@ public class AuthController : ControllerBase
                 {
                     FName = user.Fname,
                     LName = user.LName,
-                    AspnetusersId = appUser.Id
+                    AspnetusersId = appUser.Id,
+                    ProfileImg = "https://api.dicebear.com/10.x/clay/svg?size=500&animationVariant=&bodyVariant=bell&eyesVariant=big&mouthVariant=laugh&patternVariant=&topVariant=horns&topProbability=100&backgroundColor=dbdbdb&bodyColor=e0bd6a&seed=Felix"
                 };
-                System.Console.WriteLine("users");
                 dbContext.Users.Add(newUser);
                 dbContext.SaveChanges();
-                Console.WriteLine(JsonSerializer.Serialize(newUser, new JsonSerializerOptions { WriteIndented = true }));
                 // return success message + aspnetuser id if registration was successful
                 return Ok(new List<string> { "success", appUser.Id });
             }
@@ -250,7 +249,7 @@ public class AuthController : ControllerBase
     // action method used to update a user's password
     [HttpPut("setProfileImg")]
     [Authorize]
-    public async Task<ActionResult> SetProfileImg([Required] UserSetProfileValDTO valDTO)
+    public async Task<ActionResult> SetProfileImg([Required][FromBody] UserSetProfileValDTO valDTO)
     {
         if (ModelState.IsValid)
         {
