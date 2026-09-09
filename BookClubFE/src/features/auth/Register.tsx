@@ -2,22 +2,23 @@ import React, { useEffect, useState } from "react";
 import { RegistrationFormData } from "../../utils/types";
 // import AuthService from '../services/auth';
 // import { AxiosError } from "axios";
-import { useRegisterMutation, RegistrationSuccess } from "./authSlice";
+import { useRegisterMutation, RegistrationSuccess, useLoginMutation } from "./authSlice";
 import { isRegistrationAllowanceError } from "../../app/typeGuards";
 import { useNavigate } from "react-router-dom";
 
-function Register({ status }: { status: boolean| undefined }) {
+function Register({ status }: { status: boolean | undefined }) {
     const [fName, setFName] = useState('');
     const [email, setEmail] = useState('');
     // const [password, setPassword] = useState("Abcde123!");
     const [password, setPassword] = useState("");
+    const [login] = useLoginMutation();
     // const [confirmPassword, setConfirmPassword] = useState("Abcde123!");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [passwordsMatch, setPasswordsMatch] = useState(true);
     const nav = useNavigate();
 
     const [register, { isLoading }] = useRegisterMutation();
-    
+
     // check if passwords match on password and confirmPassword state changes
     useEffect(() => {
         if (confirmPassword !== password) {
@@ -92,7 +93,8 @@ function Register({ status }: { status: boolean| undefined }) {
                 console.log('suceeded in effect')
                 const submissionSuccessElement = document.querySelector(".submission-success");
                 submissionSuccessElement!.classList.toggle("hidden");
-                nav('/login');
+                await login({ email, password }).unwrap();
+                nav('/create');
                 return;
             }
 

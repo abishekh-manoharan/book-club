@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import data from "./optionInfo.json";
-import { useSetProfilePictureMutation } from "../../../features/auth/authSlice";
+import { useGetUserIdQuery, useGetUserQuery, useSetProfilePictureMutation } from "../../../features/auth/authSlice";
 import { isFetchBaseQueryError, isSerializedError } from "../../../app/typeGuards";
 import { updateErrorMessageThunk } from "../../error/errorSlice";
 import { useAppDispatch } from "../../../app/hooks";
 import { useNavigate } from "react-router-dom";
-import PropertySection from "./propertySection";
+import PropertySection from "./PropertySection";
 
 export interface Properties {
     bodyVariant: string,
@@ -29,6 +29,36 @@ function CreateAvatar() {
     const dispatch = useAppDispatch();
     const nav = useNavigate();
 
+    const [url, setURL] = useState("");
+
+    // get user's profile picture
+    const { data: userId } = useGetUserIdQuery();
+    const { data: user } = useGetUserQuery(Number(userId), {
+        skip: !userId,
+    });
+
+    // set the properties based on the profile picture
+    useEffect(() => {
+        if (!user) return;
+
+        const params = new URL(user.profileImg).searchParams;
+
+        const properties: Properties = {
+            bodyVariant: params.get("bodyVariant") ?? "",
+            eyesVariant: params.get("eyesVariant") ?? "",
+            mouthVariant: params.get("mouthVariant") ?? "",
+            topVariant: params.get("topVariant") ?? "",
+            bodyColor: params.get("bodyColor") ?? "",
+            backgroundColor: params.get("backgroundColor") ?? ""
+        };
+
+        setProperties(properties);
+    }, [user]);
+    // if the profile picture = "", set default values
+
+
+    // TODO: initial selections (not mandatory)
+
     const [setProfilePicture] = useSetProfilePictureMutation();
 
     const [properties, setProperties] = useState<Properties>({
@@ -40,7 +70,6 @@ function CreateAvatar() {
         backgroundColor: "f9ecc9"
     });
 
-    const [url, setURL] = useState("");
 
     useEffect(() => {
         const url = `https://api.dicebear.com/10.x/clay/svg?size=20&animationVariant=&bodyVariant=${properties.bodyVariant}&eyesVariant=${properties.eyesVariant}&mouthVariant=${properties.mouthVariant}&patternVariant=&topVariant=${properties.topVariant}&topProbability=100&backgroundColor=${properties.backgroundColor}&bodyColor=${properties.bodyColor}&seed=Felix`;
@@ -51,7 +80,7 @@ function CreateAvatar() {
 
     const createButtonClickHandler = async () => {
         try {
-            await setProfilePicture({Url: url}).unwrap();
+            await setProfilePicture({ Url: url }).unwrap();
             nav('/clubs')
         } catch (error) {
             if (isFetchBaseQueryError(error)) {
