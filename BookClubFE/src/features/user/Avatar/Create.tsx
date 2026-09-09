@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
 import data from "./optionInfo.json";
+import { useSetProfilePictureMutation } from "../../../features/auth/authSlice";
+import { isFetchBaseQueryError, isSerializedError } from "../../../app/typeGuards";
+import { updateErrorMessageThunk } from "../../error/errorSlice";
+import { useAppDispatch } from "../../../app/hooks";
+import { useNavigate } from "react-router-dom";
 import PropertySection from "./propertySection";
 
 export interface Properties {
@@ -21,6 +26,11 @@ export interface PropertiesCollection {
 }
 
 function CreateAvatar() {
+    const dispatch = useAppDispatch();
+    const nav = useNavigate();
+
+    const [setProfilePicture] = useSetProfilePictureMutation();
+
     const [properties, setProperties] = useState<Properties>({
         bodyVariant: "bell",
         eyesVariant: "big",
@@ -39,31 +49,51 @@ function CreateAvatar() {
     }, [properties]);
 
 
+    const createButtonClickHandler = async () => {
+        try {
+            await setProfilePicture({Url: url}).unwrap();
+            nav('/clubs')
+        } catch (error) {
+            if (isFetchBaseQueryError(error)) {
+                const errorMessage = (error.data as string) || "Unknown error";
+                dispatch(updateErrorMessageThunk(errorMessage));
+            } else if (isSerializedError(error)) {
+                dispatch(updateErrorMessageThunk(error.message!));
+            } else {
+                dispatch(updateErrorMessageThunk("Unknown error occured."));
+            }
+        }
+    }
+
     return (
         <div className="createAvatar">
             <div className="outcome">
                 <img src={url} />
             </div>
-            <div className="properties">
-                <div className="section">
-                    <PropertySection data={data.bodyVariant} properties={properties} setProperties={setProperties} propertyType="bodyVariant" header="Body" />
+            <div className="propertiesAndHeaderContainer">
+                <div className="header">
+                    <h1>Create your avatar</h1>
                 </div>
+                <div className="properties">
+                    <div className="section">
+                        <PropertySection data={data.bodyVariant} properties={properties} setProperties={setProperties} propertyType="bodyVariant" header="Body" />
+                    </div>
 
-                <div className="section">
-                    <PropertySection data={data.eyesVariant} properties={properties} setProperties={setProperties} propertyType="eyesVariant" header="Eyes" />
-                </div>
-                <div className="section">
-                    <PropertySection data={data.mouthVariant} properties={properties} setProperties={setProperties} propertyType="mouthVariant" header="Mouth" />
-                </div>
-                <div className="section">
-                    <PropertySection data={data.topVariant} properties={properties} setProperties={setProperties} propertyType="topVariant" header="Top" />
-                </div>
-                <div className="section">
-                    <PropertySection data={data.backgroundColor} properties={properties} setProperties={setProperties} propertyType="backgroundColor" header="Background Colour" />
-                </div>
-                <div className="section">
-                    <PropertySection data={data.bodyColor} properties={properties} setProperties={setProperties} propertyType="bodyColor" header="Body Colour" />
-                    {/* <input
+                    <div className="section">
+                        <PropertySection data={data.eyesVariant} properties={properties} setProperties={setProperties} propertyType="eyesVariant" header="Eyes" />
+                    </div>
+                    <div className="section">
+                        <PropertySection data={data.mouthVariant} properties={properties} setProperties={setProperties} propertyType="mouthVariant" header="Mouth" />
+                    </div>
+                    <div className="section">
+                        <PropertySection data={data.topVariant} properties={properties} setProperties={setProperties} propertyType="topVariant" header="Top" />
+                    </div>
+                    <div className="section">
+                        <PropertySection data={data.backgroundColor} properties={properties} setProperties={setProperties} propertyType="backgroundColor" header="Background Colour" />
+                    </div>
+                    <div className="section">
+                        <PropertySection data={data.bodyColor} properties={properties} setProperties={setProperties} propertyType="bodyColor" header="Body Colour" />
+                        {/* <input
                         type="color"
                         value={"#" + properties.bodyColor}
                         onChange={(event) => {
@@ -74,15 +104,18 @@ function CreateAvatar() {
                             }));
                         }}
                     /> */}
-                    {/* <input type="text" value={"#" + properties.bodyColor} onChange={(event) => {
+                        {/* <input type="text" value={"#" + properties.bodyColor} onChange={(event) => {
                         setProperties(prev => ({
                             ...prev,
                             bodyColor: event.target.value
                         }))
                     }}/> */}
+                    </div>
+                    <button className="createBtn">
+                        <h1 onClick={createButtonClickHandler}>Create</h1>
+                    </button>
                 </div>
             </div>
-
         </div>
     );
 }

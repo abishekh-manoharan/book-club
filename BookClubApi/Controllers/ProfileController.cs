@@ -32,7 +32,7 @@ public class ProfileController : ControllerBase
 
     // action method to update the user's information: fname, lname, bio, profileimg
     [HttpPut("update")]
-    public async Task<ActionResult<UserDTO>> Update(ProfileUpdateDTO updatedProfile)
+    public async Task<ActionResult<UserDTO>> Update([FromBody] ProfileUpdateDTO updatedProfile)
     {
         // retrieve associated User class
         User? user = await authHelpers.GetUserClassOfLoggedInUser(User);

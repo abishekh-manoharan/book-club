@@ -9,7 +9,7 @@ import authSlice from '../features/auth/authSlice'
 // import meetingSlice from '../features/meeting/meetingSlice'
 import pollSlice from '../features/poll/pollSlice'
 // import readingSlice from '../features/reading/readingSlice'
-import userSlice from '../features/user/userSlice'
+// import userSlice from '../features/user/userSlice'
 import errorSlice from '../features/error/errorSlice'
 
 export const store = configureStore({
@@ -22,7 +22,7 @@ export const store = configureStore({
     // meeting: meetingSlice,
     poll: pollSlice,
     // reading: readingSlice,
-    user: userSlice,
+    // user: userSlice,
     error: errorSlice
   },
   middleware: (getDefaultMiddleware) =>

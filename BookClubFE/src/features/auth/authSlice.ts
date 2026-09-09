@@ -155,6 +155,17 @@ export const apiSliceWithAuth = apiSlice.injectEndpoints({
             //         return errors;
             //     }
             // }
+        }),
+        setProfilePicture: builder.mutation<null, {Url: string}>({
+            query: (info) => ({
+                url: 'auth/setProfileImg',
+                credentials: 'include',
+                method: 'PUT',
+                body: JSON.stringify(info),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
         })
     })
 });
@@ -171,7 +182,8 @@ export const {
     useLogoutMutation,
     useRegisterMutation,
     useGetUserIdQuery,
-    useGetUserQuery
+    useGetUserQuery,
+    useSetProfilePictureMutation
 } = apiSliceWithAuth;
 
 

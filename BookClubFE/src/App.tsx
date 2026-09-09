@@ -44,6 +44,7 @@ import { useState } from "react"
 import UpcomingMeetings from "./features/meeting/UpcomingMeetings"
 import LandingPage from "./components/LandingPage"
 import CreateAvatar from "./features/user/Avatar/Create"
+import EditProfile from "./features/user/EditProfile"
 
 function App() {
   // retrieving user's logged in status
@@ -95,7 +96,8 @@ function App() {
           <Route path="activeReadings" element=<ActiveReadings status={status} /> />
           <Route path="login" element=<Login status={status} /> />
           <Route path="register" element=<Register status={status} /> />
-          <Route path="create" element=<CreateAvatar /> />
+          <Route path="create" element={status ? <CreateAvatar /> : <Login status={status}/>} />
+          <Route path="editProfile" element={status ? <EditProfile /> : <Login status={status}/>} />
           <Route path="upcomingMeetings" element=<UpcomingMeetings /> />
         </Route>
       </Routes >

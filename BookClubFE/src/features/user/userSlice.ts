@@ -1,19 +1,27 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { apiSlice } from "../api/apiSlice";
 
+export interface UpdatedProfile {
+    bio?: string,
+    fName: string,
+    profileImg: string
+}
 
-const meetingSlice = createSlice({
-    name: 'meeting',
-    initialState: [],
-    reducers: {
-        login(state, action: PayloadAction<string>) {
-            console.log(state, action)
-        }
-    },
-    // extraReducers(builder) {
-
-    // }
+export const apiSliceWithUser = apiSlice.injectEndpoints({
+    endpoints: (builder) => ({
+        updateProfile: builder.mutation<null, UpdatedProfile>({
+            query: (info) => ({
+                url: 'profile/update',
+                credentials: 'include',
+                method: 'PUT',
+                body: JSON.stringify(info),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+        })
+    })
 });
 
-export const { login: loginAction } = meetingSlice.actions;
-
-export default meetingSlice.reducer;
+export const {
+    useUpdateProfileMutation
+} = apiSliceWithUser
