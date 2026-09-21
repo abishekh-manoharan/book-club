@@ -33,7 +33,7 @@ function CreateAvatar() {
 
     // get user's profile picture
     const { data: userId } = useGetUserIdQuery();
-    const { data: user } = useGetUserQuery(Number(userId), {
+    const { data: user, refetch } = useGetUserQuery(Number(userId), {
         skip: !userId,
     });
 
@@ -81,7 +81,8 @@ function CreateAvatar() {
     const createButtonClickHandler = async () => {
         try {
             await setProfilePicture({ Url: url }).unwrap();
-            nav('/clubs')
+            refetch();
+            nav("/editProfile")
         } catch (error) {
             if (isFetchBaseQueryError(error)) {
                 const errorMessage = (error.data as string) || "Unknown error";

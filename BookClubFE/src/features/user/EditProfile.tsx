@@ -4,6 +4,7 @@ import { useUpdateProfileMutation } from "./userSlice";
 import { isFetchBaseQueryError, isSerializedError } from "../../app/typeGuards";
 import { updateErrorMessageThunk } from "../error/errorSlice";
 import { useAppDispatch } from "../../app/hooks";
+import { useNavigate } from "react-router-dom";
 
 interface ProfileForm {
     fName: string;
@@ -13,6 +14,7 @@ interface ProfileForm {
 
 function EditProfile() {
     const dispatch = useAppDispatch();
+    const nav = useNavigate()
 
     const { data: userId } = useGetUserIdQuery();
 
@@ -75,13 +77,20 @@ function EditProfile() {
         return <div>Unable to load profile.</div>;
     }
 
+    const editBtnClickHandler = () => {
+        nav("/create");
+    }
+
     return (
         <form
-            className="editProfilePage"
+            className="createClubPage"
             onSubmit={handleSubmit}
         >
             <div className="avatarSection">
-                {/* avatar input */}
+                <img className="profilePicture" src={user.profileImg} />
+                <div onClick={editBtnClickHandler} className="editBtnContainer">
+                    <img className="editBtn" src="/src/assets/images/edit.svg" />
+                </div>
             </div>
 
             <div className="displayNameSec">
@@ -91,6 +100,7 @@ function EditProfile() {
 
                 <input
                     id="displayName"
+                    className="textInput"
                     name="fName"
                     value={form.fName}
                     onChange={handleChange}
@@ -104,13 +114,14 @@ function EditProfile() {
 
                 <textarea
                     id="bio"
+                    className="textInput"
                     name="bio"
                     value={form.bio}
                     onChange={handleChange}
                 />
             </div>
 
-            <button type="submit" disabled={isUpdating}>
+            <button className="button fullWidth" type="submit" disabled={isUpdating}>
                 {isUpdating ? "Saving..." : "Save Changes"}
             </button>
         </form>

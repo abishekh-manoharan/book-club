@@ -98,7 +98,7 @@ function Register({ status }: { status: boolean | undefined }) {
                 const submissionSuccessElement = document.querySelector(".submission-success");
                 submissionSuccessElement!.classList.toggle("hidden");
                 await login({ email, password }).unwrap();
-                nav('/create');
+                nav('/editProfile');
                 return;
             }
 
