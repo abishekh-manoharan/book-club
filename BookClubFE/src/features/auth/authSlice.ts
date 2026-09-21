@@ -33,7 +33,7 @@ export type RegistrationSuccess = string[];
 
 
 export interface RegistrationFormData {
-    Fname: string,
+    Username: string,
     Email: string,
     password: string
 }

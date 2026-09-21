@@ -7,7 +7,7 @@ import { isRegistrationAllowanceError } from "../../app/typeGuards";
 import { useNavigate } from "react-router-dom";
 
 function Register({ status }: { status: boolean | undefined }) {
-    const [fName, setFName] = useState('');
+    const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     // const [password, setPassword] = useState("Abcde123!");
     const [password, setPassword] = useState("");
@@ -52,7 +52,7 @@ function Register({ status }: { status: boolean | undefined }) {
         }
 
         const registrationData: RegistrationFormData = {
-            Fname: fName,
+            Username: username,
             Email: email,
             password: password
         }
@@ -81,6 +81,10 @@ function Register({ status }: { status: boolean | undefined }) {
         const errorElement6 = document.querySelector(".DuplicateEmail");
         if (!errorElement6?.classList.contains("hidden")) { // display only if 
             errorElement6!.classList.toggle('hidden');
+        }
+        const errorElement7 = document.querySelector(".DuplicateUserName");
+        if (!errorElement7?.classList.contains("hidden")) { // display only if 
+            errorElement7!.classList.toggle('hidden');
         }
 
 
@@ -147,6 +151,13 @@ function Register({ status }: { status: boolean | undefined }) {
                             errorElement.classList.toggle('hidden');
                         }
                     }
+                    if (code === "DuplicateUserName") {
+                        // display error messages
+                        const errorElement = document.querySelector(".DuplicateUserName");
+                        if (errorElement?.classList.contains("hidden")) { // display only if 
+                            errorElement.classList.toggle('hidden');
+                        }
+                    }
                 })
 
             } else {
@@ -162,8 +173,9 @@ function Register({ status }: { status: boolean | undefined }) {
         <div className="createClubPage">
             <div className="createClubHeading"><h1>Create your BookClub Account</h1></div>
             <form className="form createMeetingForm registrationForm">
-                <label htmlFor="FName">Full Name</label>
-                <input className="textInput" name="Fname" id="Fname" value={fName} onChange={(e) => { setFName(e.target.value) }} required />
+                <label htmlFor="Username">Username</label>
+                <input className="textInput" name="Username" id="Username" value={username} onChange={(e) => { setUsername(e.target.value) }} required />
+                <p className="DuplicateUserName hidden" style={{ "color": "red" }}>Username is already taken.</p>
                 <label htmlFor="Email">Email</label>
                 <input className="textInput" name="Email" id="Email" value={email} onChange={(e) => { setEmail(e.target.value) }} type="email" required /><br />
                 <p className="DuplicateEmail hidden" style={{ "color": "red" }}>Email is already taken.</p>

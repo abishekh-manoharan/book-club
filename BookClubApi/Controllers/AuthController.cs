@@ -63,7 +63,7 @@ public class AuthController : ControllerBase
     {
         ApplicationUser appUser = new()
         {
-            UserName = user.Email,
+            UserName = user.Username,
             Email = user.Email,
         };
         System.Console.WriteLine("appUser");
