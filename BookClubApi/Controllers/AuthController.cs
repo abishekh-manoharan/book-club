@@ -173,7 +173,12 @@ public class AuthController : ControllerBase
 
             if (user != null)
             {
-                UserDTO userDTO = new(user.UserId, user.Bio, user.FName, user.LName, user.ProfileImg);
+                var aspnetuser = dbContext.AspNetUsers
+                    .Where(aUser => aUser.Id == user.AspnetusersId)
+                    .AsNoTracking()
+                    .FirstOrDefault();
+
+                UserDTO userDTO = new(user.UserId, user.Bio, user.FName, user.LName, user.ProfileImg, username: aspnetuser!.UserName);
                 return Ok(userDTO);
             }
 
