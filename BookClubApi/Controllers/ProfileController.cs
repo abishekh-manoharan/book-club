@@ -68,14 +68,14 @@ public class ProfileController : ControllerBase
                 await bookService.AddBookToDbIfNeeded(book);
 
                 // attempt to create new UserBook object
-                UserBook userBook = new((int)book.BookId!, user.UserId, DateTime.Now);
+                UserBook ub = new((int)book.BookId!, user.UserId, DateTime.Now);
 
                 try
                 {
-                    dbContext.UserBooks.Add(userBook);
+                    dbContext.UserBooks.Add(ub);
                     dbContext.SaveChanges();
 
-                    return Ok(new UserBookDTO(userBook.BookId, userBook.UserId, userBook.DateAdded));
+                    return Ok(new UserBookDTO(ub.BookId, ub.UserId, ub.DateAdded, ub.Book.Cover_Id, ub.Book.Title, ub.Book.AuthorName ?? "Unknown", ub.Book.Ol_key, ub.Book.FirstPublishYear, ub.Book.NumberOfPagesMedian, ub.Book.RatingsAverage));
                 }
                 catch (DbUpdateException dbe)
                 {
@@ -104,17 +104,17 @@ public class ProfileController : ControllerBase
             User? user = await authHelpers.GetUserClassOfLoggedInUser(User);
 
             // get the associated userbook object
-            var userbook = dbContext.UserBooks.Where(userbook => userbook.BookId == bookId && userbook.UserId == user!.UserId).AsNoTracking().FirstOrDefault();
+            var ub = dbContext.UserBooks.Where(userbook => userbook.BookId == bookId && userbook.UserId == user!.UserId).AsNoTracking().FirstOrDefault();
 
             // ensure userbook object exists. return not found otherwise.
-            if (userbook != null)
+            if (ub != null)
             {
                 try
                 {
-                    dbContext.UserBooks.Remove(userbook);
+                    dbContext.UserBooks.Remove(ub);
                     dbContext.SaveChanges();
 
-                    return Ok(new UserBookDTO(userbook.BookId, userbook.UserId, userbook.DateAdded));
+                    return Ok(new UserBookDTO(ub.BookId, ub.UserId, ub.DateAdded, ub.Book.Cover_Id, ub.Book.Title, ub.Book.AuthorName ?? "Unknown", ub.Book.Ol_key, ub.Book.FirstPublishYear, ub.Book.NumberOfPagesMedian, ub.Book.RatingsAverage));
                 }
                 catch (Exception e)
                 {
@@ -127,16 +127,18 @@ public class ProfileController : ControllerBase
     }
 
     [HttpGet("getFavourites")]
-    public ActionResult<List<UserBookDTO>> GetUsersFavourites([Required] int userId)
+    public ActionResult<List<UserBookDTO>> GetUsersFavourites([Required] [FromQuery] int UserId)
     {
         if (ModelState.IsValid)
         {
-            List<UserBook> ubs = dbContext.UserBooks.Where(ub => ub.UserId == userId).AsNoTracking().ToList();
+            List<UserBook> ubs = dbContext.UserBooks.Where(ub => ub.UserId == UserId).Include(ub => ub.Book).AsNoTracking().ToList();
             List<UserBookDTO> ubsDTOs = [];
 
             foreach (UserBook ub in ubs)
             {
-                ubsDTOs.Add(new UserBookDTO(ub.BookId, ub.UserId, ub.DateAdded));
+                System.Console.WriteLine("-=====-");
+                System.Console.WriteLine(ub.BookId);
+                ubsDTOs.Add(new UserBookDTO(ub.BookId, ub.UserId, ub.DateAdded, ub.Book.Cover_Id, ub.Book.Title, ub.Book.AuthorName, ub.Book.Ol_key, ub.Book.FirstPublishYear, ub.Book.NumberOfPagesMedian, ub.Book.RatingsAverage));
             }
 
             return Ok(ubsDTOs);
