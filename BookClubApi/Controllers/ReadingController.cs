@@ -197,6 +197,27 @@ public class ReadingController : ControllerBase
 
         return BadRequest(ModelState);
     }
+    
+    // action method that returns all readings the user is a participant of 
+    [HttpGet("readingUsersOfUser")]
+    [Authorize]
+    public async Task<ActionResult<List<Readinguser>>> GetReadingUsersOfUser([FromQuery] int userId)
+    {
+        if (ModelState.IsValid)
+        {
+            // getting all readinguser instances associated with the user
+            var readingUsers = await dbContext.Readingusers
+                .Where(ru => ru.UserId == userId)
+                .Include(b=>b.Reading.Book)
+                .Include(b=>b.Reading.Club)
+                .AsNoTracking()
+                .ToListAsync();
+
+            return Ok(readingUsers);
+        }
+
+        return BadRequest(ModelState);
+    }
 
     // action method that returns all reading records associated with a club
     [HttpGet("GetAReading")]
