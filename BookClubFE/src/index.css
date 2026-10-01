@@ -1502,3 +1502,36 @@ textarea {
   justify-content: center;
   align-items: center;
 }
+
+.profilePage {
+  position: relative;
+  margin-top: 15px;
+}
+
+.profilePage .avatarSection {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.profilePage .profilePicture {
+  width: 150px;
+}
+
+.profilePage .displayNameSec {
+  margin: 0px;
+  margin-top: 7px;
+  margin-bottom: -10px;
+}
+
+.favouriteBooks {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.favouriteBooks img {
+
+}

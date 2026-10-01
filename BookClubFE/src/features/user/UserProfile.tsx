@@ -5,6 +5,8 @@ import { isFetchBaseQueryError, isSerializedError } from "../../app/typeGuards";
 import { updateErrorMessageThunk } from "../error/errorSlice";
 import { useAppDispatch } from "../../app/hooks";
 import { useNavigate, useParams } from "react-router-dom";
+import Book from "./Book";
+import { useGetReadingUsersOfLoggedInUsersQuery } from "../reading/readingSlice";
 
 interface ProfileForm {
     fName: string;
@@ -21,7 +23,7 @@ function UserProfile() {
     const { data: user, isLoading: isGetUserLoading, isError: isGetUserError } = useGetUserQuery(Number(userId), {
         skip: !userId,
     });
-    
+
     const { data: favourites, isLoading: usGetFavouritesLoading, isError: isGetFavouritesError } = useGetFavouritesQuery(Number(userId), {
         skip: !userId,
     });
@@ -92,10 +94,13 @@ function UserProfile() {
                     </div>
                 </div>
             }
-
+            <br />
+            fav books
             <div className="favouriteBooks">
-                {favourites != undefined ? favourites.map((f) => <>{f.authorName}</>) : <>nofavs</>}
+                {favourites != undefined ? favourites.map((f) => <Book book={f} />) : <>no favs</>}
             </div>
+
+
         </form>
     );
 }

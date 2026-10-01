@@ -55,7 +55,7 @@ public class ProfileController : ControllerBase
     }
 
     [HttpPost("addFavourite")]
-    public async Task<ActionResult<UserBookDTO>> AddFavourite(Book book)
+    public async Task<ActionResult<UserBookDTO>> AddFavourite([FromBody] Book book)
     {
         if (ModelState.IsValid)
         {

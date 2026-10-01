@@ -45,6 +45,7 @@ import UpcomingMeetings from "./features/meeting/UpcomingMeetings"
 import LandingPage from "./components/LandingPage"
 import CreateAvatar from "./features/user/Avatar/Create"
 import EditProfile from "./features/user/EditProfile"
+import UserProfile from "./features/user/UserProfile"
 
 function App() {
   // retrieving user's logged in status
@@ -98,6 +99,7 @@ function App() {
           <Route path="register" element=<Register status={status} /> />
           <Route path="create" element={status ? <CreateAvatar /> : <Login status={status}/>} />
           <Route path="editProfile" element={status ? <EditProfile /> : <Login status={status}/>} />
+          <Route path="user/:userId" element={<UserProfile/>} />
           <Route path="upcomingMeetings" element=<UpcomingMeetings /> />
         </Route>
       </Routes >

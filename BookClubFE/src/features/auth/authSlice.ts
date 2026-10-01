@@ -25,6 +25,7 @@ export interface User {
     fName: string,
     lName: string,
     profileImg: string,
+    username?: string
 }
 
 export type RegistrationError = RegistrationModelStateError | RegistrationAllowanceError;
