@@ -6,7 +6,9 @@ import { updateErrorMessageThunk } from "../error/errorSlice";
 import { useAppDispatch } from "../../app/hooks";
 import { useNavigate, useParams } from "react-router-dom";
 import Book from "./Book";
-import { useGetReadingUsersOfLoggedInUsersQuery } from "../reading/readingSlice";
+import { useGetReadingUsersOfAUserQuery, useGetReadingUsersOfLoggedInUsersQuery } from "../reading/readingSlice";
+import OptedInReading from "../reading/ActiveReadings/OptedInReading";
+import JoinedReadings from "./JoinedReading";
 
 interface ProfileForm {
     fName: string;
@@ -18,7 +20,8 @@ function UserProfile() {
     const dispatch = useAppDispatch();
     const nav = useNavigate()
     const { userId } = useParams();
-    // const { data: loggedInUserId } = useGetUserIdQuery();
+    const [joinedReadingsHidden, setJoinedReadingsHidden] = useState(false);
+    const { data: loggedInUserId } = useGetUserIdQuery();
 
     const { data: user, isLoading: isGetUserLoading, isError: isGetUserError } = useGetUserQuery(Number(userId), {
         skip: !userId,
@@ -28,33 +31,7 @@ function UserProfile() {
         skip: !userId,
     });
 
-    console.log(user)
-
-    const [form, setForm] = useState<ProfileForm>({
-        fName: "",
-        bio: "",
-        profileImg: "",
-    });
-
-    // Populate the form once the user data arrives.
-    useEffect(() => {
-        if (!user) return;
-
-        setForm({
-            fName: user.fName ?? "",
-            bio: user.bio ?? "",
-            profileImg: user.profileImg ?? "",
-        });
-    }, [user]);
-
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = event.target;
-
-        setForm((previous) => ({
-            ...previous,
-            [name]: value,
-        }));
-    };
+    const { data: readingUsersOfUser, isFetching: isFetchingReadingUsersOfLoggedInUser, isSuccess } = useGetReadingUsersOfAUserQuery(userId);
 
 
     if (isGetUserLoading) {
@@ -64,13 +41,12 @@ function UserProfile() {
     if (isGetUserError || !user) {
         return <div>Unable to load profile.</div>;
     }
-
-    const editBtnClickHandler = () => {
-        nav("/create");
+    const toggleJoinedReadingsList = () => {
+        setJoinedReadingsHidden((state) => !state);
     }
     console.log(favourites)
     return (
-        <form
+        <div
             className="profilePage"
         >
             <div className="avatarSection">
@@ -95,13 +71,27 @@ function UserProfile() {
                 </div>
             }
             <br />
+
             fav books
             <div className="favouriteBooks">
                 {favourites != undefined ? favourites.map((f) => <Book book={f} />) : <>no favs</>}
             </div>
 
+            readings user is a part of
+            <div className="readingsListHeader" onClick={toggleJoinedReadingsList}>
+                {joinedReadingsHidden ? <img className="readingsListHeader-plus" src='src/assets/images/plus.svg' /> :
+                    <img className="ListHeader-plus" src='src/assets/images/minus.svg' />}
+                <h2>Joined Readings</h2>
+            </div>
+            <div className="readingsListJoinedReadings" hidden={joinedReadingsHidden}>
+                {
+                    readingUsersOfUser && readingUsersOfUser!.map((reading) => {
+                        return <JoinedReadings key={reading.bookId + reading.clubId - 1} bookId={reading.bookId} clubId={reading.clubId} progress={reading.progress!} progressTotal={reading.progressTotal} progresstypeId={reading.progresstypeId} profileIsUserAgents={loggedInUserId==userId}/>;
+                    })
+                } <br />
+            </div>
 
-        </form>
+        </div>
     );
 }
 
