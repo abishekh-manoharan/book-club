@@ -7,7 +7,6 @@ import { useAppDispatch } from "../../app/hooks";
 import { useNavigate, useParams } from "react-router-dom";
 import Book from "./Book";
 import { useGetReadingUsersOfAUserQuery, useGetReadingUsersOfLoggedInUsersQuery } from "../reading/readingSlice";
-import OptedInReading from "../reading/ActiveReadings/OptedInReading";
 import JoinedReadings from "./JoinedReading";
 
 interface ProfileForm {

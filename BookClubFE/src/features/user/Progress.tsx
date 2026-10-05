@@ -19,6 +19,7 @@ function Progress({ progress, progresstypeId, progressTotal, clubId, bookId, upd
 
     }
 
+
     return (
         <div className="progress">
             <ProgressBar progress={progress} progresstypeId={progresstypeId} progressTotal={progressTotal} />

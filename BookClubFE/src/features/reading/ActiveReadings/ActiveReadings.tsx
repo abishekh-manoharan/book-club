@@ -15,8 +15,6 @@ function ActiveReadings({status}: {status: boolean | undefined}) {
         progresstypeId?: number
     }
 
-
-
     interface OrganizedReadings {
         joinedReadings: ReadingWithProgress[],
         notJoinedReadings: Reading[]
