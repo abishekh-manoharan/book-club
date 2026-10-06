@@ -26,12 +26,12 @@ function JoinedReading({ clubId, bookId, progress, progressTotal, progresstypeId
                 : <Link className="activeReadings-reading-img" to={`/club/${clubId}/${book?.bookId}`}><img className="activeReadings-reading-img activeReadings-reading-img-noimg" src='/src/assets/images/book-open.svg' /></Link>
             }
             <div className="activeReadings-reading-bookname">
-                <Link to={`../${book?.bookId}`}>{book?.title}</Link>
+                <Link to={`/club/${clubId}/${book?.bookId}`}>{book?.title}</Link>
             </div>
             <div className="activeReadings-reading-clubname">
                 <Link to={`../${book?.bookId}`}>{club?.name}</Link>
             </div>
-            <Link to={`../${book?.bookId}`}><div className="activeReadings-reading-membercount">
+            <Link to={`/club/${clubId}/${book?.bookId}/readers`}><div className="activeReadings-reading-membercount">
                 <img className="userLogo user" src='/src/assets/images/user.svg' />
                 {readingMemberCount}
             </div></Link>

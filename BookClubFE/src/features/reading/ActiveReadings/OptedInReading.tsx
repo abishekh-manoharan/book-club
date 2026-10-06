@@ -18,18 +18,18 @@ function OptedInReading({ clubId, bookId, progress, progressTotal, progresstypeI
     const { data: readingMemberCount } = useGetReadingMemberCountQuery({ BookId: bookId, ClubId: clubId });
 
     return (
-        <div className="optedInReading activeReadings-reading">
+         <div className="optedInReading activeReadings-reading">
             {book?.cover_Id ?
                 <Link className="activeReadings-reading-img" to={`/club/${clubId}/${book?.bookId}`}><img className="activeReadings-reading-img" src={`https://covers.openlibrary.org/b/ID/${book?.cover_Id}-M.jpg`} /></Link>
                 : <Link className="activeReadings-reading-img" to={`/club/${clubId}/${book?.bookId}`}><img className="activeReadings-reading-img activeReadings-reading-img-noimg" src='/src/assets/images/book-open.svg' /></Link>
             }
             <div className="activeReadings-reading-bookname">
-                <Link to={`../${book?.bookId}`}>{book?.title}</Link>
+                <Link to={`/club/${clubId}/${book?.bookId}`}>{book?.title}</Link>
             </div>
             <div className="activeReadings-reading-clubname">
                 <Link to={`../${book?.bookId}`}>{club?.name}</Link>
             </div>
-            <Link to={`../${book?.bookId}`}><div className="activeReadings-reading-membercount">
+            <Link to={`/club/${clubId}/${book?.bookId}/readers`}><div className="activeReadings-reading-membercount">
                 <img className="userLogo user" src='/src/assets/images/user.svg' />
                 {readingMemberCount}
             </div></Link>

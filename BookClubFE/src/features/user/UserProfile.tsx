@@ -57,35 +57,36 @@ function UserProfile() {
                     {user.username}
                 </div>
             </div>
+                    <br />
 
 
-            {user.bio &&
-                <div className="bioSection">
-                    <label htmlFor="bio">
-                        About
-                    </label>
-                    <div className="bio" id="bio">
-                        {user.bio}
-                    </div>
-                </div>
-            }
+
+            <div className="bioSection">
+                <label htmlFor="bio">
+                    <h2>Biography</h2>
+                </label>
+                {user.bio && user.bio != "" ? <div className="bio" id="bio">
+                    {user.bio}
+                </div> :
+                    <><i className="smallText">User hasn't added a biography</i></>
+                }
+            </div>
             <br />
 
-            fav books
+            <h2>User's Favourite Books</h2>
             <div className="favouriteBooks">
-                {favourites != undefined ? favourites.map((f) => <Book book={f} />) : <>no favs</>}
+                {favourites != undefined && favourites.length > 0 ? favourites.map((f) => <Book book={f} />) : <><i className="smallText">No Favorites to show</i></>}
             </div>
-
-            readings user is a part of
+            <br/>
             <div className="readingsListHeader" onClick={toggleJoinedReadingsList}>
-                {joinedReadingsHidden ? <img className="readingsListHeader-plus" src='src/assets/images/plus.svg' /> :
-                    <img className="ListHeader-plus" src='src/assets/images/minus.svg' />}
+                {joinedReadingsHidden ? <img className="readingsListHeader-plus" src='/src/assets/images/plus.svg' /> :
+                    <img className="ListHeader-plus" src='/src/assets/images/minus.svg' />}
                 <h2>Joined Readings</h2>
             </div>
             <div className="readingsListJoinedReadings" hidden={joinedReadingsHidden}>
                 {
                     readingUsersOfUser && readingUsersOfUser!.map((reading) => {
-                        return <JoinedReadings key={reading.bookId + reading.clubId - 1} bookId={reading.bookId} clubId={reading.clubId} progress={reading.progress!} progressTotal={reading.progressTotal} progresstypeId={reading.progresstypeId} profileIsUserAgents={loggedInUserId==userId}/>;
+                        return <JoinedReadings key={reading.bookId + reading.clubId - 1} bookId={reading.bookId} clubId={reading.clubId} progress={reading.progress!} progressTotal={reading.progressTotal} progresstypeId={reading.progresstypeId} profileIsUserAgents={loggedInUserId == userId} />;
                     })
                 } <br />
             </div>

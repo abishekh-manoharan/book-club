@@ -46,16 +46,16 @@ function NotOptedInReading({ clubId, bookId, status, clubUser, isGetClubUserSucc
     return (
         <div className="optedInReading activeReadings-reading">
             {book?.cover_Id ?
-                <Link className="activeReadings-reading-img" to={`../${book?.bookId}`}><img className="activeReadings-reading-img" src={`https://covers.openlibrary.org/b/ID/${book?.cover_Id}-M.jpg`} /></Link>
+                <Link className="activeReadings-reading-img" to={`/club/${clubId}/${book?.bookId}`}><img className="activeReadings-reading-img" src={`https://covers.openlibrary.org/b/ID/${book?.cover_Id}-M.jpg`} /></Link>
                 : <Link className="activeReadings-reading-img" to={`../${book?.bookId}`}><img className="activeReadings-reading-img activeReadings-reading-img-noimg" src='/src/assets/images/book-open.svg' /></Link>
             }
-            <Link to={`../${book?.bookId}`}><div className="activeReadings-reading-bookname">
+            <Link to={`/club/${clubId}/${book?.bookId}`}><div className="activeReadings-reading-bookname">
                 {book?.title}
             </div></Link>
             <div className="activeReadings-reading-clubname">
-                <Link to={`../${book?.bookId}`}>{club?.name}</Link>
+                <Link to={`/club/${clubId}`}>{club?.name}</Link>
             </div>
-            <Link to={`../${book?.bookId}`}><div className="activeReadings-reading-membercount">
+            <Link to={`/club/${clubId}/${book?.bookId}/readers`}><div className="activeReadings-reading-membercount">
                 <img className="userLogo user" src='/src/assets/images/user.svg' />
                 {readingMemberCount}
             </div></Link>
