@@ -8,6 +8,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Book from "./Book";
 import { useGetReadingUsersOfAUserQuery, useGetReadingUsersOfLoggedInUsersQuery } from "../reading/readingSlice";
 import JoinedReadings from "./JoinedReading";
+import Favourites from "./Favourites/Favourites";
 
 interface ProfileForm {
     fName: string;
@@ -73,10 +74,11 @@ function UserProfile() {
             </div>
             <br />
 
-            <h2>User's Favourite Books</h2>
+            {/* <h2>User's Favourite Books</h2>
             <div className="favouriteBooks">
                 {favourites != undefined && favourites.length > 0 ? favourites.map((f) => <Book book={f} />) : <><i className="smallText">No Favorites to show</i></>}
-            </div>
+            </div> */}
+            <Favourites favourites={favourites} profileIsUserAgents={loggedInUserId == userId}/>
             <br/>
             <div className="readingsListHeader" onClick={toggleJoinedReadingsList}>
                 {joinedReadingsHidden ? <img className="readingsListHeader-plus" src='/src/assets/images/plus.svg' /> :

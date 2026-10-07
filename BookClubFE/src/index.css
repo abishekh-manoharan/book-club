@@ -1544,3 +1544,12 @@ textarea {
 .activeReadings-reading-bookname {
   align-self: start;
 }
+
+.addFavourite {
+  height: 150px;
+  width: 100px;
+  background-color: #24242437;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
