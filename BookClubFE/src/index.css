@@ -128,6 +128,11 @@ body {
   background-color: #24242495;
 }
 
+.modalBackground {
+  display: flex;
+  justify-content: center;
+}
+
 .page {
   padding: 7px;
   height: 95%;
@@ -1553,3 +1558,12 @@ textarea {
   justify-content: center;
   align-items: center;
 }
+
+.addFavouriteModal {
+  height: 100px;
+  width: 200px;
+  background-color: white;
+  justify-self: center;
+  align-self: center;
+}
+

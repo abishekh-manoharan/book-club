@@ -1,8 +1,16 @@
+import { useState } from "react";
+import AddFavouriteModal from "./AddFavouriteModal";
+
 function AddFavourite() {
-    return (
-        <div className="addFavourite">
+    const [showModal, setShowModal] = useState(false);
+    return (<>
+        <div className="addFavourite" onClick={() => {
+            setShowModal(true)
+        }}>
             <img src="/src/assets/images/plusNoCircle.svg" alt="" />
         </div>
+        {showModal && <AddFavouriteModal setShowModal={setShowModal}/>}
+    </>
     );
 }
 
