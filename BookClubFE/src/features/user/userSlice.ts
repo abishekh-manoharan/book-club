@@ -35,11 +35,11 @@ export const apiSliceWithUser = apiSlice.injectEndpoints({
             providesTags: [{ type: 'Readings', id: 'all' }]
         }),
         addFavourite: builder.mutation<Book, Book>({
-            query: (club) => ({
+            query: (book) => ({
                 url: 'profile/addFavourite',
                 credentials: 'include',
                 method: 'POST',
-                body: JSON.stringify(club),
+                body: JSON.stringify(book),
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -63,5 +63,7 @@ export const apiSliceWithUser = apiSlice.injectEndpoints({
 
 export const {
     useUpdateProfileMutation,
-    useGetFavouritesQuery
+    useGetFavouritesQuery,
+    useAddFavouriteMutation,
+    useRemoveFavouriteMutation
 } = apiSliceWithUser
