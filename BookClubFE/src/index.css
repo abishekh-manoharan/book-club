@@ -1550,6 +1550,10 @@ textarea {
   align-self: start;
 }
 
+.favBook {
+  position: relative;
+}
+
 .addFavourite {
   height: 150px;
   width: 100px;
@@ -1567,3 +1571,18 @@ textarea {
   align-self: center;
 }
 
+.removeBookBtn {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+}
+
+.removeBookBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  height: 25px;
+  width: 25px;
+  border-radius: 100%;
+}

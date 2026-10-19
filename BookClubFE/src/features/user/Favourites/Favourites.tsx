@@ -11,7 +11,7 @@ function Favourites({favourites, profileIsUserAgents}: {favourites: BookType[] |
             {(favourites == undefined || favourites.length == 0) && <div><i className="smallText">No Favorites to show</i></div>}
             <div className="favouriteBooks">
                 {profileIsUserAgents && <AddFavourite/>}
-                {favourites != undefined && favourites.length > 0 && favourites.map((f) => <Book book={f} />) } 
+                {favourites != undefined && favourites.length > 0 && favourites.map((f) => <Book book={f} profileIsUserAgents={profileIsUserAgents}/>) } 
             </div>
         </>
     );

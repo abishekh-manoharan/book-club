@@ -13,12 +13,17 @@ interface BookInterface {
     userId: number;
 }
 
-function Book({ book }: { book: BookInterface }) {
+function Book({ book, profileIsUserAgents }: { book: BookInterface, profileIsUserAgents: boolean }) {
     return (
         <div className="favBook">
             {book.cover_Id ?
                 <img className="selectedBookCover" src={`https://covers.openlibrary.org/b/ID/${book.cover_Id}-M.jpg`} alt="image indicating no books has been selected" />
                 : <img className="selectedBookCover" src='/src/assets/images/book-open.svg' alt="image indicating no books has been selected" />
+            }
+            {profileIsUserAgents && 
+                <div className="removeBookBtn">
+                    <img src="/src/assets/images/x-white.svg" />
+                </div>
             }
         </div>
     );
