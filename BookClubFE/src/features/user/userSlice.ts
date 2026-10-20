@@ -32,7 +32,7 @@ export const apiSliceWithUser = apiSlice.injectEndpoints({
             transformResponse(res: { $id: string, $values: Book[] }) {
                 return res.$values;
             },
-            providesTags: [{ type: 'Readings', id: 'all' }]
+            providesTags: [{ type: 'Books', id: 'Favourites' }]
         }),
         addFavourite: builder.mutation<Book, Book>({
             query: (book) => ({
@@ -44,19 +44,19 @@ export const apiSliceWithUser = apiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            invalidatesTags: [{ type: 'Clubs' }]
+            invalidatesTags: [{ type: 'Books', id: 'Favourites' }]
         }),
         removeFavourite: builder.mutation<Book, number>({
             query: (bookId) => ({
-                url: `profile/removeFavourite?BookId=${bookId}`,
+                url: `profile/removeFavourite`,
                 credentials: 'include',
-                method: 'POST',
+                method: 'DELETE',
                 body: JSON.stringify(bookId),
                 headers: {
                     'Content-Type': 'application/json'
                 }
             }),
-            invalidatesTags: [{ type: 'Clubs' }]
+            invalidatesTags: [{ type: 'Books', id: 'Favourites' }]
         }),
     })
 });

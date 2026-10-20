@@ -97,7 +97,7 @@ public class ProfileController : ControllerBase
     }
 
     [HttpDelete("removeFavourite")]
-    public async Task<ActionResult<UserBookDTO>> RemoveFavourite([Required] int bookId)
+    public async Task<ActionResult<UserBookDTO>> RemoveFavourite([FromBody][Required] int bookId)
     {
         if (ModelState.IsValid)
         {
@@ -114,7 +114,7 @@ public class ProfileController : ControllerBase
                     dbContext.UserBooks.Remove(ub);
                     dbContext.SaveChanges();
 
-                    return Ok(new UserBookDTO(ub.BookId, ub.UserId, ub.DateAdded, ub.Book.Cover_Id, ub.Book.Title, ub.Book.AuthorName, ub.Book.Ol_key, ub.Book.FirstPublishYear, ub.Book.NumberOfPagesMedian, ub.Book.RatingsAverage));
+                    return Ok();
                 }
                 catch (Exception e)
                 {
