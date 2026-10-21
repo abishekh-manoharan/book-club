@@ -1,12 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useGetUserIdQuery, useGetUserQuery } from "../auth/authSlice";
-import { useGetFavouritesQuery, useUpdateProfileMutation } from "./userSlice";
-import { isFetchBaseQueryError, isSerializedError } from "../../app/typeGuards";
-import { updateErrorMessageThunk } from "../error/errorSlice";
+import { useGetFavouritesQuery } from "./userSlice";
 import { useAppDispatch } from "../../app/hooks";
 import { useNavigate, useParams } from "react-router-dom";
-import Book from "./Book";
-import { useGetReadingUsersOfAUserQuery, useGetReadingUsersOfLoggedInUsersQuery } from "../reading/readingSlice";
+import { useGetReadingUsersOfAUserQuery } from "../reading/readingSlice";
 import JoinedReadings from "./JoinedReading";
 import Favourites from "./Favourites/Favourites";
 
@@ -17,7 +14,6 @@ interface ProfileForm {
 }
 
 function UserProfile() {
-    const dispatch = useAppDispatch();
     const nav = useNavigate()
     const { userId } = useParams();
     const [joinedReadingsHidden, setJoinedReadingsHidden] = useState(false);
@@ -27,12 +23,11 @@ function UserProfile() {
         skip: !userId,
     });
 
-    const { data: favourites, isLoading: usGetFavouritesLoading, isError: isGetFavouritesError } = useGetFavouritesQuery(Number(userId), {
+    const { data: favourites } = useGetFavouritesQuery(Number(userId), {
         skip: !userId,
     });
 
-    const { data: readingUsersOfUser, isFetching: isFetchingReadingUsersOfLoggedInUser, isSuccess } = useGetReadingUsersOfAUserQuery(userId);
-
+    const { data: readingUsersOfUser } = useGetReadingUsersOfAUserQuery(userId);
 
     if (isGetUserLoading) {
         return <div>Loading...</div>;
@@ -41,9 +36,15 @@ function UserProfile() {
     if (isGetUserError || !user) {
         return <div>Unable to load profile.</div>;
     }
+
     const toggleJoinedReadingsList = () => {
         setJoinedReadingsHidden((state) => !state);
     }
+
+    const editProfileBtnClickHandler = () => {
+        nav("/editProfile")
+    }
+
     console.log(favourites)
     return (
         <div
@@ -58,9 +59,7 @@ function UserProfile() {
                     {user.username}
                 </div>
             </div>
-                    <br />
-
-
+            <br />
 
             <div className="bioSection">
                 <label htmlFor="bio">
@@ -74,12 +73,8 @@ function UserProfile() {
             </div>
             <br />
 
-            {/* <h2>User's Favourite Books</h2>
-            <div className="favouriteBooks">
-                {favourites != undefined && favourites.length > 0 ? favourites.map((f) => <Book book={f} />) : <><i className="smallText">No Favorites to show</i></>}
-            </div> */}
-            <Favourites favourites={favourites} profileIsUserAgents={loggedInUserId == userId}/>
-            <br/>
+            <Favourites favourites={favourites} profileIsUserAgents={loggedInUserId == userId} />
+            <br />
             <div className="readingsListHeader" onClick={toggleJoinedReadingsList}>
                 {joinedReadingsHidden ? <img className="readingsListHeader-plus" src='/src/assets/images/plus.svg' /> :
                     <img className="ListHeader-plus" src='/src/assets/images/minus.svg' />}
@@ -93,6 +88,9 @@ function UserProfile() {
                 } <br />
             </div>
 
+            {loggedInUserId == userId && <div className="editProfileBtn button" onClick={editProfileBtnClickHandler}>
+                Edit Profile
+            </div>}
         </div>
     );
 }
